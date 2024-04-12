@@ -9,9 +9,15 @@ description = "Survival analysis made easy with pytorch"
 authors = [
     {name = "Thibaud Coroller", email = "thibaud.coroller@novartis.com"},
     {name = "Melodie Monod", email = "melodie.monod@novartis.com"},
-    {name = "Peter Krusche", email = "peter.krusche@novartis.com"}
+    {name = "Peter Krusche", email = "peter.krusche@novartis.com"},
+    {name = "Qian Cao", email = "qian.cao@fda.hhs.com"}
 ]
 license = {file = "LICENSE.txt"}
+dependencies = [
+  "torch",
+  "scipy",
+  "torchmetrics",
+]
 
 [tool.pylint]
 max-line-length = 250
