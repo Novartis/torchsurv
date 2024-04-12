@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "torchsurv"
+version = "0.1.0"
+description = "Survival analysis made easy with pytorch"
+authors = [
+    {name = "Thibaud Coroller", email = "thibaud.coroller@novartis.com"},
+    {name = "Melodie Monod", email = "melodie.monod@novartis.com"},
+    {name = "Peter Krusche", email = "peter.krusche@novartis.com"}
+]
+license = {file = "LICENSE.txt"}
+
+[tool.pylint]
+max-line-length = 120
+disable = ["C0114", "C0116", "R0801"]
