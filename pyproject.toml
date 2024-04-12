@@ -14,5 +14,15 @@ authors = [
 license = {file = "LICENSE.txt"}
 
 [tool.pylint]
-max-line-length = 120
-disable = ["C0114", "C0116", "R0801"]
+max-line-length = 250
+disable = ["C0114", "C0116", "R0801", "R0915"]
+max-args = 10
+max-attributes = 15
+max-module-lines = 1500
+max-locals = 40
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+show_error_codes = true

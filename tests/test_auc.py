@@ -150,9 +150,15 @@ class TestAUC(unittest.TestCase):
             auc_ne = Auc()
             auc_ne.auc = auc_cd_survAUC
             auc_ne.new_time = times
-            i_auc_cd = auc_ne._integrate_AUC_cumulative(S, times.max())
+            i_auc_cd = auc_ne._integrate_cumulative(S, times.max())
 
             i_auc_cd_survAUC = benchmark_auc["iauc_cd_survAUC"]  # survAUC
+
+            self.assertTrue(
+                np.isclose(
+                    i_auc_cd.numpy(), np.array(i_auc_cd_survAUC), rtol=1e-3, atol=1e-8
+                )
+            )
 
             # integral of auc incident/dynamic
             auc_id_sz_survAUC = torch.tensor(
@@ -161,14 +167,9 @@ class TestAUC(unittest.TestCase):
             auc_ne = Auc()
             auc_ne.auc = auc_id_sz_survAUC
             auc_ne.new_time = times
-            i_auc_id_sz = auc_ne._integrate_AUC_incident(S, times.max())
+            i_auc_id_sz = auc_ne._integrate_incident(S, times.max())
             i_auc_id_sz_survAUC = benchmark_auc["i_auc_id_sz_survAUC"]  # survAUC
 
-            self.assertTrue(
-                np.isclose(
-                    i_auc_cd.numpy(), np.array(i_auc_cd_survAUC), rtol=1e-3, atol=1e-8
-                )
-            )
             self.assertTrue(
                 np.isclose(
                     i_auc_id_sz.numpy(),

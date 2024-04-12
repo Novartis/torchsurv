@@ -29,7 +29,7 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 
 To run other scripts within the repo, you can run the following
 from the top level directory of the repository clone, and then run
-scripts from there that import torchsurv. Alternatively you may give
+scripts from there that import `TorchSurv`. Alternatively you may give
 an absolute path to the source directory.
 
 ```bash
@@ -42,7 +42,7 @@ To test building the package, run:
 python -m build # builds the package as a tarball -> dist
 ```
 
-To get a local installation for testing e.g. other tools that depend on torchsurv
+To get a local installation for testing e.g. other tools that depend on `TorchSurv`
 with a local development version of the code:
 
 ```bash

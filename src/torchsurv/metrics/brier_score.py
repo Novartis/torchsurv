@@ -1,3 +1,4 @@
+import copy
 import sys
 from typing import Optional
 
@@ -12,6 +13,8 @@ from ..tools.validate_inputs import (
 
 
 class BrierScore:
+    r"""Compute the Brier Score for survival models."""
+
     def __init__(self, checks: bool = True):
         """Initialize a BrierScore for survival class model evaluation.
 
@@ -43,6 +46,17 @@ class BrierScore:
                     0.2380])
         """
         self.checks = checks
+
+        # init instate attributes
+        self.order_time = None
+        self.time = None
+        self.event = None
+        self.weight = None
+        self.new_time = None
+        self.weight_new_time = None
+        self.estimate = None
+        self.brier_score = None
+        self.residuals = None
 
     def __call__(
         self,
@@ -180,7 +194,7 @@ class BrierScore:
         residuals = torch.zeros_like(estimate)
         for i, t in enumerate(new_time):
             est = estimate[:, i]
-            is_case = ((time <= t) & (event == True)).int()
+            is_case = ((time <= t) & (event)).int()
             is_control = (time > t).int()
 
             residuals[:, i] = (
@@ -240,13 +254,14 @@ class BrierScore:
             The integral is estimated with the trapzoidal rule.
 
         """
-
+        # Single time available
         if len(self.new_time) == 1:
-            return self.brier_score[0]
+            brier = self.brier_score[0]
         else:
-            return torch.trapezoid(self.brier_score, self.new_time) / (
+            brier = torch.trapezoid(self.brier_score, self.new_time) / (
                 self.new_time[-1] - self.new_time[0]
             )
+        return brier
 
     def confidence_interval(
         self,
@@ -313,13 +328,16 @@ class BrierScore:
             )
 
         if method == "bootstrap":
-            return self._confidence_interval_bootstrap(alpha, alternative, n_bootstraps)
+            conf_int = self._confidence_interval_bootstrap(
+                alpha, alternative, n_bootstraps
+            )
         elif method == "parametric":
-            return self._confidence_interval_parametric(alpha, alternative)
+            conf_int = self._confidence_interval_parametric(alpha, alternative)
         else:
             raise ValueError(
-                "Method not implemented. Please choose either 'parametric' or 'bootstrap'."
+                f"Method {method} not implemented. Please choose either 'parametric' or 'bootstrap'."
             )
+        return conf_int
 
     def p_value(
         self,
@@ -396,13 +414,14 @@ class BrierScore:
             )
 
         if method == "parametric":
-            return self._p_value_parametric(alternative, null_value)
+            pvalue = self._p_value_parametric(alternative, null_value)
         elif method == "bootstrap":
-            return self._p_value_bootstrap(alternative, n_bootstraps)
+            pvalue = self._p_value_bootstrap(alternative, n_bootstraps)
         else:
             raise ValueError(
-                "Method not implemented. Please choose either 'parametric' or 'bootstrap'."
+                f"Method {method} not implemented. Please choose either 'parametric' or 'bootstrap'."
             )
+        return pvalue
 
     def compare(
         self, other, method: str = "parametric", n_bootstraps: int = 999
@@ -467,13 +486,14 @@ class BrierScore:
             )
 
         if method == "parametric":
-            return self._compare_parametric(other)
-        if method == "bootstrap":
-            return self._compare_bootstrap(other, n_bootstraps)
+            pvalue = self._compare_parametric(other)
+        elif method == "bootstrap":
+            pvalue = self._compare_bootstrap(other, n_bootstraps)
         else:
             raise ValueError(
                 "Method not implemented. Please choose either 'parametric' or 'bootstrap'."
             )
+        return pvalue
 
     def _brier_score_se(self):
         """Brier Score's empirical standard errors."""
@@ -599,13 +619,13 @@ class BrierScore:
         p_values = torch.zeros_like(self.brier_score)
 
         # iterate over time
-        for index_t in range(len(self.brier_score)):
+        for index_t, brier_score_t in enumerate(self.brier_score):
             # Derive p-value
-            p = (
-                1 + torch.sum(brierscore0[:, index_t] <= self.brier_score[index_t])
-            ) / (n_bootstraps + 1)
+            p = (1 + torch.sum(brierscore0[:, index_t] <= brier_score_t)) / (
+                n_bootstraps + 1
+            )
             if alternative == "two_sided":
-                if self.brier_score[index_t] >= 0.5:
+                if brier_score_t >= 0.5:
                     p = 1 - p
                 p *= 2
                 p = torch.min(
@@ -630,16 +650,14 @@ class BrierScore:
         p_values = torch.zeros_like(self.brier_score)
 
         # iterate over time
-        for index_t in range(len(self.brier_score)):
+        for index_t, brier_score_t in enumerate(self.brier_score):
             # compute standard error of the difference
             paired_se = torch.std(
                 self.residuals[:, index_t] - other.residuals[:, index_t]
             ) / (n_samples ** (1 / 2))
 
             # compute t-stat
-            t_stat = (
-                self.brier_score[index_t] - other.brier_score[index_t]
-            ) / paired_se
+            t_stat = (brier_score_t - other.brier_score[index_t]) / paired_se
 
             # p-value
             p_values[index_t] = torch.tensor(
@@ -674,7 +692,7 @@ class BrierScore:
         p_values = torch.zeros_like(self.brier_score)
 
         # iterate over time
-        for index_t in range(len(self.brier_score)):
+        for index_t, _ in enumerate(self.brier_score):
             p_values[index_t] = (
                 1 + torch.sum(t_boot[:, index_t] <= t_obs[index_t])
             ) / (n_bootstraps + 1)
@@ -701,7 +719,6 @@ class BrierScore:
         Returns:
             torch.tensor: Bootstrap samples of Brier score.
         """
-        import copy
 
         # Initiate empty list to store brier score
         brier_scores = []

@@ -14,6 +14,6 @@ fi
 
 export PYTHONPATH=${DIR}/../src
 
-isort --profile black ${CHECK} src tests
+isort ${CHECK} src tests
 black ${CHECK} src tests
-# pylint src tests
+pylint src

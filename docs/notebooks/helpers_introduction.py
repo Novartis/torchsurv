@@ -1,5 +1,5 @@
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 import torch
 from torch.utils.data import Dataset
 
@@ -17,7 +17,6 @@ def plot_losses(train_losses, val_losses, title: str = "Cox") -> None:
     plt.title(title)
     plt.yscale("log")
     plt.show()
-    # plt.clf()
 
 
 class Custom_dataset(Dataset):

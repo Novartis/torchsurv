@@ -10,6 +10,8 @@ from ..tools.validate_inputs import validate_estimate, validate_survival_data
 
 
 class ConcordanceIndex:
+    """Compute the Concordance Index (C-index) for survival models."""
+
     def __init__(
         self,
         tied_tol: float = 1e-8,
@@ -43,6 +45,20 @@ class ConcordanceIndex:
         self.tied_tol = tied_tol
         self.checks = checks
 
+        # init instate attributes
+        self.time = None
+        self.event = None
+        self.estimate = None
+        self.cindex = None
+        self.concordant = None
+        self.discordant = None
+        self.tied_risk = None
+        self.weight = None
+        self.weight_squared = None
+        self.tmax = None
+
+    # disable long line check for this function due to docstring. Might be better to try and do multiline math in the TeX formula
+    # pylint: disable=C0301
     def __call__(
         self,
         estimate: torch.Tensor,
@@ -194,7 +210,7 @@ class ConcordanceIndex:
             )
 
             # Extract risk score of comparable pairs and the number of comparable samples
-            est_j, N = estimate[order[mask], order[ind]], mask.sum()
+            est_j, n = estimate[order[mask], order[ind]], mask.sum()
 
             # Check that the current sample is uncensored
             assert (
@@ -213,12 +229,12 @@ class ConcordanceIndex:
 
             # Update numerator and denominator for concordance index calculation
             numerator += w_i * n_con + 0.5 * w_i * n_ties
-            denominator += w_i * N
+            denominator += w_i * n
 
             # Update counts for tied, concordant, and discordant pairs
             tied_risk.append(w_i * n_ties)
             concordant.append(w_i * n_con)
-            discordant.append(w_i * N - w_i * n_con - w_i * n_ties)
+            discordant.append(w_i * n - w_i * n_con - w_i * n_ties)
 
         # Create/overwrite internal attributes states
         if instate:
@@ -290,25 +306,30 @@ class ConcordanceIndex:
                 Pencina2004
         """
 
+        assert isinstance(method, str)
+        assert isinstance(alternative, str)
         assert (
             hasattr(self, "cindex") and self.cindex is not None
         ), "Error: Please calculate the concordance index using `ConcordanceIndex()` before calling `confidence_interval()`."
 
         if alternative not in ["less", "greater", "two_sided"]:
             raise ValueError(
-                "'alternative' parameter must be one of ['less', 'greater', 'two_sided']."
+                f"'alternative' {alternative} must be one of ['less', 'greater', 'two_sided']."
             )
 
         if method == "noether":
-            return self._confidence_interval_noether(alpha, alternative)
+            conf_int = self._confidence_interval_noether(alpha, alternative)
         elif method == "bootstrap":
-            return self._confidence_interval_bootstrap(alpha, alternative, n_bootstraps)
+            conf_int = self._confidence_interval_bootstrap(
+                alpha, alternative, n_bootstraps
+            )
         elif method == "conservative":
-            return self._confidence_interval_conservative(alpha, alternative)
+            conf_int = self._confidence_interval_conservative(alpha, alternative)
         else:
             raise ValueError(
-                "Method not implemented. Please choose either 'noether', 'conservative' or 'bootstrap'."
+                f"Method {method} not implemented. Please choose either 'noether', 'conservative' or 'bootstrap'."
             )
+        return conf_int
 
     def p_value(
         self,
@@ -366,13 +387,14 @@ class ConcordanceIndex:
             )
 
         if method == "noether":
-            return self._p_value_noether(alternative)
+            pvalue = self._p_value_noether(alternative)
         elif method == "bootstrap":
-            return self._p_value_bootstrap(alternative, n_bootstraps)
+            pvalue = self._p_value_bootstrap(alternative, n_bootstraps)
         else:
             raise ValueError(
-                "Method not implemented. Please choose either 'noether' or 'bootstrap'."
+                f"Method {method} not implemented. Please choose either 'noether' or 'bootstrap'."
             )
+        return pvalue
 
     def compare(
         self, other, method: str = "noether", n_bootstraps: int = 999
@@ -418,6 +440,9 @@ class ConcordanceIndex:
 
         """
 
+        assert isinstance(other, ConcordanceIndex)
+        assert isinstance(method, str)
+
         assert (
             hasattr(self, "cindex") and self.cindex is not None
         ), "Error: Please calculate the concordance index using `ConcordanceIndex()` before calling `compare()`."
@@ -434,15 +459,18 @@ class ConcordanceIndex:
             )
 
         if method == "noether":
-            return self._compare_noether(other)
-        if method == "bootstrap":
-            return self._compare_bootstrap(other, n_bootstraps)
+            pvalue = self._compare_noether(other)
+        elif method == "bootstrap":
+            pvalue = self._compare_bootstrap(other, n_bootstraps)
         else:
             raise ValueError(
-                "Method not implemented. Please choose either 'noether' or 'bootstrap'."
+                f"Method {method} not implemented. Please choose either 'noether' or 'bootstrap'."
             )
+        return pvalue
 
-    def _confidence_interval_noether(self, alpha, alternative) -> torch.Tensor:
+    def _confidence_interval_noether(
+        self, alpha: float, alternative: str
+    ) -> torch.Tensor:
         """Confidence interval of Concordance index assuming that the concordance index
         is normally distributed and using standard errors estimated using Noether's method.
         """
@@ -476,7 +504,10 @@ class ConcordanceIndex:
 
         return torch.stack([lower, upper], dim=0)
 
-    def _confidence_interval_conservative(self, alpha, alternative) -> torch.tensor:
+    # pylint: disable=invalid-name
+    def _confidence_interval_conservative(
+        self, alpha: float, alternative: str
+    ) -> torch.tensor:
         """Confidence interval of Concordance index assuming that the concordance index
         is normally distributed and using the conservative method.
         """
@@ -507,7 +538,6 @@ class ConcordanceIndex:
             lower = torch.tensor(0.0, device=self.cindex.device)
         elif alternative == "greater":
             upper = torch.tensor(1.0, device=self.cindex.device)
-
         return torch.stack([lower, upper])
 
     def _confidence_interval_bootstrap(
@@ -596,6 +626,7 @@ class ConcordanceIndex:
 
         return p
 
+    # pylint: disable=W0212
     def _compare_noether(self, other):
         """Student t-test for dependent samples given Noether's standard error to
         compare two concordance indices.
@@ -836,8 +867,8 @@ class ConcordanceIndex:
 
         if len(comparable) == 0:
             raise ValueError("No comparable pairs, denominator is 0.")
-        else:
-            return comparable
+
+        return comparable
 
     @staticmethod
     def _update_weight(

@@ -10,7 +10,7 @@
 import os
 import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src" )))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
 project = "torchsurv"
 copyright = "2024, Novartis Pharma AG"
@@ -46,15 +46,15 @@ html_logo = "source/logo_firecamp.png"
 
 # latex_engine = 'xeltex'
 latex_elements = {
-    'preamble': r'''
+    "preamble": r"""
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc} % The default since 2018
 \DeclareUnicodeCharacter{200B}{{\hskip 0pt}}
 \DeclareUnicodeCharacter{2223}{{\hskip 0pt}}
-''',
-    'printindex': r'\footnotesize\raggedright\printindex',
+""",
+    "printindex": r"\footnotesize\raggedright\printindex",
 }
-latex_show_urls = 'footnote'
+latex_show_urls = "footnote"
 
 autodoc_default_options = {
     "members": True,
@@ -62,7 +62,7 @@ autodoc_default_options = {
     "undoc-members": False,
     "special-members": "__call__, __init__",
     "private-members": False,
-    "imported-members": True,
+    "imported-members": False,
     "recurse": True,
     "collapse": False,
 }

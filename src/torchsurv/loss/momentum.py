@@ -13,14 +13,41 @@ class Momentum(nn.Module):
     Two networks are concurently trained, an online network and a target network. The online network outputs batches
     are concanetaed and used by the target network, so it virtually increase its batchsize.
 
-    The target network is updated using an exponential moving average:
+    The target network (k)is updated using an exponential momentum average (**EMA**) using parameters from the online network (q).
+    The online network is trained using a memory bank of previously computed log hazards, but only tracking loss from current batch.
 
     .. math::
+            \theta_k \leftarrow m \theta_k + (1 - m) \theta_q
 
-        ( \theta_k \leftarrow m \theta_k + (1 - m) \theta_q)
+    with m=0.999.
+
+
+    Here is a pseudo python code to illustrate what is going on under the hood.
+
+    .. highlight:: python
+    .. code-block:: python
+
+        model_q = model_k                 # Same architecture, random weights
+        model_k.require_grad = False      # No gradient update for target network (k)
+        hz_memory_bank = deque(maxlen=n * batch_size)  # Double-ended queue size n * batch_size
+
+        for epoch in epochs:
+            hz_q = model_q(batch)            # Compute current estmate w/ ONLINE network (q)
+            hz_loss = hz_memory_bank + hz_q  # Combine current log hz and memory bank
+            loss = loss_function(hz_loss)    # Compute loss with pooled log hz
+            loss.backward()                  # Update online model (q) w/ PyTorch autograd
+            model_k.ema_update(model_q)      # Update target model (k) with Exponential Moving Average (EMA)
+            hz_k = model_k(batch)            # Compute batch estimate w/ TARGET network (k)
+            hz_memory_bank += hz_k           # Replace oldest batch with current from memory bank
 
     Note:
         This code is inspired from MoCo :cite:p:`he2019` and its ability to decouple batch size from training size.
+
+    Note:
+        A notable difference is that memory bank is updated at the end of the step, not at the beginning. This is because
+        MoCo uses the target network batch for the positive pair, while we use a rank-based loss function. We then need
+        to exclude the current batch from the memory bank to effectively compute our loss.
+
 
     References:
         .. bibliography::
@@ -35,8 +62,8 @@ class Momentum(nn.Module):
         backbone: nn.Module,
         loss: Callable,
         batchsize: int = 16,
-        n: int = 4,
-        m: float = 0.999,
+        steps: int = 4,
+        rate: float = 0.999,
     ):
         """
         Initialise the momentum class. Use must provide their model as backbone.
@@ -49,7 +76,7 @@ class Momentum(nn.Module):
                 Number of samples per batch. Defaults to 16.
             n (int, optional):
                 Number of queued batches to be stored for training. Defaults to 4.
-            m (float, optional):
+            rate (float, optional):
                 Exponential moving average rate. Defaults to 0.999.
 
         Examples:
@@ -78,7 +105,7 @@ class Momentum(nn.Module):
             `self.encoder_k` is the recommended to be used for inference. It refers to the target network (momentum).
         """
         super().__init__()
-        self.m = m
+        self.rate = rate
         self.online = copy.deepcopy(backbone)  # q >> online network
         self.target = copy.deepcopy(backbone)  # k >> target network (momentum)
         self._init_encoder_k()
@@ -86,20 +113,20 @@ class Momentum(nn.Module):
 
         # survival data structure
         self.survtuple = collections.namedtuple(
-            "survival", field_names=["estimate", "event", "time"]
+            "survival", ["estimate", "event", "time"]
         )
 
         # Hazards: current batch & memory
-        self.memory_q = collections.deque(maxlen=batchsize)  # q >> online network
-        self.memory_k = collections.deque(maxlen=batchsize * n)  # k >> target network
+        self.memory_q = collections.deque(maxlen=batchsize)  # online (q)
+        self.memory_k = collections.deque(maxlen=batchsize * steps)  # target (k)
 
     def forward(
-        self, x: torch.Tensor, event: torch.Tensor, time: torch.Tensor
+        self, inputs: torch.Tensor, event: torch.Tensor, time: torch.Tensor
     ) -> torch.Tensor:
-        """Forward tensor pass over the model
+        """Compute the loss for the current batch and update the memory bank using momentum class.
 
         Args:
-            x (torch.Tensor): Input tensors to the backbone model
+            inputs (torch.Tensor): Input tensors to the backbone model
             event (torch.Tensor): A boolean tensor indicating whether a patient experienced an event.
             time (torch.Tensor): A positive float tensor representing time to event (or censoring time)
 
@@ -124,18 +151,19 @@ class Momentum(nn.Module):
 
         """
 
-        estimate_q = self.online(x)
-        for e in zip(estimate_q, event, time):
-            self.memory_q.append(self.survtuple(*[e for e in e]))
+        estimate_q = self.online(inputs)
+        for estimate in zip(estimate_q, event, time):
+            self.memory_q.append(self.survtuple(*list(estimate)))
         loss = self._bank_loss()
         with torch.no_grad():
             self._update_momentum_encoder()
-            estimate_k = self.target(x)
-            for e in zip(estimate_k, event, time):
-                self.memory_k.append(self.survtuple(*[e for e in e]))
+            estimate_k = self.target(inputs)
+            for estimate in zip(estimate_k, event, time):
+                self.memory_k.append(self.survtuple(*list(estimate)))
         return loss
 
-    def eval(self, x: torch.Tensor) -> torch.Tensor:
+    @torch.no_grad()
+    def infer(self, inputs: torch.Tensor) -> torch.Tensor:
         """Evaluate data with target network
 
         Args:
@@ -147,17 +175,16 @@ class Momentum(nn.Module):
         Examples:
             >>> from torchsurv.loss import weibull
             >>> _ = torch.manual_seed(42)
-            >>> backbone = torch.nn.Sequential(torch.nn.Linear(8, 2))  # Cox expect one ouput
+            >>> backbone = torch.nn.Sequential(torch.nn.Linear(8, 2))  # Weibull expect two ouputs
             >>> model = Momentum(backbone=backbone, loss=weibull.neg_log_likelihood)
-            >>> model.eval(torch.randn((3, 8)))
+            >>> model.infer(torch.randn((3, 8)))
             tensor([[ 0.5342,  0.0062],
                     [ 0.6439,  0.7863],
                     [ 0.9771, -0.8513]])
 
         """
-
-        with torch.no_grad():
-            return self.online.eval()(x)
+        self.target.eval()  # Disable training tricks (augmentation, dropout, etc..)
+        return self.target(inputs)
 
     def _bank_loss(self) -> torch.Tensor:
         """computer the  negative loss likelyhood from memory bank"""
@@ -177,7 +204,7 @@ class Momentum(nn.Module):
     def _update_momentum_encoder(self):
         """Exponantial moving average"""
         for param_b, param_m in zip(self.online.parameters(), self.target.parameters()):
-            param_m.data = param_m.data * self.m + param_b.data * (1.0 - self.m)
+            param_m.data = param_m.data * self.rate + param_b.data * (1.0 - self.rate)
 
     @torch.no_grad()
     def _init_encoder_k(self):

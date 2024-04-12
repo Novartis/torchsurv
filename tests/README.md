@@ -1,4 +1,5 @@
-# Unit Tests
+# Related packages
+
 
 ## Structure
 
@@ -9,7 +10,6 @@ Comprehensive tests on API functionalities help maintain their reliability, accu
 - **Output Format:** The expected format of the function outputs is rigorously tested to ensure consistency and compatibility with other parts of the system or downstream processes.
 
 - **Error Handling:** Input or edge cases that should raise errors are explicitly tested to verify that the functions behave as expected.
-
 
 ## Benchmark Comparison
 
@@ -54,26 +54,27 @@ The partial log likelihood of Cox proportional hazards models fitted on two real
 
 The log likelihood of Weibull Accelerated Failure Time (AFT) models fitted to two real datasets. Models are parameterized with one, two, or all covariates. In the 'scale only' model, only the scale parameter was estimated with a fixed shape, while in the 'shape and scale' model, both the scale and shape parameters were estimated.
 
-<img src="../docs/source/benchmark_weibull.png" alt="" width="700"/>
-
+![](../docs/source/benchmark_weibull.png)
 
 ### `metrics.auc`: Area Under the Receiver Operating Characteristic Curve (AUC)
 
 Time-dependent Uno's AUC evaluated using the log hazard estimated with a Cox proportional hazards model fitted on the 'lung' dataset. In the unit tests, the AUC evaluated on other model specifications (with one, two, or all covariates) and a second dataset were also compared to this benchmark.
 
-<img src="../docs/source/benchmark_auc.png" alt="" width="600"/>
+![](../docs/source/benchmark_auc.png)
 
 ### `metrics.cindex`: Concordance index
 
 Harrell's and Uno's C-index evaluated using the log hazard estimated with a Cox proportional hazards model fitted on the 'lung' dataset. In the unit tests, the C-index evaluated on other model specifications (with one, two, or all covariates) and a second dataset were also compared to this benchmark.
 
-<img src="../docs/source/benchmark_harrell_cindex.png" alt="" width="400"/>
+![](../docs/source/benchmark_harrell_cindex.png)
 
-<img src="../docs/source/benchmark_uno_cindex.png" alt="" width="400"/>
+![](../docs/source/benchmark_uno_cindex.png)
 
 ### `metrics.brier_score`: Brier score
 
 Time-dependent Brier score evaluated using the survival function estimated with a Weibull AFT model fitted on the 'lung' dataset. In the unit tests, the Brier score evaluated on other model specifications (with one, two, or all covariates) and a second dataset were also compared to this benchmark.
 
-<img src="../docs/source/benchmark_brier_score.png" alt="" width="600"/>
+![](../docs/source/benchmark_brier_score.png)
 
+
+**_NOTE:_** All three curves are superposed.

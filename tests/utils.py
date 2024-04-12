@@ -48,14 +48,14 @@ class LitSurvival(L.LightningModule):
 class LitSurvivalTwins(LitSurvival):
     """Survival Model Fitter"""
 
-    def __init__(self, n: int = 5, **kw):
+    def __init__(self, steps: int = 5, **kw):
         super(LitSurvivalTwins, self).__init__(**kw)
         self.momentum = Momentum(
             backbone=self.backbone,
             loss=self.loss,
-            n=n,
+            steps=steps,
             batchsize=self.batch_size,
-            m=0.999,
+            rate=0.999,
         )
 
     def forward(self, x, y, t):

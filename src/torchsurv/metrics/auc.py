@@ -1,5 +1,4 @@
-""" AUC metrics module """
-
+import copy
 import sys
 from typing import Optional
 
@@ -16,6 +15,8 @@ from ..tools.validate_inputs import (
 
 
 class Auc:
+    """Area Under the Curve class for survival models."""
+
     def __init__(self, checks: bool = True, tied_tol: float = 1e-8):
         """Initialize an Auc for survival class model evaluation.
 
@@ -47,6 +48,19 @@ class Auc:
         """
         self.tied_tol = tied_tol
         self.checks = checks
+
+        # init instate variables
+        self.order_time = None
+        self.time = None
+        self.event = None
+        self.weight = None
+        self.new_time = None
+        self.weight_new_time = None
+        self.estimate = None
+        self.is_case = None
+        self.is_control = None
+        self.auc_type = None
+        self.auc = None
 
     def __call__(
         self,
@@ -187,16 +201,16 @@ class Auc:
         """
 
         # mandatory input format checks
-        Auc._validate_auc_inputs(
+        self._validate_auc_inputs(
             estimate, time, auc_type, new_time, weight, weight_new_time
         )
 
         # update inputs as required
-        estimate, new_time, weight, weight_new_time = Auc._update_auc_new_time(
+        estimate, new_time, weight, weight_new_time = self._update_auc_new_time(
             estimate, event, time, new_time, weight, weight_new_time
         )
-        estimate = Auc._update_auc_estimate(estimate, new_time)
-        weight, weight_new_time = Auc._update_auc_weight(
+        estimate = self._update_auc_estimate(estimate, new_time)
+        weight, weight_new_time = self._update_auc_weight(
             time, new_time, weight, weight_new_time
         )
 
@@ -332,7 +346,7 @@ class Auc:
         """
         # Only one time step available
         if len(self.new_time) == 1:
-            return self.auc[0]
+            auc = self.auc[0]
         else:
             # handle cases where tmax is not specified
             if tmax is None:
@@ -345,13 +359,14 @@ class Auc:
             # estimate of survival distribution
             km = KaplanMeierEstimator()
             km(self.event, self.time)
-            S = km.predict(self.new_time)
+            survival = km.predict(self.new_time)
 
             # integral of auc
             if self.auc_type == "cumulative":
-                return self._integrate_AUC_cumulative(S, tmax)
+                auc = self._integrate_cumulative(survival, tmax)
             else:
-                return self._integrate_AUC_incident(S, tmax)
+                auc = self._integrate_incident(survival, tmax)
+        return auc
 
     def confidence_interval(
         self,
@@ -419,15 +434,16 @@ class Auc:
             )
 
         if method == "blanche":
-            return self._confidence_interval_blanche(alpha, alternative)
+            conf_int = self._confidence_interval_blanche(alpha, alternative)
         elif method == "bootstrap":
-            return self._confidence_interval_bootstrap(
+            conf_int = self._confidence_interval_bootstrap(
                 alpha, alternative, n_bootstraps
-            ).squeeze()
+            )
         else:
             raise ValueError(
                 "Method not implemented. Please choose either 'blanche' or 'bootstrap'."
             )
+        return conf_int
 
     def p_value(
         self,
@@ -485,13 +501,14 @@ class Auc:
             )
 
         if method == "blanche":
-            return self._p_value_blanche(alternative)
+            pvalue = self._p_value_blanche(alternative)
         elif method == "bootstrap":
-            return self._p_value_bootstrap(alternative, n_bootstraps)
+            pvalue = self._p_value_bootstrap(alternative, n_bootstraps)
         else:
             raise ValueError(
                 "Method not implemented. Please choose either 'blanche' or 'bootstrap'."
             )
+        return pvalue
 
     def compare(
         self, other, method: str = "blanche", n_bootstraps: int = 999
@@ -556,56 +573,54 @@ class Auc:
             )
 
         if method == "blanche":
-            return self._compare_blanche(other)
-        if method == "bootstrap":
-            return self._compare_bootstrap(other, n_bootstraps)
+            pvalue = self._compare_blanche(other)
+        elif method == "bootstrap":
+            pvalue = self._compare_bootstrap(other, n_bootstraps)
         else:
             raise ValueError(
-                "Method not implemented. Please choose either 'blanche' or 'bootstrap'."
+                f"Method {method} not implemented. Please choose either 'blanche' or 'bootstrap'."
             )
+        return pvalue
 
-    def _integrate_AUC_incident(
-        self, S: torch.tensor, tmax: torch.tensor
-    ) -> torch.Tensor:
+    # pylint: disable=invalid-name
+    def _integrate_incident(self, S: torch.tensor, tmax: torch.tensor) -> torch.Tensor:
         """Integrates the incident/dynamic AUC, int_t AUC(t) x w(t) dt
         where w(t) = 2*f(t)*S(t) and f(t) is the lifeline distribution,
         S(t) is the survival distribution estimated with the Kaplan
         Meier estimator.
         """
 
-        # Get the number of unique event times
-        n_S = len(S)
-
         # Find the index corresponding to tmax in times
-        maxI = torch.sum(self.new_time <= tmax)
+        tmax_index = torch.sum(self.new_time <= tmax)
 
         # Initialize an array to store the density function f(t)
         f = torch.zeros_like(S)
 
         # Compute the density function f(t)
         f[0] = 1.0 - S[0]
-        for i in range(1, n_S):
+        for i in range(1, len(S)):
             f[i] = S[i - 1] - S[i]
 
         # Initialize a variable to accumulate the weighted sum of f(t)*S(t)
         wT = 0.0
 
         # Accumulate the weighted sum up to maxI
-        for i in range(maxI):
+        for i in range(tmax_index):
             wT += 2.0 * f[i] * S[i]
 
         # Initialize the integrated AUC
         i_auc = 0
 
         # Calculate the integrated AUC using the weight
-        for i in range(maxI):
+        for i in range(tmax_index):
             if wT != 0.0:
                 if f[i] > torch.finfo(torch.double).eps:
                     i_auc += self.auc[i] * (2.0 * f[i] * S[i]) / wT
 
         return i_auc
 
-    def _integrate_AUC_cumulative(
+    # pylint: disable=invalid-name
+    def _integrate_cumulative(
         self, S: torch.tensor, tmax: torch.tensor
     ) -> torch.Tensor:
         """Integrates the cumulative/dynamic AUC, int_t AUC(t) · f(t) dt
@@ -613,25 +628,23 @@ class Auc:
         incremental changes of the Kalpan-Meier estimate of the survival function.
         """
 
-        # Get the number of unique event times
-        n_S = len(S)
-
         # Find the index corresponding to tmax in times
-        maxI = torch.sum(self.new_time <= tmax)
+
+        tmax_index = torch.sum(self.new_time <= tmax)
 
         # Initialize an array to store the density function f(t)
         f = torch.zeros_like(S)
 
         # Compute the density function f(t)
         f[0] = 1.0 - S[0]
-        for i in range(1, n_S):
+        for i in range(1, len(S)):
             f[i] = S[i - 1] - S[i]
 
         # Initialize a variable to accumulate the weighted sum of f(t)
         wT = 0.0
 
         # Accumulate the weighted sum up to maxI
-        for i in range(maxI):
+        for i in range(tmax_index):
             if f[i] > torch.finfo(torch.double).eps:
                 wT += f[i]
 
@@ -639,7 +652,7 @@ class Auc:
         i_auc = 0
 
         # Calculate the integrated AUC using the weight
-        for i in range(maxI):
+        for i in range(tmax_index):
             if wT != 0.0:
                 if f[i] > torch.finfo(torch.double).eps:
                     i_auc += self.auc[i] * (f[i]) / wT
@@ -755,7 +768,7 @@ class Auc:
         p_values = torch.zeros_like(self.auc)
 
         # iterate over time
-        for index_t in range(len(self.auc)):
+        for index_t, _ in enumerate(self.auc):
             # Derive p-value
             p = (
                 torch.tensor(1.0) + torch.sum(auc0[:, index_t] <= self.auc[index_t])
@@ -784,13 +797,14 @@ class Auc:
 
         # compute noether standard error
         auc1_se = self._auc_se()
+        # pylint: disable=protected-access
         auc2_se = other._auc_se()
 
         # intialize empty vector to store p_values
         p_values = torch.zeros_like(self.auc)
 
         # iterate over time
-        for index_t in range(len(self.auc)):
+        for index_t, _ in enumerate(self.auc):
             # compute spearman correlation between risk prediction
             corr = regression.SpearmanCorrCoef()(
                 self.estimate[:, index_t], other.estimate[:, index_t]
@@ -854,9 +868,6 @@ class Auc:
         # sample size and length of time
         n_samples, n_times = self.estimate.shape[0], self.new_time.shape[0]
 
-        # number of effective subjects
-        N = torch.sum(self.weight)
-
         # survival distribution estimated with KM
         km = KaplanMeierEstimator()
         km(self.event, self.time)
@@ -871,7 +882,7 @@ class Auc:
         ipsw = (time_long >= new_time_long) / survival_long
 
         # element (i,k) = int_0^{T_i} M_Ck(t) / S dt, where M_Ck(t) = I(delta_k = 0, T_k <= t) - int_0^t dLambda_c(u)
-        integral_M_div_S = self._integral_censoring_martingale_divided_survival()
+        integral_m_div_s = self._integral_censoring_martingale_divided_survival()
 
         # element (i, t) = f_i1t = I(T_i <= t, delta_i = 1) * W(T_i) (if incident, condition for case is T_i = t)
         f = self.is_case * self.weight.unsqueeze(1).expand(-1, n_times)
@@ -902,13 +913,13 @@ class Auc:
             H_t = (1 / (n_samples**2)) * torch.sum(h_t)
 
             # phi*(t), eq.bottom page 3 of Supplementary Material of Blanche et al. (2013)
-            phi = Auc._phi_blanche(
+            phi = self._phi_blanche(
                 h_t,
                 H_t,
                 f[:, index_t],
                 F[index_t],
                 S[index_t],
-                integral_M_div_S,
+                integral_m_div_s,
                 ipsw[:, index_t],
                 n_samples,
             )
@@ -975,22 +986,22 @@ class Auc:
             )
         )
 
-        # divide by empirical survival function
-        d_censoring_martingale_div_S = torch.stack(
+        def divide_by_empirical_survival(v):
+            return v / torch.cat(
+                (torch.tensor([1.0]), 1 - torch.arange(1, len(v)) / len(v))
+            )
+
+        d_censoring_martingale_div_s = torch.stack(
             [
-                (
-                    lambda v: v
-                    / torch.cat(
-                        (torch.tensor([1.0]), 1 - torch.arange(1, len(v)) / len(v))
-                    )
-                )(d_censoring_martingale[:, i])
+                divide_by_empirical_survival(d_censoring_martingale[:, i])
                 for i in range(n_samples)
             ],
             dim=1,
         )
 
-        return torch.cumsum(d_censoring_martingale_div_S, dim=0)
+        return torch.cumsum(d_censoring_martingale_div_s, dim=0)
 
+    # pylint: disable=invalid-name
     @staticmethod
     def _phi_blanche(
         h_t: torch.Tensor,
@@ -998,7 +1009,7 @@ class Auc:
         f_t: torch.Tensor,
         F_t: torch.Tensor,
         S_t: torch.Tensor,
-        integral_M_div_S: torch.Tensor,
+        integral_m_div_s: torch.Tensor,
         ipsw_t: torch.Tensor,
         n_samples: int,
     ) -> torch.Tensor:
@@ -1010,7 +1021,7 @@ class Auc:
             device=h_t.device,
         )
         for i in range(n_samples):
-            _phi = 1 + integral_M_div_S[:, i]
+            _phi = 1 + integral_m_div_s[:, i]
             _phi *= f_t
             _phi -= F_t
             _phi /= F_t
@@ -1018,7 +1029,7 @@ class Auc:
             _phi *= -H_t
             _phi = _phi.unsqueeze(1).expand(-1, n_samples)
             _phi = _phi + (
-                h_t * ((1 + integral_M_div_S[:, i]).unsqueeze(1).expand(-1, n_samples))
+                h_t * ((1 + integral_m_div_s[:, i]).unsqueeze(1).expand(-1, n_samples))
             )
             _phi /= S_t * F_t
 
@@ -1047,8 +1058,6 @@ class Auc:
         Returns:
             torch.tensor: Bootstrap samples of AUC.
         """
-        import copy
-
         # Initiate empty list to store auc
         aucs = []
 
@@ -1247,7 +1256,7 @@ class Auc:
                 weight_new_time = (weight[mask])[sorted_unique_indices]
 
             # for time-dependent estimate, select those corresponding to new time
-            if estimate.ndim == 2 and estimate.shape[1] > 1:
+            if estimate.ndim == 2 and estimate.Size[1] > 1:
                 estimate = estimate[:, sorted_unique_indices]
 
         return estimate, new_time, weight, weight_new_time

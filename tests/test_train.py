@@ -63,7 +63,7 @@ class TestLitTraining(unittest.TestCase):
         model = LitSurvivalTwins(
             backbone=SimpleLinearNNOneParameter(input_size=2),
             loss=weibull,
-            n=2,
+            steps=2,
             dataname="gbsb",
             batch_size=686 // BATCH_N,
         )

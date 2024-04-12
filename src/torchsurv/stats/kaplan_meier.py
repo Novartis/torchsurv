@@ -89,6 +89,38 @@ class KaplanMeierEstimator:
         self.time = uniq_times
         self.km_est = y
 
+    def plot_km(self, ax=None, **kwargs):
+        """Plot the Kaplan-Meier estimate of the survival distribution.
+
+        Args:
+            ax (matplotlib.axes.Axes, optional):
+                The axes to plot the Kaplan-Meier estimate.
+                If None, a new figure and axes are created.
+                Defaults to None.
+            **kwargs:
+                Additional keyword arguments to pass to the plot function.
+
+        Examples:
+            >>> _ = torch.manual_seed(42)
+            >>> n = 32
+            >>> time = torch.randint(low=0, high=8, size=(n,)).float()
+            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
+            >>> km = KaplanMeierEstimator()
+            >>> km(event, time)
+            >>> km.plot_km()
+
+
+        """
+        import matplotlib.pyplot as plt
+
+        if ax is None:
+            _, ax = plt.subplots()
+
+        ax.step(self.time, self.km_est, where="post", **kwargs)
+        ax.set_xlabel("Time")
+        ax.set_ylabel("Survival Probability")
+        ax.set_title("Kaplan-Meier Estimate")
+
     def predict(self, new_time: torch.Tensor) -> torch.Tensor:
         """Predicts the Kaplan-Meier estimate on new time points.
         If the new time points do not match any times used to fit, the left-limit is used.
@@ -140,6 +172,27 @@ class KaplanMeierEstimator:
         km_pred[~extends] = km_est_[idx]
 
         return km_pred
+
+    def print_survival_table(self):
+        """Prints the survival table with the unique times and Kaplan-Meier estimates.
+
+        Examples:
+            >>> _ = torch.manual_seed(42)
+            >>> n = 32
+            >>> time = torch.randint(low=0, high=8, size=(n,)).float()
+            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
+            >>> s = KaplanMeierEstimator()
+        """
+        # Print header
+        print("Time\tSurvival")
+        print("-" * 16)
+
+        # Print unique times and Kaplan-Meier estimates
+        for t, y in zip(self.time, self.km_est):
+            print(f"{t:.2f}\t{y:.4f}")
+
+        x = torch.randn(1, 50, 50, 50)
+        print(x.shape)  # shows the shape of the tensor
 
     def _compute_counts(
         self,

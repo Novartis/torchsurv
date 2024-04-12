@@ -98,25 +98,26 @@ def neg_log_likelihood(
         _check_inputs(log_params, event, time)
 
     # Negative log likelihood
-    ll = torch.neg(
+    nll = torch.neg(
         event * log_hazard(log_params, time, all_times=False)
         - cumulative_hazard(log_params, time, all_times=False)  # Huge values here
     )
 
-    if any(torch.isinf(ll)):
+    if any(torch.isinf(nll)):
         # Remove any torch.inf values
-        ll = ll[~torch.isinf(ll)]
+        nll = nll[~torch.isinf(nll)]
 
     if reduction.lower() == "mean":
-        return ll.nanmean()
+        loss = nll.nanmean()
     elif reduction.lower() == "sum":
-        return ll.sum()
+        loss = nll.sum()
     else:
         raise (
             ValueError(
                 f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."
             )
         )
+    return loss
 
 
 def survival_function(
@@ -331,13 +332,13 @@ def _check_log_shape(log_params: torch.Tensor) -> torch.Tensor:
 
 def _check_inputs(log_params: torch.Tensor, event: torch.Tensor, time: torch.Tensor):
     """Private function, perform input format checks."""
-    if isinstance(log_params, torch.Tensor) == False:
+    if not isinstance(log_params, torch.Tensor):
         raise TypeError("Input 'log_params' must be a tensor.")
 
-    if isinstance(event, torch.Tensor) == False:
+    if not isinstance(event, torch.Tensor):
         raise TypeError("Input 'event' must be a tensor.")
 
-    if isinstance(time, torch.Tensor) == False:
+    if not isinstance(time, torch.Tensor):
         raise TypeError("``Input 'time' must be a tensor.")
 
     if log_params.shape[0] != len(event):

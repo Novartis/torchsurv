@@ -1,3 +1,6 @@
+# pylint: disable=C0103
+# pylint: disable=C0301
+
 import sys
 import warnings
 
@@ -149,15 +152,16 @@ def neg_partial_log_likelihood(
     # Negative partial log likelihood
     pll = torch.neg(pll)
     if reduction.lower() == "mean":
-        return pll.nanmean()
+        loss = pll.nanmean()
     elif reduction.lower() == "sum":
-        return pll.sum()
+        loss = pll.sum()
     else:
         raise (
             ValueError(
                 f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."
             )
         )
+    return loss
 
 
 def _partial_likelihood_cox(
@@ -168,7 +172,7 @@ def _partial_likelihood_cox(
     in the absence of ties in event time.
     """
     log_denominator = torch.logcumsumexp(log_hz_sorted.flip(0), dim=0).flip(0)
-    return (log_hz_sorted - log_denominator)[event_sorted == True]
+    return (log_hz_sorted - log_denominator)[event_sorted]
 
 
 def _partial_likelihood_efron(
@@ -202,7 +206,7 @@ def _partial_likelihood_efron(
             log_denominator_efron[j] += torch.log(
                 denominator_naive[j] - (l - 1) / m[j] * denominator_ties[j]
             )
-    return (log_nominator - log_denominator_efron)[include == True]
+    return (log_nominator - log_denominator_efron)[include]
 
 
 def _partial_likelihood_breslow(
@@ -220,17 +224,17 @@ def _partial_likelihood_breslow(
         [torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(N)]
     )
 
-    return (log_hz_sorted - log_denominator)[event_sorted == True]
+    return (log_hz_sorted - log_denominator)[event_sorted]
 
 
 def _check_inputs(log_hz: torch.Tensor, event: torch.Tensor, time: torch.Tensor):
-    if isinstance(log_hz, torch.Tensor) == False:
+    if not isinstance(log_hz, torch.Tensor):
         raise TypeError("Input 'log_hz' must be a tensor.")
 
-    if isinstance(event, torch.Tensor) == False:
+    if not isinstance(event, torch.Tensor):
         raise TypeError("Input 'event' must be a tensor.")
 
-    if isinstance(time, torch.Tensor) == False:
+    if not isinstance(time, torch.Tensor):
         raise TypeError("Input 'time' must be a tensor.")
 
     if len(log_hz) != len(event):

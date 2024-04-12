@@ -1,5 +1,5 @@
-import torch
 import pytorch_lightning as L
+import torch
 from torch.utils.data import DataLoader, random_split
 from torchvision.datasets import MNIST
 from torchvision.transforms import v2

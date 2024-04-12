@@ -1,4 +1,4 @@
-Welcome to Torchsurv's documentation!
+Welcome to TorchSurv's documentation!
 =====================================
 
 .. include:: ../README.md
@@ -23,11 +23,12 @@ Welcome to Torchsurv's documentation!
     :maxdepth: 2
     :caption: Other:
 
-    devnotes
-    AUTHORS
     CHANGELOG
-
-
+    AUTHORS
+    devnotes
+    benchmarks
+    
+    
 Indices and tables
 ==================
 
