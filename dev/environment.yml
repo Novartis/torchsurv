@@ -1,0 +1,26 @@
+name: torchsurv
+channels:
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.10
+  - build
+  - pep517
+  - numpy
+  - pandas
+  - pytorch
+  - torchvision
+  - lightning
+  - loguru
+  - scikit-survival
+  - lifelines
+  - tox
+  - black
+  - pylint
+  - mypy
+  - sphinx
+  - sphinx-book-theme
+  - sphinxcontrib-bibtex
+  - myst-parser 
+  - nbsphinx
+  - ipython
