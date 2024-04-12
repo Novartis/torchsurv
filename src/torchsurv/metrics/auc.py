@@ -6,12 +6,8 @@ import torch
 from scipy import stats
 from torchmetrics import regression
 
-from ..stats.kaplan_meier import KaplanMeierEstimator
-from ..tools.validate_inputs import (
-    validate_estimate,
-    validate_evaluation_time,
-    validate_survival_data,
-)
+from ..stats import kaplan_meier
+from ..tools import validate_inputs
 
 
 class Auc:
@@ -216,9 +212,9 @@ class Auc:
 
         # further input format checks
         if self.checks:
-            validate_survival_data(event, time)
-            validate_evaluation_time(new_time, time)
-            validate_estimate(estimate, time, new_time)
+            validate_inputs.validate_survival_data(event, time)
+            validate_inputs.validate_evaluation_time(new_time, time)
+            validate_inputs.validate_estimate(estimate, time, new_time)
 
         # sample size and length of time
         n_samples, n_times = estimate.shape[0], new_time.shape[0]
@@ -357,7 +353,7 @@ class Auc:
                 )
 
             # estimate of survival distribution
-            km = KaplanMeierEstimator()
+            km = kaplan_meier.KaplanMeierEstimator()
             km(self.event, self.time)
             survival = km.predict(self.new_time)
 
@@ -869,7 +865,7 @@ class Auc:
         n_samples, n_times = self.estimate.shape[0], self.new_time.shape[0]
 
         # survival distribution estimated with KM
-        km = KaplanMeierEstimator()
+        km = kaplan_meier.KaplanMeierEstimator()
         km(self.event, self.time)
         S = km.predict(self.new_time)
 

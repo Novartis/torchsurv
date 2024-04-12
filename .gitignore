@@ -24,6 +24,7 @@ __pycache__/*
 .settings
 .idea
 .vscode
++.vscode/settings.json
 tags
 
 # Package files

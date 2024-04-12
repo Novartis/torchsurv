@@ -211,7 +211,7 @@ If you use this project in academic work or publications, we appreciate citing i
 
 ```bibtex
 @misc{TorchSurv,
-  title={TorchSurv: a lightweight package for deep survival analysis},
+  title={TorchSurv: A lightweight package for deep survival analysis},
   author={Monod et al.},
   year={2024},
   publisher={arXiv},

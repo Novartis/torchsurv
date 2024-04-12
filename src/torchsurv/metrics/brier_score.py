@@ -5,11 +5,7 @@ from typing import Optional
 import torch
 from scipy import stats
 
-from ..tools.validate_inputs import (
-    validate_estimate,
-    validate_evaluation_time,
-    validate_survival_data,
-)
+from ..tools import validate_inputs
 
 
 class BrierScore:
@@ -186,9 +182,11 @@ class BrierScore:
 
         # further input format checks
         if self.checks:
-            validate_survival_data(event, time)
-            validate_evaluation_time(new_time, time, within_follow_up=False)
-            validate_estimate(estimate, time, new_time)
+            validate_inputs.validate_survival_data(event, time)
+            validate_inputs.validate_evaluation_time(
+                new_time, time, within_follow_up=False
+            )
+            validate_inputs.validate_estimate(estimate, time, new_time)
 
         # Calculating the residuals for each subject and time point
         residuals = torch.zeros_like(estimate)

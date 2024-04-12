@@ -4,10 +4,12 @@ from typing import Tuple
 
 import torch
 
-from ..tools.validate_inputs import validate_survival_data
+from ..tools import validate_inputs
 
 
 class KaplanMeierEstimator:
+    """Kaplan-Meier estimate of survival or censoring distribution for right-censored data :cite:p:`Kaplan1958`."""
+
     def __call__(
         self,
         event: torch.tensor,
@@ -15,7 +17,7 @@ class KaplanMeierEstimator:
         censoring_dist: bool = False,
         check: bool = True,
     ):
-        """Kaplan-Meier estimate of survival or censoring distribution for right-censored data :cite:p:`Kaplan1958`.
+        """Initialize Kaplan Meier estimator.
 
         Args:
             event (torch.tensor, bool):
@@ -54,12 +56,13 @@ class KaplanMeierEstimator:
         """
 
         # create attribute state
+        # pylint: disable=attribute-defined-outside-init
         self.event = event
         self.time = time
 
         # Check input validity if required
         if check:
-            validate_survival_data(event, time)
+            validate_inputs.validate_survival_data(event, time)
 
         # Compute the counts of events, censorings, and the number at risk at each unique time
         uniq_times, n_events, n_at_risk, n_censored = self._compute_counts()
@@ -111,7 +114,7 @@ class KaplanMeierEstimator:
 
 
         """
-        import matplotlib.pyplot as plt
+        import matplotlib.pyplot as plt  # pylint: disable=import-outside-toplevel
 
         if ax is None:
             _, ax = plt.subplots()
@@ -151,6 +154,7 @@ class KaplanMeierEstimator:
         # Check if newtime is beyond the last observed time point
         extends = new_time > torch.max(ref_time)
         if km_est_[torch.argmax(ref_time)] > 0 and extends.any():
+            # pylint: disable=consider-using-f-string
             raise ValueError(
                 "Cannot predict survival/censoring distribution after the largest observed training event time point: {}".format(
                     ref_time[-1].item()

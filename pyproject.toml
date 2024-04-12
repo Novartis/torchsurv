@@ -15,7 +15,7 @@ license = {file = "LICENSE.txt"}
 
 [tool.pylint]
 max-line-length = 250
-disable = ["C0114", "C0116", "R0801", "R0915"]
+disable = ["C0114", "C0116", "R0801", "R0915", "E0402"]
 max-args = 10
 max-attributes = 15
 max-module-lines = 1500
