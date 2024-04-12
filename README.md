@@ -33,13 +33,14 @@ cindex.p_value(method="noether", alternative="two_sided")
 cindex.compare(cindexB)
 ```
 
-# Installation
+## Installation
 
 First, install the package:
 
 ```bash
 pip install torchsurv
 ```
+
 or for local installation (from package root)
 
 ```bash
@@ -49,11 +50,9 @@ pip install -e .
 If you use Conda, you can install requirements into a conda environment
 using the `environment.yml` file included in the `dev` subfolder of the source repository.
 
-# Getting started
+## Getting started
 
-We recommend starting with the [introductory guide](notebooks/introduction), where you'll find an overview of the package's functionalities. 
-
-## Usage
+We recommend starting with the [introductory guide](notebooks/introduction), where you'll find an overview of the package's functionalities.
 
 ### Survival data
 
@@ -176,23 +175,23 @@ We obtain the integrated brier-score with:
 tensor(0.4447)
 ```
 
-# Related Packages
+## Related Packages
 
-The table below compares the functionalities of `TorchSurv` with those of 
+The table below compares the functionalities of `TorchSurv` with those of
 [auton-survival](https://proceedings.mlr.press/v182/nagpal22a.html),
 [pycox](http://jmlr.org/papers/v20/18-424.html),
 [torchlife](https://sachinruk.github.io/torchlife//index.html),
 [scikit-survival](https://jmlr.org/papers/v21/20-729.html),
 [lifelines](https://joss.theoj.org/papers/10.21105/joss.01317), and
-[deepsurv](https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-018-0482-1). 
+[deepsurv](https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-018-0482-1).
 While several libraries offer survival modelling functionalities, no existing library provides the flexibility to use a custom PyTorch-based neural networks to define the survival model parameters.
 
 The outputs of both the log-likelihood functions and the evaluation metrics functions have undergone thorough comparison with benchmarks generated using Python packages and R packages. The comparisons are summarised in the [Related packages summary](benchmarks).
 
-![Survival analysis libraries in Python](../docs/source/table_python_benchmark.png)
-![Survival analysis libraries in Python](../docs/source/table_python_benchmark_legend.png)
+![Survival analysis libraries in Python](docs/source/table_python_benchmark.png)
+![Survival analysis libraries in Python](docs/source/table_python_benchmark_legend.png)
 
-# Contributing
+## Contributing
 
 We value contributions from the community to enhance and improve this project. If you'd like to contribute, please consider the following:
 
@@ -202,11 +201,11 @@ We value contributions from the community to enhance and improve this project. I
 
 By contributing to this project, you agree to license your contributions under the same license as this project.
 
-# Contact
+## Contact
 
 If you have any questions, suggestions, or feedback, feel free to reach out to [us](AUTHORS).
 
-# Cite
+## Cite
 
 If you use this project in academic work or publications, we appreciate citing it using the following BibTeX entry:
 

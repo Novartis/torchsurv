@@ -1,7 +1,7 @@
 Welcome to TorchSurv's documentation!
 =====================================
 
-.. include:: ../README.md
+.. include:: README-copy.md
     :parser: myst_parser.sphinx_
 
 .. toctree::
