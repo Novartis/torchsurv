@@ -52,7 +52,7 @@ using the `environment.yml` file included in the `dev` subfolder of the source r
 
 ## Getting started
 
-We recommend starting with the [introductory guide](notebooks/introduction), where you'll find an overview of the package's functionalities.
+We recommend starting with the [introductory guide](https://opensource.nibr.com/torchsurv/notebooks/introduction.html), where you'll find an overview of the package's functionalities.
 
 ### Survival data
 
@@ -186,7 +186,7 @@ The table below compares the functionalities of `TorchSurv` with those of
 [deepsurv](https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-018-0482-1).
 While several libraries offer survival modelling functionalities, no existing library provides the flexibility to use a custom PyTorch-based neural networks to define the survival model parameters.
 
-The outputs of both the log-likelihood functions and the evaluation metrics functions have undergone thorough comparison with benchmarks generated using Python packages and R packages. The comparisons are summarised in the [Related packages summary](benchmarks).
+The outputs of both the log-likelihood functions and the evaluation metrics functions have undergone thorough comparison with benchmarks generated using Python packages and R packages. The comparisons are summarised in the [Related packages summary](https://opensource.nibr.com/torchsurv/benchmarks.html).
 
 ![Survival analysis libraries in Python](docs/source/table_python_benchmark.png)
 ![Survival analysis libraries in Python](docs/source/table_python_benchmark_legend.png)
@@ -203,7 +203,7 @@ By contributing to this project, you agree to license your contributions under t
 
 ## Contact
 
-If you have any questions, suggestions, or feedback, feel free to reach out to [us](AUTHORS).
+If you have any questions, suggestions, or feedback, feel free to reach out to [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
 
 ## Cite
 
@@ -211,7 +211,7 @@ If you use this project in academic work or publications, we appreciate citing i
 
 ```bibtex
 @misc{TorchSurv,
-  title={TorchSurv: a lightweight package for deep survival analysis},
+  title={TorchSurv: A lightweight package for deep survival analysis},
   author={Monod et al.},
   year={2024},
   publisher={arXiv},

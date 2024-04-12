@@ -4,10 +4,11 @@ from typing import Optional
 
 import torch
 
-from ..tools.validate_inputs import validate_survival_data
-from .kaplan_meier import KaplanMeierEstimator
+from ..tools import validate_inputs
+from . import kaplan_meier
 
 
+# pylint: disable=anomalous-backslash-in-string
 def get_ipcw(
     event: torch.tensor,
     time: torch.tensor,
@@ -55,14 +56,14 @@ def get_ipcw(
     """
 
     if checks:
-        validate_survival_data(event, time)
+        validate_inputs.validate_survival_data(event, time)
 
     # time on which to evaluate IPCW
     if new_time is None:  # if none, return ipcw of same size as time
         new_time = time
 
     # fit KM censoring estimator
-    km = KaplanMeierEstimator()
+    km = kaplan_meier.KaplanMeierEstimator()
     km(event, time, censoring_dist=True)
 
     # predict censoring distribution at time
@@ -99,10 +100,8 @@ def _inverse_censoring_dist(ct: torch.Tensor) -> torch.Tensor:
             "Censoring distribution zero at one or more time points. Returning ones as weight"
         )
         return torch.ones_like(ct, dtype=ct.dtype)
-    else:
-        weight = torch.ones(1, dtype=ct.dtype) / ct
-
-        return weight
+    weight = torch.ones(1, dtype=ct.dtype) / ct
+    return weight
 
 
 if __name__ == "__main__":
