@@ -18,10 +18,13 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install build==0.7.0 pep517 setuptools wheel
+          pip install build==0.7.0 pep517 setuptools wheel twine
 
       - name: Build PyPI release
         run: python -m build
+
+      - name: Check PyPI release
+        run: python -m twine check dist/*
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
