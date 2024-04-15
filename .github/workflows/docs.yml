@@ -1,0 +1,57 @@
+name: torchsurv-docs-cicd
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest"]
+        python-version: ["3.10"]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Miniconda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+        miniconda-version: "latest"
+        python-version: ${{ matrix.python-version }}
+        environment-file: dev/environment.yml
+        activate-environment: torchsurv
+
+    - name: Cache Conda
+      uses: actions/cache@v3
+      env:
+        # This hashFiles function returns a hash value that changes when the environment.yml file changes
+        CACHE_NUMBER: ${{ hashFiles('dev/environment.yml') }}
+      with:
+        path: ~/miniconda3/envs/torchsurv
+        key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}
+        restore-keys: |
+          ${{ runner.os }}-conda-
+
+    - name: Build docs
+      shell: bash -l {0}
+      run: |
+        conda activate torchsurv
+        ./dev/build-docs.sh
+
+    - name: Deploy to GitHub Pages
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'actions@github.com'
+        git checkout --orphan gh-pages
+        git reset --hard
+        git clean -fdx
+        mv docs/_build/html .
+        touch .nojekyll  # Prevents GitHub Pages from ignoring files that start with an underscore
+        git add .
+        git commit -m "Deploy GitHub Pages"
+        git push -f origin gh-pages
