@@ -12,19 +12,24 @@ on: [pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest"]
+        python-version: ["3.11"]
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Setup Miniconda
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@v3
       with:
         auto-update-conda: true
         miniconda-version: "latest"
-        python-version: 3.10
+        python-version: ${{ matrix.python-version }}
         environment-file: dev/environment.yml
         activate-environment: torchsurv
-
+        python-version:     
     - name: Cache Conda
       uses: actions/cache@v2
       env:
