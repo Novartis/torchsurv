@@ -20,19 +20,27 @@ jobs:
         auto-update-conda: true
         miniconda-version: "latest"
         python-version: ${{ matrix.python-version }}
-        environment-file: dev/environment.yml
         activate-environment: torchsurv
 
-    - name: Cache Conda
+    - name: Get Date
+      id: get-date
+      run: echo "today=$(/bin/date -u '+%Y%m%d')" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache Conda env
       uses: actions/cache@v3
-      env:
-        # This hashFiles function returns a hash value that changes when the environment.yml file changes
-        CACHE_NUMBER: ${{ hashFiles('dev/environment.yml') }}
       with:
-        path: ~/miniconda3/envs/torchsurv
-        key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}
-        restore-keys: |
-          ${{ runner.os }}-conda-
+        path: ${{ env.CONDA }}/envs
+        key:
+          conda-${{ runner.os }}--${{ runner.arch }}--${{ steps.get-date.outputs.today }}-${{ hashFiles('dev/environment.yml') }}-${{ env.CACHE_NUMBER }}
+      env:
+        # Increase this value to reset cache if environment.yml has not changed
+        CACHE_NUMBER: 0
+
+    - name: Update conda environment
+      run:
+        conda env update -n torchsurv -f dev/environment.yml
+      if: steps.cache.outputs.cache-hit != 'true'
 
     - name: Code QC
       shell: bash -l {0}
