@@ -26,6 +26,7 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinx.ext.napoleon",
     "nbsphinx",
+    "sphinx.ext.viewcode",
     "sphinxcontrib.bibtex",
 ]
 
