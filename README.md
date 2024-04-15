@@ -209,12 +209,5 @@ If you have any questions, suggestions, or feedback, feel free to reach out to [
 
 If you use this project in academic work or publications, we appreciate citing it using the following BibTeX entry:
 
-```bibtex
-@misc{TorchSurv,
-  title={TorchSurv: A lightweight package for deep survival analysis},
-  author={Monod et al.},
-  year={2024},
-  publisher={arXiv},
-  howpublished={\url{https://arxiv.org/abs/2106.13199}},
-}
-```
+TEMPORARY PLACEHOLDER.
+
