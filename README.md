@@ -1,4 +1,4 @@
-# Survival analysis made easy
+# Deep survival analysis made easy
 
 > :warning: :construction: **We are still working on the publication of this project and appreciate your patience until everything will be ready.** :construction: :warning:
 
