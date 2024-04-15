@@ -1,0 +1,47 @@
+name: torchsurv-cicd
+
+on: [push, pull_request]
+# on:
+#   push:
+#     branches:
+#       - main  # Your default branch
+#     paths:
+#       - 'docs/**'
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        miniconda-version: "latest"
+        python-version: 3.10
+        environment-file: dev/environment.yml
+        activate-environment: torchsurv
+
+    - name: Cache Conda
+      uses: actions/cache@v2
+      env:
+        # This hashFiles function returns a hash value that changes when the environment.yml file changes
+        CACHE_NUMBER: ${{ hashFiles('dev/environment.yml') }}
+      with:
+        path: ~/miniconda3/envs/torchsurv
+        key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}
+        restore-keys: |
+          ${{ runner.os }}-conda-
+
+    - name: Install Dependencies
+      run: |
+        conda env update --file dev/environment.yml --name torchsurv
+
+    - name: Build docs
+      shell: bash -l {0}
+      run: |
+        conda activate torchsurv
+        ./dev/build_docs.sh
