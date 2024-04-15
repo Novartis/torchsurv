@@ -1,5 +1,7 @@
 # Survival analysis made easy
 
+> :warning: :construction: **We are still working on the publication of this project and appreciate your patience until everything will be ready.** :construction: :warning:
+
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
 
 ## TL;DR
