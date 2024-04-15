@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=42.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -12,7 +12,21 @@ authors = [
     {name = "Peter Krusche", email = "peter.krusche@novartis.com"},
     {name = "Qian Cao", email = "qian.cao@fda.hhs.com"}
 ]
+
 license = {file = "LICENSE.txt"}
+readme = "README.md"
+
+keywords = ["example", "project", "tutorial"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
 
 dependencies = [
   "torch",
@@ -21,6 +35,13 @@ dependencies = [
   "numpy",
   "torchmetrics",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Novartis/torchsurv"
+Repository = "https://github.com/Novartis/torchsurv"
+Documentation = "https://opensource.nibr.com/torchsurv/"
+IssueTracker = "https://github.com/Novartis/torchsurv/issues"
+Changelog = "https://opensource.nibr.com/torchsurv/CHANGELOG.html"
 
 [tool.pylint]
 max-line-length = 250
