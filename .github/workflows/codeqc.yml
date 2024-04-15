@@ -1,6 +1,6 @@
 name: torchsurv-codeqc
 
-on: [pull-request]
+on: [pull_request]
 
 jobs:
   build:
