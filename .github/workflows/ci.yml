@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest"]
-        python-version: ["3.11"]
+        python-version: ["3.10"]
 
     steps:
     - uses: actions/checkout@v2
@@ -40,12 +40,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-conda-
 
-    - name: Install Dependencies
-      run: |
-        conda env update --file dev/environment.yml --name torchsurv
-
     - name: Build docs
       shell: bash -l {0}
       run: |
         conda activate torchsurv
-        ./dev/build_docs.sh
+        ./dev/build-docs.sh
