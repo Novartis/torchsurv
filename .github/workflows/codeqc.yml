@@ -35,7 +35,7 @@ jobs:
           conda-${{ runner.os }}--${{ runner.arch }}--${{ steps.get-date.outputs.today }}-${{ hashFiles('dev/environment.yml') }}-${{ env.CACHE_NUMBER }}
       env:
         # Increase this value to reset cache if environment.yml has not changed
-        CACHE_NUMBER: 0
+        CACHE_NUMBER: 1
 
     - name: Update conda environment
       run:
