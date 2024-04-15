@@ -22,7 +22,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
         environment-file: dev/environment.yml
         activate-environment: torchsurv
-        use-only-tar-bz2: true
 
     - name: Cache Conda
       uses: actions/cache@v3
