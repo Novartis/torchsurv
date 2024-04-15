@@ -48,7 +48,7 @@ jobs:
         git config --global user.name 'GitHub Actions'
         git config --global user.email 'actions@github.com'
         git checkout --orphan gh-pages
-        tar czvf /tmp/docs.tar.gz -C docs/_build/html '*'
+        cd docs/_build/html && tar czvf /tmp/docs.tar.gz * && cd ../../..
         git reset --hard
         git clean -fdx
         tar xvf /tmp/docs.tar.gz
