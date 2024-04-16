@@ -206,7 +206,7 @@ We value contributions from the community to enhance and improve this project. I
 
 By contributing to this project, you agree to license your contributions under the same license as this project.
 
-## Contact
+## Contacts
 
 * Thibaud Coroller thibaud.coroller@novartis.com `(creator, maintainer)`
 * Mélodie Monod melodie.monod@novartis.com `(creator, maintainer)`
