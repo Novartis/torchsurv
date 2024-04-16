@@ -208,6 +208,7 @@ By contributing to this project, you agree to license your contributions under t
 
 ## Contact
 Package creators Melodie Monod <melodie.monod@novartis.com> and Thibaud Coroller <thibaud.coroller@novartis.com>.
+
 If you have any questions, suggestions, or feedback, feel free to reach out the developement team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
 
 ## Cite
