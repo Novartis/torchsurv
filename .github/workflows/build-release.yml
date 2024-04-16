@@ -1,0 +1,34 @@
+name: Test-build Python Package
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install build==0.7.0 pep517 setuptools wheel twine
+
+      - name: Build PyPI release
+        run: python -m build
+
+      - name: Check PyPI release
+        run: python -m twine check dist/*
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Python-package
+          path: dist
+
