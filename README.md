@@ -207,7 +207,11 @@ We value contributions from the community to enhance and improve this project. I
 By contributing to this project, you agree to license your contributions under the same license as this project.
 
 ## Contact
-Package creators Mélodie Monod <melodie.monod@novartis.com> and Thibaud Coroller <thibaud.coroller@novartis.com>.
+
+* Thibaud Coroller thibaud.coroller@novartis.com `(creator, maintainer)`
+* Mélodie Monod melodie.monod@novartis.com `(creator, maintainer)`
+* Peter Krusche peter.krusche@novartis.com `(author, maintainer)`
+* Qian Cao qian.cao@fda.hhs.gov `(author, maintainer)`
 
 If you have any questions, suggestions, or feedback, feel free to reach out the developement team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
 
