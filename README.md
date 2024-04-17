@@ -4,9 +4,9 @@
 
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
-[![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg)](https://arxiv.org/abs/2404.10761)
-[![Documentation](https://img.shields.io/badge/GitBook-Docu-lightblue)](https://opensource.nibr.com/torchsurv/)
 [![PyPI version](https://badge.fury.io/py/torchsurv.svg)](https://badge.fury.io/py/torchsurv)
+[![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg)](https://arxiv.org/abs/2404.10761)
+[![Documentation](https://img.shields.io/badge/GitBook-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
 [![Downloads](https://static.pepy.tech/badge/torchsurv)](https://pepy.tech/project/torchsurv)
 
 
@@ -224,4 +224,13 @@ If you have any questions, suggestions, or feedback, feel free to reach out the 
 
 If you use this project in academic work or publications, we appreciate citing it using the following BibTeX entry:
 
-TEMPORARY PLACEHOLDER.
+```
+@misc{monod2024torchsurv,
+      title={TorchSurv: A Lightweight Package for Deep Survival Analysis}, 
+      author={Melodie Monod and Peter Krusche and Qian Cao and Berkman Sahiner and Nicholas Petrick and David Ohlssen and Thibaud Coroller},
+      year={2024},
+      eprint={2404.10761},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+```
