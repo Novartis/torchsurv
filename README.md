@@ -231,6 +231,7 @@ If you use this project in academic work or publications, we appreciate citing i
       year={2024},
       eprint={2404.10761},
       archivePrefix={arXiv},
-      primaryClass={cs.LG}
+      primaryClass={cs.LG},
+      doi={https://doi.org/10.48550/arXiv.2404.10761}
 }
 ```
