@@ -1,4 +1,4 @@
-name: torchsurv-codeqc
+name: "QC :hammer_and_wrench:"
 
 on: [push]
 
