@@ -1,4 +1,4 @@
-name: torchsurv-docs-cicd
+name: Docs
 
 on:
   push:
