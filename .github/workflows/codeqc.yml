@@ -1,4 +1,4 @@
-name: torchsurv-codeqc
+name: "QC 🛠️"
 
 on: [push]
 
