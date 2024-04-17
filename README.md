@@ -4,11 +4,10 @@
 
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
-[![arXiv](https://img.shields.io/badge/arXiv-2404.10761-<COLOR>.svg)](https://arxiv.org/abs/https://arxiv.org/abs/2404.10761)
+[![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg)](https://arxiv.org/abs/2404.10761)
 [![Documentation](https://img.shields.io/badge/GitBook-Docu-lightblue)](https://opensource.nibr.com/torchsurv/)
 [![PyPI version](https://badge.fury.io/py/torchsurv.svg)](https://badge.fury.io/py/torchsurv)
 [![Downloads](https://static.pepy.tech/badge/torchsurv)](https://pepy.tech/project/torchsurv)
-
 
 
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
