@@ -9,7 +9,6 @@
 [![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
 [![Downloads](https://static.pepy.tech/badge/torchsurv)](https://pepy.tech/project/torchsurv)
 
-
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
 
 ## TL;DR
@@ -43,7 +42,7 @@ cindex.p_value(method="noether", alternative="two_sided")
 cindex.compare(cindexB)
 ```
 
-## Installation
+## Installation and dependencies
 
 First, install the package:
 
@@ -51,7 +50,7 @@ First, install the package:
 pip install torchsurv
 ```
 
-or for local installation (from package root)
+or for local installation (from package root / clone of this git repository):
 
 ```bash
 pip install -e .
@@ -59,6 +58,27 @@ pip install -e .
 
 If you use Conda, you can install requirements into a conda environment
 using the `environment.yml` file included in the `dev` subfolder of the source repository.
+
+Using the package has the following dependencies which will be installed automatically via pip:
+
+* [torch](https://pytorch.org/): Consider pre-installing if you have specific system requirements (CPU / GPU / CUDA version).
+* [scipy](https://scipy.org/): We use some statistical helper functions to calculate metrics.
+* [torchmetrics](https://lightning.ai/docs/torchmetrics/stable/): We use some statistical helper functions to calculate metrics.
+
+To run the tests and example notebooks, you need the following additional packages:
+
+* [lifelines](https://lifelines.readthedocs.io/en/latest/)
+* [scikit-survival](https://scikit-survival.readthedocs.io/en/stable/)
+* [pytorch_lightning](https://lightning.ai/docs/pytorch/stable/) (and [lightning](https://lightning.ai/))
+
+To build the documentation, you will need the following packages:
+
+* [sphinx](https://www.sphinx-doc.org/)
+* [myst-parser](https://myst-parser.readthedocs.io/)
+* [nbsphinx](https://nbsphinx.readthedocs.io/)
+* [sphinxcontrib-bibtex](https://pypi.org/project/sphinxcontrib-bibtex)
+* [sphinx-book-theme](https://pypi.org/project/sphinx-book-theme)
+* [pandoc](https://pypi.org/project/pandoc)
 
 ## Getting started
 

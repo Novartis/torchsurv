@@ -1,6 +1,12 @@
 Change log
 =========
 
+Version 0.1.2
+-------------
+
+* Updated package documentation with publication links & badges (#9, #14, #16, #19, #21, #22, #24)
+* Fixed and documented package dependencies (#1)
+
 Version 0.1.1
 -------------
 

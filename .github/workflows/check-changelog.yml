@@ -1,0 +1,26 @@
+name: "Check Changelog Update"
+
+on:
+  pull_request:
+    branches: [ main ]  # or the default branch of your repo
+
+jobs:
+  check-changelog:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check for Changelog Updates
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          git checkout origin/${{ github.base_ref }}
+          BASE_CHANGELOG_HASH=$(git log -1 --format=format:%H -- CHANGELOG.md)
+          git checkout ${{ github.head_ref }}
+          HEAD_CHANGELOG_HASH=$(git log -1 --format=format:%H -- CHANGELOG.md)
+
+          if [ "$BASE_CHANGELOG_HASH" == "$HEAD_CHANGELOG_HASH" ]; then
+            echo "Changelog must be updated with every pull request."
+            exit 1
+          fi

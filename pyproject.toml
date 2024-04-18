@@ -30,7 +30,6 @@ classifiers = [
 
 dependencies = [
   "torch",
-  "lightning",
   "scipy",
   "numpy",
   "torchmetrics",
