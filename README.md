@@ -1,7 +1,5 @@
 # Deep survival analysis made easy
 
-> :warning: :construction: **We are still working on the publication of this project and appreciate your patience until everything will be ready.** :construction: :warning:
-
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
 [![PyPI - Version](https://img.shields.io/pypi/v/torchsurv)](https://pypi.org/project/torchsurv/)
