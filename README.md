@@ -233,10 +233,10 @@ By contributing to this project, you agree to license your contributions under t
 
 ## Contacts
 
-* Thibaud Coroller thibaud.coroller@novartis.com `(creator, maintainer)`
-* Mélodie Monod melodie.monod@novartis.com `(creator, maintainer)`
-* Peter Krusche peter.krusche@novartis.com `(author, maintainer)`
-* Qian Cao qian.cao@fda.hhs.gov `(author, maintainer)`
+* [Thibaud Coroller](mailto:thibaud.coroller@novartis.com?subject=TorchSurv) `(creator, maintainer)`
+* [Mélodie Monod](mailto:melodie.monod@novartis.com?subject=TorchSurv) `(creator, maintainer)`
+* [Peter Krusche](mailto:peter.krusche@novartis.com?subject=TorchSurv) `(author, maintainer)`
+* [Qian Cao](mailto:qian.cao@fda.hhs.gov@novartis.com?subject=TorchSurv) `(author, maintainer)`
 
 If you have any questions, suggestions, or feedback, feel free to reach out the developement team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
 
