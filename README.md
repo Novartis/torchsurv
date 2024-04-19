@@ -63,20 +63,14 @@ Using the package has the following dependencies which will be installed automat
 * [scipy](https://scipy.org/): We use some statistical helper functions to calculate metrics.
 * [torchmetrics](https://lightning.ai/docs/torchmetrics/stable/): We use some statistical helper functions to calculate metrics.
 
-To run the tests and example notebooks, you need the following additional packages:
+To run the tests and example notebooks, you need to install the following additional packages:
 
 * [lifelines](https://lifelines.readthedocs.io/en/latest/)
 * [scikit-survival](https://scikit-survival.readthedocs.io/en/stable/)
 * [pytorch_lightning](https://lightning.ai/docs/pytorch/stable/) (and [lightning](https://lightning.ai/))
 
-To build the documentation, you will need the following packages:
-
-* [sphinx](https://www.sphinx-doc.org/)
-* [myst-parser](https://myst-parser.readthedocs.io/)
-* [nbsphinx](https://nbsphinx.readthedocs.io/)
-* [sphinxcontrib-bibtex](https://pypi.org/project/sphinxcontrib-bibtex)
-* [sphinx-book-theme](https://pypi.org/project/sphinx-book-theme)
-* [pandoc](https://pypi.org/project/pandoc)
+To build the documentation and for package development, please see [the development notes](https://opensource.nibr.com/torchsurv/devnotes.html) and
+[dev/environment.yml](dev/environment.yml).
 
 ## Getting started
 
