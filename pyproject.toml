@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "torchsurv"
-version = "0.1.1"
+version = "0.1.2"
 description = "Survival analysis made easy with pytorch"
 authors = [
     {name = "Thibaud Coroller", email = "thibaud.coroller@novartis.com"},
@@ -30,7 +30,6 @@ classifiers = [
 
 dependencies = [
   "torch",
-  "lightning",
   "scipy",
   "numpy",
   "torchmetrics",

@@ -1,14 +1,11 @@
 # Deep survival analysis made easy
 
-> :warning: :construction: **We are still working on the publication of this project and appreciate your patience until everything will be ready.** :construction: :warning:
-
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
 [![PyPI - Version](https://img.shields.io/pypi/v/torchsurv)](https://pypi.org/project/torchsurv/)
 [![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg)](https://arxiv.org/abs/2404.10761)
 [![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
 [![Downloads](https://static.pepy.tech/badge/torchsurv)](https://pepy.tech/project/torchsurv)
-
 
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
 
@@ -43,7 +40,7 @@ cindex.p_value(method="noether", alternative="two_sided")
 cindex.compare(cindexB)
 ```
 
-## Installation
+## Installation and dependencies
 
 First, install the package:
 
@@ -51,7 +48,7 @@ First, install the package:
 pip install torchsurv
 ```
 
-or for local installation (from package root)
+or for local installation (from package root / clone of this git repository):
 
 ```bash
 pip install -e .
@@ -59,6 +56,21 @@ pip install -e .
 
 If you use Conda, you can install requirements into a conda environment
 using the `environment.yml` file included in the `dev` subfolder of the source repository.
+
+Using the package has the following dependencies which will be installed automatically via pip:
+
+* [torch](https://pytorch.org/): Consider pre-installing if you have specific system requirements (CPU / GPU / CUDA version).
+* [scipy](https://scipy.org/): We use some statistical helper functions to calculate metrics.
+* [torchmetrics](https://lightning.ai/docs/torchmetrics/stable/): We use some statistical helper functions to calculate metrics.
+
+To run the tests and example notebooks, you need to install the following additional packages:
+
+* [lifelines](https://lifelines.readthedocs.io/en/latest/)
+* [scikit-survival](https://scikit-survival.readthedocs.io/en/stable/)
+* [pytorch_lightning](https://lightning.ai/docs/pytorch/stable/) (and [lightning](https://lightning.ai/))
+
+To build the documentation and for package development, please see [the development notes](https://opensource.nibr.com/torchsurv/devnotes.html) and
+[dev/environment.yml](dev/environment.yml).
 
 ## Getting started
 
@@ -213,10 +225,10 @@ By contributing to this project, you agree to license your contributions under t
 
 ## Contacts
 
-* Thibaud Coroller thibaud.coroller@novartis.com `(creator, maintainer)`
-* Mélodie Monod melodie.monod@novartis.com `(creator, maintainer)`
-* Peter Krusche peter.krusche@novartis.com `(author, maintainer)`
-* Qian Cao qian.cao@fda.hhs.gov `(author, maintainer)`
+* [Thibaud Coroller](mailto:thibaud.coroller@novartis.com?subject=TorchSurv) `(creator, maintainer)`
+* [Mélodie Monod](mailto:melodie.monod@novartis.com?subject=TorchSurv) `(creator, maintainer)`
+* [Peter Krusche](mailto:peter.krusche@novartis.com?subject=TorchSurv) `(author, maintainer)`
+* [Qian Cao](mailto:qian.cao@fda.hhs.gov@novartis.com?subject=TorchSurv) `(author, maintainer)`
 
 If you have any questions, suggestions, or feedback, feel free to reach out the developement team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
 
