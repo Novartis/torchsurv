@@ -20,7 +20,7 @@ conda activate torchsurv
 
 ## Test and develop the package
 
-To run all unit tests either use `dev/run-unittests.sh` or run the 
+To run all unit tests either use `dev/run-unittests.sh` or run the
 following command from the repository root directory:
 
 ```bash
@@ -100,3 +100,42 @@ make latexpdf LATEXMKOPTS="-silent -f"
 There are a few errors in the PDF build due to layout issues,
 but the PDF can still be used to summarize the package in a single
 file.
+
+## Steps to create a new release
+
+Follow the steps below, ensure each one is successful.
+
+1. Update the version number in `pyproject.toml`.
+2. Ensure [CHANGELOG.md](CHANGELOG.md) is up-to-date with the new version number and changes.
+3. Ensure all PRs to be included are merged with `main`, pushed to Github and that all tests & checks have run successfully.
+4. Build the release from the latest main branch: `git checkout main && git pull && rm -rf dist && python -m build`
+5. Check the built package: `python -m twine check dist/*`
+6. Upload the package to testPyPI: `python -m twine upload -r testpypi dist/*`
+7. Check if the package can be installed (also check this installs the correct version):
+
+    ```bash
+    rm -rf testenv # ensure a new test env is created
+    python -m virtualenv testenv
+    . ./testenv/bin/activate
+    # these don't simply install from testpypi
+    pip install torch torchmetrics scipy numpy
+    pip install -i https://test.pypi.org/simple/ torchsurv
+    python
+    >>> from torchsurv.loss import cox
+    >>> from torchsurv.metrics.cindex import ConcordanceIndex
+    ```
+
+8. Upload to pypi: `python -m twine upload -r pypi dist/*`
+9. Check that the package can be installed:
+
+    ```bash
+    rm -rf testenv # ensure a new test env is created
+    python -m virtualenv testenv
+    . ./testenv/bin/activate
+    pip install torchsurv
+    python
+    >>> from torchsurv.loss import cox
+    >>> from torchsurv.metrics.cindex import ConcordanceIndex
+    ```
+
+10. Create a new tag for the release, e.g. `git tag -a v0.1.2 -m "Version 0.1.2"`. Push the tag to Github: `git push origin v0.1.2`. Create a release on Github from the tag via <https://github.com/Novartis/torchsurv/releases>.
