@@ -1,11 +1,9 @@
-import pytorch_lightning as L
+import lightning as L
 import torch
 from torch.utils.data import DataLoader, random_split
 from torchvision.datasets import MNIST
-from torchvision.transforms import v2
 
 from torchsurv.loss.cox import neg_partial_log_likelihood
-from torchsurv.loss.momentum import Momentum
 from torchsurv.metrics.cindex import ConcordanceIndex
 
 
