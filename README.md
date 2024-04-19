@@ -239,7 +239,7 @@ If you use this project in academic work or publications, we appreciate citing i
 ```
 @misc{monod2024torchsurv,
       title={TorchSurv: A Lightweight Package for Deep Survival Analysis}, 
-      author={Melodie Monod and Peter Krusche and Qian Cao and Berkman Sahiner and Nicholas Petrick and David Ohlssen and Thibaud Coroller},
+      author={M{\'{e}}lodie Monod and Peter Krusche and Qian Cao and Berkman Sahiner and Nicholas Petrick and David Ohlssen and Thibaud Coroller},
       year={2024},
       eprint={2404.10761},
       archivePrefix={arXiv},
