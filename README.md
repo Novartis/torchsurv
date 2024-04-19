@@ -54,23 +54,8 @@ or for local installation (from package root / clone of this git repository):
 pip install -e .
 ```
 
-If you use Conda, you can install requirements into a conda environment
-using the `environment.yml` file included in the `dev` subfolder of the source repository.
-
-Using the package has the following dependencies which will be installed automatically via pip:
-
-* [torch](https://pytorch.org/): Consider pre-installing if you have specific system requirements (CPU / GPU / CUDA version).
-* [scipy](https://scipy.org/): We use some statistical helper functions to calculate metrics.
-* [torchmetrics](https://lightning.ai/docs/torchmetrics/stable/): We use some statistical helper functions to calculate metrics.
-
-To run the tests and example notebooks, you need to install the following additional packages:
-
-* [lifelines](https://lifelines.readthedocs.io/en/latest/)
-* [scikit-survival](https://scikit-survival.readthedocs.io/en/stable/)
-* [pytorch_lightning](https://lightning.ai/docs/pytorch/stable/) (and [lightning](https://lightning.ai/))
-
-To build the documentation and for package development, please see [the development notes](https://opensource.nibr.com/torchsurv/devnotes.html) and
-[dev/environment.yml](dev/environment.yml).
+Additionally, to build the documentation (`notebooks`, `sphinx`) and for package development (`tests`), please see [the development notes](https://opensource.nibr.com/torchsurv/devnotes.html) and
+[dev/environment.yml](dev/environment.yml). This step is **not required** to use `TorchSurv` in your projects but only for optional features.
 
 ## Getting started
 
