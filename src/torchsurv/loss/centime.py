@@ -246,9 +246,8 @@ def neg_log_likelihood_centime(
     nll = torch.cat([nll_uncens, nll_cens])
     if reduction == "mean":
         return nll.mean()
-    elif reduction == "sum":
+    if reduction == "sum":
         return nll.sum()
-    else:
-        raise ValueError(
-            f"Reduction method {reduction} not recognized. Please use 'mean' or 'sum'."
-        )
+    raise ValueError(
+        f"Reduction method {reduction} not recognized. Please use 'mean' or 'sum'."
+    )
