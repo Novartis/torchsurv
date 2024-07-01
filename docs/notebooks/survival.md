@@ -1,7 +1,8 @@
-# Predictive accuracy evaluation metrics for survival model
-Author: Mélodie Monod<br>
-Date: 28th June 2024
+# A statistical introduction
 
+<!-- ## Predictive accuracy evaluation metrics for survival model -->
+
+* **Author**: Mélodie Monod
 
 ## Introduction
 
@@ -11,9 +12,9 @@ The evaluation metrics for assessing the predictive performance of a model depen
 
 To understand the evaluation metrics for time-to-event data, it is helpful to start with a review of the evaluation metrics used for binary outcomes, as the former are extensions of the latter.
 
-Assume we have a binary response $Y_i \in \{0,1\}$, for any individual $i$. The model is a probabilistic classifier that outputs a score $\pi_i \in [0,1]$, which is an estimate of the probability $p(Y_i = 1)$. 
+Assume we have a binary response $Y_i \in \{0,1\}$, for any individual $i$. The model is a probabilistic classifier that outputs a score $\pi_i \in [0,1]$, which is an estimate of the probability $p(Y_i = 1)$.
 
-The predicted response for individual $i$, denoted $\hat{Y}_i$, is obtained by comparing the score to a threshold $c$, 
+The predicted response for individual $i$, denoted $\hat{Y}_i$, is obtained by comparing the score to a threshold $c$,
 
 $$
 \hat{Y}_i  = 
@@ -38,7 +39,7 @@ $$
 \text{AUC} = \int_0^1 TPR(FPR(c)) dFPR(c).
 $$
 
-It can be shown that the AUC is equal to  $p(\pi_i > \pi_j|Y_i = 1, Y_j = 0)$. This is the probability that, for a comparable pair, the individual without the event has a lower score than the individual with the event. This probability is also referred to as the C-index (denoted by C). In the binary context, the AUC is equal to the C-index. 
+It can be shown that the AUC is equal to $p(\pi_i > \pi_j|Y_i = 1, Y_j = 0)$. This is the probability that, for a comparable pair, the individual without the event has a lower score than the individual with the event. This probability is also referred to as the C-index (denoted by C). In the binary context, the AUC is equal to the C-index.
 
 <details>
 <summary> Proof of the AUC's probabilistic interpretation </summary>
@@ -253,8 +254,7 @@ The Brier score assesses both calibration and discrimination and serves as an al
 
 A meta-analysis by Zhou et al. (2022) recorded the proportion of evaluation metrics for survival models used from 2010 to 2021 in prominent journals such as "Annals of Statistics," "Biometrika," "Journal of the American Statistical Association," "Journal of the Royal Statistical Society, Series B," "Statistics in Medicine," "Artificial Intelligence in Medicine," and "Lifetime Data Analysis." This analysis indicates that the use of the C-index has been steadily increasing and has recently become a dominant predictive measure. In 2021, the C-index was used in more than 75% of the readings.
  
-
-
+ 
 ## Reference
  * Heagerty, P. J., & Zheng, Y. (2005). Survival Model Predictive Accuracy and ROC Curves. In Biometrics (Vol. 61, Issue 1, pp. 92–105). Oxford University Press (OUP). https://doi.org/10.1111/j.0006-341x.2005.030814.x
  * Lambert, J., & Chevret, S. (2016). Summary measure of discrimination in survival models based on cumulative/dynamic time-dependent ROC curves. In Statistical Methods in Medical Research (Vol. 25, Issue 5, pp. 2088–2102). SAGE Publications

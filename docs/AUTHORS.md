@@ -8,4 +8,3 @@ Contributors
 * David Ohlssen <david.ohlssen@novartis.com> `(contributor)`
 * Berkman Sahiner <berkman.sahiner@fda.hhs.gov> `(contributor)`
 * Nicholas Petrick <nicholas.petrick@fda.hhs.gov> `(contributor)`
-
