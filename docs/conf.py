@@ -28,7 +28,9 @@ extensions = [
     "nbsphinx",
     "sphinx.ext.viewcode",
     "sphinxcontrib.bibtex",
+    "sphinx_math_dollar",
 ]
+
 
 # templates_path = ['_templates']
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
