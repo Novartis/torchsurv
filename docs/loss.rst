@@ -7,3 +7,4 @@ Loss
     torchsurv.loss.cox
     torchsurv.loss.momentum
     torchsurv.loss.weibull
+    torchsurv.loss.centime
