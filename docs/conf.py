@@ -28,6 +28,7 @@ extensions = [
     "nbsphinx",
     "sphinx.ext.viewcode",
     "sphinxcontrib.bibtex",
+    "sphinx_math_dollar",
 ]
 
 
