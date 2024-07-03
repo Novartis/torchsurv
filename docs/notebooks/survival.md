@@ -8,7 +8,7 @@
 
 The evaluation metrics for assessing the predictive performance of a model depend greatly on the type of response variable. For instance, mean squared error (MSE) or mean absolute error (MAE) are commonly used for continuous response data. In contrast, for binary data, metrics such as true positive rate (TPR) and true negative rate (TNR) are utilized. This document presents evaluation metrics specifically designed for survival data, where the response variable is the time to an event.
 
-## Evaluation metrics under binary response 
+## Evaluation metrics under binary response
 
 To understand the evaluation metrics for time-to-event data, it is helpful to start with a review of the evaluation metrics used for binary outcomes, as the former are extensions of the latter.
 
