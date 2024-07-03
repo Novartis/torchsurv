@@ -24,3 +24,5 @@ dependencies:
   - nbsphinx=0.9.3
   - ipython=8.20.0
   - twine=4.0.2
+  - scipy=1.12.0
+  - sphinx-math-dollar=1.2.1

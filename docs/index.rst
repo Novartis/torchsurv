@@ -16,6 +16,7 @@ Welcome to TorchSurv's documentation!
     :maxdepth: 2
     :caption: Tutorials:
 
+    notebooks/survival
     notebooks/introduction
     notebooks/momentum
 
