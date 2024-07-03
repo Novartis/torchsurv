@@ -193,7 +193,7 @@ The table below compares the functionalities of `TorchSurv` with those of
 [deepsurv](https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-018-0482-1).
 While several libraries offer survival modelling functionalities, no existing library provides the flexibility to use a custom PyTorch-based neural networks to define the survival model parameters.
 
-The outputs of both the log-likelihood functions and the evaluation metrics functions have undergone thorough comparison with benchmarks generated using Python packages and R packages. The comparisons are summarised in the [Related packages summary](https://opensource.nibr.com/torchsurv/benchmarks.html).
+The outputs of both the log-likelihood functions and the evaluation metrics functions have **undergone thorough comparison with benchmarks generated** using `Python` and `R` packages. The comparisons (at time of publication) are summarised in the [Related packages summary](https://opensource.nibr.com/torchsurv/benchmarks.html).
 
 ![Survival analysis libraries in Python](docs/source/table_python_benchmark.png)
 ![Survival analysis libraries in Python](docs/source/table_python_benchmark_legend.png)
