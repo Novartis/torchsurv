@@ -279,7 +279,6 @@ class SurvivalDataGenerator:
         )
 
     def _generate_input(self):
-
         # random maximum time in observational period
         tmax = torch.randint(5, 500, (1,)).item()
 
@@ -297,7 +296,6 @@ class SurvivalDataGenerator:
         self._generate_new_time()
 
     def _generate_data(self, tmax: int, n_train: int, n_test: int):
-
         # time-to-event or censoring in train
         train_time = torch.randint(1, tmax + 1, (n_train,)).float()
 
@@ -340,7 +338,6 @@ class SurvivalDataGenerator:
     def _enforce_conditions_data(
         self, time: torch.tensor, event: torch.tensor, dataset_type: str
     ) -> Tuple[torch.tensor, torch.tensor]:
-
         # if test max time should be greater than train max time
         if dataset_type == "test":
             if self.test_max_time_gt_train_max_time:
@@ -395,7 +392,6 @@ class SurvivalDataGenerator:
         return time, event
 
     def _generate_estimate(self):
-
         # random risk score for observations in test
         estimate = torch.randn(len(self.test_event))
 
@@ -403,7 +399,6 @@ class SurvivalDataGenerator:
         self.estimate = self._enforce_conditions_estimate(estimate)
 
     def _enforce_conditions_estimate(self, estimate: torch.tensor) -> torch.tensor:
-
         # if there should be ties in risk score associated to patients with event
         if self.ties_score_events:
             estimate[torch.where(self.test_event == 1.0)[0][0]] = estimate[
@@ -425,7 +420,6 @@ class SurvivalDataGenerator:
         return estimate
 
     def _generate_new_time(self):
-
         if torch.all(self.test_event == False):
             # if all patients are censored in test, no evaluation time
             new_time = torch.tensor([])
@@ -447,7 +441,6 @@ class SurvivalDataGenerator:
         self.new_time = self._enforce_conditions_time(new_time)
 
     def _enforce_conditions_time(self, new_time: torch.tensor) -> torch.tensor:
-
         # if the test max time should be included in evaluation time
         if self.test_max_time_in_new_time:
             new_time = torch.cat(
@@ -457,7 +450,6 @@ class SurvivalDataGenerator:
         return new_time
 
     def _evaluate_conditions(self):
-
         # are there ties in event times
         self.has_train_ties_time_event = self._has_ties(
             self.train_time[self.train_event == 1]
@@ -614,7 +606,6 @@ class DataBatchContainer:
             n_batch = len(flags_to_set)
 
         for i in range(n_batch):
-
             if i >= len(flags_to_set):
                 # simulate data without flag
                 self.generate_one_batch()

@@ -1,5 +1,6 @@
 import copy
 import sys
+import warnings
 from typing import Optional, Tuple
 
 import torch
@@ -638,6 +639,13 @@ class ConcordanceIndex:
         # compute noether standard error
         cindex1_se = self._concordance_index_se()
         cindex2_se = other._concordance_index_se()
+
+        # Suppress the specific warning
+        warnings.filterwarnings(
+            "ignore",
+            message="Metric `SpearmanCorrcoef` will save all targets and predictions in the buffer. For large datasets, this may lead to large memory footprint.",
+            category=UserWarning,
+        )
 
         # compute spearman correlation between risk prediction
         corr = regression.SpearmanCorrCoef()(
