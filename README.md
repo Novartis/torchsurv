@@ -198,6 +198,11 @@ The outputs of both the log-likelihood functions and the evaluation metrics func
 ![Survival analysis libraries in Python](docs/source/table_python_benchmark.png)
 ![Survival analysis libraries in Python](docs/source/table_python_benchmark_legend.png)
 
+Survival analysis libraries in R. For obtaining the evaluation metrics, packages `survival`, `riskRegression`, `SurvMetrics` and `pec` require the fitted model object as input (a specific object format) and `RisksetROC` imposes a smoothing method. Packages `timeROC`, `riskRegression` and pec force the user to choose a form for subject-specific
+weights (e.g., inverse probability of censoring weighting (IPCW)). Packages `survcomp` and `SurvivalROC` do not implement the general AUC but the censoring-adjusted AUC estimator proposed by Heagerty et al. (2000).
+
+![Survival analysis libraries in R](docs/source/table_r_benchmark.png)
+
 ## Contributing
 
 We value contributions from the community to enhance and improve this project. If you'd like to contribute, please consider the following:
