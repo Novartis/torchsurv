@@ -171,10 +171,13 @@ class BrierScore:
         )
 
         # update inputs as required
-        estimate, new_time, weight, weight_new_time = (
-            BrierScore._update_brier_score_new_time(
-                estimate, time, new_time, weight, weight_new_time
-            )
+        (
+            estimate,
+            new_time,
+            weight,
+            weight_new_time,
+        ) = BrierScore._update_brier_score_new_time(
+            estimate, time, new_time, weight, weight_new_time
         )
         weight, weight_new_time = BrierScore._update_brier_score_weight(
             time, new_time, weight, weight_new_time
@@ -190,14 +193,14 @@ class BrierScore:
 
         # Calculating the residuals for each subject and time point
         residuals = torch.zeros_like(estimate)
-        for i, t in enumerate(new_time):
-            est = estimate[:, i]
-            is_case = ((time <= t) & (event)).int()
-            is_control = (time > t).int()
+        for index, new_time_i in enumerate(new_time):
+            est = estimate[:, index]
+            is_case = ((time <= new_time_i) & (event)).int()
+            is_control = (time > new_time_i).int()
 
-            residuals[:, i] = (
+            residuals[:, index] = (
                 torch.square(est) * is_case * weight
-                + torch.square(1.0 - est) * is_control * weight_new_time[i]
+                + torch.square(1.0 - est) * is_control * weight_new_time[index]
             )
 
         # Calculating the brier scores at each time point
@@ -827,7 +830,6 @@ class BrierScore:
         weight: torch.tensor,
         weight_new_time: torch.tensor,
     ) -> torch.tensor:
-
         # check new_time and weight are provided, weight_new_time should be provided
         if all([new_time is not None, weight is not None, weight_new_time is None]):
             raise ValueError(
@@ -859,7 +861,6 @@ class BrierScore:
         weight: torch.tensor,
         weight_new_time: torch.tensor,
     ) -> torch.tensor:
-
         # check format of new_time
         if (
             new_time is not None
@@ -871,7 +872,6 @@ class BrierScore:
                 new_time = new_time.unsqueeze(0)
 
         else:  # else: find new_time
-
             # if new_time are not specified, use unique time
             new_time, inverse_indices, counts = torch.unique(
                 time, sorted=True, return_inverse=True, return_counts=True
@@ -896,7 +896,6 @@ class BrierScore:
         weight: torch.tensor,
         weight_new_time: torch.tensor,
     ) -> torch.tensor:
-
         # if weight was not specified, weight of 1
         if weight is None:
             weight = torch.ones_like(time)

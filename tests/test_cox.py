@@ -57,9 +57,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
     def test_log_likelihood_without_ties(self):
         """test cox partial log likelihood without ties on lung and gbsg datasets"""
         for benchmark_cox_loglik in benchmark_cox_logliks:
-
             if benchmark_cox_loglik["no_ties"][0] == True:
-
                 log_lik = -cox(
                     torch.tensor(
                         benchmark_cox_loglik["log_hazard"], dtype=torch.float32
@@ -82,9 +80,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
     def test_log_likelihood_with_ties(self):
         """test Efron and Breslow's approximation of cox partial log likelihood with ties on lung and gbsg data"""
         for benchmark_cox_loglik in benchmark_cox_logliks:
-
             if benchmark_cox_loglik["no_ties"][0] == False:
-
                 # efron approximation of partial log likelihood
                 log_lik_efron = -cox(
                     torch.tensor(

@@ -13,7 +13,6 @@ torch.manual_seed(45)
 
 
 class TestMometum(unittest.TestCase):
-
     def test_momentum_weibull(self):
         model = Momentum(
             backbone=nn.Sequential(nn.Linear(8, 2)),  # Weibull expect two ouputs

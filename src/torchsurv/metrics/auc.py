@@ -1192,7 +1192,6 @@ class Auc:
     def _validate_auc_inputs(
         estimate, time, auc_type, new_time, weight, weight_new_time
     ):
-
         # check new_time and weight are provided, weight_new_time should be provided
         if all([new_time is not None, weight is not None, weight_new_time is None]):
             raise ValueError(
@@ -1222,12 +1221,10 @@ class Auc:
         weight: torch.tensor,
         weight_new_time: torch.tensor,
     ) -> torch.tensor:
-
         # update new time
         if (
             new_time is not None
         ):  # if new_time are specified: ensure it has the correct format
-
             # ensure that new_time are float
             if isinstance(new_time, int):
                 new_time = torch.tensor([new_time]).float()
@@ -1237,7 +1234,6 @@ class Auc:
                 new_time = new_time.unsqueeze(0)
 
         else:  # else: find new_time
-
             # if new_time are not specified, use unique event time
             mask = event & (time < torch.max(time))
             new_time, inverse_indices, counts = torch.unique(
@@ -1261,7 +1257,6 @@ class Auc:
     def _update_auc_estimate(
         estimate: torch.tensor, new_time: torch.tensor
     ) -> torch.tensor:
-
         # squeeze estimate if shape = (n_samples, 1)
         if estimate.ndim == 2 and estimate.shape[1] == 1:
             estimate = estimate.squeeze(1)
@@ -1281,7 +1276,6 @@ class Auc:
         weight: torch.tensor,
         weight_new_time: torch.tensor,
     ) -> torch.tensor:
-
         # if weight was not specified, weight of 1
         if weight is None:
             weight = torch.ones_like(time)
