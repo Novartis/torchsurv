@@ -100,7 +100,7 @@ for data in dataloader:
 ```
 
 **Momentum**
- When training a model with a large file, the batch size is greatly limited by computational resources. This impacts the stability of model optimization, especially when rank-based loss is used. Inspired from MoCO \citep{he2020momentum}, we implemented a momentum loss that decouples batch size from survival loss, increasing the effective batch size and allowing robust train of a model, even when using a very limited batch size (e.g., $batch_{size} \leq 16$). We illustrate the use of momentum for a pseudo training loop in the code
+ When training a model with a large file, the batch size is greatly limited by computational resources. This impacts the stability of model optimization, especially when rank-based loss is used. Inspired from MoCO [@he2020momentum], we implemented a momentum loss that decouples batch size from survival loss, increasing the effective batch size and allowing robust train of a model, even when using a very limited batch size (e.g., $batch_{size} \leq 16$). We illustrate the use of momentum for a pseudo training loop in the code
 snippet below.
 
 ```python
@@ -150,7 +150,7 @@ brier.integral() # integrated brier score
 ```
 
 
-**Additional features.** In \texttt{TorchSurv}, the evaluation metrics can be obtained for time-dependent and time-independent risk scores (e.g., for proportional and non-proportional hazards). Additionally subjects can be optionally weighted (e.g., by the inverse probability of censoring weighting (IPCW)).
+**Additional features.** In `TorchSurv`, the evaluation metrics can be obtained for time-dependent and time-independent risk scores (e.g., for proportional and non-proportional hazards). Additionally subjects can be optionally weighted (e.g., by the inverse probability of censoring weighting (IPCW)).
 Lastly, functionalities including the confidence interval, one-sample hypothesis test to determine whether the metric is better than that of a random predictor, and two-sample hypothesis test to compare two evaluation metrics between  different models are implemented. For the hypothesis tests, the significance level, typically referred to as $\alpha$, can be modified as needed. The following code snippet exemplifies the aforementioned functionalities for the C-index.
 
 ```python
