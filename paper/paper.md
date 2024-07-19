@@ -37,20 +37,20 @@ bibliography: paper.bib
 `TorchSurv` (available on GitHub and PyPI) is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment [@paszke2019pytorch]. With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient deep survival model implementation and is particularly beneficial for high-dimensional and complex input data scenarios.
 `TorchSurv` has undergone rigorous testing on open source data and synthetically generated survival data that include edge cases. The package is comprehensively documented and contains illustrative examples. The latest documentation of `TorchSurv` can be found on [`TorchSurv`'s website](https://opensource.nibr.com/torchsurv/).
 
-`TorchSurv` provides a user-friendly workflow for defining a survival model with parameters specified by a `PyTorch`-based (deep) neural network. At the core of `TorchSurv` lies its `PyTorch`-based calculation of log-likelihoods for prominent survival models, including the Cox proportional hazards model [@Cox1972] and the Weibull Accelerated Time Failure (AFT) model [@Carroll2003]. 
+`TorchSurv` provides a user-friendly workflow for defining a survival model with parameters specified by a `PyTorch`-based (deep) neural network. At the core of `TorchSurv` lies its `PyTorch`-based calculation of log-likelihoods for prominent survival models, including the Cox proportional hazards model [@Cox1972] and the Weibull Accelerated Time Failure (AFT) model [@Carroll2003].
+
 In survival analysis, each observation is associated with survival data denoted by $y$ (comprising the event indicator and the time-to-event or censoring) and covariates denoted by $x$. A survival model that is able to capture the complexity of the survival data $y$, is parametrized by parameters denoted by $\theta$. For instance, in the Cox proportional hazards model, the survival model parameters $\theta$ are the relative hazards. Within the `TorchSurv` framework, a `PyTorch`-based neural network is defined to act as a flexible function that takes the covariates $x$ as input and outputs the survival model parameters $\theta$. Estimation of the parameters $\theta$ is achieved via maximum likelihood estimation facilitated by backpropagation.
 Additionally, `TorchSurv` offers evaluation metrics (the time-dependent Area Under the cure (AUC) under the Receiver operating characteristic curve (ROC), the Concordance index (C-index) and the Brier Score) to characterize the predictive performance of survival models.
 Below is an overview of the workflow for model inference and evaluation with `TorchSurv`:
 
 1. Initialize a `PyTorch`-based neural network that defines the function from the covariates to the survival model's parameters. In the context of the Cox relative hazards model for example, the parameters are the log relative hazards.
 2. Initiate training: For each epoch on the training set,
-    -  Draw survival data $y^{\text{train}}$ (i.e., event indicator and time-to-event or censoring) and covariates $x^{\text{train}}$ from the training set.
+    - Draw survival data $y^{\text{train}}$ (i.e., event indicator and time-to-event or censoring) and covariates $x^{\text{train}}$ from the training set.
     - Obtain parameters $\theta^{\text{train}}$ based on drawn covariates $x^{\text{train}}$ using `PyTorch`-based neural network.
     - Calculate the loss given survival data $y^{\text{train}}$ and parameters $\theta^{\text{train}}$ using `TorchSurv`'s loss function. In the context of the Cox relative hazards model for example, the loss function is equal to the negative of the log partial likelihood.
     - Utilize backpropagation to update parameters $\theta^{\text{train}}$.
 3. Obtain parameters $\theta^{\text{test}}$ based on covariates from the test set $x^{\text{test}}$ using the trained `PyTorch`-based neural network.
 4. Evaluate the predictive performance of the model using `TorchSurv`'s evaluation metric functions (e.g., C-index) given parameters $\theta^{\text{test}}$ and survival data from the test set $y^{\text{test}}$.
-
 
 
 # Statement of need
@@ -120,9 +120,9 @@ log_hzs = model_momentum.infer(x)  # torch.Size([64, 1])
 
 ## Evaluation Metrics Functions
 
-The `TorchSurv` package offers a comprehensive set of metrics to evaluate the predictive performance of survival models, including the AUC, C-index, and Brier score. The inputs of the evaluation metrics functions are the individual risk score estimated on the test set and the survival data on the test set. The risk score measures the risk (or a proxy thereof) that a subject has an event.  We provide definitions for each metric and demonstrate their use through illustrative code snippets. 
+The `TorchSurv` package offers a comprehensive set of metrics to evaluate the predictive performance of survival models, including the AUC, C-index, and Brier score. The inputs of the evaluation metrics functions are the individual risk score estimated on the test set and the survival data on the test set. The risk score measures the risk (or a proxy thereof) that a subject has an event.  We provide definitions for each metric and demonstrate their use through illustrative code snippets.
 
-**AUC.** The AUC measures the discriminatory capacity of a model at a given time $t$, i.e., the model’s ability to provide a reliable ranking of times-to-event based on estimated individual risk scores [@Heagerty2005;@Uno2007;@Blanche2013]. 
+**AUC.** The AUC measures the discriminatory capacity of a model at a given time $t$, i.e., the model’s ability to provide a reliable ranking of times-to-event based on estimated individual risk scores [@Heagerty2005;@Uno2007;@Blanche2013].
 
 ```python
 from torchsurv.metrics import Auc
@@ -148,7 +148,6 @@ brier = Brier()
 brier(surv, event, time)  # Brier score at each time
 brier.integral() # integrated brier score
 ```
-
 
 **Additional features.** In `TorchSurv`, the evaluation metrics can be obtained for time-dependent and time-independent risk scores (e.g., for proportional and non-proportional hazards). Additionally subjects can be optionally weighted (e.g., by the inverse probability of censoring weighting (IPCW)).
 Lastly, functionalities including the confidence interval, one-sample hypothesis test to determine whether the metric is better than that of a random predictor, and two-sample hypothesis test to compare two evaluation metrics between  different models are implemented. For the hypothesis tests, the significance level, typically referred to as $\alpha$, can be modified as needed. The following code snippet exemplifies the aforementioned functionalities for the C-index.
