@@ -34,7 +34,7 @@ bibliography: paper.bib
 
 # Summary
 
-`TorchSurv` (available on GitHub and PyPI) is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment [@paszke2019pytorch]. With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive parameterizations, `TorchSurv` facilitates efficient deep survival model implementation and is particularly beneficial for high-dimensional and complex data scenarios.
+`TorchSurv` ([GitHub](https://github.com/Novartis/torchsurv) and [PyPI](https://pypi.org/project/torchsurv/)) is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment [@paszke2019pytorch]. With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive parameterizations, `TorchSurv` facilitates efficient deep survival model implementation and is particularly beneficial for high-dimensional and complex data scenarios.
 `TorchSurv` has been rigorously tested using both open-source and synthetically generated survival data. The package is thoroughly documented and includes illustrative examples. The latest documentation for TorchSurv can be found on the[`TorchSurv`'s website](https://opensource.nibr.com/torchsurv/).
 
 `TorchSurv` provides a user-friendly workflow for training and evaluating `PyTorch`-based deep survival models.
