@@ -39,7 +39,13 @@ Note that the sensitivity is also referred to as the True Positive Rate (TPR), a
 To visualize the predictive performance of the probabilistic classifier, the Receiver Operating Characteristic (ROC) curve plots the FPR on the x-axis and the TPR on the y-axis for all values of $c$. The Area Under the ROC Curve (AUC) summarizes the predictive performance across all values of $c$. It is given by
 
 $$
-\text{AUC} = \int_0^1 TPR(FPR(c)) dFPR(c).
+TPR(c): c \rightarrow y\newline
+FPR(c): c \rightarrow x
+$$
+
+
+$$
+\text{AUC} = \int_0^1 TPR(FPR^{-1}(x)) dx.
 $$
 
 It can be shown that the AUC is equal to $p(\pi_i > \pi_j|Y_i = 1, Y_j = 0)$. This is the probability that, for a comparable pair, the individual without the event has a lower score than the individual with the event. This probability is also referred to as the C-index (denoted by C). In the binary context, the AUC is equal to the C-index.
@@ -48,32 +54,23 @@ It can be shown that the AUC is equal to $p(\pi_i > \pi_j|Y_i = 1, Y_j = 0)$. Th
 <summary> Proof of the AUC's probabilistic interpretation </summary>
 <br>
 
-Let
-$$
-\begin{align*}
-y(c) &= \text{TPR}(c) = p(\pi_i > c | Y_i = 1),\newline
-x(c) &= \text{FPR}(c) = p(\pi_i > c | Y_i = 0).
-\end{align*}
-$$
 
-Let us denote $f_1(c) = p(\pi_i = c | Y_i = 1)$ and $F_1(c) = p(\pi_i \leq c | Y_i = 1)$ and similarly $f_0(c) = p(\pi_i = c | Y_i = 0)$ and $F_0(c) = p(\pi_i \leq c | Y_i = 0)$. Notice that $y(c) = 1 - F_1(c)$ and $x(c) = 1 - F_0(c)$. 
-
-The AUC is defined as
-$$
-\text{AUC} = \int_0^1 y(x(c)) dx(c).
-$$
-
-We use a change of variable $c = x(c)$. We have $\frac{dx}{dc}(c) = x'(c)$ and the limits become $x^{-1}(1) = - \infty$ and $x^{-1}(0) = \infty$. Therefore
+Let us denote $f_1(c) = p(\pi = c | Y = 1)$ and $F_1(c) = p(\pi \leq c | Y = 1)$ and similarly $f_0(c) = p(\pi = c | Y_i = 0)$ and $F_0(c) = p(\pi \leq c | Y = 0)$. Notice that $y(c) = 1 - F_1(c)$ and $x(c) = 1 - F_0(c)$. 
+Moreover, notice that $dx = x'(c) dc$. Therefore
 
 $$
 \begin{align*}
-\text{AUC} &= \int_{\infty}^{-\infty} y(c) x'(c) dc \newline
+\text{AUC} &= \int_0^1 TPR(FPR^{-1}(x)) dx \newline
+&=\int_{\infty}^{-\infty} y(c) x'(c) dc \newline
 &= \int_{\infty}^{-\infty} (1- F_1(c)) (-f_0(c)) dc \newline
 &= \int_{-\infty}^\infty (1- F_1(c)) f_0(c) dc \newline
-&= \int_{-\infty}^\infty p(\pi_i > c | Y_i = 1) p(\pi_j = c | Y_j = 0) dc \newline
-&= p(\pi_i > \pi_j |  Y_i = 1, Y_j = 0)  \\
+&= \int_{-\infty}^\infty p(\pi > c | Y = 1) p(\pi = c | Y = 0) dc \newline
+&= p(\pi_i > \pi_j |  Y_i = 1, Y_j = 0)  
 \end{align*}
 $$
+
+
+
 </details>
 
 ## Evaluation metrics under time-to-event response
