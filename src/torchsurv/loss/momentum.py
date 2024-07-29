@@ -162,7 +162,7 @@ class Momentum(nn.Module):
                 self.memory_k.append(self.survtuple(*list(estimate)))
         return loss
 
-    @torch.no_grad()
+    @torch.no_grad()  # deactivates autograd
     def infer(self, inputs: torch.Tensor) -> torch.Tensor:
         """Evaluate data with target network
 
@@ -183,8 +183,8 @@ class Momentum(nn.Module):
                     [ 0.9771, -0.8513]])
 
         """
-        self.target.eval()  # Disable training tricks (augmentation, dropout, etc..)
-        return self.target(inputs)
+        with self.target.eval():  # notify all your layers that you are in eval mode
+            return self.target(inputs)
 
     def _bank_loss(self) -> torch.Tensor:
         """computer the  negative loss likelyhood from memory bank"""
