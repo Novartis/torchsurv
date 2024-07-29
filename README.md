@@ -4,6 +4,7 @@
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
 [![PyPI - Version](https://img.shields.io/pypi/v/torchsurv)](https://pypi.org/project/torchsurv/)
 [![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg)](https://arxiv.org/abs/2404.10761)
+[![status](https://camo.githubusercontent.com/22fa65b2a659780cddfac609463c5fe719e3ea82a28eb7a61e24b7c4e40eb56d/68747470733a2f2f6a6f73732e7468656f6a2e6f72672f7061706572732f30326437343936646132623963633334663961366530346361626632323938642f7374617475732e737667)](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d)
 [![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
 [![Downloads](https://static.pepy.tech/badge/torchsurv)](https://pepy.tech/project/torchsurv)
 
