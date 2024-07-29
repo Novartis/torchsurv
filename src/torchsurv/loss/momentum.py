@@ -183,8 +183,8 @@ class Momentum(nn.Module):
                     [ 0.9771, -0.8513]])
 
         """
-        with self.target.eval():  # notify all your layers that you are in eval mode
-            return self.target(inputs)
+        self.target.eval()  # notify all your layers that you are in eval mode
+        return self.target(inputs)
 
     def _bank_loss(self) -> torch.Tensor:
         """computer the  negative loss likelyhood from memory bank"""
