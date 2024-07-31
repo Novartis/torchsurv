@@ -1,27 +1,27 @@
 ---
 title: 'TorchSurv: A Lightweight Package for Deep Survival Analysis'
 tags:
-  - Python package
-  - Deep Survival Analysis
+  - Python
+  - Deep Learning
+  - Survival Analysis
   - PyTorch
-  - TorchSurv
 authors:
   - name: Mélodie Monod
     orcid: 0000-0001-6448-2051
-    affiliation: "1"
+    affiliation: 1
   - name: Peter Krusche
-    affiliation: "1"
+    affiliation: 1
   - name: Qian Cao
-    affiliation: "2"
+    affiliation: 2
   - name: Berkman Sahiner
-    affiliation: "2"
+    affiliation: 2
   - name: Nicholas Petrick
-    affiliation: "2"
+    affiliation: 2
   - name: David Ohlssen
-    affiliation: "3"
+    affiliation: 3
   - name: Thibaud Coroller
     orcid: 0000-0001-7662-8724
-    affiliation: "3"
+    affiliation: 3
   - name: Novartis Pharma AG, Switzerland
     index: 1
   - name: Center for Devices and Radiological Health, Food and Drug Administration, MD, USA
