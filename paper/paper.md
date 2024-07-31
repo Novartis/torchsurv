@@ -21,7 +21,9 @@ authors:
     affiliation: 3
   - name: Thibaud Coroller
     orcid: 0000-0001-7662-8724
+    corresponding: true
     affiliation: 3
+affiliations:
   - name: Novartis Pharma AG, Switzerland
     index: 1
   - name: Center for Devices and Radiological Health, Food and Drug Administration, MD, USA
