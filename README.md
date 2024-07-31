@@ -2,11 +2,14 @@
 
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
-[![PyPI - Version](https://img.shields.io/pypi/v/torchsurv)](https://pypi.org/project/torchsurv/)
-[![Conda](https://img.shields.io/conda/v/conda-forge/torchsurv?label=conda&color=success)](https://anaconda.org/conda-forge/torchsurv)
-[![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg)](https://arxiv.org/abs/2404.10761)
+[![PyPI - Version](https://img.shields.io/pypi/v/torchsurv?)](https://pypi.org/project/torchsurv/)
+[![Conda](https://img.shields.io/conda/v/conda-forge/torchsurv?label=conda)](https://anaconda.org/conda-forge/torchsurv)
+[![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg?)](https://arxiv.org/abs/2404.10761)
 [![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
-[![Downloads](https://static.pepy.tech/badge/torchsurv)](https://pepy.tech/project/torchsurv)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/torchsurv.svg?label=PyPI%20downloads)](
+https://pypi.org/project/torchsurv/)
+[![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/torchsurv.svg?label=Conda%20downloads)](
+https://anaconda.org/conda-forge/torchsurv)
 
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
 
@@ -43,15 +46,23 @@ cindex.compare(cindexB)
 
 ## Installation and dependencies
 
-First, install the package:
 
+First, install the package using either [PyPI]([https://pypi.org/](https://pypi.org/project/torchsurv/)) or [Conda]([https://anaconda.org/anaconda/conda](https://anaconda.org/conda-forge/torchsurv))
+
+- Using conda (`recommended`)
+```bash
+conda install conda-forge::torchsurv
+```
+- Using PyPI
 ```bash
 pip install torchsurv
 ```
 
-or for local installation (from package root / clone of this git repository):
+- Using for local installation (`latest version`)
 
 ```bash
+git clone <repo>
+cd <repo>
 pip install -e .
 ```
 
