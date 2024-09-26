@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - pytorch
 dependencies:
-  - build=0.7.0
+  - python-build=1.2.2
   - pep517=0.13.0
   - numpy=1.26.4
   - pandas=2.2.0
