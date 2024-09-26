@@ -36,7 +36,7 @@ jobs:
 
     - name: Update conda environment
       run:
-        conda env update -n torchsurv -f dev/environment.yml
+        conda env update -n torchsurv -c conda-forge -f dev/environment.yml
       if: steps.cache.outputs.cache-hit != 'true'
 
     - name: Build docs
