@@ -46,8 +46,8 @@ jobs:
       shell: bash -l {0}
       run: |
         conda activate torchsurv
-        ./dev/codeqc.sh
- 
+        ./dev/codeqc.sh check
+
     - name: Tests
       shell: bash -l {0}
       run: |
