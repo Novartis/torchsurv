@@ -1,8 +1,8 @@
 Change log
 =========
 
-Version 0.1.3
--------------
+Version 0.1.3 (unreleased)
+--------------------------
 
 * Tutorial dataset error on momentum.ipynb #50
 * Fix issue #48 - log_hazard returns torch.Inf
