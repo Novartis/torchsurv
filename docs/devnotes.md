@@ -118,6 +118,8 @@ file.
 
 ## Steps to create a new release
 
+### 1. On pypi
+
 Follow the steps below, ensure each one is successful.
 
 1. Update the version number in `pyproject.toml`.
@@ -153,4 +155,13 @@ Follow the steps below, ensure each one is successful.
     >>> from torchsurv.metrics.cindex import ConcordanceIndex
     ```
 
-10. Create a new tag for the release, e.g. `git tag -a v0.1.2 -m "Version 0.1.2"`. Push the tag to Github: `git push origin v0.1.2`. Create a release on Github from the tag via <https://github.com/Novartis/torchsurv/releases>.
+10. Create a new tag for the release, e.g. `git tag -a v0.1.3 -m "Version 0.1.3"`. Push the tag to Github: `git push origin v0.1.3`. Create a release on Github from the tag via <https://github.com/Novartis/torchsurv/releases>.
+
+### 2. Update on conda-forge
+
+1. Create a fork of <https://github.com/conda-forge/torchsurv-feedstock>
+2. Create a branch on this fork, and update the version number in recipe/meta.yaml as well as the sha sum (obtained via `shasum -a 256 dist/torchsurv-<version>.tar.gz` from the file we uploaded to pypi)
+3. Finish the checklist in the PR, ensure it builds.
+4. Double-check and merge the PR.
+
+The new release should become available some time after this.
