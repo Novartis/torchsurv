@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "torchsurv"
-version = "0.1.2"
-description = "Survival analysis made easy with pytorch"
+version = "0.1.3"
+description = "Deep survival analysis made easy with pytorch"
 authors = [
     {name = "Thibaud Coroller", email = "thibaud.coroller@novartis.com"},
     {name = "Melodie Monod", email = "melodie.monod@novartis.com"},
