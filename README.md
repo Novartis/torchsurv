@@ -14,6 +14,8 @@ https://anaconda.org/conda-forge/torchsurv)
 
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
 
+If you find this repository useful, please consider giving a star! ⭐
+
 ## TL;DR
 
 Our idea is to **keep things simple**. You are free to use any model architecture you want! Our code has 100% PyTorch backend and behaves like any other functions (losses or metrics) you may be familiar with.
@@ -44,6 +46,7 @@ cindex.p_value(method="noether", alternative="two_sided")
 # You can even compare the metrics between two models (e.g., vs. model B)
 cindex.compare(cindexB)
 ```
+
 
 ## Installation and dependencies
 
