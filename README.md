@@ -4,7 +4,8 @@
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
 [![PyPI - Version](https://img.shields.io/pypi/v/torchsurv?)](https://pypi.org/project/torchsurv/)
 [![Conda](https://img.shields.io/conda/v/conda-forge/torchsurv?label=conda)](https://anaconda.org/conda-forge/torchsurv)
-[![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg?)](https://arxiv.org/abs/2404.10761)
+[![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg?color=green)](https://arxiv.org/abs/2404.10761)
+[![status](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d/status.svg)](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d)
 [![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
 [![PyPI Downloads](https://img.shields.io/pypi/dm/torchsurv.svg?label=PyPI%20downloads)](
 https://pypi.org/project/torchsurv/)
@@ -12,6 +13,8 @@ https://pypi.org/project/torchsurv/)
 https://anaconda.org/conda-forge/torchsurv)
 
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
+
+If you find this repository useful, please consider giving a star! ⭐
 
 ## TL;DR
 
@@ -43,6 +46,7 @@ cindex.p_value(method="noether", alternative="two_sided")
 # You can even compare the metrics between two models (e.g., vs. model B)
 cindex.compare(cindexB)
 ```
+
 
 ## Installation and dependencies
 
