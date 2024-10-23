@@ -1,16 +1,20 @@
 # Deep survival analysis made easy
 
-![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
-![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
-[![PyPI - Version](https://img.shields.io/pypi/v/torchsurv?)](https://pypi.org/project/torchsurv/)
-[![Conda](https://img.shields.io/conda/v/conda-forge/torchsurv?label=conda)](https://anaconda.org/conda-forge/torchsurv)
-[![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg?color=green)](https://arxiv.org/abs/2404.10761)
-[![status](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d/status.svg)](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d)
-[![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
+[![Python](https://img.shields.io/pypi/pyversions/torchsurv?label=Python)](https://pypi.org/project/torchsurv/)
+[![PyPI - Version](https://img.shields.io/pypi/v/torchsurv?color=green&label=PyPI)](https://pypi.org/project/torchsurv/)
+[![Conda](https://img.shields.io/conda/v/conda-forge/torchsurv?label=Conda&color=green)](https://anaconda.org/conda-forge/torchsurv)
 [![PyPI Downloads](https://img.shields.io/pypi/dm/torchsurv.svg?label=PyPI%20downloads)](
 https://pypi.org/project/torchsurv/)
 [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/torchsurv.svg?label=Conda%20downloads)](
 https://anaconda.org/conda-forge/torchsurv)
+
+![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
+![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
+[![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg?color=green)](https://arxiv.org/abs/2404.10761)
+[![status](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d/status.svg)](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d)
+[![License](https://img.shields.io/badge/License-MIT-black)](https://opensource.org/licenses/MIT)
+[![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
+
 
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
 
