@@ -82,7 +82,7 @@ for data in dataloader:
 from torchsurv.loss import weibull
 
 # PyTorch model outputs TWO Weibull parameters per observation
-my_model = MyPyTorchWeibullhModel() 
+my_model = MyPyTorchWeibullModel() 
 
 for data in dataloader:
     x, event, time = data
