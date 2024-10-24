@@ -585,7 +585,7 @@ class ConcordanceIndex:
         cindex_se = self._concordance_index_se()
 
         # get p-value
-        if cindex_se > 0:
+        if cindex_se >= 0:
             p = torch.distributions.normal.Normal(0, 1).cdf(
                 (self.cindex - null_value) / cindex_se
             )
