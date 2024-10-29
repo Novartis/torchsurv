@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="https://github.com/Novartis/torchsurv/blob/main/docs/source/logo_firecamp.png" width="300">
+</p>
+
 # Deep survival analysis made easy
 
 [![Python](https://img.shields.io/pypi/pyversions/torchsurv?label=Python)](https://pypi.org/project/torchsurv/)
