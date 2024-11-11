@@ -1,3 +1,9 @@
+<p align="center">
+    <!-- <img src="https://github.com/Novartis/torchsurv/blob/main/docs/source/logo_firecamp.png" width="300"> -->
+    <img src="./docs/source/logo_firecamp.png" width="300">
+
+</p>
+
 # Deep survival analysis made easy
 
 [![Python](https://img.shields.io/pypi/pyversions/torchsurv?label=Python)](https://pypi.org/project/torchsurv/)
@@ -51,13 +57,11 @@ cindex.p_value(method="noether", alternative="two_sided")
 cindex.compare(cindexB)
 ```
 
-
 ## Installation and dependencies
-
 
 First, install the package using either [PyPI]([https://pypi.org/](https://pypi.org/project/torchsurv/)) or [Conda]([https://anaconda.org/anaconda/conda](https://anaconda.org/conda-forge/torchsurv))
 
-- Using conda (`recommended`)
+- Using conda (**recommended**)
 ```bash
 conda install conda-forge::torchsurv
 ```
