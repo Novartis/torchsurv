@@ -81,11 +81,12 @@ Let's assume that individual $i$ has a time-to-event $X_i$ and a time-to-censori
 A time-to-event outcome can be viewed as a time-varying binary outcome using the counting process representation:
 
 $$
-N_i(t) = 1(X_i \leq t).
+N_i(t) = 1(X_i \leq t),
 $$
 
+which is zero until $t$ passes $X_i$ where it jumps to unity.
 
-The risk score chosen can either predicts prevalence or incidence (Heagerty and Zheng, 2005). For example, the cumulative hazard can be seen as a measure of prevalence because it measures the cumulative risk, whereas the instantaneous hazard can be seen as a measure of incidence as it measures the risk of an event in a very short, infinitesimally small time. Consequently, there are two different types of sensitivity depending on the chosen risk score.
+This function, also called the risk score chosen, can either predict prevalence or incidence (Heagerty and Zheng, 2005). For example, the cumulative hazard can be seen as a measure of prevalence because it measures the cumulative risk, whereas the instantaneous hazard can be seen as a measure of incidence as it measures the risk of an event in a very short, infinitesimally small time. Consequently, there are two different types of sensitivity depending on the chosen risk score.
 
 #### Cumulative sensitivity
 
