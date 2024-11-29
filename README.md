@@ -26,6 +26,8 @@ https://anaconda.org/conda-forge/torchsurv)
 
 If you find this repository useful, please consider giving a star! ⭐
 
+This package was developed by Novartis and the FDA as part of a research collaboration agreement on radiogenomics.
+
 ## TL;DR
 
 Our idea is to **keep things simple**. You are free to use any model architecture you want! Our code has 100% PyTorch backend and behaves like any other functions (losses or metrics) you may be familiar with.
@@ -239,10 +241,10 @@ By contributing to this project, you agree to license your contributions under t
 
 ## Contacts
 
-* [Thibaud Coroller](mailto:thibaud.coroller@novartis.com?subject=TorchSurv) `(creator, maintainer)`
-* [Mélodie Monod](mailto:melodie.monod@novartis.com?subject=TorchSurv) `(creator, maintainer)`
-* [Peter Krusche](mailto:peter.krusche@novartis.com?subject=TorchSurv) `(author, maintainer)`
-* [Qian Cao](mailto:qian.cao@fda.hhs.gov@novartis.com?subject=TorchSurv) `(author, maintainer)`
+* [Thibaud Coroller](mailto:thibaud.coroller@novartis.com?subject=TorchSurv) (**Novartis**): `(creator, maintainer)`
+* [Mélodie Monod](mailto:monod.melodie@gmail.com?subject=TorchSurv) (**Imperial College London**): `(creator, maintainer)`
+* [Peter Krusche](mailto:peter.krusche@novartis.com?subject=TorchSurv) (**Novartis**): `(author, maintainer)`
+* [Qian Cao](mailto:qian.cao@fda.hhs.gov?subject=TorchSurv) (**FDA**): `(author, maintainer)`
 
 If you have any questions, suggestions, or feedback, feel free to reach out the developement team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
 
