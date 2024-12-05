@@ -209,9 +209,9 @@ def _partial_likelihood_efron(
             Log relative hazard of length n_samples, ordered by time-to-event or censoring.
         event_sorted (torch.Tensor, bool):
             Event indicator of length n_samples (= True if event occured), ordered by time-to-event or censoring.
-        time_sorted (torch.Tensor): 
+        time_sorted (torch.Tensor):
             Time-to-event values sorted in order.
-        time_unique (torch.Tensor): 
+        time_unique (torch.Tensor):
             Set of unique time-to-event values.
     Returns:
         (torch.tensor, float):
@@ -256,7 +256,7 @@ def _partial_likelihood_breslow(
             Log relative hazard of length n_samples, ordered by time-to-event or censoring.
         event_sorted (torch.Tensor, bool):
             Event indicator of length n_samples (= True if event occured), ordered by time-to-event or censoring.
-        time_sorted (torch.Tensor): 
+        time_sorted (torch.Tensor):
             Time-to-event values sorted in order.
 
     Returns:
@@ -269,7 +269,7 @@ def _partial_likelihood_breslow(
     log_denominator = torch.tensor(
         [torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(N)]
     )
-   
+
     return (log_hz_sorted - log_denominator)[event_sorted]
 
 
