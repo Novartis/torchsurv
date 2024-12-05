@@ -195,9 +195,6 @@ class KaplanMeierEstimator:
         for t, y in zip(self.time, self.km_est):
             print(f"{t:.2f}\t{y:.4f}")
 
-        x = torch.randn(1, 50, 50, 50)
-        print(x.shape)  # shows the shape of the tensor
-
     def _compute_counts(
         self,
     ) -> Tuple[torch.tensor, torch.tensor, torch.tensor, torch.tensor]:
