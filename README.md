@@ -26,7 +26,7 @@ https://anaconda.org/conda-forge/torchsurv)
 
 If you find this repository useful, please consider giving a star! ⭐
 
-This package was developed by Novartis and the FDA as part of a research collaboration agreement on radiogenomics.
+This package was developed by **Novartis** and the **US Food and Drug Administration** as part of a **research collaboration** agreement on radiogenomics.
 
 ## TL;DR
 
