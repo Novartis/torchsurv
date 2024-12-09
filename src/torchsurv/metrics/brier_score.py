@@ -5,7 +5,7 @@ from typing import Optional
 import torch
 from scipy import stats
 
-from ..tools import validate_inputs
+from ..tools import validate_data
 
 
 class BrierScore:
@@ -185,11 +185,11 @@ class BrierScore:
 
         # further input format checks
         if self.checks:
-            validate_inputs.validate_survival_data(event, time)
-            validate_inputs.validate_evaluation_time(
+            validate_data.validate_survival_data(event, time)
+            validate_data.validate_evaluation_time(
                 new_time, time, within_follow_up=False
             )
-            validate_inputs.validate_estimate(estimate, time, new_time)
+            validate_data.validate_estimate(estimate, time, new_time)
 
         # Calculating the residuals for each subject and time point
         residuals = torch.zeros_like(estimate)
@@ -802,7 +802,7 @@ class BrierScore:
 
     @staticmethod
     def _find_torch_unique_indices(
-        inverse_indices: torch.tensor, counts: torch.tensor
+        inverse_indices: torch.Tensor, counts: torch.Tensor
     ) -> torch.tensor:
         """return unique_sorted_indices such that
         sorted_unique_tensor[inverse_indices] = original_tensor
@@ -824,11 +824,11 @@ class BrierScore:
 
     @staticmethod
     def _validate_brier_score_inputs(
-        estimate: torch.tensor,
-        time: torch.tensor,
-        new_time: torch.tensor,
-        weight: torch.tensor,
-        weight_new_time: torch.tensor,
+        estimate: torch.Tensor,
+        time: torch.Tensor,
+        new_time: torch.Tensor,
+        weight: torch.Tensor,
+        weight_new_time: torch.Tensor,
     ) -> torch.tensor:
         # check new_time and weight are provided, weight_new_time should be provided
         if all([new_time is not None, weight is not None, weight_new_time is None]):
@@ -855,11 +855,11 @@ class BrierScore:
 
     @staticmethod
     def _update_brier_score_new_time(
-        estimate: torch.tensor,
-        time: torch.tensor,
-        new_time: torch.tensor,
-        weight: torch.tensor,
-        weight_new_time: torch.tensor,
+        estimate: torch.Tensor,
+        time: torch.Tensor,
+        new_time: torch.Tensor,
+        weight: torch.Tensor,
+        weight_new_time: torch.Tensor,
     ) -> torch.tensor:
         # check format of new_time
         if (
@@ -891,10 +891,10 @@ class BrierScore:
 
     @staticmethod
     def _update_brier_score_weight(
-        time: torch.tensor,
-        new_time: torch.tensor,
-        weight: torch.tensor,
-        weight_new_time: torch.tensor,
+        time: torch.Tensor,
+        new_time: torch.Tensor,
+        weight: torch.Tensor,
+        weight_new_time: torch.Tensor,
     ) -> torch.tensor:
         # if weight was not specified, weight of 1
         if weight is None:

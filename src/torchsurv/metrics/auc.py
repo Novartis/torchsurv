@@ -7,7 +7,7 @@ from scipy import stats
 from torchmetrics import regression
 
 from ..stats import kaplan_meier
-from ..tools import validate_inputs
+from ..tools import validate_data
 
 
 class Auc:
@@ -212,9 +212,9 @@ class Auc:
 
         # further input format checks
         if self.checks:
-            validate_inputs.validate_survival_data(event, time)
-            validate_inputs.validate_evaluation_time(new_time, time)
-            validate_inputs.validate_estimate(estimate, time, new_time)
+            validate_data.validate_survival_data(event, time)
+            validate_data.validate_evaluation_time(new_time, time)
+            validate_data.validate_estimate(estimate, time, new_time)
 
         # sample size and length of time
         n_samples, n_times = estimate.shape[0], new_time.shape[0]
@@ -579,7 +579,7 @@ class Auc:
         return pvalue
 
     # pylint: disable=invalid-name
-    def _integrate_incident(self, S: torch.tensor, tmax: torch.tensor) -> torch.Tensor:
+    def _integrate_incident(self, S: torch.Tensor, tmax: torch.Tensor) -> torch.Tensor:
         """Integrates the incident/dynamic AUC, int_t AUC(t) x w(t) dt
         where w(t) = 2*f(t)*S(t) and f(t) is the lifeline distribution,
         S(t) is the survival distribution estimated with the Kaplan
@@ -617,7 +617,7 @@ class Auc:
 
     # pylint: disable=invalid-name
     def _integrate_cumulative(
-        self, S: torch.tensor, tmax: torch.tensor
+        self, S: torch.Tensor, tmax: torch.Tensor
     ) -> torch.Tensor:
         """Integrates the cumulative/dynamic AUC, int_t AUC(t) · f(t) dt
         where f(t) is the lifeline distribution estimated from the discrete
@@ -1168,7 +1168,7 @@ class Auc:
 
     @staticmethod
     def _find_torch_unique_indices(
-        inverse_indices: torch.tensor, counts: torch.tensor
+        inverse_indices: torch.Tensor, counts: torch.Tensor
     ) -> torch.tensor:
         """return unique_sorted_indices such that
         sorted_unique_tensor[inverse_indices] = original_tensor
@@ -1214,12 +1214,12 @@ class Auc:
 
     @staticmethod
     def _update_auc_new_time(
-        estimate: torch.tensor,
-        event: torch.tensor,
-        time: torch.tensor,
-        new_time: torch.tensor,
-        weight: torch.tensor,
-        weight_new_time: torch.tensor,
+        estimate: torch.Tensor,
+        event: torch.Tensor,
+        time: torch.Tensor,
+        new_time: torch.Tensor,
+        weight: torch.Tensor,
+        weight_new_time: torch.Tensor,
     ) -> torch.tensor:
         # update new time
         if (
@@ -1255,7 +1255,7 @@ class Auc:
 
     @staticmethod
     def _update_auc_estimate(
-        estimate: torch.tensor, new_time: torch.tensor
+        estimate: torch.Tensor, new_time: torch.Tensor
     ) -> torch.tensor:
         # squeeze estimate if shape = (n_samples, 1)
         if estimate.ndim == 2 and estimate.shape[1] == 1:
@@ -1271,10 +1271,10 @@ class Auc:
 
     @staticmethod
     def _update_auc_weight(
-        time: torch.tensor,
-        new_time: torch.tensor,
-        weight: torch.tensor,
-        weight_new_time: torch.tensor,
+        time: torch.Tensor,
+        new_time: torch.Tensor,
+        weight: torch.Tensor,
+        weight_new_time: torch.Tensor,
     ) -> torch.tensor:
         # if weight was not specified, weight of 1
         if weight is None:

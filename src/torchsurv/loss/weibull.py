@@ -4,7 +4,10 @@ import torch
 
 TORCH_CLAMP_VALUE = 1e10
 
+from torchsurv.tools.validate_data import validate_weibull
 
+
+@torch.jit.script
 def neg_log_likelihood(
     log_params: torch.Tensor,
     event: torch.Tensor,
@@ -95,7 +98,7 @@ def neg_log_likelihood(
     """
 
     if checks:
-        _check_inputs(log_params, event, time)
+        validate_weibull(log_params, event, time)
 
     # Negative log likelihood
     nll = torch.neg(
@@ -120,6 +123,7 @@ def neg_log_likelihood(
     return loss
 
 
+@torch.jit.script
 def survival_function(
     log_params: torch.Tensor, time: torch.Tensor, all_times: bool = True
 ) -> torch.Tensor:
@@ -186,6 +190,7 @@ def survival_function(
     ).cdf(time)
 
 
+@torch.jit.script
 def log_hazard(
     log_params: torch.Tensor, time: torch.Tensor, all_times: bool = True
 ) -> torch.Tensor:
@@ -254,12 +259,13 @@ def log_hazard(
         log_shape
         - log_scale
         + torch.expm1(log_shape)
-        * (torch.log(torch.clip(time, 1e-100, torch.inf)) - log_scale),
+        * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale),
         min=-TORCH_CLAMP_VALUE,
         max=TORCH_CLAMP_VALUE,
     )
 
 
+@torch.jit.script
 def cumulative_hazard(
     log_params: torch.Tensor, time: torch.Tensor, all_times: bool = True
 ) -> torch.Tensor:
@@ -308,13 +314,14 @@ def cumulative_hazard(
     return torch.clamp(
         torch.exp(
             torch.exp(log_shape)
-            * (torch.log(torch.clip(time, 1e-100, torch.inf)) - log_scale)
+            * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale)
         ),
         min=0,
         max=TORCH_CLAMP_VALUE,
     )
 
 
+@torch.jit.script
 def _check_log_shape(log_params: torch.Tensor) -> torch.Tensor:
     """Private function, check if the log shape is missing and impute it with 0
     if needed."""
@@ -333,34 +340,6 @@ def _check_log_shape(log_params: torch.Tensor) -> torch.Tensor:
         log_params = torch.hstack((log_params, torch.zeros_like(log_params)))
 
     return log_params
-
-
-def _check_inputs(log_params: torch.Tensor, event: torch.Tensor, time: torch.Tensor):
-    """Private function, perform input format checks."""
-    if not isinstance(log_params, torch.Tensor):
-        raise TypeError("Input 'log_params' must be a tensor.")
-
-    if not isinstance(event, torch.Tensor):
-        raise TypeError("Input 'event' must be a tensor.")
-
-    if not isinstance(time, torch.Tensor):
-        raise TypeError("``Input 'time' must be a tensor.")
-
-    if log_params.shape[0] != len(event):
-        raise ValueError(
-            "Length mismatch: The length of 'log_params' must match the length of 'event'."
-        )
-
-    if len(time) != len(event):
-        raise ValueError(
-            "Length mismatch: The length of 'time' must match the length of 'event'.`"
-        )
-
-    if any(val < 0 for val in time):
-        raise ValueError("All elements in 'time' must be non-negative.")
-
-    if any(val not in [True, False, 0, 1] for val in event):
-        raise ValueError("All elements in 'event' must be boolean (True/False or 0/1).")
 
 
 if __name__ == "__main__":
