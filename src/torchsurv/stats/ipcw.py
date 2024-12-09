@@ -4,15 +4,16 @@ from typing import Optional
 
 import torch
 
-from ..tools import validate_inputs
-from . import kaplan_meier
+from torchsurv.tools.validate_data import validate_inputs
+from torchsurv.stats import kaplan_meier
 
 
 # pylint: disable=anomalous-backslash-in-string
+@torch.jit.script
 def get_ipcw(
-    event: torch.tensor,
-    time: torch.tensor,
-    new_time: Optional[torch.tensor] = None,
+    event: torch.Tensor,
+    time: torch.Tensor,
+    new_time: Optional[torch.Tensor] = None,
     checks: bool = True,
 ) -> torch.Tensor:
     """Calculate the inverse probability censoring weights (IPCW).
@@ -56,7 +57,7 @@ def get_ipcw(
     """
 
     if checks:
-        validate_inputs.validate_survival_data(event, time)
+        validate_inputs(event, time)
 
     # time on which to evaluate IPCW
     if new_time is None:  # if none, return ipcw of same size as time
@@ -77,6 +78,7 @@ def get_ipcw(
     return ipcw
 
 
+@torch.jit.script
 def _inverse_censoring_dist(ct: torch.Tensor) -> torch.Tensor:
     """Compute inverse of the censoring distribution.
 
@@ -95,11 +97,12 @@ def _inverse_censoring_dist(ct: torch.Tensor) -> torch.Tensor:
         tensor([2.9701, 7.7634, 4.2651, 4.3415])
 
     """
-    if torch.any(ct.eq(0.0)):
+    if torch.any(ct == 0.0):
+        zero_indices = torch.nonzero(ct.eq(0.0), as_tuple=True)[0]
         warnings.warn(
-            "Censoring distribution zero at one or more time points. Returning ones as weight"
+            f"Censoring distribution zero at time points: {zero_indices.tolist()}. Returning ones as weight"
         )
-        return torch.ones_like(ct, dtype=ct.dtype)
+    weight = 1.0 / ct
     weight = torch.ones(1, dtype=ct.dtype) / ct
     return weight
 

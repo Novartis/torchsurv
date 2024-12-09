@@ -6,7 +6,77 @@ import warnings
 
 import torch
 
+from torchsurv.tools.validate_data import validate_cox
 
+
+@torch.jit.script
+def _partial_likelihood_cox(
+    log_hz_sorted: torch.Tensor,
+    event_sorted: torch.Tensor,
+) -> torch.Tensor:
+    """Calculate the partial log likelihood for the Cox proportional hazards model
+    in the absence of ties in event time.
+    """
+    log_denominator = torch.logcumsumexp(log_hz_sorted.flip(0), dim=0).flip(0)
+    return (log_hz_sorted - log_denominator)[event_sorted]
+
+
+@torch.jit.script
+def _partial_likelihood_efron(
+    log_hz_sorted: torch.Tensor,
+    event_sorted: torch.Tensor,
+    time_sorted: torch.Tensor,
+    time_unique: torch.Tensor,
+) -> torch.Tensor:
+    """Calculate the partial log likelihood for the Cox proportional hazards model
+    using Efron's method to handle ties in event time.
+    """
+    J = len(time_unique)
+
+    H = [
+        torch.where((time_sorted == time_unique[j]) & (event_sorted == 1))[0]
+        for j in range(J)
+    ]
+    R = [torch.where(time_sorted >= time_unique[j])[0] for j in range(J)]
+
+    m = torch.tensor([len(h) for h in H])
+    include = torch.tensor([len(h) > 0 for h in H])
+
+    log_nominator = torch.stack([torch.sum(log_hz_sorted[h]) for h in H])
+
+    denominator_naive = torch.stack([torch.sum(torch.exp(log_hz_sorted[r])) for r in R])
+    denominator_ties = torch.stack([torch.sum(torch.exp(log_hz_sorted[h])) for h in H])
+
+    log_denominator_efron = torch.zeros(J).to(log_hz_sorted.device)
+    for j in range(J):
+        mj = int(m[j].item())  # Convert tensor to int
+        for l in range(1, mj + 1):
+            log_denominator_efron[j] += torch.log(
+                denominator_naive[j] - (l - 1) / float(m[j]) * denominator_ties[j]
+            )
+    return (log_nominator - log_denominator_efron)[include]
+
+
+@torch.jit.script
+def _partial_likelihood_breslow(
+    log_hz_sorted: torch.Tensor,
+    event_sorted: torch.Tensor,
+    time_sorted: torch.Tensor,
+):
+    """Calculate the partial log likelihood for the Cox proportional hazards model
+    using Breslow's method to handle ties in event time.
+    """
+    N = len(time_sorted)
+
+    R = [torch.where(time_sorted >= time_sorted[i])[0] for i in range(N)]
+    log_denominator = torch.tensor(
+        [torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(N)]
+    )
+
+    return (log_hz_sorted - log_denominator)[event_sorted]
+
+
+@torch.jit.script
 def neg_partial_log_likelihood(
     log_hz: torch.Tensor,
     event: torch.Tensor,
@@ -118,9 +188,9 @@ def neg_partial_log_likelihood(
     """
 
     if checks:
-        _check_inputs(log_hz, event, time)
+        validate_cox(log_hz, event, time)
 
-    if any([event.sum() == 0, len(log_hz.size()) == 0]):
+    if torch.any([event.sum().item() == 0, len(log_hz.size()) == 0]):
         warnings.warn("No events OR single sample. Returning zero loss for the batch")
         return torch.tensor(0.0, requires_grad=True)
 
@@ -162,98 +232,6 @@ def neg_partial_log_likelihood(
             )
         )
     return loss
-
-
-def _partial_likelihood_cox(
-    log_hz_sorted: torch.Tensor,
-    event_sorted: torch.Tensor,
-) -> torch.Tensor:
-    """Calculate the partial log likelihood for the Cox proportional hazards model
-    in the absence of ties in event time.
-    """
-    log_denominator = torch.logcumsumexp(log_hz_sorted.flip(0), dim=0).flip(0)
-    return (log_hz_sorted - log_denominator)[event_sorted]
-
-
-def _partial_likelihood_efron(
-    log_hz_sorted: torch.Tensor,
-    event_sorted: torch.Tensor,
-    time_sorted: torch.Tensor,
-    time_unique: torch.Tensor,
-) -> torch.Tensor:
-    """Calculate the partial log likelihood for the Cox proportional hazards model
-    using Efron's method to handle ties in event time.
-    """
-    J = len(time_unique)
-
-    H = [
-        torch.where((time_sorted == time_unique[j]) & (event_sorted == 1))[0]
-        for j in range(J)
-    ]
-    R = [torch.where(time_sorted >= time_unique[j])[0] for j in range(J)]
-
-    m = torch.tensor([len(h) for h in H])
-    include = torch.tensor([len(h) > 0 for h in H])
-
-    log_nominator = torch.stack([torch.sum(log_hz_sorted[h]) for h in H])
-
-    denominator_naive = torch.stack([torch.sum(torch.exp(log_hz_sorted[r])) for r in R])
-    denominator_ties = torch.stack([torch.sum(torch.exp(log_hz_sorted[h])) for h in H])
-
-    log_denominator_efron = torch.zeros(J).to(log_hz_sorted.device)
-    for j in range(J):
-        for l in range(1, m[j] + 1):
-            log_denominator_efron[j] += torch.log(
-                denominator_naive[j] - (l - 1) / m[j] * denominator_ties[j]
-            )
-    return (log_nominator - log_denominator_efron)[include]
-
-
-def _partial_likelihood_breslow(
-    log_hz_sorted: torch.Tensor,
-    event_sorted: torch.Tensor,
-    time_sorted: torch.Tensor,
-):
-    """Calculate the partial log likelihood for the Cox proportional hazards model
-    using Breslow's method to handle ties in event time.
-    """
-    N = len(time_sorted)
-
-    R = [torch.where(time_sorted >= time_sorted[i])[0] for i in range(N)]
-    log_denominator = torch.tensor(
-        [torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(N)]
-    )
-
-    return (log_hz_sorted - log_denominator)[event_sorted]
-
-
-def _check_inputs(log_hz: torch.Tensor, event: torch.Tensor, time: torch.Tensor):
-    if not isinstance(log_hz, torch.Tensor):
-        raise TypeError("Input 'log_hz' must be a tensor.")
-
-    if not isinstance(event, torch.Tensor):
-        raise TypeError("Input 'event' must be a tensor.")
-
-    if not isinstance(time, torch.Tensor):
-        raise TypeError("Input 'time' must be a tensor.")
-
-    if len(log_hz) != len(event):
-        raise ValueError(
-            "Length mismatch: 'log_hz' and 'event' must have the same length."
-        )
-
-    if len(time) != len(event):
-        raise ValueError(
-            "Length mismatch: 'time' must have the same length as 'event'."
-        )
-
-    if any(val < 0 for val in time):
-        raise ValueError("Invalid values: All elements in 'time' must be non-negative.")
-
-    if any(val not in [True, False, 0, 1] for val in event):
-        raise ValueError(
-            "Invalid values: 'event' must contain only boolean values (True/False or 1/0)"
-        )
 
 
 if __name__ == "__main__":
