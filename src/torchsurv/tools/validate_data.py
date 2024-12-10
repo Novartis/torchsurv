@@ -1,5 +1,25 @@
 import torch
-import torch
+
+
+@torch.jit.script
+def validate_log_shape(log_params: torch.Tensor) -> torch.Tensor:
+    """Private function, check if the log shape is missing and impute it with 0
+    if needed."""
+    if any(
+        [
+            log_params.dim() == 0,
+            log_params.dim() == 1,  # if shape = [n_samples]
+            log_params.dim() > 1
+            and log_params.size(1) == 1,  # if shape = [n_samples, 1]
+        ]
+    ):
+        if log_params.dim() == 1:
+            log_params = log_params.unsqueeze(1)
+
+        # Missing log shape parameter. Creating zeros placeholder instead.
+        log_params = torch.hstack((log_params, torch.zeros_like(log_params)))
+
+    return log_params
 
 
 @torch.jit.script

@@ -39,7 +39,10 @@ def _partial_likelihood_efron(
     ]
     R = [torch.where(time_sorted >= time_unique[j])[0] for j in range(J)]
 
+    # Calculate the length of each element in H and store it in a tensor
     m = torch.tensor([len(h) for h in H])
+
+    # Create a boolean tensor indicating whether each element in H has a length greater than 0
     include = torch.tensor([len(h) > 0 for h in H])
 
     log_nominator = torch.stack([torch.sum(log_hz_sorted[h]) for h in H])
@@ -47,9 +50,9 @@ def _partial_likelihood_efron(
     denominator_naive = torch.stack([torch.sum(torch.exp(log_hz_sorted[r])) for r in R])
     denominator_ties = torch.stack([torch.sum(torch.exp(log_hz_sorted[h])) for h in H])
 
-    log_denominator_efron = torch.zeros(J).to(log_hz_sorted.device)
+    log_denominator_efron = torch.zeros(J, device=log_hz_sorted.device)
     for j in range(J):
-        mj = int(m[j].item())  # Convert tensor to int
+        mj = int(m[j].item())
         for l in range(1, mj + 1):
             log_denominator_efron[j] += torch.log(
                 denominator_naive[j] - (l - 1) / float(m[j]) * denominator_ties[j]
@@ -63,8 +66,16 @@ def _partial_likelihood_breslow(
     event_sorted: torch.Tensor,
     time_sorted: torch.Tensor,
 ):
-    """Calculate the partial log likelihood for the Cox proportional hazards model
-    using Breslow's method to handle ties in event time.
+    """
+    Compute the partial likelihood using Breslow's method for Cox proportional hazards model.
+
+    Args:
+        log_hz_sorted (torch.Tensor): Log hazard rates sorted by time.
+        event_sorted (torch.Tensor): Binary tensor indicating if the event occurred (1) or was censored (0), sorted by time.
+        time_sorted (torch.Tensor): Event or censoring times sorted in ascending order.
+
+    Returns:
+        torch.Tensor: The partial likelihood for the observed events.
     """
     N = len(time_sorted)
 

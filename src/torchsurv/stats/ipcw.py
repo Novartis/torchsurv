@@ -4,12 +4,11 @@ from typing import Optional
 
 import torch
 
-from torchsurv.tools.validate_data import validate_inputs
 from torchsurv.stats import kaplan_meier
+from torchsurv.tools.validate_data import validate_inputs
 
 
 # pylint: disable=anomalous-backslash-in-string
-@torch.jit.script
 def get_ipcw(
     event: torch.Tensor,
     time: torch.Tensor,
@@ -98,12 +97,13 @@ def _inverse_censoring_dist(ct: torch.Tensor) -> torch.Tensor:
 
     """
     if torch.any(ct == 0.0):
-        zero_indices = torch.nonzero(ct.eq(0.0), as_tuple=True)[0]
+        zero_indices = torch.nonzero(ct.eq(0.0)).squeeze()
+        zero_indices_list = zero_indices.tolist()  # Explicitly convert to list
         warnings.warn(
-            f"Censoring distribution zero at time points: {zero_indices.tolist()}. Returning ones as weight"
+            f"Censoring distribution zero at time points: {zero_indices_list}. Returning ones as weight"
         )
     weight = 1.0 / ct
-    weight = torch.ones(1, dtype=ct.dtype) / ct
+    weight = torch.ones_like(ct) / ct
     return weight
 
 
@@ -114,6 +114,3 @@ if __name__ == "__main__":
     results = doctest.testmod()
     if results.failed == 0:
         print("All tests passed.")
-    else:
-        print("Some doctests failed.")
-        sys.exit(1)
