@@ -216,6 +216,45 @@ class TestNonParametric(unittest.TestCase):
 
             self.assertRaises(ValueError, km.predict, test_time)
 
+            def test_kaplan_meier_plot_km(self):
+                """test Kaplan Meier plot function"""
+                import matplotlib.pyplot as plt
+
+                event = torch.tensor([1, 1, 0, 1, 0, 1, 0, 0, 1, 1], dtype=torch.bool)
+                time = torch.tensor([1, 2, 2, 3, 3, 4, 4, 5, 6, 7], dtype=torch.float32)
+
+                km = KaplanMeierEstimator()
+                km(event, time, censoring_dist=False)
+
+                fig, ax = plt.subplots()
+                km.plot_km(ax=ax)
+                plt.close(fig)  # Close the plot to avoid displaying it during tests
+
+            def test_kaplan_meier_print_survival_table(self):
+                """test Kaplan Meier print survival table function"""
+                event = torch.tensor([1, 1, 0, 1, 0, 1, 0, 0, 1, 1], dtype=torch.bool)
+                time = torch.tensor([1, 2, 2, 3, 3, 4, 4, 5, 6, 7], dtype=torch.float32)
+
+                km = KaplanMeierEstimator()
+                km(event, time, censoring_dist=False)
+                km.print_survival_table()
+
+                # Check if the survival table is printed correctly
+                expected_output = (
+                    "Time\tSurvival\n"
+                    "----------------\n"
+                    "1.00\t1.0000\n"
+                    "2.00\t0.8889\n"
+                    "3.00\t0.6667\n"
+                    "4.00\t0.5000\n"
+                    "5.00\t0.5000\n"
+                    "6.00\t0.3333\n"
+                    "7.00\t0.0000\n"
+                )
+                with self.assertLogs(level="INFO") as log:
+                    km.print_survival_table()
+                    self.assertIn(expected_output, log.output)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -151,15 +151,15 @@ class Momentum(nn.Module):
 
         """
 
-        estimate_q = self.online(inputs)
-        for estimate in zip(estimate_q, event, time):
-            self.memory_q.append(self.survtuple(*list(estimate)))
+        online_estimate = self.online(inputs)
+        for estimate in zip(online_estimate, event, time):
+            self.memory_q.append(self.survtuple(*estimate))
         loss = self._bank_loss()
         with torch.no_grad():
             self._update_momentum_encoder()
-            estimate_k = self.target(inputs)
-            for estimate in zip(estimate_k, event, time):
-                self.memory_k.append(self.survtuple(*list(estimate)))
+            target_estimate = self.target(inputs)
+            for estimate in zip(target_estimate, event, time):
+                self.memory_k.append(self.survtuple(*estimate))
         return loss
 
     @torch.no_grad()  # deactivates autograd
@@ -187,27 +187,33 @@ class Momentum(nn.Module):
         return self.target(inputs)
 
     def _bank_loss(self) -> torch.Tensor:
-        """computer the  negative loss likelyhood from memory bank"""
+        """compute the negative log-likelihood from memory bank"""
 
         # Combine current batch and momentum
         bank = self.memory_k + self.memory_q
         assert all(
             x in bank[0]._fields for x in ["estimate", "event", "time"]
         ), "All fields must be present"
-        return self.loss(
-            torch.stack([mem.estimate.cpu() for mem in bank]).squeeze(),
-            torch.stack([mem.event.cpu() for mem in bank]).squeeze(),
-            torch.stack([mem.time.cpu() for mem in bank]).squeeze(),
-        )
+        log_estimates = torch.stack([mem.estimate.cpu() for mem in bank]).squeeze()
+        events = torch.stack([mem.event.cpu() for mem in bank]).squeeze()
+        times = torch.stack([mem.time.cpu() for mem in bank]).squeeze()
+        return self.loss(log_estimates, events, times)
 
     @torch.no_grad()
     def _update_momentum_encoder(self):
-        """Exponantial moving average"""
+        """Exponential moving average"""
         for param_b, param_m in zip(self.online.parameters(), self.target.parameters()):
             param_m.data = param_m.data * self.rate + param_b.data * (1.0 - self.rate)
 
     @torch.no_grad()
     def _init_encoder_k(self):
+        """
+        Initialize the target network (encoder_k) with the parameters of the online network (encoder_q).
+        The requires_grad attribute of the target network parameters is set to False to prevent gradient updates during training,
+        ensuring that the target network remains a stable reference point.
+        This method uses the `copy_` method to copy the parameters from the online network to the target network
+        and sets the requires_grad attribute of the target network parameters to False to prevent gradient updates.
+        """
         for param_q, param_k in zip(self.online.parameters(), self.target.parameters()):
             param_k.data.copy_(param_q.data)
             param_k.requires_grad = False
