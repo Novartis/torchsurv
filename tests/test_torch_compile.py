@@ -1,0 +1,87 @@
+"""
+
+Tests for torch.compile
+
+Note: conda install conda-forge::gxx
+
+TODO: 
+    - test conda install conda-forge::cxx-compiler
+    - check torchtriton for GPU
+    
+References:
+    - https://pytorch.org/tutorials/intermediate/torch_compile_tutorial.html
+    - https://github.com/pytorch/pytorch/issues/122094
+
+"""
+
+# global modules
+import json
+import unittest
+
+import numpy as np
+import torch
+
+# Local modules
+from torchsurv.loss.cox import neg_partial_log_likelihood as cox
+from torchsurv.loss.weibull import neg_log_likelihood as weibull
+
+# set seed for reproducibility
+torch.manual_seed(42)
+
+class TestTorchCompile(unittest.TestCase):
+    """
+    Tests using torch.compile with cox
+    """
+
+    def test_cox_equivalence(self):
+        """
+        whether the compiled version of cox evaluates to the same value
+        """
+        
+        # random data and parameters
+        N = 32
+        log_hz = torch.randn(N)
+        event = torch.randint(low=0, high=2, size=(N,)).bool()
+        time = torch.randint(low=1, high=100, size=(N,))
+
+        # compiled version of cox
+        ccox = torch.compile(cox)
+
+        loss_cox = cox(log_hz, event, time)
+        loss_ccox = ccox(log_hz, event, time)
+
+        self.assertTrue(np.isclose(loss_cox.numpy(),
+                                   loss_ccox.numpy(),
+                                   rtol=1e-3,
+                                   atol=1e-3))
+
+    def test_weibull_equivalence(self):
+        """
+        whether the compiled version of weibull evaluates to the same value
+        """
+        
+        # random data and parameters
+        N = 32
+        log_hz = torch.randn(N)
+        event = torch.randint(low=0, high=2, size=(N,)).bool()
+        time = torch.randint(low=1, high=100, size=(N,))
+
+        # compiled version of weibull
+        cweibull = torch.compile(weibull)
+
+        loss_weibull = weibull(log_hz, event, time)
+        loss_cweibull = cweibull(log_hz, event, time)
+
+        self.assertTrue(np.isclose(loss_weibull.numpy(),
+                                   loss_cweibull.numpy(),
+                                   rtol=1e-3,
+                                   atol=1e-3))
+
+if __name__ == "__main__":
+    
+    unittest.main()
+
+    
+    
+    
+    
