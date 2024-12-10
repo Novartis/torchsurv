@@ -2,7 +2,7 @@ import sys
 
 import torch
 
-from torchsurv.tools.validate_data import validate_log_shape, validate_weibull
+from torchsurv.tools.validate_data import validate_log_shape, validate_inputs
 
 
 @torch.jit.script
@@ -232,7 +232,7 @@ def neg_log_likelihood(
     """
 
     if checks:
-        validate_weibull(log_params, event, time)
+        validate_inputs(log_params, event, time, model_type="weibull")
 
     # Negative log likelihood
     nll = torch.neg(
