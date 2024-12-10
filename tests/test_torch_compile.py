@@ -25,8 +25,8 @@ import torch
 from torchsurv.loss.cox import neg_partial_log_likelihood as cox
 
 # torch compile settings
-import torch._inductor.config
-torch._inductor.config.cpp.cxx = ("g++",)
+# import torch._inductor.config
+# torch._inductor.config.cpp.cxx = ("g++",)
 
 # set seed for reproducibility
 torch.manual_seed(42)
