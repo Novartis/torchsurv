@@ -23,31 +23,6 @@ def validate_log_shape(log_params: torch.Tensor) -> torch.Tensor:
 
 
 @torch.jit.script
-def validate_inputs(event: torch.Tensor, time: torch.Tensor) -> None:
-    """
-    Validate the inputs for survival analysis functions.
-
-    Args:
-        event (torch.Tensor): Event indicator tensor.
-        time (torch.Tensor): Time-to-event or censoring tensor.
-
-    Raises:
-        TypeError: If inputs are not tensors.
-        ValueError: If any ``time`` are negative.
-    """
-    if not isinstance(event, torch.Tensor) or not isinstance(time, torch.Tensor):
-        raise TypeError("Inputs 'event' and 'time' should be tensors")
-
-    if torch.any(time < 0):
-        raise ValueError("All elements in 'time' must be non-negative")
-
-    if torch.any((event != 0) & (event != 1)):
-        raise ValueError(
-            "Input 'event' must contain only boolean values (True/False or 1/0)"
-        )
-
-
-@torch.jit.script
 def check_within_follow_up(
     new_time: torch.Tensor, time: torch.Tensor, within_follow_up: bool
 ) -> None:
@@ -105,11 +80,45 @@ def validate_new_time(
     check_within_follow_up(new_time, time, within_follow_up)
 
 
-import torch
+def validate_survival_data(event, time):
+    """Perform format and validity checks for survival data.
+
+    Args:
+        event (torch.Tensor, boolean):
+            Event indicator of size n_samples (= True if event occured).
+        time (torch.Tensor, float):
+            Event or censoring time of size n_samples.
+
+    Raises:
+        TypeError: If ``event`` or ``time`` are not tensors.
+        ValueError: If ``event`` is not boolean.
+        ValueError: If ``event`` and ``time`` are not of the same length.
+        ValueError: If all ``event`` are False.
+        ValueError: If any ``time`` are negative.
+    """
+    if not torch.is_tensor(event) or not torch.is_tensor(time):
+        raise TypeError("Inputs 'event' and 'time' should be tensors")
+
+    if not event.dtype == torch.bool:
+        raise ValueError("Input 'event' should be of boolean type.")
+
+    if not torch.is_floating_point(time):
+        raise ValueError("Input 'time' should be of float type.")
+
+    if len(event) != len(time):
+        raise ValueError(
+            "Dimension mismatch: Incompatible length between inputs 'time' and 'event'."
+        )
+
+    if torch.sum(event) <= 0:
+        raise ValueError("All samples are censored.")
+
+    if torch.any(time < 0.0):
+        raise ValueError("Input 'time' should be non-negative.")
 
 
 @torch.jit.script
-def validate_inputs(
+def validate_loss(
     log_params: torch.Tensor, event: torch.Tensor, time: torch.Tensor, model_type: str
 ) -> None:
     """
@@ -155,9 +164,10 @@ def validate_inputs(
         )
 
     if model_type == "weibull":
-        if log_params.shape[1] != 2:
+        # if log_params.shape[1] is not 1 or 2:
+        if log_params.shape[1] not in [1, 2]:
             raise ValueError(
-                "For Weibull model, 'log_params' must have shape (n_samples, 2)."
+                f"For Weibull model, 'log_params' must have shape (n_samples, 2) or (n_samples, 1)."
             )
     elif model_type == "cox":
         if log_params.shape[1] != 1:
@@ -176,7 +186,7 @@ if __name__ == "__main__":
     time = torch.tensor([10, 20, 30, 40, 50], dtype=torch.float32)
 
     # Validate Weibull model inputs
-    validate_inputs(log_params_weibull, event, time, model_type="weibull")
+    validate_loss(log_params_weibull, event, time, model_type="weibull")
 
     # Validate Cox model inputs
-    validate_inputs(log_params_cox, event, time, model_type="cox")
+    validate_loss(log_params_cox, event, time, model_type="cox")

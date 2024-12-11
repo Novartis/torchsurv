@@ -4,10 +4,9 @@ from typing import Tuple
 
 import torch
 
-from torchsurv.tools import validate_data
+from torchsurv.tools.validate_data import validate_survival_data
 
 
-@torch.jit.script
 class KaplanMeierEstimator:
     """Kaplan-Meier estimate of survival or censoring distribution for right-censored data :cite:p:`Kaplan1958`."""
 
@@ -63,7 +62,7 @@ class KaplanMeierEstimator:
 
         # Check input validity if required
         if check:
-            validate_data.validate_inputs(event, time)
+            validate_survival_data(event, time)
 
         # Compute the counts of events, censorings, and the number at risk at each unique time
         uniq_times, n_events, n_at_risk, n_censored = self._compute_counts()

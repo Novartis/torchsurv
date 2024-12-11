@@ -6,7 +6,7 @@ import warnings
 
 import torch
 
-from torchsurv.tools.validate_data import validate_inputs
+from torchsurv.tools.validate_data import validate_loss
 
 
 @torch.jit.script
@@ -80,7 +80,7 @@ def _partial_likelihood_breslow(
     """
     N = len(time_sorted)
     R = [torch.where(time_sorted >= time_sorted[i])[0] for i in range(N)]
-    log_denominator = torch._stack(
+    log_denominator = torch.stack(
         [torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(N)]
     )
 
@@ -199,7 +199,7 @@ def neg_partial_log_likelihood(
     """
 
     if checks:
-        validate_inputs(log_hz, event, time, model_type="cox")
+        validate_loss(log_hz, event, time, model_type="cox")
 
     if any([event.sum().item() == 0, len(log_hz.size()) == 0]):
         warnings.warn("No events OR single sample. Returning zero loss for the batch")

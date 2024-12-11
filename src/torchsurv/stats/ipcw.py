@@ -1,11 +1,10 @@
-import sys
 import warnings
 from typing import Optional
 
 import torch
 
 from torchsurv.stats import kaplan_meier
-from torchsurv.tools.validate_data import validate_inputs
+from torchsurv.tools.validate_data import validate_survival_data
 
 
 # pylint: disable=anomalous-backslash-in-string
@@ -56,7 +55,7 @@ def get_ipcw(
     """
 
     if checks:
-        validate_inputs(event, time)
+        validate_survival_data(event, time)
 
     # time on which to evaluate IPCW
     if new_time is None:  # if none, return ipcw of same size as time
@@ -77,7 +76,6 @@ def get_ipcw(
     return ipcw
 
 
-@torch.jit.script
 def _inverse_censoring_dist(ct: torch.Tensor) -> torch.Tensor:
     """Compute inverse of the censoring distribution.
 

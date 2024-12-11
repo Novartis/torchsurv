@@ -7,7 +7,7 @@ import torch
 from scipy import stats
 from torchmetrics import regression
 
-from ..tools import validate_data
+from torchsurv.tools.validate_data import validate_log_shape, validate_survival_data
 
 
 class ConcordanceIndex:
@@ -185,8 +185,8 @@ class ConcordanceIndex:
 
         # Inputs checks
         if self.checks:
-            validate_data.validate_survival_data(event, time)
-            validate_data.validate_estimate(estimate, time)
+            validate_survival_data(event, time)
+            validate_log_shape(estimate)
 
         # find comparable pairs
         comparable = self._get_comparable_and_tied_time(event, time)

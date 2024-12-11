@@ -6,8 +6,12 @@ import torch
 from scipy import stats
 from torchmetrics import regression
 
-from ..stats import kaplan_meier
-from ..tools import validate_data
+from torchsurv.stats import kaplan_meier
+from torchsurv.tools.validate_data import (
+    validate_log_shape,
+    validate_new_time,
+    validate_survival_data,
+)
 
 
 class Auc:
@@ -212,9 +216,9 @@ class Auc:
 
         # further input format checks
         if self.checks:
-            validate_data.validate_survival_data(event, time)
-            validate_data.validate_evaluation_time(new_time, time)
-            validate_data.validate_estimate(estimate, time, new_time)
+            validate_survival_data(event, time)
+            validate_new_time(new_time, time)
+            validate_log_shape(estimate)
 
         # sample size and length of time
         n_samples, n_times = estimate.shape[0], new_time.shape[0]

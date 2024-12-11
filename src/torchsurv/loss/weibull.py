@@ -2,10 +2,9 @@ import sys
 
 import torch
 
-from torchsurv.tools.validate_data import validate_log_shape, validate_inputs
+from torchsurv.tools.validate_data import validate_log_shape, validate_loss
 
 
-@torch.jit.script
 def cumulative_hazard(
     log_params: torch.Tensor,
     time: torch.Tensor,
@@ -64,7 +63,6 @@ def cumulative_hazard(
     )
 
 
-@torch.jit.script
 def log_hazard(
     log_params: torch.Tensor,
     time: torch.Tensor,
@@ -232,7 +230,7 @@ def neg_log_likelihood(
     """
 
     if checks:
-        validate_inputs(log_params, event, time, model_type="weibull")
+        validate_loss(log_params, event, time, model_type="weibull")
 
     # Negative log likelihood
     nll = torch.neg(
@@ -257,7 +255,6 @@ def neg_log_likelihood(
     return loss
 
 
-@torch.jit.script
 def survival_function(
     log_params: torch.Tensor, time: torch.Tensor, all_times: bool = True
 ) -> torch.Tensor:
