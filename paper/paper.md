@@ -41,9 +41,10 @@ bibliography: paper.bib
 
 # Statement of need
 
-Survival analysis plays a crucial role in various domains, such as medicine, economics or engineering. Thus, sophisticated survival models sugin deep learning opens new opportunities to leverage complex dataset and relationships. However, no existing library provides the flexibility to define the survival model's parameters using a custom `PyTorch`-based neural network.
+Survival analysis plays a crucial role in various domains, such as medicine, economics or engineering. Sophisticated survival analysis using deep learning, often referred to as "deep survival analysis," unlocks new opportunities to leverage new data types and uncover intricate relationships. 
+However, performing comprehensive deep survival analysis remain challenging. Key issues include the lack of flexibility in existing tools to define survival model parameters with custom architectures and limitations in handling complex, high-dimensional datasets. Indeed, existing frameworks often lack the computational efficiency necessary to process large datasets efficiently, making them less suitable for real-world applications where time and resource constraints are paramount. 
 
-\autoref{tab:bibliography} compares the functionalities of `TorchSurv` with those of
+To address these gaps, we propose a flexible, `PyTorch`-based library that allows users to define survival model parameters using custom neural network architectures. By combining computational efficiency with ease of use, this toolbox opens new opportunities to advance survival analysis research and application, making it more accessible and interpretable for practitioners across disciplines. \autoref{tab:bibliography} compares the functionalities of `TorchSurv` with those of
 `auton-survival` [@nagpal2022auton],
 `pycox` [@Kvamme2019pycox],
 `torchlife` [@torchlifeAbeywardana],
