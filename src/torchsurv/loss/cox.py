@@ -168,7 +168,7 @@ def _partial_likelihood_cox(
     log_hz_sorted: torch.Tensor,
     event_sorted: torch.Tensor,
 ) -> torch.Tensor:
-    """Calculate the partial log likelihood for the Cox proportional hazards model
+    r"""Calculate the partial log likelihood for the Cox proportional hazards model
     in the absence of ties in event time.
 
     Args:
