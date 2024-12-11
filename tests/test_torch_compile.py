@@ -11,7 +11,6 @@ References:
 # global modules
 import unittest
 
-import numpy as np
 import torch
 
 # Local modules
