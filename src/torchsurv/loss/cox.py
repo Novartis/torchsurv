@@ -17,7 +17,8 @@ def _partial_likelihood_cox(
     """Calculate the partial log likelihood for the Cox proportional hazards model
     in the absence of ties in event time.
     """
-    log_denominator = torch.logcumsumexp(log_hz_sorted.flip(0), dim=0).flip(0)
+    log_hz_flipped = log_hz_sorted.flip(0)
+    log_denominator = torch.logcumsumexp(log_hz_flipped, dim=0).flip(0)
     return (log_hz_sorted - log_denominator)[event_sorted]
 
 
