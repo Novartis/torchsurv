@@ -9,7 +9,6 @@ References:
 """
 
 # global modules
-import json
 import unittest
 
 import numpy as np
@@ -21,6 +20,8 @@ from torchsurv.loss.weibull import neg_log_likelihood as weibull
 
 # set seed for reproducibility
 torch.manual_seed(42)
+
+N = 512
 
 
 class TestTorchCompile(unittest.TestCase):
@@ -34,7 +35,6 @@ class TestTorchCompile(unittest.TestCase):
         """
 
         # random data and parameters
-        N = 32
         log_hz = torch.randn(N)
         event = torch.randint(low=0, high=2, size=(N,)).bool()
         time = torch.randint(low=1, high=100, size=(N,))
@@ -45,9 +45,7 @@ class TestTorchCompile(unittest.TestCase):
         loss_cox = cox(log_hz, event, time)
         loss_ccox = ccox(log_hz, event, time)
 
-        self.assertTrue(
-            np.isclose(loss_cox.numpy(), loss_ccox.numpy(), rtol=1e-3, atol=1e-3)
-        )
+        self.assertTrue(torch.allclose(loss_cox, loss_ccox, rtol=1e-3, atol=1e-3))
 
     def test_weibull_equivalence(self):
         """
@@ -55,7 +53,6 @@ class TestTorchCompile(unittest.TestCase):
         """
 
         # random data and parameters
-        N = 32
         log_hz = torch.randn(N)
         event = torch.randint(low=0, high=2, size=(N,)).bool()
         time = torch.randint(low=1, high=100, size=(N,))
@@ -67,9 +64,7 @@ class TestTorchCompile(unittest.TestCase):
         loss_cweibull = cweibull(log_hz, event, time)
 
         self.assertTrue(
-            np.isclose(
-                loss_weibull.numpy(), loss_cweibull.numpy(), rtol=1e-3, atol=1e-3
-            )
+            torch.allclose(loss_weibull, loss_cweibull, rtol=1e-3, atol=1e-3)
         )
 
 
