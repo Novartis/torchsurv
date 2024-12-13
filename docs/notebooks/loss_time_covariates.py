@@ -85,7 +85,7 @@ def _partial_likelihood_time_cox(
 
     #same step as in normal cox loss, just again, we consider Z(tau_j) where tau_j denotes event time to subject j
     log_denominator_tj = torch.logcumsumexp(log_hz_sorted_tj.flip(0), dim=0).flip(0)
-    
+
     return (log_hz_sorted_tj - log_denominator_tj)[event_sorted]
 
 
