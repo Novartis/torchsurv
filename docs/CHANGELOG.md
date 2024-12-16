@@ -1,6 +1,14 @@
 Change log
 =========
 
+Version 0.1.4
+-------------
+
+* JOSS review edits (#45, #59, #66, #68, #77, #78)
+* Torch.compile tests #81
+* Improved documentation (#73, #76)
+* Improved notebook #83
+
 Version 0.1.3
 -------------
 
