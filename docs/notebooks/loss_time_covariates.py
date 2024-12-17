@@ -9,19 +9,11 @@ def neg_partial_time_log_likelihood(
     event: torch.Tensor,
     time: torch.Tensor,
     ties_method: str = "efron",
-    reduction: str = "mean",
-    checks: bool = True,
+    reduction: str = "mean"
 ) -> torch.Tensor:
     '''
-    THIS FUNCTION IS NOT DONE, i HAVENT TESTED THE NEGATIVE PART YET
+    needs further work
     '''
-    if checks:
-        _check_inputs(log_hz, event, time)
-
-    if any([event.sum() == 0, len(log_hz.size()) == 0]):
-        warnings.warn("No events OR single sample. Returning zero loss for the batch")
-        return torch.tensor(0.0, requires_grad=True)
-
     # sort data by time-to-event or censoring
     time_sorted, idx = torch.sort(time)
     log_hz_sorted = log_hz[idx]
