@@ -179,12 +179,12 @@ def neg_partial_log_likelihood(
         >>> time = torch.tensor([1., 2., 3., 4., 5.])
         >>> neg_partial_log_likelihood(log_hz, event, time) # default, mean of log likelihoods across patients
         tensor(1.0071)
-        >>> neg_partial_log_likelihood(log_hz, event, time, reduction = 'sum') # sun of log likelihoods across patients
+        >>> neg_partial_log_likelihood(log_hz, event, time, reduction = 'sum') # sum of log likelihoods across patients
         tensor(3.0214)
         >>> time = torch.tensor([1., 2., 2., 4., 5.])  # Dealing with ties (default: Efron)
         >>> neg_partial_log_likelihood(log_hz, event, time, ties_method = "efron")
         tensor(1.0873)
-        >>> neg_partial_log_likelihood(log_hz, event, time, ties_method = "breslow")  # Dealing with ties (Bfron)
+        >>> neg_partial_log_likelihood(log_hz, event, time, ties_method = "breslow")  # Dealing with ties (Breslow)
         tensor(1.0873)
 
     References:
@@ -215,6 +215,10 @@ def neg_partial_log_likelihood(
         # if not ties, use traditional cox partial likelihood
         pll = _partial_likelihood_cox(log_hz_sorted, event_sorted)
     else:
+        # add warning about ties
+        warnings.warn(
+            f"Ties in event time detected; using {ties_method}'s method to handle ties."
+        )
         # if ties, use either efron or breslow approximation of partial likelihood
         if ties_method == "efron":
             pll = _partial_likelihood_efron(

@@ -162,6 +162,8 @@ class MNISTDataModule(L.LightningDataModule):
             batch_size=self.batch_size,
             num_workers=self.num_workers,
             persistent_workers=True,
+            shuffle=True,
+            drop_last=True,
         )
 
     def val_dataloader(self):

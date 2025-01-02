@@ -16,8 +16,7 @@ https://anaconda.org/conda-forge/torchsurv)
 
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
-[![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg?color=green)](https://arxiv.org/abs/2404.10761)
-[![status](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d/status.svg)](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d)
+[![JOSS](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d/status.svg)](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d)
 [![License](https://img.shields.io/badge/License-MIT-black)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
 
@@ -253,13 +252,15 @@ If you have any questions, suggestions, or feedback, feel free to reach out the 
 If you use this project in academic work or publications, we appreciate citing it using the following BibTeX entry:
 
 ```
-@misc{monod2024torchsurv,
-      title={TorchSurv: A Lightweight Package for Deep Survival Analysis}, 
-      author={M{\'{e}}lodie Monod and Peter Krusche and Qian Cao and Berkman Sahiner and Nicholas Petrick and David Ohlssen and Thibaud Coroller},
-      year={2024},
-      eprint={2404.10761},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      doi={https://doi.org/10.48550/arXiv.2404.10761}
+@article{Monod2024,
+    doi = {10.21105/joss.07341},
+    url = {https://doi.org/10.21105/joss.07341},
+    year = {2024},
+    publisher = {The Open Journal},
+    volume = {9},
+    number = {104},
+    pages = {7341},
+    author = {Mélodie Monod and Peter Krusche and Qian Cao and Berkman Sahiner and Nicholas Petrick and David Ohlssen and Thibaud Coroller},
+    title = {TorchSurv: A Lightweight Package for Deep Survival Analysis}, journal = {Journal of Open Source Software}
 }
 ```
