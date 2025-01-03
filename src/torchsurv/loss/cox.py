@@ -98,12 +98,12 @@ def neg_partial_log_likelihood(
         >>> time = torch.tensor([1., 2., 3., 4., 5.])
         >>> neg_partial_log_likelihood(log_hz, event, time) # default, mean of log likelihoods across patients
         tensor(1.0071)
-        >>> neg_partial_log_likelihood(log_hz, event, time, reduction = 'sum') # sun of log likelihoods across patients
+        >>> neg_partial_log_likelihood(log_hz, event, time, reduction = 'sum') # sum of log likelihoods across patients
         tensor(3.0214)
         >>> time = torch.tensor([1., 2., 2., 4., 5.])  # Dealing with ties (default: Efron)
         >>> neg_partial_log_likelihood(log_hz, event, time, ties_method = "efron")
         tensor(1.0873)
-        >>> neg_partial_log_likelihood(log_hz, event, time, ties_method = "breslow")  # Dealing with ties (Bfron)
+        >>> neg_partial_log_likelihood(log_hz, event, time, ties_method = "breslow")  # Dealing with ties (Breslow)
         tensor(1.0873)
 
     References:
@@ -134,6 +134,10 @@ def neg_partial_log_likelihood(
         # if not ties, use traditional cox partial likelihood
         pll = _partial_likelihood_cox(log_hz_sorted, event_sorted)
     else:
+        # add warning about ties
+        warnings.warn(
+            f"Ties in event time detected; using {ties_method}'s method to handle ties."
+        )
         # if ties, use either efron or breslow approximation of partial likelihood
         if ties_method == "efron":
             pll = _partial_likelihood_efron(
@@ -168,10 +172,30 @@ def _partial_likelihood_cox(
     log_hz_sorted: torch.Tensor,
     event_sorted: torch.Tensor,
 ) -> torch.Tensor:
-    """Calculate the partial log likelihood for the Cox proportional hazards model
+    r"""Calculate the partial log likelihood for the Cox proportional hazards model
     in the absence of ties in event time.
+
+    Args:
+        log_hz_sorted (torch.Tensor, float):
+            Log relative hazard of length n_samples, ordered by time-to-event or censoring.
+        event_sorted (torch.Tensor, bool):
+            Event indicator of length n_samples (= True if event occured), ordered by time-to-event or censoring.
+
+    Returns:
+        (torch.tensor, float):
+            Vector of the partial log likelihoods.
+
+    Note:
+        Let :math:`\tau_1 < \tau_2 < \cdots < \tau_N`
+        be the ordered times and let  :math:`R(\tau_i) = \{ j: \tau_j \geq \tau_i\}`
+        be the risk set at :math:`\tau_i`. The partial log likelihood is defined as:
+
+        .. math::
+
+            pll = \sum_{i: \: \delta_i = 1} \left(\log \theta_i - \log\left(\sum_{j \in R(\tau_i)} \theta_j \right) \right)
     """
     log_denominator = torch.logcumsumexp(log_hz_sorted.flip(0), dim=0).flip(0)
+
     return (log_hz_sorted - log_denominator)[event_sorted]
 
 
@@ -183,6 +207,19 @@ def _partial_likelihood_efron(
 ) -> torch.Tensor:
     """Calculate the partial log likelihood for the Cox proportional hazards model
     using Efron's method to handle ties in event time.
+
+    Args:
+        log_hz_sorted (torch.Tensor, float):
+            Log relative hazard of length n_samples, ordered by time-to-event or censoring.
+        event_sorted (torch.Tensor, bool):
+            Event indicator of length n_samples (= True if event occured), ordered by time-to-event or censoring.
+        time_sorted (torch.Tensor):
+            Time-to-event values sorted in order.
+        time_unique (torch.Tensor):
+            Set of unique time-to-event values.
+    Returns:
+        (torch.tensor, float):
+            Vector of partial log likelihood estimated using Efron's method.
     """
     J = len(time_unique)
 
@@ -206,6 +243,7 @@ def _partial_likelihood_efron(
             log_denominator_efron[j] += torch.log(
                 denominator_naive[j] - (l - 1) / m[j] * denominator_ties[j]
             )
+
     return (log_nominator - log_denominator_efron)[include]
 
 
@@ -216,6 +254,18 @@ def _partial_likelihood_breslow(
 ):
     """Calculate the partial log likelihood for the Cox proportional hazards model
     using Breslow's method to handle ties in event time.
+
+    Args:
+        log_hz_sorted (torch.Tensor, float):
+            Log relative hazard of length n_samples, ordered by time-to-event or censoring.
+        event_sorted (torch.Tensor, bool):
+            Event indicator of length n_samples (= True if event occured), ordered by time-to-event or censoring.
+        time_sorted (torch.Tensor):
+            Time-to-event values sorted in order.
+
+    Returns:
+        (torch.tensor, float):
+            Vector containing partial log likelihood estimated using Breslow's method.
     """
     N = len(time_sorted)
 

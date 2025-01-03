@@ -16,8 +16,7 @@ https://anaconda.org/conda-forge/torchsurv)
 
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
-[![arXiv](https://img.shields.io/badge/arXiv-2404.10761-f9f107.svg?color=green)](https://arxiv.org/abs/2404.10761)
-[![status](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d/status.svg)](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d)
+[![JOSS](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d/status.svg)](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d)
 [![License](https://img.shields.io/badge/License-MIT-black)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
 
@@ -25,6 +24,8 @@ https://anaconda.org/conda-forge/torchsurv)
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
 
 If you find this repository useful, please consider giving a star! ⭐
+
+This package was developed by **Novartis** and the **US Food and Drug Administration** as part of a **research collaboration** agreement on radiogenomics.
 
 ## TL;DR
 
@@ -239,10 +240,10 @@ By contributing to this project, you agree to license your contributions under t
 
 ## Contacts
 
-* [Thibaud Coroller](mailto:thibaud.coroller@novartis.com?subject=TorchSurv) `(creator, maintainer)`
-* [Mélodie Monod](mailto:melodie.monod@novartis.com?subject=TorchSurv) `(creator, maintainer)`
-* [Peter Krusche](mailto:peter.krusche@novartis.com?subject=TorchSurv) `(author, maintainer)`
-* [Qian Cao](mailto:qian.cao@fda.hhs.gov@novartis.com?subject=TorchSurv) `(author, maintainer)`
+* [Thibaud Coroller](mailto:thibaud.coroller@novartis.com?subject=TorchSurv) (**Novartis**): `(creator, maintainer)`
+* [Mélodie Monod](mailto:monod.melodie@gmail.com?subject=TorchSurv) (**Imperial College London**): `(creator, maintainer)`
+* [Peter Krusche](mailto:peter.krusche@novartis.com?subject=TorchSurv) (**Novartis**): `(author, maintainer)`
+* [Qian Cao](mailto:qian.cao@fda.hhs.gov?subject=TorchSurv) (**FDA**): `(author, maintainer)`
 
 If you have any questions, suggestions, or feedback, feel free to reach out the developement team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
 
@@ -251,13 +252,15 @@ If you have any questions, suggestions, or feedback, feel free to reach out the 
 If you use this project in academic work or publications, we appreciate citing it using the following BibTeX entry:
 
 ```
-@misc{monod2024torchsurv,
-      title={TorchSurv: A Lightweight Package for Deep Survival Analysis}, 
-      author={M{\'{e}}lodie Monod and Peter Krusche and Qian Cao and Berkman Sahiner and Nicholas Petrick and David Ohlssen and Thibaud Coroller},
-      year={2024},
-      eprint={2404.10761},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      doi={https://doi.org/10.48550/arXiv.2404.10761}
+@article{Monod2024,
+    doi = {10.21105/joss.07341},
+    url = {https://doi.org/10.21105/joss.07341},
+    year = {2024},
+    publisher = {The Open Journal},
+    volume = {9},
+    number = {104},
+    pages = {7341},
+    author = {Mélodie Monod and Peter Krusche and Qian Cao and Berkman Sahiner and Nicholas Petrick and David Ohlssen and Thibaud Coroller},
+    title = {TorchSurv: A Lightweight Package for Deep Survival Analysis}, journal = {Journal of Open Source Software}
 }
 ```
