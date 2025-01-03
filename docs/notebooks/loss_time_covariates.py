@@ -167,25 +167,21 @@ def _time_varying_covariance(
 
 if __name__ == "__main__":
     import torch
-    from torchsurv.loss import cox
     from torchsurv.metrics.cindex import ConcordanceIndex
 
     # set seed
     torch.manual_seed(123)
 
     # Parameters
-    input_size = 16  # Irrelevant to the loss function
+    input_size = 8  # Irrelevant to the loss function
     output_size = 1  # always 1 for Cox
-    seq_length = 2  # number of time steps
-    batch_size = 3  # number of samples
+    seq_length = 5  # number of time steps
+    batch_size = 32  # number of samples
 
     # make random boolean events
     events = torch.rand(batch_size) > 0.5
-    print(events)
-
     # make random positive time to event
     time = torch.rand(batch_size) * 100
-    print(time)
 
     # Create simple RNN model
     rnn = torch.nn.RNN(input_size, output_size, seq_length)
@@ -200,3 +196,8 @@ if __name__ == "__main__":
     # Loss
     loss = neg_partial_time_log_likelihood(outputs, time, events)
     print(f"loss = {loss}")
+
+    # Cindex
+    cindex = ConcordanceIndex()
+    estimates = outputs[-1].squeeze()  # Last outputs matter ?! @Melodie
+    print(f"C-index = {cindex(estimates, events, time)}")
