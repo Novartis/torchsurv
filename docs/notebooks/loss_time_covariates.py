@@ -1,4 +1,3 @@
-import sys
 import warnings
 
 import torch
@@ -30,15 +29,23 @@ def neg_partial_time_log_likelihood(
         >>> _ = torch.manual_seed(52)
         >>> n = 10  # number of samples
         >>> t = 5  # time steps
+        >>> k = 16  # # covariates
         >>> time = torch.randint(low=5, high=250, size=(n,)).float()
         >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-        >>> log_hz = torch.rand((t, n, 1))
-        >>> neg_partial_time_log_likelihood(log_hz, time, event)
-        tensor(0.9456)
-        >>> neg_partial_time_log_likelihood(log_hz.squeeze(), time, event)  # Also works with 2D tensor
-        tensor(0.9456)
-        >>> neg_partial_time_log_likelihood(log_hz, time, event, reduction='sum')
-        tensor(37.8241)
+        >>> x = torch.rand((t, n, k))
+        >>> h0 = torch.randn(t, n, 1)
+        >>> rnn = torch.nn.RNN(k, 1, t)
+        >>> estimates, _ = rnn(x, h0)
+        >>> neg_partial_time_log_likelihood(estimates, time, event)
+        tensor(0.9452, grad_fn=<DivBackward0>)
+        >>> neg_partial_time_log_likelihood(estimates.squeeze(), time, event)  # Also works with 2D tensor
+        tensor(0.9452, grad_fn=<DivBackward0>)
+        >>> neg_partial_time_log_likelihood(estimates, time, event, reduction='sum')
+        tensor(37.8082, grad_fn=<SumBackward0>)
+        >>> from torchsurv.metrics.cindex import ConcordanceIndex
+        >>> cindex = ConcordanceIndex()
+        >>> cindex(estimates[-1].squeeze(), event, time)
+        tensor(0.5152)
     """
 
     # only consider theta at tiem of
@@ -200,42 +207,13 @@ def _time_varying_covariance(
 
 
 if __name__ == "__main__":
-    import torch
-    from torchsurv.metrics.cindex import ConcordanceIndex
     import doctest
+    import sys
 
     # Run doctest
     results = doctest.testmod()
-
-    # set seed
-    torch.manual_seed(123)
-
-    # Parameters
-    input_size = 8  # Irrelevant to the loss function
-    output_size = 1  # always 1 for Cox
-    seq_length = 5  # number of time steps
-    batch_size = 32  # number of samples
-
-    # make random boolean events
-    events = torch.rand(batch_size) > 0.5
-    # make random positive time to event
-    time = torch.rand(batch_size) * 100
-
-    # Create simple RNN model
-    rnn = torch.nn.RNN(input_size, output_size, seq_length)
-    rnn = torch.compile(rnn)
-    inputs = torch.randn(seq_length, batch_size, input_size)
-    h0 = torch.randn(seq_length, batch_size, output_size)
-
-    # Forward pass time series input
-    outputs, _ = rnn(inputs, h0)
-    print(f"outputs shape = {outputs.size()}")
-
-    # Loss
-    loss = neg_partial_time_log_likelihood(outputs, time, events)
-    print(f"loss = {loss}")
-
-    # Cindex
-    cindex = ConcordanceIndex()
-    estimates = outputs[-1].squeeze()  # Last outputs matter ?! @Melodie
-    print(f"C-index = {cindex(estimates, events, time)}")
+    if results.failed == 0:
+        print("All tests passed.")
+    else:
+        print("Some doctests failed.")
+        sys.exit(1)
