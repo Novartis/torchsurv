@@ -158,6 +158,7 @@ def _partial_likelihood_time_cox(
     return (log_hz_sorted_tj - log_cumulative_hazard)[include]
 
 
+# Code below will be either deleted or moved to another file (e.g. stats)
 def _time_varying_covariance(
     log_hz: torch.Tensor,  # nx1 vector
     event: torch.Tensor,  # n vector (i think)
