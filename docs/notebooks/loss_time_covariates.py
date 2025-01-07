@@ -1,8 +1,4 @@
-import warnings
-
 import torch
-
-MAX_TIME = 1e6
 
 
 def neg_partial_time_log_likelihood(
@@ -44,8 +40,11 @@ def neg_partial_time_log_likelihood(
         tensor(37.8082, grad_fn=<SumBackward0>)
         >>> from torchsurv.metrics.cindex import ConcordanceIndex
         >>> cindex = ConcordanceIndex()
-        >>> cindex(estimates[-1].squeeze(), event, time)
-        tensor(0.5152)
+        >>> cindex_t = torch.stack([cindex(log_hz_t, event, time) for log_hz_t in estimates.unbind(0)])  # Compute for each time step t
+        >>> cindex_t
+        tensor([0.6061, 0.2424, 0.5758, 0.3333, 0.5152])
+        >>> cindex_t.mean()  # Average over all time steps t
+        tensor(0.4545)
     """
 
     # only consider theta at tiem of
@@ -66,10 +65,11 @@ def neg_partial_time_log_likelihood(
     return loss
 
 
+@torch.jit.script
 def _partial_likelihood_time_cox(
-    log_hz: torch.Tensor,  # Txnxp torch tensor, n is batch size, T number of time points, p is number of different covariates over time
-    time: torch.Tensor,  # n length vector, time at which someone experiences event
-    events: torch.Tensor,  # n length vector, boolean, true or false to determine if someone had an event
+    log_hz: torch.Tensor,
+    time: torch.Tensor,
+    events: torch.Tensor,
 ) -> torch.Tensor:
     """
     Calculate the partial log likelihood for the Cox proportional hazards model
@@ -137,12 +137,6 @@ def _partial_likelihood_time_cox(
     # time cannot be smaller than zero, and maximum value cannot exceed the T dimension for this to work
     if time.min() < 0:
         raise ValueError("Time values must be greater or equal to zero.")
-
-    # Maximum values in time do not exceed MAX_TIME and raise a warning
-    if time.max() > MAX_TIME:
-        warnings.warn(
-            f"Maximum value {MAX_TIME} in time vector exceeds the time dimension of the log_hz tensor."
-        )
 
     # Sort the time vector and the output of the RNN by the subjects who have earlier event time
     _, idx = torch.sort(time)
