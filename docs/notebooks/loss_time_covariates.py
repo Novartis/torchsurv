@@ -40,8 +40,8 @@ def neg_partial_time_log_likelihood(
         tensor(37.8082, grad_fn=<SumBackward0>)
         >>> from torchsurv.metrics.cindex import ConcordanceIndex
         >>> cindex = ConcordanceIndex()
-        >>> cindex_t = torch.stack([cindex(log_hz_t, event, time) for log_hz_t in estimates.unbind(0)])  # Compute for each time step t
-        >>> cindex_t
+        >>> cindex_t = torch.stack([cindex(log_hz_t, event, time) for log_hz_t in estimates.unbind(0)])
+        >>> cindex_t  # Compute c-index for each time step t
         tensor([0.6061, 0.2424, 0.5758, 0.3333, 0.5152])
         >>> cindex_t.mean()  # Average over all time steps t
         tensor(0.4545)
