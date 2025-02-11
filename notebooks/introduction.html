@@ -1,0 +1,1629 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Getting started &#8212; torchsurv  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/introduction';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Survival with MNIST" href="momentum.html" />
+    <link rel="prev" title="A statistical introduction" href="survival.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo_firecamp.png" class="logo__image only-light" alt="torchsurv  documentation - Home"/>
+    <img src="../_static/logo_firecamp.png" class="logo__image only-dark pst-js-only" alt="torchsurv  documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../loss.html">Loss</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.cox.html">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.weibull.html">torchsurv.loss.weibull</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../metrics.html">Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.metrics.cindex.html">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="survival.html">A statistical introduction</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="momentum.html">Survival with MNIST</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../AUTHORS.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devnotes.html">Development notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Related packages</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/introduction.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Getting started</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Dependencies">Dependencies</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Dataset-overview">Dataset overview</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Data-preparation">Data preparation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-1:-Cox-proportional-hazards-model">Section 1: Cox proportional hazards model</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-1.1:-MLP-model-for-log-relative-hazards">Section 1.1: MLP model for log relative hazards</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-1.2:-MLP-model-training">Section 1.2: MLP model training</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-1.3:-Cox-proportional-hazards-model-evaluation">Section 1.3: Cox proportional hazards model evaluation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-2:-Weibull-accelerated-failure-time-(AFT)-model">Section 2: Weibull accelerated failure time (AFT) model</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-2.1:-MLP-model-for-log-scale-and-log-shape">Section 2.1: MLP model for log scale and log shape</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-2.2:-MLP-model-training">Section 2.2: MLP model training</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-2.3:-Weibull-AFT-model-evaluation">Section 2.3: Weibull AFT model evaluation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-3:-Models-comparison">Section 3: Models comparison</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-3.1:-Concordance-index">Section 3.1: Concordance index</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-3.2:-AUC-at-5-year">Section 3.2: AUC at 5-year</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-4:-Kaplan-Meier">Section 4: Kaplan Meier</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="Getting-started">
+<h1>Getting started<a class="headerlink" href="#Getting-started" title="Link to this heading">#</a></h1>
+<p>In this notebook, we use <code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code> to train a model that predicts relative risk of breast cancer recurrence. We use a public data set, the <a class="reference external" href="https://paperswithcode.com/dataset/gbsg2">German Breast Cancer Study Group 2 (GBSG2)</a>. After training the model, we evaluate the predictive performance using evaluation metrics implemented in <code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code>.</p>
+<p>We first load the dataset using the package <a class="reference external" href="https://lifelines.readthedocs.io/en/latest/">lifelines</a>. The GBSG2 dataset contains features and recurrence free survival time (in days) for 686 women undergoing hormonal treatment.</p>
+<section id="Dependencies">
+<h2>Dependencies<a class="headerlink" href="#Dependencies" title="Link to this heading">#</a></h2>
+<p>To run this notebook, dependencies must be installed. the recommended method is to use our developpment conda environment (<strong>preffered</strong>). Instruction can be found <a class="reference external" href="https://opensource.nibr.com/torchsurv/devnotes.html#set-up-a-development-environment-via-conda">here</a> to install all optional dependancies. The other method is to install only required packages using the command line below:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install only required packages (optional)</span>
+<span class="c1"># %pip install lifelines</span>
+<span class="c1"># %pip install matplotlib</span>
+<span class="c1"># %pip install sklearn</span>
+<span class="c1"># %pip install pandas</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">lifelines</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="c1"># Our package</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.loss.cox</span><span class="w"> </span><span class="kn">import</span> <span class="n">neg_partial_log_likelihood</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.loss.weibull</span><span class="w"> </span><span class="kn">import</span> <span class="n">neg_log_likelihood</span><span class="p">,</span> <span class="n">log_hazard</span><span class="p">,</span> <span class="n">survival_function</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.brier_score</span><span class="w"> </span><span class="kn">import</span> <span class="n">BrierScore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.cindex</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConcordanceIndex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.auc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Auc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.stats.kaplan_meier</span><span class="w"> </span><span class="kn">import</span> <span class="n">KaplanMeierEstimator</span>
+
+<span class="c1"># PyTorch boilerplate - see https://github.com/Novartis/torchsurv/blob/main/docs/notebooks/helpers_introduction.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">helpers_introduction</span><span class="w"> </span><span class="kn">import</span> <span class="n">Custom_dataset</span><span class="p">,</span> <span class="n">plot_losses</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Constant parameters accross models</span>
+<span class="c1"># Detect available accelerator; Downgrade batch size if only CPU available</span>
+<span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">(),</span> <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">mps</span><span class="o">.</span><span class="n">is_available</span><span class="p">()]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CUDA-enabled GPU/TPU is available.&quot;</span><span class="p">)</span>
+    <span class="n">BATCH_SIZE</span> <span class="o">=</span> <span class="mi">128</span>  <span class="c1"># batch size for training</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No CUDA-enabled GPU found, using CPU.&quot;</span><span class="p">)</span>
+    <span class="n">BATCH_SIZE</span> <span class="o">=</span> <span class="mi">32</span>  <span class="c1"># batch size for training</span>
+
+<span class="n">EPOCHS</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">LEARNING_RATE</span> <span class="o">=</span> <span class="mf">1e-2</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CUDA-enabled GPU/TPU is available.
+</pre></div></div>
+</div>
+<section id="Dataset-overview">
+<h3>Dataset overview<a class="headerlink" href="#Dataset-overview" title="Link to this heading">#</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load GBSG2 dataset</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">lifelines</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">load_gbsg2</span><span class="p">()</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>horTh</th>
+      <th>age</th>
+      <th>menostat</th>
+      <th>tsize</th>
+      <th>tgrade</th>
+      <th>pnodes</th>
+      <th>progrec</th>
+      <th>estrec</th>
+      <th>time</th>
+      <th>cens</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>no</td>
+      <td>70</td>
+      <td>Post</td>
+      <td>21</td>
+      <td>II</td>
+      <td>3</td>
+      <td>48</td>
+      <td>66</td>
+      <td>1814</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>yes</td>
+      <td>56</td>
+      <td>Post</td>
+      <td>12</td>
+      <td>II</td>
+      <td>7</td>
+      <td>61</td>
+      <td>77</td>
+      <td>2018</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>yes</td>
+      <td>58</td>
+      <td>Post</td>
+      <td>35</td>
+      <td>II</td>
+      <td>9</td>
+      <td>52</td>
+      <td>271</td>
+      <td>712</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>yes</td>
+      <td>59</td>
+      <td>Post</td>
+      <td>17</td>
+      <td>II</td>
+      <td>4</td>
+      <td>60</td>
+      <td>29</td>
+      <td>1807</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>no</td>
+      <td>73</td>
+      <td>Post</td>
+      <td>35</td>
+      <td>II</td>
+      <td>1</td>
+      <td>26</td>
+      <td>65</td>
+      <td>772</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>The dataset contains the categorical features:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">horTh</span></code>: hormonal therapy, a factor at two levels (yes and no).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">age</span></code>: age of the patients in years.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">menostat</span></code>: menopausal status, a factor at two levels pre (premenopausal) and post (postmenopausal).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tsize</span></code>: tumor size (in mm).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tgrade</span></code>: tumor grade, a ordered factor at levels I &lt; II &lt; III.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pnodes</span></code>: number of positive nodes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">progrec</span></code>: progesterone receptor (in fmol).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">estrec</span></code>: estrogen receptor (in fmol).</p></li>
+</ul>
+<p>Additionally, it contains our survival targets:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">time</span></code>: recurrence free survival time (in days).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cens</span></code>: censoring indicator (0- censored, 1- event).</p></li>
+</ul>
+<p>One common approach is to use a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.get_dummies.html">one hot encoder</a> to convert them into numerical features. We then seperate the dataframes into features <code class="docutils literal notranslate"><span class="pre">X</span></code> and labels <code class="docutils literal notranslate"><span class="pre">y</span></code>. The following code also partitions the labels and features into training and testing cohorts.</p>
+</section>
+<section id="Data-preparation">
+<h3>Data preparation<a class="headerlink" href="#Data-preparation" title="Link to this heading">#</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_onehot</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;horTh&quot;</span><span class="p">,</span> <span class="s2">&quot;menostat&quot;</span><span class="p">,</span> <span class="s2">&quot;tgrade&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
+<span class="n">df_onehot</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">&quot;horTh_no&quot;</span><span class="p">,</span> <span class="s2">&quot;menostat_Post&quot;</span><span class="p">,</span> <span class="s2">&quot;tgrade_I&quot;</span><span class="p">],</span>
+    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">df_onehot</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>tsize</th>
+      <th>pnodes</th>
+      <th>progrec</th>
+      <th>estrec</th>
+      <th>time</th>
+      <th>cens</th>
+      <th>horTh_yes</th>
+      <th>menostat_Pre</th>
+      <th>tgrade_II</th>
+      <th>tgrade_III</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>70.0</td>
+      <td>21.0</td>
+      <td>3.0</td>
+      <td>48.0</td>
+      <td>66.0</td>
+      <td>1814.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>56.0</td>
+      <td>12.0</td>
+      <td>7.0</td>
+      <td>61.0</td>
+      <td>77.0</td>
+      <td>2018.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>58.0</td>
+      <td>35.0</td>
+      <td>9.0</td>
+      <td>52.0</td>
+      <td>271.0</td>
+      <td>712.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>59.0</td>
+      <td>17.0</td>
+      <td>4.0</td>
+      <td>60.0</td>
+      <td>29.0</td>
+      <td>1807.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>73.0</td>
+      <td>35.0</td>
+      <td>1.0</td>
+      <td>26.0</td>
+      <td>65.0</td>
+      <td>772.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df_onehot</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">df_train</span><span class="p">,</span> <span class="n">df_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;(Sample size) Training:</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span><span class="si">}</span><span class="s2"> | Validation:</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_val</span><span class="p">)</span><span class="si">}</span><span class="s2"> |Testing:</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_test</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(Sample size) Training:336 | Validation:144 |Testing:206
+</pre></div></div>
+</div>
+<p>Let us setup the dataloaders for training, validation and testing.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Dataloader</span>
+<span class="n">dataloader_train</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">Custom_dataset</span><span class="p">(</span><span class="n">df_train</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="n">dataloader_val</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">Custom_dataset</span><span class="p">(</span><span class="n">df_val</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">df_val</span><span class="p">),</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+<span class="n">dataloader_test</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">Custom_dataset</span><span class="p">(</span><span class="n">df_test</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">df_test</span><span class="p">),</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Sanity check</span>
+<span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader_train</span><span class="p">))</span>
+<span class="n">num_features</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x (shape)    = </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_features = </span><span class="si">{</span><span class="n">num_features</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;event        = </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;time         = </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+x (shape)    = torch.Size([128, 9])
+num_features = 9
+event        = torch.Size([128])
+time         = torch.Size([128])
+</pre></div></div>
+</div>
+</section>
+<section id="Section-1:-Cox-proportional-hazards-model">
+<h3>Section 1: Cox proportional hazards model<a class="headerlink" href="#Section-1:-Cox-proportional-hazards-model" title="Link to this heading">#</a></h3>
+<p>In this section, we use the <a class="reference external" href="../_autosummary/torchsurv.loss.cox.html">Cox proportional hazards model</a>. Given covariate <span class="math notranslate nohighlight">\(x_{i}\)</span>, the hazard of patient <span class="math notranslate nohighlight">\(i\)</span> has the form</p>
+<div class="math notranslate nohighlight">
+\[\lambda (t|x_{i}) =\lambda_{0}(t)\theta(x_{i})\]</div>
+<p>The baseline hazard <span class="math notranslate nohighlight">\(\lambda_{0}(t)\)</span> is identical across subjects (i.e., has no dependency on <span class="math notranslate nohighlight">\(i\)</span>). The subject-specific risk of event occurrence is captured through the relative hazards <span class="math notranslate nohighlight">\(\{\theta(x_{i})\}_{i = 1, \dots, N}\)</span>.</p>
+<p>We train a multi-layer perceptron (MLP) to model the subject-specific risk of event occurrence, i.e., the log relative hazards <span class="math notranslate nohighlight">\(\log\theta(x_{i})\)</span>. Patients with lower recurrence time are assumed to have higher risk of event.</p>
+</section>
+</section>
+<section id="Section-1.1:-MLP-model-for-log-relative-hazards">
+<h2>Section 1.1: MLP model for log relative hazards<a class="headerlink" href="#Section-1.1:-MLP-model-for-log-relative-hazards" title="Link to this heading">#</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cox_model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="n">num_features</span><span class="p">),</span>  <span class="c1"># Batch normalization</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># Estimating log hazards for Cox models</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Section-1.2:-MLP-model-training">
+<h2>Section 1.2: MLP model training<a class="headerlink" href="#Section-1.2:-MLP-model-training" title="Link to this heading">#</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Init optimizer for Cox</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">cox_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">LEARNING_RATE</span><span class="p">)</span>
+
+<span class="c1"># Initiate empty list to store the loss on the train and validation sets</span>
+<span class="n">train_losses</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">val_losses</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># training loop</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">EPOCHS</span><span class="p">):</span>
+    <span class="n">epoch_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader_train</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">log_hz</span> <span class="o">=</span> <span class="n">cox_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># shape = (16, 1)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">neg_partial_log_likelihood</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="n">epoch_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="p">(</span><span class="n">EPOCHS</span> <span class="o">//</span> <span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">:</span><span class="s2">03</span><span class="si">}</span><span class="s2">, Training loss: </span><span class="si">{</span><span class="n">epoch_loss</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Reccord loss on train and test sets</span>
+    <span class="n">epoch_loss</span> <span class="o">/=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">train_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epoch_loss</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader_val</span><span class="p">))</span>
+        <span class="n">val_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">neg_partial_log_likelihood</span><span class="p">(</span><span class="n">cox_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Epoch: 000, Training loss: 12.55
+Epoch: 010, Training loss: 12.40
+Epoch: 020, Training loss: 12.02
+Epoch: 030, Training loss: 11.90
+Epoch: 040, Training loss: 11.97
+Epoch: 050, Training loss: 11.85
+Epoch: 060, Training loss: 11.68
+Epoch: 070, Training loss: 11.85
+Epoch: 080, Training loss: 11.74
+Epoch: 090, Training loss: 11.88
+</pre></div></div>
+</div>
+<p>We can visualize the training and validation losses.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_losses</span><span class="p">(</span><span class="n">train_losses</span><span class="p">,</span> <span class="n">val_losses</span><span class="p">,</span> <span class="s2">&quot;Cox&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_introduction_20_0.png" src="../_images/notebooks_introduction_20_0.png" />
+</div>
+</div>
+</section>
+<section id="Section-1.3:-Cox-proportional-hazards-model-evaluation">
+<h2>Section 1.3: Cox proportional hazards model evaluation<a class="headerlink" href="#Section-1.3:-Cox-proportional-hazards-model-evaluation" title="Link to this heading">#</a></h2>
+<p>We evaluate the predictive performance of the model using</p>
+<ul class="simple">
+<li><p>the <a class="reference external" href="../_autosummary/torchsurv.metrics.cindex.html">concordance index</a> (C-index), which measures the the probability that a model correctly predicts which of two comparable samples will experience an event first based on their estimated risk scores,</p></li>
+<li><p>the <a class="reference external" href="../_autosummary/torchsurv.metrics.auc.html">Area Under the Receiver Operating Characteristic Curve</a> (AUC), which measures the probability that a model correctly predicts which of two comparable samples will experience an event by time t based on their estimated risk scores.</p></li>
+</ul>
+<p>We cannot use the Brier score because this model is not able to estimate the survival function.</p>
+<p>We start by evaluating the subject-specific relative hazards on the test set</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cox_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="c1"># test event and test time of length n</span>
+    <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader_test</span><span class="p">))</span>
+    <span class="n">log_hz</span> <span class="o">=</span> <span class="n">cox_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># log hazard of length n</span>
+</pre></div>
+</div>
+</div>
+<p>We obtain the concordance index, and its confidence interval</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Concordance index</span>
+<span class="n">cox_cindex</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cox model performance:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Concordance-index   = </span><span class="si">{</span><span class="n">cox_cindex</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Confidence interval = </span><span class="si">{</span><span class="n">cox_cindex</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Cox model performance:
+Concordance-index   = 0.639417290687561
+Confidence interval = tensor([0.5143, 0.7645])
+</pre></div></div>
+</div>
+<p>We can also test whether the observed concordance index is greater than 0.5. The statistical test is specified with H0: c-index = 0.5 and Ha: c-index &gt; 0.5. The p-value of the statistical test is</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># H0: cindex = 0.5, Ha: cindex &gt; 0.5</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p-value = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cox_cindex</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;greater&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+p-value = 0.014473557472229004
+</pre></div></div>
+</div>
+<p>For time-dependent prediction (e.g., 5-year mortality), the C-index is not a proper measure. Instead, it is recommended to use the AUC. The probability to correctly predicts which of two comparable patients will experience an event by 5-year based on their estimated risk scores is the AUC evaluated at 5-year (1825 days) obtained with</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cox_auc</span> <span class="o">=</span> <span class="n">Auc</span><span class="p">()</span>
+
+<span class="n">new_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1825.0</span><span class="p">)</span>
+
+<span class="c1"># auc evaluated at new time = 1825, 5 year</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC 5-yr             = </span><span class="si">{</span><span class="n">cox_auc</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="p">,</span><span class="w"> </span><span class="n">new_time</span><span class="o">=</span><span class="n">new_time</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC 5-yr (conf int.) = </span><span class="si">{</span><span class="n">cox_auc</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AUC 5-yr             = tensor([0.6342])
+AUC 5-yr (conf int.) = tensor([0.5767, 0.6917])
+</pre></div></div>
+</div>
+<p>As before, we can test whether the observed Auc at 5-year is greater than 0.5. The statistical test is specified with H0: auc = 0.5 and Ha: auc &gt; 0.5. The p-value of the statistical test is</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC (p_value) = </span><span class="si">{</span><span class="n">cox_auc</span><span class="o">.</span><span class="n">p_value</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AUC (p_value) = tensor([4.7684e-06])
+</pre></div></div>
+</div>
+<section id="Section-2:-Weibull-accelerated-failure-time-(AFT)-model">
+<h3>Section 2: Weibull accelerated failure time (AFT) model<a class="headerlink" href="#Section-2:-Weibull-accelerated-failure-time-(AFT)-model" title="Link to this heading">#</a></h3>
+<p>In this section, we use the <a class="reference external" href="../_autosummary/torchsurv.loss.weibull.html">Weibull accelerated failure (AFT) model</a>. Given covariate <span class="math notranslate nohighlight">\(x_{i}\)</span>, the hazard of patient <span class="math notranslate nohighlight">\(i\)</span> at time <span class="math notranslate nohighlight">\(t\)</span> has the form</p>
+<div class="math notranslate nohighlight">
+\[\lambda (t|x_{i}) = \frac{\rho(x_{i}) } {\lambda(x_{i}) } + \left(\frac{t}{\lambda(x_{i})}\right)^{\rho(x_{i}) - 1}\]</div>
+<p>Given the hazard form, it can be shown that the event density follows a Weibull distribution parametrized by scale <span class="math notranslate nohighlight">\(\lambda(x_{i})\)</span> and shape <span class="math notranslate nohighlight">\(\rho(x_{i})\)</span>. The subject-specific risk of event occurrence at time <span class="math notranslate nohighlight">\(t\)</span> is captured through the hazards <span class="math notranslate nohighlight">\(\{\lambda (t|x_{i})\}_{i = 1, \dots, N}\)</span>. We train a multi-layer perceptron (MLP) to model the subject-specific log scale, <span class="math notranslate nohighlight">\(\log \lambda(x_{i})\)</span>, and the log shape, <span class="math notranslate nohighlight">\(\log\rho(x_{i})\)</span>.</p>
+</section>
+</section>
+<section id="Section-2.1:-MLP-model-for-log-scale-and-log-shape">
+<h2>Section 2.1: MLP model for log scale and log shape<a class="headerlink" href="#Section-2.1:-MLP-model-for-log-scale-and-log-shape" title="Link to this heading">#</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Same architecture than Cox model, beside outputs dimension</span>
+<span class="n">weibull_model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="n">num_features</span><span class="p">),</span>  <span class="c1"># Batch normalization</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>  <span class="c1"># Estimating log parameters for Weibull model</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Section-2.2:-MLP-model-training">
+<h2>Section 2.2: MLP model training<a class="headerlink" href="#Section-2.2:-MLP-model-training" title="Link to this heading">#</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Init optimizer for Weibull</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">weibull_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">LEARNING_RATE</span><span class="p">)</span>
+
+<span class="c1"># Initialize empty list to store loss on train and validation sets</span>
+<span class="n">train_losses</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">val_losses</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># training loop</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">EPOCHS</span><span class="p">):</span>
+    <span class="n">epoch_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader_train</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">log_params</span> <span class="o">=</span> <span class="n">weibull_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># shape = (16, 2)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">neg_log_likelihood</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="n">epoch_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="p">(</span><span class="n">EPOCHS</span> <span class="o">//</span> <span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">:</span><span class="s2">03</span><span class="si">}</span><span class="s2">, Training loss: </span><span class="si">{</span><span class="n">epoch_loss</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Reccord losses for the following figure</span>
+    <span class="n">train_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epoch_loss</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader_val</span><span class="p">))</span>
+        <span class="n">val_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">neg_log_likelihood</span><span class="p">(</span><span class="n">weibull_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Epoch: 000, Training loss: 100312.30
+Epoch: 010, Training loss: 19.79
+Epoch: 020, Training loss: 20.48
+Epoch: 030, Training loss: 16.80
+Epoch: 040, Training loss: 17.24
+Epoch: 050, Training loss: 17.22
+Epoch: 060, Training loss: 16.75
+Epoch: 070, Training loss: 16.55
+Epoch: 080, Training loss: 16.76
+Epoch: 090, Training loss: 16.69
+</pre></div></div>
+</div>
+<p>We can visualize the training and validation losses.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_losses</span><span class="p">(</span><span class="n">train_losses</span><span class="p">,</span> <span class="n">val_losses</span><span class="p">,</span> <span class="s2">&quot;Weibull&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_introduction_39_0.png" src="../_images/notebooks_introduction_39_0.png" />
+</div>
+</div>
+</section>
+<section id="Section-2.3:-Weibull-AFT-model-evaluation">
+<h2>Section 2.3: Weibull AFT model evaluation<a class="headerlink" href="#Section-2.3:-Weibull-AFT-model-evaluation" title="Link to this heading">#</a></h2>
+<p>We evaluate the predictive performance of the model using</p>
+<ul class="simple">
+<li><p>the <a class="reference external" href="../_autosummary/torchsurv.metrics.cindex.html">C-index</a>, which measures the the probability that a model correctly predicts which of two comparable samples will experience an event first based on their estimated risk scores,</p></li>
+<li><p>the <a class="reference external" href="../_autosummary/torchsurv.metrics.auc.html">AUC</a>, which measures the probability that a model correctly predicts which of two comparable samples will experience an event by time t based on their estimated risk scores, and</p></li>
+<li><p>the <a class="reference external" href="../_autosummary/torchsurv.metrics.brier_score.html">Brier score</a>, which measures the model’s calibration by calculating the mean square error between the estimated survival function and the empirical (i.e., in-sample) event status.</p></li>
+</ul>
+<p>We start by obtaining the subject-specific log hazard and survival probability at every time <span class="math notranslate nohighlight">\(t\)</span> observed on the test set</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">weibull_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="c1"># event and time of length n</span>
+    <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader_test</span><span class="p">))</span>
+    <span class="n">log_params</span> <span class="o">=</span> <span class="n">weibull_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># shape = (n,2)</span>
+
+<span class="c1"># Compute the log hazards from weibull log parameters</span>
+<span class="n">log_hz</span> <span class="o">=</span> <span class="n">log_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>  <span class="c1"># shape = (n,n)</span>
+
+<span class="c1"># Compute the survival probability from weibull log parameters</span>
+<span class="n">surv</span> <span class="o">=</span> <span class="n">survival_function</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>  <span class="c1"># shape = (n,n)</span>
+</pre></div>
+</div>
+</div>
+<p>We can evaluate the concordance index, its confidence interval and the p-value of the statistical test testing whether the c-index is greater than 0.5:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Concordance index</span>
+<span class="n">weibull_cindex</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Weibull model performance:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Concordance-index   = </span><span class="si">{</span><span class="n">weibull_cindex</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Confidence interval = </span><span class="si">{</span><span class="n">weibull_cindex</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># H0: cindex = 0.5, Ha: cindex &gt;0.5</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;p-value             = </span><span class="si">{</span><span class="n">weibull_cindex</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">alternative</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;greater&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Weibull model performance:
+Concordance-index   = 0.4327795207500458
+Confidence interval = tensor([0.3040, 0.5615])
+p-value             = 0.8468805551528931
+</pre></div></div>
+</div>
+<p>For time-dependent prediction (e.g., 5-year mortality), the C-index is not a proper measure. Instead, it is recommended to use the AUC. The probability to correctly predicts which of two comparable patients will experience an event by 5-year based on their estimated risk scores is the AUC evaluated at 5-year (1825 days) obtained with</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1825.0</span><span class="p">)</span>
+
+<span class="c1"># subject-specific log hazard at \5-yr</span>
+<span class="n">log_hz_t</span> <span class="o">=</span> <span class="n">log_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">new_time</span><span class="p">)</span>  <span class="c1"># shape = (n)</span>
+<span class="n">weibull_auc</span> <span class="o">=</span> <span class="n">Auc</span><span class="p">()</span>
+
+<span class="c1"># auc evaluated at new time = 1825, 5 year</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC 5-yr             = </span><span class="si">{</span><span class="n">weibull_auc</span><span class="p">(</span><span class="n">log_hz_t</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="p">,</span><span class="w"> </span><span class="n">new_time</span><span class="o">=</span><span class="n">new_time</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC 5-yr (conf int.) = </span><span class="si">{</span><span class="n">weibull_auc</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC 5-yr (p value)   = </span><span class="si">{</span><span class="n">weibull_auc</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AUC 5-yr             = tensor([0.4158])
+AUC 5-yr (conf int.) = tensor([0.3684, 0.4632])
+AUC 5-yr (p value)   = tensor([0.9998])
+</pre></div></div>
+</div>
+<p>Lastly, we can evaluate the time-dependent Brier score and the integrated Brier score</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">brier_score</span> <span class="o">=</span> <span class="n">BrierScore</span><span class="p">()</span>
+
+<span class="c1"># brier score at first 5 times</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Brier score             = </span><span class="si">{</span><span class="n">brier_score</span><span class="p">(</span><span class="n">surv</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Brier score (conf int.) = </span><span class="si">{</span><span class="n">brier_score</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()[:,:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># integrated brier score</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Integrated Brier score  = </span><span class="si">{</span><span class="n">brier_score</span><span class="o">.</span><span class="n">integral</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Brier score             = tensor([0.4088, 0.4081, 0.4071, 0.4390, 0.4405])
+Brier score (conf int.) = tensor([[0.4044, 0.4021, 0.4000, 0.4294, 0.4303],
+        [0.4133, 0.4140, 0.4143, 0.4485, 0.4507]])
+Integrated Brier score  = 0.24420785903930664
+</pre></div></div>
+</div>
+<p>We can test whether the time-dependent Brier score is smaller than what would be expected if the survival model was not providing accurate predictions beyond random chance. We use a bootstrap permutation test and obtain the p-value with:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># H0: bs = bs0, Ha: bs &lt; bs0; where bs0 is the expected brier score if the survival model was not providing accurate predictions beyond random chance.</span>
+
+<span class="c1"># p-value for brier score at first 5 times</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Brier score (p-val)        = </span><span class="si">{</span><span class="n">brier_score</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">alternative</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;less&#39;</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Brier score (p-val)        = tensor([0.7680, 0.9690, 0.6890, 0.7730, 0.9120])
+</pre></div></div>
+</div>
+<section id="Section-3:-Models-comparison">
+<h3>Section 3: Models comparison<a class="headerlink" href="#Section-3:-Models-comparison" title="Link to this heading">#</a></h3>
+<p>We can compare the predictive performance of the Cox proportional hazards model against the Weibull AFT model.</p>
+</section>
+</section>
+<section id="Section-3.1:-Concordance-index">
+<h2>Section 3.1: Concordance index<a class="headerlink" href="#Section-3.1:-Concordance-index" title="Link to this heading">#</a></h2>
+<p>The statistical test is formulated as follows, H0: cindex cox = cindex weibull, Ha: cindex cox &gt; cindex weibull</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cox cindex     = </span><span class="si">{</span><span class="n">cox_cindex</span><span class="o">.</span><span class="n">cindex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Weibull cindex = </span><span class="si">{</span><span class="n">weibull_cindex</span><span class="o">.</span><span class="n">cindex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p-value        = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cox_cindex</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">weibull_cindex</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Cox cindex     = 0.639417290687561
+Weibull cindex = 0.4327795207500458
+p-value        = 0.01457300502806902
+</pre></div></div>
+</div>
+</section>
+<section id="Section-3.2:-AUC-at-5-year">
+<h2>Section 3.2: AUC at 5-year<a class="headerlink" href="#Section-3.2:-AUC-at-5-year" title="Link to this heading">#</a></h2>
+<p>The statistical test is formulated as follows, H0: 5-yr auc cox = 5-yr auc weibull, Ha: 5-yr auc cox &gt; 5-yr auc weibull</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cox 5-yr AUC     = </span><span class="si">{</span><span class="n">cox_auc</span><span class="o">.</span><span class="n">auc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Weibull 5-yr AUC = </span><span class="si">{</span><span class="n">weibull_auc</span><span class="o">.</span><span class="n">auc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p-value          = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cox_auc</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">weibull_auc</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Cox 5-yr AUC     = tensor([0.6342])
+Weibull 5-yr AUC = tensor([0.4158])
+p-value          = tensor([4.9211e-08])
+</pre></div></div>
+</div>
+<section id="Section-4:-Kaplan-Meier">
+<h3>Section 4: Kaplan Meier<a class="headerlink" href="#Section-4:-Kaplan-Meier" title="Link to this heading">#</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a Kaplan-Meier estimator</span>
+<span class="n">km</span> <span class="o">=</span> <span class="n">KaplanMeierEstimator</span><span class="p">()</span>
+
+<span class="c1"># Use our observed testing dataset</span>
+<span class="n">event</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">df_test</span><span class="p">[</span><span class="s2">&quot;cens&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">df_test</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+<span class="c1"># Compute the estimator</span>
+<span class="n">km</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot estimate</span>
+<span class="n">km</span><span class="o">.</span><span class="n">plot_km</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_introduction_58_0.png" src="../_images/notebooks_introduction_58_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Print the survival values at each time step</span>
+<span class="n">km</span><span class="o">.</span><span class="n">print_survival_table</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Time    Survival
+----------------
+16.00   1.0000
+17.00   1.0000
+18.00   1.0000
+98.00   0.9951
+113.00  0.9901
+160.00  0.9852
+177.00  0.9803
+180.00  0.9753
+181.00  0.9704
+186.00  0.9704
+191.00  0.9654
+195.00  0.9604
+223.00  0.9555
+241.00  0.9505
+247.00  0.9455
+251.00  0.9405
+273.00  0.9405
+276.00  0.9405
+286.00  0.9355
+308.00  0.9305
+316.00  0.9254
+338.00  0.9204
+343.00  0.9154
+348.00  0.9104
+350.00  0.9053
+353.00  0.9003
+358.00  0.8953
+371.00  0.8902
+377.00  0.8852
+415.00  0.8802
+420.00  0.8752
+424.00  0.8752
+426.00  0.8701
+448.00  0.8650
+460.00  0.8600
+463.00  0.8600
+475.00  0.8549
+476.00  0.8498
+481.00  0.8447
+490.00  0.8396
+515.00  0.8345
+526.00  0.8345
+536.00  0.8294
+541.00  0.8294
+544.00  0.8243
+545.00  0.8191
+547.00  0.8140
+548.00  0.8088
+552.00  0.8037
+554.00  0.7985
+559.00  0.7934
+570.00  0.7934
+573.00  0.7882
+575.00  0.7830
+578.00  0.7778
+594.00  0.7726
+596.00  0.7726
+623.00  0.7726
+624.00  0.7674
+632.00  0.7621
+637.00  0.7621
+650.00  0.7568
+657.00  0.7568
+662.00  0.7515
+687.00  0.7461
+730.00  0.7408
+733.00  0.7408
+734.00  0.7408
+737.00  0.7408
+740.00  0.7408
+745.00  0.7353
+762.00  0.7298
+784.00  0.7242
+799.00  0.7187
+805.00  0.7132
+819.00  0.7076
+827.00  0.7021
+841.00  0.7021
+855.00  0.7021
+859.00  0.6965
+883.00  0.6908
+889.00  0.6852
+890.00  0.6795
+891.00  0.6738
+933.00  0.6738
+936.00  0.6738
+940.00  0.6738
+945.00  0.6680
+964.00  0.6621
+967.00  0.6621
+969.00  0.6621
+972.00  0.6621
+974.00  0.6621
+983.00  0.6559
+991.00  0.6498
+1059.00 0.6437
+1062.00 0.6437
+1078.00 0.6437
+1090.00 0.6374
+1093.00 0.6312
+1100.00 0.6312
+1105.00 0.6249
+1108.00 0.6186
+1152.00 0.6186
+1162.00 0.6122
+1170.00 0.6058
+1174.00 0.5994
+1212.00 0.5994
+1218.00 0.5930
+1219.00 0.5930
+1222.00 0.5930
+1253.00 0.5864
+1264.00 0.5864
+1280.00 0.5797
+1283.00 0.5797
+1296.00 0.5797
+1323.00 0.5797
+1329.00 0.5728
+1343.00 0.5728
+1351.00 0.5728
+1357.00 0.5728
+1358.00 0.5728
+1363.00 0.5655
+1364.00 0.5655
+1371.00 0.5580
+1420.00 0.5506
+1427.00 0.5506
+1434.00 0.5506
+1441.00 0.5506
+1460.00 0.5429
+1469.00 0.5429
+1472.00 0.5429
+1481.00 0.5349
+1486.00 0.5349
+1490.00 0.5349
+1499.00 0.5349
+1502.00 0.5349
+1525.00 0.5262
+1527.00 0.5262
+1570.00 0.5262
+1604.00 0.5262
+1617.00 0.5262
+1629.00 0.5262
+1645.00 0.5262
+1653.00 0.5262
+1666.00 0.5262
+1680.00 0.5262
+1684.00 0.5161
+1693.00 0.5161
+1703.00 0.5161
+1707.00 0.5161
+1730.00 0.5054
+1751.00 0.5054
+1756.00 0.5054
+1767.00 0.5054
+1771.00 0.5054
+1791.00 0.5054
+1818.00 0.5054
+1826.00 0.5054
+1838.00 0.5054
+1858.00 0.5054
+1884.00 0.5054
+1897.00 0.5054
+1904.00 0.5054
+1918.00 0.4901
+1926.00 0.4901
+1938.00 0.4901
+1956.00 0.4901
+1959.00 0.4901
+1965.00 0.4901
+1975.00 0.4712
+1977.00 0.4712
+1981.00 0.4712
+2007.00 0.4712
+2010.00 0.4712
+2014.00 0.4712
+2027.00 0.4712
+2030.00 0.4464
+2048.00 0.4464
+2065.00 0.4464
+2093.00 0.4185
+2132.00 0.4185
+2144.00 0.4185
+2192.00 0.4185
+2227.00 0.4185
+2233.00 0.4185
+2237.00 0.4185
+2297.00 0.4185
+2372.00 0.3662
+2388.00 0.3662
+2449.00 0.3662
+2456.00 0.3662
+2467.00 0.3662
+2539.00 0.3662
+</pre></div></div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="survival.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">A statistical introduction</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="momentum.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Survival with MNIST</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Dependencies">Dependencies</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Dataset-overview">Dataset overview</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Data-preparation">Data preparation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-1:-Cox-proportional-hazards-model">Section 1: Cox proportional hazards model</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-1.1:-MLP-model-for-log-relative-hazards">Section 1.1: MLP model for log relative hazards</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-1.2:-MLP-model-training">Section 1.2: MLP model training</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-1.3:-Cox-proportional-hazards-model-evaluation">Section 1.3: Cox proportional hazards model evaluation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-2:-Weibull-accelerated-failure-time-(AFT)-model">Section 2: Weibull accelerated failure time (AFT) model</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-2.1:-MLP-model-for-log-scale-and-log-shape">Section 2.1: MLP model for log scale and log shape</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-2.2:-MLP-model-training">Section 2.2: MLP model training</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-2.3:-Weibull-AFT-model-evaluation">Section 2.3: Weibull AFT model evaluation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-3:-Models-comparison">Section 3: Models comparison</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-3.1:-Concordance-index">Section 3.1: Concordance index</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-3.2:-AUC-at-5-year">Section 3.2: AUC at 5-year</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Section-4:-Kaplan-Meier">Section 4: Kaplan Meier</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Novartis Pharma AG.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

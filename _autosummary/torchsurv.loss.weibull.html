@@ -1,0 +1,675 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>torchsurv.loss.weibull &#8212; torchsurv  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/torchsurv.loss.weibull';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Metrics" href="../metrics.html" />
+    <link rel="prev" title="torchsurv.loss.momentum" href="torchsurv.loss.momentum.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo_firecamp.png" class="logo__image only-light" alt="torchsurv  documentation - Home"/>
+    <img src="../_static/logo_firecamp.png" class="logo__image only-dark pst-js-only" alt="torchsurv  documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../loss.html">Loss</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.loss.cox.html">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">torchsurv.loss.weibull</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../metrics.html">Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.metrics.cindex.html">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/survival.html">A statistical introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/introduction.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/momentum.html">Survival with MNIST</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../AUTHORS.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devnotes.html">Development notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Related packages</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/_autosummary/torchsurv.loss.weibull.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>torchsurv.loss.weibull</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.weibull.neg_log_likelihood"><code class="docutils literal notranslate"><span class="pre">neg_log_likelihood()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.weibull.survival_function"><code class="docutils literal notranslate"><span class="pre">survival_function()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.weibull.log_hazard"><code class="docutils literal notranslate"><span class="pre">log_hazard()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.weibull.cumulative_hazard"><code class="docutils literal notranslate"><span class="pre">cumulative_hazard()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-torchsurv.loss.weibull">
+<span id="torchsurv-loss-weibull"></span><h1>torchsurv.loss.weibull<a class="headerlink" href="#module-torchsurv.loss.weibull" title="Link to this heading">#</a></h1>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchsurv.loss.weibull.cumulative_hazard" title="torchsurv.loss.weibull.cumulative_hazard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumulative_hazard</span></code></a>(log_params, time[, all_times])</p></td>
+<td><p>Cumulative hazard for the Weibull Accelerated Time Failure (AFT) survival model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchsurv.loss.weibull.log_hazard" title="torchsurv.loss.weibull.log_hazard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_hazard</span></code></a>(log_params, time[, all_times])</p></td>
+<td><p>Log hazard of the Weibull Accelerated Time Failure (AFT) survival model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchsurv.loss.weibull.neg_log_likelihood" title="torchsurv.loss.weibull.neg_log_likelihood"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neg_log_likelihood</span></code></a>(log_params, event, time)</p></td>
+<td><p>Negative of the log likelihood for the Weibull Accelerated Time Failure (AFT) survival model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchsurv.loss.weibull.survival_function" title="torchsurv.loss.weibull.survival_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">survival_function</span></code></a>(log_params, time[, all_times])</p></td>
+<td><p>Survival function for the Weibull Accelerated Time Failure (AFT) survival model.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="torchsurv.loss.weibull.neg_log_likelihood">
+<span class="sig-prename descclassname"><span class="pre">torchsurv.loss.weibull.</span></span><span class="sig-name descname"><span class="pre">neg_log_likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/torchsurv/loss/weibull.html#neg_log_likelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.loss.weibull.neg_log_likelihood" title="Link to this definition">#</a></dt>
+<dd><p>Negative of the log likelihood for the Weibull Accelerated Time Failure (AFT) survival model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_params</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Parameters of the Weibull distribution of shape = (n_samples, 1) or (n_samples, 2).
+The first column corresponds to the log scale parameter. The second column
+corresponds to the log shape parameter.  If the log shape parameter is missing, it is
+imputed with 0.</p></li>
+<li><p><strong>event</strong> (<em>torch.Tensor</em><em>, </em><em>bool</em>) – Event indicator of length n_samples (= True if event occured).</p></li>
+<li><p><strong>time</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Time-to-event or censoring of length n_samples.</p></li>
+<li><p><strong>reduction</strong> (<em>str</em>) – Method to reduce losses. Defaults to “mean”.
+Must be one of the following: “sum”, “mean”.</p></li>
+<li><p><strong>checks</strong> (<em>bool</em>) – Whether to perform input format checks.
+Enabling checks can help catch potential issues in the input data.
+Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Negative of the log likelihood.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(torch.Tensor, float)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For each subject <span class="math notranslate nohighlight">\(i \in \{1, \cdots, N\}\)</span>, denote <span class="math notranslate nohighlight">\(X_i\)</span> as the survival time and <span class="math notranslate nohighlight">\(D_i\)</span> as the
+censoring time. Survival data consist of the event indicator, <span class="math notranslate nohighlight">\(\delta_i=1(X_i\leq D_i)\)</span>
+(argument <code class="docutils literal notranslate"><span class="pre">event</span></code>) and the time-to-event or censoring, <span class="math notranslate nohighlight">\(T_i = \min(\{ X_i,D_i \})\)</span>
+(argument <code class="docutils literal notranslate"><span class="pre">time</span></code>).</p>
+<p>The log hazard function for the Weibull AFT survival model <span id="id1">[<a class="reference internal" href="#id17" title="Kevin J. Carroll. On the use and utility of the weibull model in the analysis of survival data. Controlled Clinical Trials, 24(6):682–701, December 2003.">Car03</a>]</span> of subject <span class="math notranslate nohighlight">\(i\)</span> at time <span class="math notranslate nohighlight">\(t\)</span> has the form:</p>
+<div class="math notranslate nohighlight">
+\[\log h_i(t) = \log{\rho_i} - \log{\lambda_i} + (\rho_i -1) \left( \log{t} - \log{\lambda_i}\right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\log{\lambda_i}\)</span> is the log scale parameter (first column of argument <code class="docutils literal notranslate"><span class="pre">log_params</span></code>)
+and <span class="math notranslate nohighlight">\(\log{\rho_i}\)</span> is the log shape parameter (second column of argument <code class="docutils literal notranslate"><span class="pre">log_params</span></code>).
+The cumulative hazard for the Weibull survival model of subject <span class="math notranslate nohighlight">\(i\)</span> at time <span class="math notranslate nohighlight">\(t\)</span> has the form:</p>
+<div class="math notranslate nohighlight">
+\[H_i(t) = \left(\frac{t}{\lambda_i}\right)^{\rho_i}\]</div>
+<p>The survival function for the Weibull survival model of subject <span class="math notranslate nohighlight">\(i\)</span> at time <span class="math notranslate nohighlight">\(t\)</span> has the form:</p>
+<div class="math notranslate nohighlight">
+\[S_i(t) = 1 - F(t | \lambda_i, \rho_i)\]</div>
+<p>where <span class="math notranslate nohighlight">\(F(t | \lambda, \rho)\)</span> is the cumulative distribution function (CDF) of the Weibull distribution given
+scale parameter <span class="math notranslate nohighlight">\(\lambda\)</span> and shape parameter <span class="math notranslate nohighlight">\(\rho\)</span>.</p>
+<p>The log likelihood of the Weibull survival model is</p>
+<div class="math notranslate nohighlight">
+\[ll = \sum_{i: \delta_i = 1} \log h_i(T_i) - \sum_{i = 1}^N H_i(T_i)\]</div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_params</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neg_log_likelihood</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="c1"># Default: mean of log likelihoods across subject</span>
+<span class="go">tensor(47.5035)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neg_log_likelihood</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">reduction</span> <span class="o">=</span> <span class="s1">&#39;sum&#39;</span><span class="p">)</span> <span class="c1"># Sum of log likelihoods across subject</span>
+<span class="go">tensor(190.0141)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neg_log_likelihood</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>  <span class="c1"># Missing shape: exponential decrease</span>
+<span class="go">tensor(66.7203)</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<div class="docutils container" id="id2">
+<div role="list" class="citation-list">
+<div class="citation" id="id17" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Car03</a><span class="fn-bracket">]</span></span>
+<p>Kevin J. Carroll. On the use and utility of the weibull model in the analysis of survival data. <em>Controlled Clinical Trials</em>, 24(6):682–701, December 2003.</p>
+</div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchsurv.loss.weibull.survival_function">
+<span class="sig-prename descclassname"><span class="pre">torchsurv.loss.weibull.</span></span><span class="sig-name descname"><span class="pre">survival_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/torchsurv/loss/weibull.html#survival_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.loss.weibull.survival_function" title="Link to this definition">#</a></dt>
+<dd><p>Survival function for the Weibull Accelerated Time Failure (AFT) survival model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_params</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Parameters of the Weibull distribution of shape = (n_samples, 1) or (n_samples, 2).
+The first column corresponds to the log scale parameter. The second column
+corresponds to the log shape parameter. If the log shape parameter is missing, it is
+imputed with 0.</p></li>
+<li><p><strong>time</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Time at which to evaluate the survival function.
+Should be of length n_samples to evaluate the survival function at observed time-to-event or censoring,
+or of length one to evaluate the survival function at a new time.</p></li>
+<li><p><strong>all_times</strong> (<em>bool</em>) – If True, subject-specific survival function is evaluated at all <code class="docutils literal notranslate"><span class="pre">time</span></code> (used for evaluation metrics).
+If False, subject-specific survival function is evaluated at respective <code class="docutils literal notranslate"><span class="pre">time</span></code>.
+Defaults is True.
+Ignored if <code class="docutils literal notranslate"><span class="pre">time</span></code> is of length one.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Subject-specific survival function evaluated at <code class="docutils literal notranslate"><span class="pre">time</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(torch.Tensor, float)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_params</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">survival_function</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">all_times</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># Survival at respective time</span>
+<span class="go">tensor([0.0002, 0.0000, 0.0299, 0.0000])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">survival_function</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">all_times</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>  <span class="c1"># Default. Survival at all observed time</span>
+<span class="go">tensor([[1.7941e-04, 0.0000e+00, 0.0000e+00, 0.0000e+00],</span>
+<span class="go">        [2.8610e-06, 0.0000e+00, 0.0000e+00, 0.0000e+00],</span>
+<span class="go">        [4.1870e-01, 3.1040e-02, 2.9881e-02, 6.8224e-02],</span>
+<span class="go">        [9.5576e-04, 0.0000e+00, 0.0000e+00, 0.0000e+00]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">survival_function</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">10.0</span><span class="p">))</span>  <span class="c1"># Survival at one new time (e.g., 10 years)</span>
+<span class="go">tensor([1.3709e-06, 5.9605e-08, 3.4954e-01, 1.5438e-05])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">150.0</span><span class="p">]):</span> <span class="n">survival_function</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>  <span class="c1"># Subject-specific survival at multiple new times</span>
+<span class="go">tensor([0.0000, 0.0000, 0.0288, 0.0000])</span>
+<span class="go">tensor([0.0000, 0.0000, 0.0123, 0.0000])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchsurv.loss.weibull.log_hazard">
+<span class="sig-prename descclassname"><span class="pre">torchsurv.loss.weibull.</span></span><span class="sig-name descname"><span class="pre">log_hazard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/torchsurv/loss/weibull.html#log_hazard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.loss.weibull.log_hazard" title="Link to this definition">#</a></dt>
+<dd><p>Log hazard of the Weibull Accelerated Time Failure (AFT) survival model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_params</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Parameters of the Weibull distribution of shape = (n_samples, 1) or (n_samples, 2).
+The first column corresponds to the log scale parameter. The second column
+corresponds to the log shape parameter. If the log shape parameter is missing, it is
+imputed with 0.</p></li>
+<li><p><strong>time</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Time at which to evaluate the log hazard.
+Should be of length n_samples to evaluate the log hazard at observed time-to-event or censoring,
+or of length one to evaluate the log hazard at a new time.</p></li>
+<li><p><strong>all_times</strong> (<em>bool</em>) – If True, subject-specific log hazard is evaluated at all <code class="docutils literal notranslate"><span class="pre">time</span></code> (used for evaluation metrics).
+If False, subject-specific log hazard is evaluated at respective <code class="docutils literal notranslate"><span class="pre">time</span></code>.
+Defaults is True.
+Ignored if <code class="docutils literal notranslate"><span class="pre">time</span></code> is of length one.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Subject-specific log hazard evaluated at <code class="docutils literal notranslate"><span class="pre">time</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(torch.Tensor, float)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_params</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">all_times</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># Log hazard at respective time</span>
+<span class="go">tensor([ 0.4392, -0.0303, -3.9672,  0.9140])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">all_times</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>  <span class="c1"># Default. Log hazard at all time</span>
+<span class="go">tensor([[ 0.4392,  1.1174,  1.1227,  0.9913],</span>
+<span class="go">        [ 0.4148, -0.0303, -0.0338,  0.0525],</span>
+<span class="go">        [-2.7225, -3.9575, -3.9672, -3.7279],</span>
+<span class="go">        [ 0.2606,  1.0632,  1.0695,  0.9140]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">10.0</span><span class="p">))</span>  <span class="c1"># Log hazard at one new time (e.g., 10 years)</span>
+<span class="go">tensor([ 0.5316,  0.3542, -2.8907,  0.3699])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">150.0</span><span class="p">]):</span> <span class="n">log_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>  <span class="c1"># Subject-specific log hazard at multiple new times</span>
+<span class="go">tensor([ 1.1280, -0.0372, -3.9767,  1.0757])</span>
+<span class="go">tensor([ 1.2330, -0.1062, -4.1680,  1.1999])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_params</span>  <span class="o">*=</span> <span class="mf">1e2</span>  <span class="c1"># Increase scale</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">all_times</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># Check for Torch.Inf values</span>
+<span class="go">tensor([-1.0000e+10, -2.3197e+01, -6.8385e+01, -1.0000e+10])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchsurv.loss.weibull.cumulative_hazard">
+<span class="sig-prename descclassname"><span class="pre">torchsurv.loss.weibull.</span></span><span class="sig-name descname"><span class="pre">cumulative_hazard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/torchsurv/loss/weibull.html#cumulative_hazard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.loss.weibull.cumulative_hazard" title="Link to this definition">#</a></dt>
+<dd><p>Cumulative hazard for the Weibull Accelerated Time Failure (AFT) survival model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_params</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Parameters of the Weibull distribution of shape = (n_samples, 1) or (n_samples, 2).
+The first column corresponds to the log scale parameter. The second column
+corresponds to the log shape parameter. If the log shape parameter is missing, it is
+imputed with 0.</p></li>
+<li><p><strong>time</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Time-to-event or censoring of length n_samples.</p></li>
+<li><p><strong>all_times</strong> (<em>bool</em>) – If True, subject-specific cumulative hazard is evaluated at all <code class="docutils literal notranslate"><span class="pre">time</span></code> (used for evaluation metrics).
+If False, subject-specific cumulative hazard is evaluated at respective <code class="docutils literal notranslate"><span class="pre">time</span></code>.
+Defaults is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Subject-specific cumulative hazard evaluated at <code class="docutils literal notranslate"><span class="pre">time</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(torch.Tensor, float)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_params</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cumulative_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">all_times</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># Cumulative hazard at respective time</span>
+<span class="go">tensor([  8.6257, 112.2115,   3.5105, 112.6339])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cumulative_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">all_times</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># Default. Cumulative hazard at all time</span>
+<span class="go">tensor([[  8.6257, 233.0865, 239.2167, 126.2805],</span>
+<span class="go">        [ 12.7698, 112.2115, 114.1484,  74.9134],</span>
+<span class="go">        [  0.8706,   3.4725,   3.5105,   2.6850],</span>
+<span class="go">        [  6.9530, 212.7592, 218.5687, 112.6339]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="torchsurv.loss.momentum.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">torchsurv.loss.momentum</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../metrics.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Metrics</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.weibull.neg_log_likelihood"><code class="docutils literal notranslate"><span class="pre">neg_log_likelihood()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.weibull.survival_function"><code class="docutils literal notranslate"><span class="pre">survival_function()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.weibull.log_hazard"><code class="docutils literal notranslate"><span class="pre">log_hazard()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.weibull.cumulative_hazard"><code class="docutils literal notranslate"><span class="pre">cumulative_hazard()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Novartis Pharma AG.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
