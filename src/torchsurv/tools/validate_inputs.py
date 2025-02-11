@@ -80,9 +80,7 @@ def validate_evaluation_time(new_time, time, within_follow_up=True):
     if within_follow_up:
         if new_time.max() >= time.max() or new_time.min() < time.min():
             raise ValueError(
-                "Value error: All new_time must be within follow-up time of test data: [{}; {}[".format(
-                    time.min(), time.max()
-                )
+                f"Value error: All new_time must be within follow-up time of test data: [{time.min()}; {time.max()}["
             )
 
 
@@ -119,7 +117,5 @@ def validate_estimate(estimate, time, new_time=None) -> None:
     if not new_time is None:
         if estimate.ndim == 2 and estimate.shape[1] != new_time.shape[0]:
             raise ValueError(
-                "Dimension mismatch: Expected  inputs 'estimate' with {} columns, but got {}".format(
-                    new_time.shape[0], estimate.shape[1]
-                )
+                f"Dimension mismatch: Expected  inputs 'estimate' with {new_time.shape[0]} columns, but got {estimate.shape[1]}"
             )
