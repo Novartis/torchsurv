@@ -1,0 +1,790 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Welcome to TorchSurv’s documentation! &#8212; torchsurv  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Loss" href="loss.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo_firecamp.png" class="logo__image only-light" alt="torchsurv  documentation - Home"/>
+    <img src="_static/logo_firecamp.png" class="logo__image only-dark pst-js-only" alt="torchsurv  documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="loss.html">Loss</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.loss.cox.html">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.loss.weibull.html">torchsurv.loss.weibull</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="metrics.html">Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.metrics.cindex.html">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/survival.html">A statistical introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/introduction.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/momentum.html">Survival with MNIST</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="AUTHORS.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devnotes.html">Development notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">Related packages</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/index.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Welcome to TorchSurv’s documentation!</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Welcome to TorchSurv’s documentation!</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deep-survival-analysis-made-easy">Deep survival analysis made easy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tl-dr">TL;DR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-and-dependencies">Installation and dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-started">Getting started</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#survival-data">Survival data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cox-proportional-hazards-model">Cox proportional hazards model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weibull-accelerated-failure-time-aft-model">Weibull accelerated failure time (AFT) model</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-packages">Related Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">Contributing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contacts">Contacts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cite">Cite</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="welcome-to-torchsurv-s-documentation">
+<h1>Welcome to TorchSurv’s documentation!<a class="headerlink" href="#welcome-to-torchsurv-s-documentation" title="Link to this heading">#</a></h1>
+<p align="center">
+    <!-- <img src="https://github.com/Novartis/torchsurv/blob/main/source/logo_firecamp.png" width="300"> -->
+    <img src="./source/logo_firecamp.png" width="300">
+</p>
+<section id="deep-survival-analysis-made-easy">
+<h2>Deep survival analysis made easy<a class="headerlink" href="#deep-survival-analysis-made-easy" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://pypi.org/project/torchsurv/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/torchsurv?label=Python" /></a>
+<a class="reference external" href="https://pypi.org/project/torchsurv/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/torchsurv?color=green&amp;label=PyPI" /></a>
+<a class="reference external" href="https://anaconda.org/conda-forge/torchsurv"><img alt="Conda" src="https://img.shields.io/conda/v/conda-forge/torchsurv?label=Conda&amp;color=green" /></a>
+<a class="reference external" href="https://pypi.org/project/torchsurv/"><img alt="PyPI Downloads" src="https://img.shields.io/pypi/dm/torchsurv.svg?label=PyPI%20downloads" /></a>
+<a class="reference external" href="https://anaconda.org/conda-forge/torchsurv"><img alt="Conda Downloads" src="https://img.shields.io/conda/dn/conda-forge/torchsurv.svg?label=Conda%20downloads" /></a></p>
+<p><img alt="CodeQC" src="https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main" />
+<img alt="Docs" src="https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main" />
+<a class="reference external" href="https://www.codefactor.io/repository/github/novartis/torchsurv/overview/main"><img alt="CodeFactor" src="https://www.codefactor.io/repository/github/novartis/torchsurv/badge/main" /></a>
+<a class="reference external" href="https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d"><img alt="JOSS" src="https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d/status.svg" /></a>
+<a class="reference external" href="https://opensource.org/licenses/MIT"><img alt="License" src="https://img.shields.io/badge/License-MIT-black" /></a>
+<a class="reference external" href="https://opensource.nibr.com/torchsurv/"><img alt="Documentation" src="https://img.shields.io/badge/GithubPage-Sphinx-blue" /></a></p>
+<p><code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code> is a Python package that serves as a companion tool to perform deep survival modeling within the <code class="docutils literal notranslate"><span class="pre">PyTorch</span></code> environment. Unlike existing libraries that impose specific parametric forms on users, <code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code> enables the use of custom <code class="docutils literal notranslate"><span class="pre">PyTorch</span></code>-based deep survival models.  With its lightweight design, minimal input requirements, full <code class="docutils literal notranslate"><span class="pre">PyTorch</span></code> backend, and freedom from restrictive survival model parameterizations, <code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code> facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.</p>
+<p>If you find this repository useful, please consider giving a star! ⭐</p>
+<p>This package was developed by <strong>Novartis</strong> and the <strong>US Food and Drug Administration</strong> as part of a <strong>research collaboration</strong> agreement on radiogenomics.</p>
+</section>
+<section id="tl-dr">
+<h2>TL;DR<a class="headerlink" href="#tl-dr" title="Link to this heading">#</a></h2>
+<p>Our idea is to <strong>keep things simple</strong>. You are free to use any model architecture you want! Our code has 100% PyTorch backend and behaves like any other functions (losses or metrics) you may be familiar with.</p>
+<p>Our functions are designed to support you, not to make you jump through hoops. Here’s a pseudo code illustrating how easy is it to use <code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code> to fit and evaluate a Cox proportional hazards model:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.loss</span><span class="w"> </span><span class="kn">import</span> <span class="n">cox</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.cindex</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConcordanceIndex</span>
+
+<span class="c1"># Pseudo training loop</span>
+<span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">dataloader</span><span class="p">:</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="n">estimate</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># shape = torch.Size([64, 1]), if batch size is 64</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">cox</span><span class="o">.</span><span class="n">neg_partial_log_likelihood</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>  <span class="c1"># native torch backend</span>
+
+<span class="c1"># You can check model performance using our evaluation metrics, e.g, the concordance index with</span>
+<span class="n">cindex</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="n">cindex</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+<span class="c1"># You can obtain the confidence interval of the c-index</span>
+<span class="n">cindex</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span>
+
+<span class="c1"># You can test whether the observed c-index is greater than 0.5 (random estimator)</span>
+<span class="n">cindex</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;noether&quot;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;two_sided&quot;</span><span class="p">)</span>
+
+<span class="c1"># You can even compare the metrics between two models (e.g., vs. model B)</span>
+<span class="n">cindex</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">cindexB</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="installation-and-dependencies">
+<h2>Installation and dependencies<a class="headerlink" href="#installation-and-dependencies" title="Link to this heading">#</a></h2>
+<p>First, install the package using either <a class="reference internal" href="#%5Bhttps://pypi.org/%5D(https://pypi.org/project/torchsurv/)"><span class="xref myst">PyPI</span></a> or <a class="reference internal" href="#%5Bhttps://anaconda.org/anaconda/conda%5D(https://anaconda.org/conda-forge/torchsurv)"><span class="xref myst">Conda</span></a></p>
+<ul class="simple">
+<li><p>Using conda (<strong>recommended</strong>)</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>conda-forge::torchsurv
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Using PyPI</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>torchsurv
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Using for local installation (<code class="docutils literal notranslate"><span class="pre">latest</span> <span class="pre">version</span></code>)</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>&lt;repo&gt;
+<span class="nb">cd</span><span class="w"> </span>&lt;repo&gt;
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+<p>Additionally, to build the documentation (<code class="docutils literal notranslate"><span class="pre">notebooks</span></code>, <code class="docutils literal notranslate"><span class="pre">sphinx</span></code>) and for package development (<code class="docutils literal notranslate"><span class="pre">tests</span></code>), please see <a class="reference external" href="https://opensource.nibr.com/torchsurv/devnotes.html">the development notes</a> and
+<a class="reference internal" href="#dev/environment.yml"><span class="xref myst">dev/environment.yml</span></a>. This step is <strong>not required</strong> to use <code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code> in your projects but only for optional features.</p>
+</section>
+<section id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h2>
+<p>We recommend starting with the <a class="reference external" href="https://opensource.nibr.com/torchsurv/notebooks/introduction.html">introductory guide</a>, where you’ll find an overview of the package’s functionalities.</p>
+<section id="survival-data">
+<h3>Survival data<a class="headerlink" href="#survival-data" title="Link to this heading">#</a></h3>
+<p>We simulate a random batch of 64 subjects. Each subject is associated with a binary event status (= <code class="docutils literal notranslate"><span class="pre">True</span></code> if event occured), a time-to-event or censoring and 16 covariates.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">52</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="cox-proportional-hazards-model">
+<h3>Cox proportional hazards model<a class="headerlink" href="#cox-proportional-hazards-model" title="Link to this heading">#</a></h3>
+<p>The user is expected to have defined a model that outputs the estimated <em>log relative hazard</em> for each subject. For illustrative purposes, we define a simple linear model that generates a linear combination of the covariates.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model_cox</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_hz</span> <span class="o">=</span> <span class="n">model_cox</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">log_hz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="go">torch.Size([64, 1])</span>
+</pre></div>
+</div>
+<p>Given the estimated log relative hazard and the survival data, we calculate the current loss for the batch with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.loss.cox</span><span class="w"> </span><span class="kn">import</span> <span class="n">neg_partial_log_likelihood</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss</span> <span class="o">=</span> <span class="n">neg_partial_log_likelihood</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+<span class="go">tensor(4.1723, grad_fn=&lt;DivBackward0&gt;)</span>
+</pre></div>
+</div>
+<p>We obtain the concordance index for this batch with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.cindex</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConcordanceIndex</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span> <span class="n">log_hz</span> <span class="o">=</span> <span class="n">model_cox</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cindex</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">))</span>
+<span class="go">tensor(0.4872)</span>
+</pre></div>
+</div>
+<p>We obtain the Area Under the Receiver Operating Characteristic Curve (AUC) at a new time t = 50 for this batch with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.auc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Auc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">50.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">auc</span> <span class="o">=</span> <span class="n">Auc</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">auc</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">new_time</span><span class="o">=</span><span class="mi">50</span><span class="p">))</span>
+<span class="go">tensor([0.4737])</span>
+</pre></div>
+</div>
+</section>
+<section id="weibull-accelerated-failure-time-aft-model">
+<h3>Weibull accelerated failure time (AFT) model<a class="headerlink" href="#weibull-accelerated-failure-time-aft-model" title="Link to this heading">#</a></h3>
+<p>The user is expected to have defined a model that outputs for each subject the estimated <em>log scale</em> and optionally the <em>log shape</em> of the Weibull distribution that the event density follows. In case the model has a single output, <code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code> assume that the shape is equal to 1, resulting in the event density to be an exponential distribution solely parametrized by the scale.</p>
+<p>For illustrative purposes, we define a simple linear model that estimate two linear combinations of the covariates (log scale and log shape parameters).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model_weibull</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_params</span> <span class="o">=</span> <span class="n">model_weibull</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">log_params</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="go">torch.Size([64, 2])</span>
+</pre></div>
+</div>
+<p>Given the estimated log scale and log shape and the survival data, we calculate the current loss for the batch with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.loss.weibull</span><span class="w"> </span><span class="kn">import</span> <span class="n">neg_log_likelihood</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss</span> <span class="o">=</span> <span class="n">neg_log_likelihood</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+<span class="go">tensor(82931.5078, grad_fn=&lt;DivBackward0&gt;)</span>
+</pre></div>
+</div>
+<p>To evaluate the predictive performance of the model, we calculate subject-specific log hazard and survival function evaluated at all times with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.loss.weibull</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_hazard</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.loss.weibull</span><span class="w"> </span><span class="kn">import</span> <span class="n">survival_function</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span> <span class="n">log_params</span> <span class="o">=</span> <span class="n">model_weibull</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_hz</span> <span class="o">=</span> <span class="n">log_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">log_hz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="go">torch.Size([64, 64])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">surv</span> <span class="o">=</span> <span class="n">survival_function</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">surv</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="go">torch.Size([64, 64])</span>
+</pre></div>
+</div>
+<p>We obtain the concordance index for this batch with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.cindex</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConcordanceIndex</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cindex</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">))</span>
+<span class="go">tensor(0.4062)</span>
+</pre></div>
+</div>
+<p>We obtain the AUC at a new time t = 50 for this batch with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.auc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Auc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">50.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_hz_t</span> <span class="o">=</span> <span class="n">log_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">new_time</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">auc</span> <span class="o">=</span> <span class="n">Auc</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">auc</span><span class="p">(</span><span class="n">log_hz_t</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">new_time</span><span class="o">=</span><span class="n">new_time</span><span class="p">))</span>
+<span class="go">tensor([0.3509])</span>
+</pre></div>
+</div>
+<p>We obtain the integrated brier-score with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.brier_score</span><span class="w"> </span><span class="kn">import</span> <span class="n">BrierScore</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">brier_score</span> <span class="o">=</span> <span class="n">BrierScore</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bs</span> <span class="o">=</span> <span class="n">brier_score</span><span class="p">(</span><span class="n">surv</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">brier_score</span><span class="o">.</span><span class="n">integral</span><span class="p">())</span>
+<span class="go">tensor(0.4447)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="related-packages">
+<h2>Related Packages<a class="headerlink" href="#related-packages" title="Link to this heading">#</a></h2>
+<p>The table below compares the functionalities of <code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code> with those of
+<a class="reference external" href="https://proceedings.mlr.press/v182/nagpal22a.html">auton-survival</a>,
+<a class="reference external" href="http://jmlr.org/papers/v20/18-424.html">pycox</a>,
+<a class="reference external" href="https://sachinruk.github.io/torchlife//index.html">torchlife</a>,
+<a class="reference external" href="https://jmlr.org/papers/v21/20-729.html">scikit-survival</a>,
+<a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.01317">lifelines</a>, and
+<a class="reference external" href="https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-018-0482-1">deepsurv</a>.
+While several libraries offer survival modelling functionalities, no existing library provides the flexibility to use a custom PyTorch-based neural networks to define the survival model parameters.</p>
+<p>The outputs of both the log-likelihood functions and the evaluation metrics functions have <strong>undergone thorough comparison with benchmarks generated</strong> using <code class="docutils literal notranslate"><span class="pre">Python</span></code> and <code class="docutils literal notranslate"><span class="pre">R</span></code> packages. The comparisons (at time of publication) are summarised in the <a class="reference external" href="https://opensource.nibr.com/torchsurv/benchmarks.html">Related packages summary</a>.</p>
+<p><img alt="Survival analysis libraries in Python" src="_images/table_python_benchmark.png" />
+<img alt="Survival analysis libraries in Python" src="_images/table_python_benchmark_legend.png" /></p>
+<p>Survival analysis libraries in R. For obtaining the evaluation metrics, packages <code class="docutils literal notranslate"><span class="pre">survival</span></code>, <code class="docutils literal notranslate"><span class="pre">riskRegression</span></code>, <code class="docutils literal notranslate"><span class="pre">SurvMetrics</span></code> and <code class="docutils literal notranslate"><span class="pre">pec</span></code> require the fitted model object as input (a specific object format) and <code class="docutils literal notranslate"><span class="pre">RisksetROC</span></code> imposes a smoothing method. Packages <code class="docutils literal notranslate"><span class="pre">timeROC</span></code>, <code class="docutils literal notranslate"><span class="pre">riskRegression</span></code> and pec force the user to choose a form for subject-specific
+weights (e.g., inverse probability of censoring weighting (IPCW)). Packages <code class="docutils literal notranslate"><span class="pre">survcomp</span></code> and <code class="docutils literal notranslate"><span class="pre">SurvivalROC</span></code> do not implement the general AUC but the censoring-adjusted AUC estimator proposed by Heagerty et al. (2000).</p>
+<p><img alt="Survival analysis libraries in R" src="_images/table_r_benchmark.png" /></p>
+</section>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading">#</a></h2>
+<p>We value contributions from the community to enhance and improve this project. If you’d like to contribute, please consider the following:</p>
+<ol class="arabic simple">
+<li><p>Create Issues: If you encounter bugs, have feature requests, or want to suggest improvements, please create an <a class="reference external" href="https://github.com/Novartis/torchsurv/issues">issue</a> in the GitHub repository. Make sure to provide detailed information about the problem, including code for reproducibility, or enhancement you’re proposing.</p></li>
+<li><p>Fork and Pull Requests: If you’re willing to address an existing issue or contribute a new feature, fork the repository, create a new branch, make your changes, and then submit a pull request. Please ensure your code follows our coding conventions and include tests for any new functionality.</p></li>
+</ol>
+<p>By contributing to this project, you agree to license your contributions under the same license as this project.</p>
+</section>
+<section id="contacts">
+<h2>Contacts<a class="headerlink" href="#contacts" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="mailto:thibaud&#46;coroller&#37;&#52;&#48;novartis&#46;com?subject=TorchSurv">Thibaud Coroller</a> (<strong>Novartis</strong>): <code class="docutils literal notranslate"><span class="pre">(creator,</span> <span class="pre">maintainer)</span></code></p></li>
+<li><p><a class="reference external" href="mailto:monod&#46;melodie&#37;&#52;&#48;gmail&#46;com?subject=TorchSurv">Mélodie Monod</a> (<strong>Imperial College London</strong>): <code class="docutils literal notranslate"><span class="pre">(creator,</span> <span class="pre">maintainer)</span></code></p></li>
+<li><p><a class="reference external" href="mailto:peter&#46;krusche&#37;&#52;&#48;novartis&#46;com?subject=TorchSurv">Peter Krusche</a> (<strong>Novartis</strong>): <code class="docutils literal notranslate"><span class="pre">(author,</span> <span class="pre">maintainer)</span></code></p></li>
+<li><p><a class="reference external" href="mailto:qian&#46;cao&#37;&#52;&#48;fda&#46;hhs&#46;gov?subject=TorchSurv">Qian Cao</a> (<strong>FDA</strong>): <code class="docutils literal notranslate"><span class="pre">(author,</span> <span class="pre">maintainer)</span></code></p></li>
+</ul>
+<p>If you have any questions, suggestions, or feedback, feel free to reach out the developement team <a class="reference external" href="https://opensource.nibr.com/torchsurv/AUTHORS.html">us</a>.</p>
+</section>
+<section id="cite">
+<h2>Cite<a class="headerlink" href="#cite" title="Link to this heading">#</a></h2>
+<p>If you use this project in academic work or publications, we appreciate citing it using the following BibTeX entry:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@article</span><span class="p">{</span><span class="n">Monod2024</span><span class="p">,</span>
+    <span class="n">doi</span> <span class="o">=</span> <span class="p">{</span><span class="mf">10.21105</span><span class="o">/</span><span class="n">joss</span><span class="mf">.07341</span><span class="p">},</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="p">{</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">doi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mf">10.21105</span><span class="o">/</span><span class="n">joss</span><span class="mf">.07341</span><span class="p">},</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2024</span><span class="p">},</span>
+    <span class="n">publisher</span> <span class="o">=</span> <span class="p">{</span><span class="n">The</span> <span class="n">Open</span> <span class="n">Journal</span><span class="p">},</span>
+    <span class="n">volume</span> <span class="o">=</span> <span class="p">{</span><span class="mi">9</span><span class="p">},</span>
+    <span class="n">number</span> <span class="o">=</span> <span class="p">{</span><span class="mi">104</span><span class="p">},</span>
+    <span class="n">pages</span> <span class="o">=</span> <span class="p">{</span><span class="mi">7341</span><span class="p">},</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="p">{</span><span class="n">Mélodie</span> <span class="n">Monod</span> <span class="ow">and</span> <span class="n">Peter</span> <span class="n">Krusche</span> <span class="ow">and</span> <span class="n">Qian</span> <span class="n">Cao</span> <span class="ow">and</span> <span class="n">Berkman</span> <span class="n">Sahiner</span> <span class="ow">and</span> <span class="n">Nicholas</span> <span class="n">Petrick</span> <span class="ow">and</span> <span class="n">David</span> <span class="n">Ohlssen</span> <span class="ow">and</span> <span class="n">Thibaud</span> <span class="n">Coroller</span><span class="p">},</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="p">{</span><span class="n">TorchSurv</span><span class="p">:</span> <span class="n">A</span> <span class="n">Lightweight</span> <span class="n">Package</span> <span class="k">for</span> <span class="n">Deep</span> <span class="n">Survival</span> <span class="n">Analysis</span><span class="p">},</span> <span class="n">journal</span> <span class="o">=</span> <span class="p">{</span><span class="n">Journal</span> <span class="n">of</span> <span class="n">Open</span> <span class="n">Source</span> <span class="n">Software</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="loss.html">Loss</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.loss.cox.html">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.loss.weibull.html">torchsurv.loss.weibull</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.metrics.cindex.html">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">Stats</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/survival.html">A statistical introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/survival.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/survival.html#evaluation-metrics-under-binary-response">Evaluation metrics under binary response</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/survival.html#evaluation-metrics-under-time-to-event-response">Evaluation metrics under time-to-event response</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/survival.html#discussion">Discussion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/survival.html#the-brier-score-as-an-alternative-to-the-auc-and-c-index">The Brier-Score as an alternative to the AUC and C-index</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/survival.html#conclusion-in-practice">Conclusion in practice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/survival.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/introduction.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/introduction.html#Dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/introduction.html#Section-1.1:-MLP-model-for-log-relative-hazards">Section 1.1: MLP model for log relative hazards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/introduction.html#Section-1.2:-MLP-model-training">Section 1.2: MLP model training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/introduction.html#Section-1.3:-Cox-proportional-hazards-model-evaluation">Section 1.3: Cox proportional hazards model evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/introduction.html#Section-2.1:-MLP-model-for-log-scale-and-log-shape">Section 2.1: MLP model for log scale and log shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/introduction.html#Section-2.2:-MLP-model-training">Section 2.2: MLP model training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/introduction.html#Section-2.3:-Weibull-AFT-model-evaluation">Section 2.3: Weibull AFT model evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/introduction.html#Section-3.1:-Concordance-index">Section 3.1: Concordance index</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/introduction.html#Section-3.2:-AUC-at-5-year">Section 3.2: AUC at 5-year</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/momentum.html">Survival with MNIST</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/momentum.html#Dependencies">Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/momentum.html#Momentum">Momentum</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Change log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#version-0-1-4">Version 0.1.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#version-0-1-3">Version 0.1.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#version-0-1-2">Version 0.1.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#version-0-1-1">Version 0.1.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#version-0-1-0">Version 0.1.0</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="AUTHORS.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devnotes.html">Development notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="devnotes.html#set-up-a-development-environment-via-conda">Set up a development environment via conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="devnotes.html#test-and-develop-the-package">Test and develop the package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="devnotes.html#installing-a-local-package-build">Installing a local package build</a></li>
+<li class="toctree-l2"><a class="reference internal" href="devnotes.html#code-formatting">Code formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="devnotes.html#build-and-test-the-documentation-locally">Build and test the documentation locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="devnotes.html#steps-to-create-a-new-release">Steps to create a new release</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">Related packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#structure">Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#benchmark-comparison">Benchmark Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#obtaining-benchmarks-on-r">Obtaining Benchmarks on R</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#benchmark-comparison-figures">Benchmark Comparison Figures</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="loss.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Loss</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Welcome to TorchSurv’s documentation!</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deep-survival-analysis-made-easy">Deep survival analysis made easy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tl-dr">TL;DR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-and-dependencies">Installation and dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-started">Getting started</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#survival-data">Survival data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cox-proportional-hazards-model">Cox proportional hazards model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weibull-accelerated-failure-time-aft-model">Weibull accelerated failure time (AFT) model</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-packages">Related Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">Contributing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contacts">Contacts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cite">Cite</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Novartis Pharma AG.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

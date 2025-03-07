@@ -1,0 +1,760 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>A statistical introduction &#8212; torchsurv  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/survival';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Getting started" href="introduction.html" />
+    <link rel="prev" title="torchsurv.stats.ipcw" href="../_autosummary/torchsurv.stats.ipcw.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo_firecamp.png" class="logo__image only-light" alt="torchsurv  documentation - Home"/>
+    <img src="../_static/logo_firecamp.png" class="logo__image only-dark pst-js-only" alt="torchsurv  documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../loss.html">Loss</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.cox.html">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.weibull.html">torchsurv.loss.weibull</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../metrics.html">Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.metrics.cindex.html">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">A statistical introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="momentum.html">Survival with MNIST</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../AUTHORS.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devnotes.html">Development notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Related packages</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/survival.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>A statistical introduction</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation-metrics-under-binary-response">Evaluation metrics under binary response</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation-metrics-under-time-to-event-response">Evaluation metrics under time-to-event response</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extension-of-sensitivity-and-specificity-for-time-to-event-response">Extension of sensitivity and specificity for time-to-event response</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-sensitivity">Cumulative sensitivity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#incident-sensitivity">Incident sensitivity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-specificity">Dynamic specificity</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extension-of-the-auc-for-time-to-event-response">Extension of the AUC for time-to-event response</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-dynamic-auc">Cumulative/dynamic AUC</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#incident-dynamic-auc">Incident/dynamic AUC</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extension-of-the-c-index-for-time-to-event-response">Extension of the C-index for time-to-event response</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion">Discussion</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-estimate-the-auc-and-c-index">How to estimate the AUC and C-index?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-risk-score-should-be-used">What risk score should be used?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-evaluation-metric-should-be-used">What evaluation metric should be used?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-are-the-limits-of-the-auc-and-the-c-index">What are the limits of the AUC and the C-index?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-brier-score-as-an-alternative-to-the-auc-and-c-index">The Brier-Score as an alternative to the AUC and C-index</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brier-score-and-integrated-brier-score">Brier-score and Integrated Brier Score</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discrimination-auc-c-index-vs-calibration-brier-score-measure">Discrimination (AUC, C-index) vs. calibration (Brier score) measure</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion-in-practice">Conclusion in practice</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference">Reference</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="a-statistical-introduction">
+<h1>A statistical introduction<a class="headerlink" href="#a-statistical-introduction" title="Link to this heading">#</a></h1>
+<!-- ## Predictive accuracy evaluation metrics for survival model -->
+<ul class="simple">
+<li><p><strong>Author</strong>: Mélodie Monod</p></li>
+</ul>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>The evaluation metrics for assessing the predictive performance of a model depend greatly on the type of response variable. For instance, mean squared error (MSE) or mean absolute error (MAE) are commonly used for continuous response data. In contrast, for binary data, metrics such as true positive rate (TPR) and true negative rate (TNR) are utilized. This document presents evaluation metrics specifically designed for survival data, where the response variable is the time to an event.</p>
+</section>
+<section id="evaluation-metrics-under-binary-response">
+<h2>Evaluation metrics under binary response<a class="headerlink" href="#evaluation-metrics-under-binary-response" title="Link to this heading">#</a></h2>
+<p>To understand the evaluation metrics for time-to-event data, it is helpful to start with a review of the evaluation metrics used for binary outcomes, as the former are extensions of the latter.</p>
+<p>Assume we have a binary response <span class="math notranslate nohighlight">\(Y_i \in {0,1}\)</span>, for any individual <span class="math notranslate nohighlight">\(i\)</span>. The model is a probabilistic classifier that outputs a score <span class="math notranslate nohighlight">\(\pi_i \in [0,1]\)</span>, which is an estimate of the probability <span class="math notranslate nohighlight">\(p(Y_i = 1)\)</span>.</p>
+<p>The predicted response for individual <span class="math notranslate nohighlight">\(i\)</span>, denoted <span class="math notranslate nohighlight">\(\hat{Y}_i\)</span>, is obtained by comparing the score to a threshold <span class="math notranslate nohighlight">\(c\)</span>,</p>
+<p>$$
+\hat{Y}_i  =
+\begin{cases}
+1, \text{ if } \pi_i &gt; c \
+0, \text{ if } \pi_i \leq c. \
+\end{cases}
+$$</p>
+<p>Two key quantities are defined to evaluate the accuracy of the score: sensitivity and specificity, which are defined as</p>
+<p>$$
+\text{Sensitivity}(c) = p(\hat{Y}_i = 1 | Y_i = 1) = p(\pi_i &gt; c | Y_i = 1),\
+\text{Specificity}(c) = p(\hat{Y}_i = 0 | Y_i = 0) = p(\pi_i \leq c | Y_i = 0).
+$$</p>
+<p>Note that the sensitivity is also referred to as the True Positive Rate (TPR), and the specificity is also known as the True Negative Rate (TNR), which equals 1 − False Positive Rate (FPR).</p>
+<p>To visualize the predictive performance of the probabilistic classifier, the Receiver Operating Characteristic (ROC) curve plots the FPR on the x-axis and the TPR on the y-axis for all values of <span class="math notranslate nohighlight">\(c\)</span>. The Area Under the ROC Curve (AUC) summarizes the predictive performance across all values of <span class="math notranslate nohighlight">\(c\)</span>. It is given by</p>
+<p>$$
+\text{AUC} = \int_0^1 TPR(FPR(c)) dFPR(c).
+$$</p>
+<p>It can be shown that the AUC is equal to <span class="math notranslate nohighlight">\(p(\pi_i &gt; \pi_j|Y_i = 1, Y_j = 0)\)</span>. This is the probability that, for a comparable pair, the individual without the event has a lower score than the individual with the event. This probability is also referred to as the C-index (denoted by C). In the binary context, the AUC is equal to the C-index.</p>
+<details>
+<summary> Proof of the AUC's probabilistic interpretation </summary>
+<br>
+<p>Let
+$$
+y(c) = \text{TPR}(c) = p(\pi_i &gt; c | Y_i = 1),\
+x(c) = \text{FPR}(c) = p(\pi_i &gt; c | Y_i = 0).
+$$</p>
+<p>Let us denote <span class="math notranslate nohighlight">\(f_1(c) = p(\pi_i = c | Y_i = 1)\)</span> and <span class="math notranslate nohighlight">\(F_1(c) = p(\pi_i \leq c | Y_i = 1)\)</span> and similarly <span class="math notranslate nohighlight">\(f_0(c) = p(\pi_i = c | Y_i = 0)\)</span> and <span class="math notranslate nohighlight">\(F_0(c) = p(\pi_i \leq c | Y_i = 0)\)</span>. Notice that <span class="math notranslate nohighlight">\(y(c) = 1 - F_1(c)\)</span> and <span class="math notranslate nohighlight">\(x(c) = 1 - F_0(c)\)</span>.</p>
+<p>The AUC is defined as
+$$
+\text{AUC} = \int_0^1 y(x(c)) dx(c).
+$$</p>
+<p>We use a change of variable <span class="math notranslate nohighlight">\(c = x(c)\)</span>. We have <span class="math notranslate nohighlight">\(\frac{dx}{dc}(c) = x'(c)\)</span> and the limits become <span class="math notranslate nohighlight">\(x^{-1}(1) = - \infty\)</span> and <span class="math notranslate nohighlight">\(x^{-1}(0) = \infty\)</span>. Therefore</p>
+<p>$$
+\begin{align*}
+\text{AUC} &amp;= \int_{\infty}^{-\infty} y(c) x’(c) dc \
+&amp;= \int_{\infty}^{-\infty} (1- F_1(c)) (-f_0(c)) dc \
+&amp;= \int_{-\infty}^\infty (1- F_1(c)) f_0(c) dc \
+&amp;= \int_{-\infty}^\infty p(\pi_i &gt; c | Y_i = 1) p(\pi_j = c | Y_j = 0) dc \
+&amp;= p(\pi_i &gt; \pi_j |  Y_i = 1, Y_j = 0)  \
+\end{align*}
+$$</p>
+</details>
+</section>
+<section id="evaluation-metrics-under-time-to-event-response">
+<h2>Evaluation metrics under time-to-event response<a class="headerlink" href="#evaluation-metrics-under-time-to-event-response" title="Link to this heading">#</a></h2>
+<p>Let’s assume that individual <span class="math notranslate nohighlight">\(i\)</span> has a time-to-event <span class="math notranslate nohighlight">\(X_i\)</span> and a time-to-censoring <span class="math notranslate nohighlight">\(D_i\)</span>. We observe either the time to event or censoring, <span class="math notranslate nohighlight">\(T_i = \min(X_i, D_i)\)</span>, along with the event indicator <span class="math notranslate nohighlight">\(\delta_i = 1(X_i \leq D_i)\)</span>. A probabilistic survival model outputs a score <span class="math notranslate nohighlight">\(q_i(t) \in \mathbb{R}\)</span>, which estimates the event risk at time <span class="math notranslate nohighlight">\(t\)</span>  for individual <span class="math notranslate nohighlight">\(i\)</span>.</p>
+<section id="extension-of-sensitivity-and-specificity-for-time-to-event-response">
+<h3>Extension of sensitivity and specificity for time-to-event response<a class="headerlink" href="#extension-of-sensitivity-and-specificity-for-time-to-event-response" title="Link to this heading">#</a></h3>
+<p>A time-to-event outcome can be viewed as a time-varying binary outcome using the counting process representation:</p>
+<p>$$
+N_i(t) = 1(X_i \leq t).
+$$</p>
+<p>The risk score chosen can either predicts prevalence or incidence (Heagerty and Zheng, 2005). For example, the cumulative hazard can be seen as a measure of prevalence because it measures the cumulative risk, whereas the instantaneous hazard can be seen as a measure of incidence as it measures the risk of an event in a very short, infinitesimally small time. Consequently, there are two different types of sensitivity depending on the chosen risk score.</p>
+<section id="cumulative-sensitivity">
+<h4>Cumulative sensitivity<a class="headerlink" href="#cumulative-sensitivity" title="Link to this heading">#</a></h4>
+<p>If the predicted classification of <span class="math notranslate nohighlight">\(i\)</span> is based on a risk score measuring prevalence, it is defined as:</p>
+<p>$$
+\hat{N}_i(t) =
+\begin{cases}
+1, \text{ if } q_i(t) &gt; c \
+0, \text{ if } q_i(t) \leq c. \
+\end{cases}
+$$</p>
+<p>In this case, the sensitivity is referred to as cumulative sensitivity. It is the probability that a model correctly predicts that individual <span class="math notranslate nohighlight">\(i\)</span> experiences an event before or at time <span class="math notranslate nohighlight">\(t\)</span> and is defined as:</p>
+<p>$$
+\text{sensitivity}^{\mathbb{C}}(c,t) = p(\hat{N}_i(t) = 1 | {N}_i(t) =1 ) = p(q_i(t) &gt; c| X_i \leq t )
+$$</p>
+</section>
+<section id="incident-sensitivity">
+<h4>Incident sensitivity<a class="headerlink" href="#incident-sensitivity" title="Link to this heading">#</a></h4>
+<p>If the prediction classification of <span class="math notranslate nohighlight">\(i\)</span> is based on a risk score measuring incidence, it is defined as:</p>
+<p>$$
+d\hat{N}_i(t)  =
+\begin{cases}
+1, \text{ if } q_i(t) &gt; c \
+0, \text{ if } q_i(t) \leq c. \
+\end{cases}
+$$</p>
+<p>In this case, the sensitivity is referred to as incident sensitivity. It is the probability that a model correctly predicts that individual <span class="math notranslate nohighlight">\(i\)</span> experiences an event at time <span class="math notranslate nohighlight">\(t\)</span> and is defined as:</p>
+<p>$$
+\text{sensitivity}^{\mathbb{I}}(c,t) = p(d\hat{N}_i(t) = 1 | d{N}_i(t) =1 ) = p(q_i(t) &gt; c| X_i = t )
+$$</p>
+</section>
+<section id="dynamic-specificity">
+<h4>Dynamic specificity<a class="headerlink" href="#dynamic-specificity" title="Link to this heading">#</a></h4>
+<p>Extending the concept from the binary response setting, specificity in the time-to-event response context is called dynamic specificity. It is the probability that a model correctly predicts that individual <span class="math notranslate nohighlight">\(i\)</span> does not experience an event before or at time <span class="math notranslate nohighlight">\(t\)</span>. It is defined as:</p>
+<p>$$
+\text{specificity}^{\mathbb{D}}(c,t) = p(\hat{N}_i(t) = 0 | {N}_i(t) =0 ) = p(q_i(t) \leq c| X_i &gt; t )
+$$</p>
+<p>Note that there is no distinction between prevalence and incidence in the context of specificity. This is because if we condition on <span class="math notranslate nohighlight">\(dN_i(t) = 0\)</span>, it implies either the individual had an event before <span class="math notranslate nohighlight">\(t\)</span> and is thus excluded, or the individual has an event after <span class="math notranslate nohighlight">\(t\)</span> which is equivalent to conditioning on <span class="math notranslate nohighlight">\(N_i(t) = 0\)</span>.</p>
+</section>
+</section>
+<section id="extension-of-the-auc-for-time-to-event-response">
+<h3>Extension of the AUC for time-to-event response<a class="headerlink" href="#extension-of-the-auc-for-time-to-event-response" title="Link to this heading">#</a></h3>
+<section id="cumulative-dynamic-auc">
+<h4>Cumulative/dynamic AUC<a class="headerlink" href="#cumulative-dynamic-auc" title="Link to this heading">#</a></h4>
+<p>If the risk score measures prevalence, a cumulative/dynamic ROC curve can be defined on the cumulative sensitivity against 1 - dynamic specificity. The area under the cumulative/dynamic ROC curve is called the cumulative/dynamic AUC (AUC C/D). It represents the probability that the model correctly identifies which of two comparable samples experiences an event before or at time <span class="math notranslate nohighlight">\(t\)</span> based on their predicted risk scores. It is defined as:</p>
+<p>$$
+\begin{align*}
+AUC^{\mathbb{C}/\mathbb{D}}(t) &amp;= p(q_i(t)&gt;q_j(t)|N_i(t) = 1, N_j(t) = 0) \
+&amp;= p(q_i(t)&gt;q_j(t)|X_i \leq t, X_j &gt;t)
+\end{align*}
+$$</p>
+<p>The proof of the probabilitic interpretation of <span class="math notranslate nohighlight">\(AUC^{\mathbb{C}/\mathbb{D}}\)</span> is similar to that in the binary response context.</p>
+</section>
+<section id="incident-dynamic-auc">
+<h4>Incident/dynamic AUC<a class="headerlink" href="#incident-dynamic-auc" title="Link to this heading">#</a></h4>
+<p>If the risk score measures incidence, a incident/dynamic ROC curve can be defined on the incident sensitivity against 1 - dynamic specificity. The area under the incident/dynamic ROC curve is called the incident/dynamic AUC (AUC I/D). It represents the probability that the model correctly identifies which of two comparable samples experiences an event at time <span class="math notranslate nohighlight">\(t\)</span> based on their predicted risk scores. It is defined as:</p>
+<p>$$
+\begin{align*}
+\text{AUC}^{\mathbb{I}/\mathbb{D}}(t) &amp;= p(q_i(t)&gt;q_j(t)|dN_i(t) = 1, N_j(t) = 0) \
+&amp; = p(q_i(t)&gt;q_j(t)|X_i = t, X_j &gt;t)
+\end{align*}
+$$</p>
+<p>The proof of the probabilitic interpretation of <span class="math notranslate nohighlight">\(AUC^{\mathbb{I}/\mathbb{D}}\)</span> is similar to that in the binary response context.</p>
+</section>
+</section>
+<section id="extension-of-the-c-index-for-time-to-event-response">
+<h3>Extension of the C-index for time-to-event response<a class="headerlink" href="#extension-of-the-c-index-for-time-to-event-response" title="Link to this heading">#</a></h3>
+<p>The C-index is the probability that a model correctly predict which of two comparable samples experiences an event first based on their predicted risk scores.</p>
+<p>$$
+C = p(q_i(X_i) &gt; q_j(X_i) | X_i &lt; X_j)
+$$</p>
+<p>It can be shown that the C-index is related to the incidence/dynamic AUC, specifically <span class="math notranslate nohighlight">\(C = \int_t \text{AUC}^{\mathbb{I}/\mathbb{D}}(t) g(t) dt\)</span> where <span class="math notranslate nohighlight">\(g(t) = 2f(t)S(t)\)</span>, <span class="math notranslate nohighlight">\(f(t)\)</span> is the time-to-event densitity and <span class="math notranslate nohighlight">\(S(t)\)</span> is the survival function.</p>
+<details>
+<summary> Proof of the relation between the C-index and the AUC I/D </summary>
+<br>
+<p>$$
+\begin{align}
+C &amp;= p(q_i(X_i) &gt; q_j(X_i) | X_i &lt; X_j) \
+&amp;= \frac{p(q_i(X_i) &gt; q_j(X_i) , X_i &lt; X_j)}{p(X_i &lt; X_j)} \
+&amp;= 2 p(q_i(X_i) &gt; q_j(X_i) , X_i &lt; X_j) \
+&amp;= 2 \int_t p(q_i(X_i) &gt; q_j(X_i) , X_i = t, X_j &gt; t) dt \
+&amp;= 2 \int_t p(q_i(X_i) &gt; q_j(X_i) | X_i = t, X_j &gt; t) p(X_i = t, X_j &gt; t) dt \
+&amp;= 2 \int_t \text{AUC}^{\mathbb{I}/\mathbb{D}}(t) p(X_i = t) p(X_j &gt; t) dt \
+&amp;= 2 \int_t \text{AUC}^{\mathbb{I}/\mathbb{D}}(t) f(t) S(t) dt \
+\end{align}
+$$
+where in the third line we used the fact that <span class="math notranslate nohighlight">\(p(X_i &lt; X_j) = 1/2\)</span> by independence, and in the sixth line, we again relied on the independence of the response.</p>
+</details>
+</section>
+</section>
+<section id="discussion">
+<h2>Discussion<a class="headerlink" href="#discussion" title="Link to this heading">#</a></h2>
+<section id="how-to-estimate-the-auc-and-c-index">
+<h3>How to estimate the AUC and C-index?<a class="headerlink" href="#how-to-estimate-the-auc-and-c-index" title="Link to this heading">#</a></h3>
+<p>In other documentation, we presented the <a class="reference internal" href="#(../_autosummary/torchsurv.metrics.auc.html)"><span class="xref myst">estimators for the AUC</span></a> and the <a class="reference internal" href="#../_autosummary/torchsurv.metrics.cindex.html"><span class="xref myst">estimators for the C-index</span></a>. In particular, these estimator needs to account for censored time-to-event data.</p>
+</section>
+<section id="what-risk-score-should-be-used">
+<h3>What risk score should be used?<a class="headerlink" href="#what-risk-score-should-be-used" title="Link to this heading">#</a></h3>
+<p>As explained previously, the risk score can either measure incidence or prevalence. An obvious candidate for measuring incidence is the instantaneous hazard, while the cumulative hazard is suitable for measuring prevalence. The choice of risk score depends on the question of interest and what the model should be good at predicting. For example, if the question of interest is how many deaths occur by time <span class="math notranslate nohighlight">\(t\)</span>, the risk score chosen should measure prevalence, and the evaluation metrics should be the AUC C/D.</p>
+</section>
+<section id="what-evaluation-metric-should-be-used">
+<h3>What evaluation metric should be used?<a class="headerlink" href="#what-evaluation-metric-should-be-used" title="Link to this heading">#</a></h3>
+<p>Choosing between AUC I/D and AUC C/D depends on the type of risk score, as previously explained. However, the question remains whether to use the AUC or the C-index. The AUCs are time-dependent and provide a measure of predictive performance at specific time points. In contrast, the concordance index (C-index) offers a global assessment of a fitted survival model over the entire observational period. It is recommended to use AUC instead of the concordance index for time-dependent predictions (e.g., 10-year mortality), as AUC is proper in this context, while the concordance index is not (Blanche et al., 2018).</p>
+<p>Below, we summarize the pros and cons of the C-index, AUC I/D, and AUC C/D (Lambert and Chevret, 2016).</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>C-index</p></th>
+<th class="head"><p>AUC cumulative/dynamic</p></th>
+<th class="head"><p>AUC incident/dynamic</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Pros</p></td>
+<td><p>Global measure that does not depend on time</p></td>
+<td><p>More clinically relevant, where one wishes to predict individuals who will have failed by time <span class="math notranslate nohighlight">\(t\)</span>. <br> Proper for time-dependent prediction.</p></td>
+<td><p>Integral has probabilistic interpretation of the C-index. <br> Natural companion for hazard models. <br>Proper for time-dependent prediction.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cons</p></td>
+<td><p>Not proper for time-dependent prediction (e.g., 10-years mortality).</p></td>
+<td><p>Integral does not have a nice probabilistic interpretation. <br> Requires a cumulative risk score (e.g., 1-survival function or cumulative hazard).</p></td>
+<td><p>Require the exact event times to be recorded. <br> All subjects that failed before <span class="math notranslate nohighlight">\(t\)</span> are ignored.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="what-are-the-limits-of-the-auc-and-the-c-index">
+<h3>What are the limits of the AUC and the C-index?<a class="headerlink" href="#what-are-the-limits-of-the-auc-and-the-c-index" title="Link to this heading">#</a></h3>
+<p>There are three main limits of the AUC and C-index (Hartman et al., 2023):</p>
+<ul class="simple">
+<li><p><strong>Ties in predicted risk score (C-index)</strong>:
+A model that assigns the same risk score to individuals with extremely different survival experiences is not performing well, but the C-Index does not detect this inadequacy.
+On the other hand, a model that assigns the same risk score to individuals with very similar survival experiences may be appropriately capturing the similarities in underlying risk.
+While these two scenarios have very different interpretations, they are treated as the same in the C-Index calculation, since each of these pairs contributes a score of 0.5.</p></li>
+<li><p><strong>Time dependence (AUC and C-index)</strong>:
+Time-to-event outcome is dichotomized at each time point, which potentially generates many comparable pairs that are difficult to discriminate and are not clinically meaningful.
+For example, if a individual experiences the event of interest on day t of the study, and another individual, with similar underlying risk, experiences the event shortly afterwards on day t + 1, then these two individuals would be deemed comparable according to the time-dependent C-Index definition.</p></li>
+<li><p><strong>Discrimination (AUC and C-index)</strong>:
+The concordance index disregards the actual values of predicted risk scores – it is a ranking metric – and is unable to tell anything about calibration.</p></li>
+</ul>
+</section>
+</section>
+<section id="the-brier-score-as-an-alternative-to-the-auc-and-c-index">
+<h2>The Brier-Score as an alternative to the AUC and C-index<a class="headerlink" href="#the-brier-score-as-an-alternative-to-the-auc-and-c-index" title="Link to this heading">#</a></h2>
+<section id="brier-score-and-integrated-brier-score">
+<h3>Brier-score and Integrated Brier Score<a class="headerlink" href="#brier-score-and-integrated-brier-score" title="Link to this heading">#</a></h3>
+<p>Suppose that the probabilistic survival model can output for any individual <span class="math notranslate nohighlight">\(i\)</span> an estimate of the survival function <span class="math notranslate nohighlight">\(P(X_i &gt; t)\)</span>, denoted by <span class="math notranslate nohighlight">\(\xi_i(t) \in [0,1]\)</span>. The Time-dependent Brier Score (BS) and integrated Brier Score (Graf et al., 1999) are defined as</p>
+<p>$$
+\text{BS}(t) = \mathbb{E}\big[\big(1(X &gt; t) - \xi(t)\big)^2\big],
+$$</p>
+<p>$$
+\text{IBS} = \int_0^{t_{\text{max}}} \text{BS}(t) dW(t),
+$$
+where <span class="math notranslate nohighlight">\(W(t) = t / t_{\text{max}}\)</span> and <span class="math notranslate nohighlight">\(t_{\text{max}}\)</span> is the time-point until which we want to restrict the average.</p>
+</section>
+<section id="discrimination-auc-c-index-vs-calibration-brier-score-measure">
+<h3>Discrimination (AUC, C-index) vs. calibration (Brier score) measure<a class="headerlink" href="#discrimination-auc-c-index-vs-calibration-brier-score-measure" title="Link to this heading">#</a></h3>
+<p>The Brier score assesses both calibration and discrimination and serves as an alternative to the C-index and AUC. However, it is limited to models capable of estimating a survival function, thereby excluding models like the Cox proportional hazards model. Below, we outline the strengths and weaknesses of the C-index and AUC compared to the Brier score.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>C-index and AUC</p></th>
+<th class="head"><p>Brier-Score</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Pros</p></td>
+<td><p>Extremely popular. <br> Simple to explain to clinical audience. <br> User-friendly scale (from 0.5 to 1).</p></td>
+<td><p>Reflects both calibration and discrimination. <br>Can support the conclusions from a graphical calibration curve.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cons</p></td>
+<td><p>Already discussed.</p></td>
+<td><p>Only applicable for models that can estimate a survival function.<br> Inadequate for very rare (or very frequent) events.<br>Less interpretable by clinicians.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="conclusion-in-practice">
+<h2>Conclusion in practice<a class="headerlink" href="#conclusion-in-practice" title="Link to this heading">#</a></h2>
+<p>A meta-analysis by Zhou et al. (2022) recorded the proportion of evaluation metrics for survival models used from 2010 to 2021 in prominent journals such as “Annals of Statistics,” “Biometrika,” “Journal of the American Statistical Association,” “Journal of the Royal Statistical Society, Series B,” “Statistics in Medicine,” “Artificial Intelligence in Medicine,” and “Lifetime Data Analysis.” This analysis indicates that the use of the C-index has been steadily increasing and has recently become a dominant predictive measure. In 2021, the C-index was used in more than 75% of the readings.</p>
+</section>
+<section id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Heagerty, P. J., &amp; Zheng, Y. (2005). Survival Model Predictive Accuracy and ROC Curves. In Biometrics (Vol. 61, Issue 1, pp. 92–105). Oxford University Press (OUP). https://doi.org/10.1111/j.0006-341x.2005.030814.x</p></li>
+<li><p>Lambert, J., &amp; Chevret, S. (2016). Summary measure of discrimination in survival models based on cumulative/dynamic time-dependent ROC curves. In Statistical Methods in Medical Research (Vol. 25, Issue 5, pp. 2088–2102). SAGE Publications</p></li>
+<li><p>Hartman, N., Kim, S., He, K., &amp; Kalbfleisch, J. D. (2023). Pitfalls of the concordance index for survival outcomes. In Statistics in Medicine (Vol. 42, Issue 13, pp. 2179–2190). Wiley. https://doi.org/10.1002/sim.9717</p></li>
+<li><p>Graf, E., Schmoor, C., Sauerbrei, W., &amp; Schumacher, M. (1999). Assessment and comparison of prognostic classification schemes for survival data. In Statistics in Medicine (Vol. 18, Issues 17–18, pp. 2529–2545). Wiley. https://doi.org/10.1002/(sici)1097-0258(19990915/30)18:17/18&lt;2529::aid-sim274&gt;3.0.co;2-5</p></li>
+<li><p>Hanpu Zhou; Hong Wang; Sizheng Wang; Yi Zou (2022). SurvMetrics: An R package for Predictive Evaluation Metrics in Survival Analysis. R Journal . Dec2022, Vol. 14 Issue 4, p1-12. 12p.</p></li>
+<li><p>Paul Blanche, Michael W Kattan, and Thomas A Gerds. The c-index is not proper for the evaluation of t-year predicted risks. Biostatistics, 20(2):347–357, February 2018.</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../_autosummary/torchsurv.stats.ipcw.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">torchsurv.stats.ipcw</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="introduction.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Getting started</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation-metrics-under-binary-response">Evaluation metrics under binary response</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation-metrics-under-time-to-event-response">Evaluation metrics under time-to-event response</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extension-of-sensitivity-and-specificity-for-time-to-event-response">Extension of sensitivity and specificity for time-to-event response</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-sensitivity">Cumulative sensitivity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#incident-sensitivity">Incident sensitivity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-specificity">Dynamic specificity</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extension-of-the-auc-for-time-to-event-response">Extension of the AUC for time-to-event response</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-dynamic-auc">Cumulative/dynamic AUC</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#incident-dynamic-auc">Incident/dynamic AUC</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extension-of-the-c-index-for-time-to-event-response">Extension of the C-index for time-to-event response</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion">Discussion</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-estimate-the-auc-and-c-index">How to estimate the AUC and C-index?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-risk-score-should-be-used">What risk score should be used?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-evaluation-metric-should-be-used">What evaluation metric should be used?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-are-the-limits-of-the-auc-and-the-c-index">What are the limits of the AUC and the C-index?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-brier-score-as-an-alternative-to-the-auc-and-c-index">The Brier-Score as an alternative to the AUC and C-index</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brier-score-and-integrated-brier-score">Brier-score and Integrated Brier Score</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discrimination-auc-c-index-vs-calibration-brier-score-measure">Discrimination (AUC, C-index) vs. calibration (Brier score) measure</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion-in-practice">Conclusion in practice</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference">Reference</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Novartis Pharma AG.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

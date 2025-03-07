@@ -1,0 +1,757 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>torchsurv.metrics.cindex &#8212; torchsurv  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/torchsurv.metrics.cindex';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="torchsurv.metrics.brier_score" href="torchsurv.metrics.brier_score.html" />
+    <link rel="prev" title="torchsurv.metrics.auc" href="torchsurv.metrics.auc.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo_firecamp.png" class="logo__image only-light" alt="torchsurv  documentation - Home"/>
+    <img src="../_static/logo_firecamp.png" class="logo__image only-dark pst-js-only" alt="torchsurv  documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../loss.html">Loss</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.loss.cox.html">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.loss.weibull.html">torchsurv.loss.weibull</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../metrics.html">Metrics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/survival.html">A statistical introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/introduction.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/momentum.html">Survival with MNIST</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../AUTHORS.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devnotes.html">Development notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Related packages</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/_autosummary/torchsurv.metrics.cindex.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>torchsurv.metrics.cindex</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.metrics.cindex.ConcordanceIndex"><code class="docutils literal notranslate"><span class="pre">ConcordanceIndex</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.metrics.cindex.ConcordanceIndex.__init__"><code class="docutils literal notranslate"><span class="pre">ConcordanceIndex.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.metrics.cindex.ConcordanceIndex.__call__"><code class="docutils literal notranslate"><span class="pre">ConcordanceIndex.__call__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.metrics.cindex.ConcordanceIndex.confidence_interval"><code class="docutils literal notranslate"><span class="pre">ConcordanceIndex.confidence_interval()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.metrics.cindex.ConcordanceIndex.p_value"><code class="docutils literal notranslate"><span class="pre">ConcordanceIndex.p_value()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.metrics.cindex.ConcordanceIndex.compare"><code class="docutils literal notranslate"><span class="pre">ConcordanceIndex.compare()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-torchsurv.metrics.cindex">
+<span id="torchsurv-metrics-cindex"></span><h1>torchsurv.metrics.cindex<a class="headerlink" href="#module-torchsurv.metrics.cindex" title="Link to this heading">#</a></h1>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchsurv.metrics.cindex.ConcordanceIndex" title="torchsurv.metrics.cindex.ConcordanceIndex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConcordanceIndex</span></code></a>([tied_tol, checks])</p></td>
+<td><p>Compute the Concordance Index (C-index) for survival models.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="torchsurv.metrics.cindex.ConcordanceIndex">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torchsurv.metrics.cindex.</span></span><span class="sig-name descname"><span class="pre">ConcordanceIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tied_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torchsurv/metrics/cindex.html#ConcordanceIndex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.metrics.cindex.ConcordanceIndex" title="Link to this definition">#</a></dt>
+<dd><p>Compute the Concordance Index (C-index) for survival models.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="torchsurv.metrics.cindex.ConcordanceIndex.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tied_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/torchsurv/metrics/cindex.html#ConcordanceIndex.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.metrics.cindex.ConcordanceIndex.__init__" title="Link to this definition">#</a></dt>
+<dd><p>Initialize a ConcordanceIndex for survival class model evaluation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tied_tol</strong> (<em>float</em>) – Tolerance for tied risk scores.
+Defaults to 1e-8.</p></li>
+<li><p><strong>checks</strong> (<em>bool</em>) – Whether to perform input format checks.
+Enabling checks can help catch potential issues in the input data.
+Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimate</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="n">n</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="go">tensor(0.5337)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span> <span class="c1"># default: Noether, two_sided</span>
+<span class="go">tensor([0.3251, 0.7423])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;bootstrap&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">)</span>
+<span class="go">tensor(0.2620)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="torchsurv.metrics.cindex.ConcordanceIndex.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/torchsurv/metrics/cindex.html#ConcordanceIndex.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.metrics.cindex.ConcordanceIndex.__call__" title="Link to this definition">#</a></dt>
+<dd><p>Compute the Concordance Index (C-index).</p>
+<p>The concordance index is the probability that a model correctly predicts
+which of two comparable samples will experience an event first based on their
+estimated risk scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>estimate</strong> (<em>torch.Tensor</em>) – Estimated risk of event occurrence (i.e., risk score).
+Can be of shape = (n_samples,) if subject-specific risk score is time-independent,
+or of shape = (n_samples, n_samples) if subject-specific risk score is evaluated at <code class="docutils literal notranslate"><span class="pre">time</span></code>.</p></li>
+<li><p><strong>event</strong> (<em>torch.Tensor</em><em>, </em><em>boolean</em>) – Event indicator of size n_samples (= True if event occured).</p></li>
+<li><p><strong>time</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Time-to-event or censoring of size n_samples.</p></li>
+<li><p><strong>weight</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – Optional sample weight of size n_samples. Defaults to 1.</p></li>
+<li><p><strong>tmax</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – Truncation time. Defaults to None.
+<code class="docutils literal notranslate"><span class="pre">tmax</span></code> should be chosen such that the probability of
+being censored after time <code class="docutils literal notranslate"><span class="pre">tmax</span></code> is non-zero. If <code class="docutils literal notranslate"><span class="pre">tmax</span></code> is None, no truncation
+is performed.</p></li>
+<li><p><strong>instate</strong> (<em>bool</em>) – Whether to create/overwrite internal attributes states.
+Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Concordance-index</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The concordance index provides a global assessment of a fitted survival model over the entire observational
+period rather than focussing on the prediction for a fixed time (e.g., 10-year mortality).
+It is recommended to use AUC instead of the concordance index for such time-dependent predictions, as
+AUC is proper in this context, while the concordance index is not <span id="id1">[<a class="reference internal" href="#id12" title="Paul Blanche, Michael W Kattan, and Thomas A Gerds. The c-index is not proper for the evaluation of $t$-year predicted risks. Biostatistics, 20(2):347–357, February 2018.">BKG18</a>]</span>.</p>
+<p>For each subject <span class="math notranslate nohighlight">\(i \in \{1, \cdots, N\}\)</span>, denote <span class="math notranslate nohighlight">\(X_i\)</span> as the survival time and <span class="math notranslate nohighlight">\(D_i\)</span> as the
+censoring time. Survival data consist of the event indicator, <span class="math notranslate nohighlight">\(\delta_i=(X_i\leq D_i)\)</span>
+(argument <code class="docutils literal notranslate"><span class="pre">event</span></code>) and the time-to-event or censoring, <span class="math notranslate nohighlight">\(T_i = \min(\{ X_i,D_i \})\)</span>
+(argument <code class="docutils literal notranslate"><span class="pre">time</span></code>).</p>
+<p>The risk score measures the risk (or a proxy thereof) that a subject has an event.
+The function accepts time-dependent risk score and time-independent risk score. The time-dependent risk score
+of subject <span class="math notranslate nohighlight">\(i\)</span> is specified through a function <span class="math notranslate nohighlight">\(q_i: [0, \infty) \rightarrow \mathbb{R}\)</span>.
+The time-independent risk score of subject <span class="math notranslate nohighlight">\(i\)</span> is specified by a constant <span class="math notranslate nohighlight">\(q_i\)</span>.
+The argument <code class="docutils literal notranslate"><span class="pre">estimate</span></code> is the estimated risk score.
+For time-dependent risk score, the argument <code class="docutils literal notranslate"><span class="pre">estimate</span></code> should be a tensor of shape = (N,N)
+(<span class="math notranslate nohighlight">\((i,j)\)</span> th element is <span class="math notranslate nohighlight">\(\hat{q}_i(T_j)\)</span>). For time-independent risk score, the argument <code class="docutils literal notranslate"><span class="pre">estimate</span></code>
+should be a tensor of size N (<span class="math notranslate nohighlight">\(i\)</span> th element is <span class="math notranslate nohighlight">\(\hat{q}_i\)</span>).</p>
+<p>For a pair <span class="math notranslate nohighlight">\((i,j)\)</span>, we say that the pair is comparable if the event of <span class="math notranslate nohighlight">\(i\)</span> has occured before
+the event of <span class="math notranslate nohighlight">\(j\)</span>, i.e., <span class="math notranslate nohighlight">\(X_i &lt; X_j\)</span>. Given that the pair is comparable, we say that the pair is
+concordant if <span class="math notranslate nohighlight">\(q_i(X_i) &gt; q_j(X_i)\)</span>.</p>
+<p>The concordance index measures the probability that, for a pair of randomly selected comparable samples,
+the one that experiences an event first has a higher risk. The concordance index is defined as</p>
+<div class="math notranslate nohighlight">
+\[C = p(q_i(X_i) &gt; q_j(X_i) \: | \: X_i &lt; X_j)\]</div>
+<p>The default concordance index estimate is the popular nonparametric estimation proposed by <span id="id2">Harrell <em>et al.</em> [<a class="reference internal" href="#id10" title="Frank E. Harrell, Kerry L. Lee, and Daniel B. Mark. Multivariable prognostic models: issues in developing models, evaluating assumptions and adequacy, and measuring and reducing errorss. Statistics in Medicine, 15(4):361–387, February 1996.">HLM96</a>]</span></p>
+<div class="math notranslate nohighlight">
+\[\hat{C} = \frac{\sum_i\sum_j \delta_i \: I(T_i &lt; T_j)\left(I \left( \hat{q}_i(T_i) &gt; \hat{q}_j(T_i) \right) + \frac{1}{2} I\left(\hat{q}_i(T_i) = \hat{q}_j(T_i)\right)\right)}{\sum_i\sum_j \delta_i\: I\left(T_i &lt; T_j\right)}\]</div>
+<p>When the event time are censored, the Harrell’s concordance index converges to an association measure that
+involves the censoring distribution.
+To address this shortcoming, <span id="id3">Uno <em>et al.</em> [<a class="reference internal" href="#id11" title="Hajime Uno, Tianxi Cai, Michael J. Pencina, Ralph B. D’Agostino, and L. J. Wei. On the c‐statistics for evaluating overall adequacy of risk prediction procedures with censored survival data. Statistics in Medicine, 30(10):1105–1117, January 2011.">UCP+11</a>]</span>  proposed to employ the
+inverse probability weighting technique. In this context, each subject with event time at
+<span class="math notranslate nohighlight">\(t\)</span> is weighted by the inverse probability of censoring <span class="math notranslate nohighlight">\(\omega(t) = 1 / \hat{D}(t)\)</span>, where
+<span class="math notranslate nohighlight">\(\hat{D}(t)\)</span> is the Kaplan-Meier estimate of the censoring distribution, <span class="math notranslate nohighlight">\(P(D&gt;t)\)</span>.
+Let <span class="math notranslate nohighlight">\(\omega(T_i)\)</span> be the weight associated with subject time <span class="math notranslate nohighlight">\(i\)</span> (argument <code class="docutils literal notranslate"><span class="pre">weight</span></code>).
+The concordance index estimate with weight is,</p>
+<div class="math notranslate nohighlight">
+\[\hat{C} = \frac{\sum_i\sum_j \delta_i \: \omega(T_i)^2 \: I(T_i &lt; T_j)\left(I \left( \hat{q}_i(T_i) &gt; \hat{q}_j(T_i) \right) + \frac{1}{2} I\left(\hat{q}_i(T_i) = \hat{q}_j(T_i)\right)\right)}{\sum_i\sum_j \delta_i \: \omega(T_i)^2\: I\left(T_i &lt; T_j\right)}\]</div>
+<p>In the context of train/test split, the weights should be derived from the censoring distribution estimated in the training data.
+Specifically, the censoring distribution is estimated using the training set and then evaluated at the subject time within the test set.</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.stats.ipcw</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ipcw</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimate</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="n">n</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="c1"># Harrell&#39;s c-index</span>
+<span class="go">tensor(0.5337)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ipcw</span> <span class="o">=</span> <span class="n">get_ipcw</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="c1"># ipcw at subject time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="n">ipcw</span><span class="p">)</span> <span class="c1"># Uno&#39;s c-index</span>
+<span class="go">tensor(0.5453)</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<div class="docutils container" id="id4">
+<div role="list" class="citation-list">
+<div class="citation" id="id12" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BKG18</a><span class="fn-bracket">]</span></span>
+<p>Paul Blanche, Michael W Kattan, and Thomas A Gerds. The c-index is not proper for the evaluation of $t$-year predicted risks. <em>Biostatistics</em>, 20(2):347–357, February 2018.</p>
+</div>
+<div class="citation" id="id10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">HLM96</a><span class="fn-bracket">]</span></span>
+<p>Frank E. Harrell, Kerry L. Lee, and Daniel B. Mark. Multivariable prognostic models: issues in developing models, evaluating assumptions and adequacy, and measuring and reducing errorss. <em>Statistics in Medicine</em>, 15(4):361–387, February 1996.</p>
+</div>
+<div class="citation" id="id11" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">UCP+11</a><span class="fn-bracket">]</span></span>
+<p>Hajime Uno, Tianxi Cai, Michael J. Pencina, Ralph B. D’Agostino, and L. J. Wei. On the c‐statistics for evaluating overall adequacy of risk prediction procedures with censored survival data. <em>Statistics in Medicine</em>, 30(10):1105–1117, January 2011.</p>
+</div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="torchsurv.metrics.cindex.ConcordanceIndex.confidence_interval">
+<span class="sig-name descname"><span class="pre">confidence_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'noether'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'two_sided'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bootstraps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">999</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/torchsurv/metrics/cindex.html#ConcordanceIndex.confidence_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.metrics.cindex.ConcordanceIndex.confidence_interval" title="Link to this definition">#</a></dt>
+<dd><p>Compute the confidence interval of the Concordance index.</p>
+<p>This function calculates either the pointwise confidence interval or the bootstrap
+confidence interval for the concordance index. The pointwise confidence interval is computed
+assuming that the concordance index is normally distributed and using the standard error estimated with either the Noether or
+the conservative method <span id="id21">[<a class="reference internal" href="#id35" title="Michael J. Pencina and Ralph B. D’Agostino. Overall c as a measure of discrimination in survival analysis: model specific population value and confidence interval estimation. Statistics in Medicine, 23(13):2109–2123, June 2004.">PDAgostino04</a>]</span>.
+The bootstrap confidence interval is constructed based on the distribution of bootstrap samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>) – Method for computing confidence interval. Defaults to “noether”.
+Must be one of the following: “noether”, “conservative”, “bootstrap”.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – Significance level. Defaults to 0.05.</p></li>
+<li><p><strong>alternative</strong> (<em>str</em>) – Alternative hypothesis. Defaults to “two_sided”.
+Must be one of the following: “two_sided”, “greater”, “less”.</p></li>
+<li><p><strong>n_bootstraps</strong> (<em>int</em>) – Number of bootstrap samples. Defaults to 999.
+Ignored if <code class="docutils literal notranslate"><span class="pre">method</span></code> is not “bootstrap”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lower and upper bounds of the confidence interval.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor([lower,upper])</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimate</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="n">n</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="go">tensor(0.5337)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span> <span class="c1"># default: Noether, two_sided</span>
+<span class="go">tensor([0.3251, 0.7423])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;greater&quot;</span><span class="p">)</span>
+<span class="go">tensor([0.4459, 1.0000])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;conservative&quot;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;less&quot;</span><span class="p">)</span>
+<span class="go">tensor([0.0000, 0.7558])</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<div class="docutils container" id="id22">
+<div role="list" class="citation-list">
+<div class="citation" id="id35" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>PDAgostino04<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id21">1</a>,<a role="doc-backlink" href="#id39">2</a>,<a role="doc-backlink" href="#id40">3</a>)</span>
+<p>Michael J. Pencina and Ralph B. D’Agostino. Overall c as a measure of discrimination in survival analysis: model specific population value and confidence interval estimation. <em>Statistics in Medicine</em>, 23(13):2109–2123, June 2004.</p>
+</div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="torchsurv.metrics.cindex.ConcordanceIndex.p_value">
+<span class="sig-name descname"><span class="pre">p_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'noether'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'two_sided'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bootstraps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">999</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/torchsurv/metrics/cindex.html#ConcordanceIndex.p_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.metrics.cindex.ConcordanceIndex.p_value" title="Link to this definition">#</a></dt>
+<dd><p>Perform one-sample hypothesis test on the Concordance index.</p>
+<p>This function calculates either the pointwise p-value or the bootstrap p-value
+for testing the null hypothesis that the concordance index is equal to 0.5.
+The pointwise p-value is computed assuming that the concordance index is normally distributed and using the
+standard error estimated using the Noether’s method <span id="id39">[<a class="reference internal" href="#id35" title="Michael J. Pencina and Ralph B. D’Agostino. Overall c as a measure of discrimination in survival analysis: model specific population value and confidence interval estimation. Statistics in Medicine, 23(13):2109–2123, June 2004.">PDAgostino04</a>]</span>.
+The bootstrap p-value is derived by permuting risk predictions to estimate
+the sampling distribution under the null hypothesis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>) – Method for computing p-value. Defaults to “noether”.
+Must be one of the following: “noether”, “bootstrap”.</p></li>
+<li><p><strong>alternative</strong> (<em>str</em>) – Alternative hypothesis. Defaults to “two_sided”.
+Must be one of the following: “two_sided” (concordance index is not equal to 0.5),
+“greater” (concordance index is greater than 0.5), “less” (concordance index is less than 0.5).</p></li>
+<li><p><strong>n_bootstraps</strong> (<em>int</em>) – Number of bootstrap samples. Defaults to 999.
+Ignored if <code class="docutils literal notranslate"><span class="pre">method</span></code> is not “bootstrap”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>p-value of statistical test.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimate</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="n">n</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="go">tensor(0.5337)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span><span class="o">.</span><span class="n">p_value</span><span class="p">()</span> <span class="c1"># default: Noether, two_sided</span>
+<span class="go">tensor(0.7516)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;greater&quot;</span><span class="p">)</span>
+<span class="go">tensor(0.2620)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="torchsurv.metrics.cindex.ConcordanceIndex.compare">
+<span class="sig-name descname"><span class="pre">compare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'noether'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bootstraps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">999</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tensor</span></span></span><a class="reference internal" href="../_modules/torchsurv/metrics/cindex.html#ConcordanceIndex.compare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.metrics.cindex.ConcordanceIndex.compare" title="Link to this definition">#</a></dt>
+<dd><p>Compare two Concordance indices.</p>
+<p>This function compares two concordance indices computed on the
+same data with different risk scores. The statistical hypotheses are
+formulated as follows, null hypothesis: cindex1 = cindex2 and alternative
+hypothesis: cindex1 &gt; cindex2.
+The statistical test is either a Student t-test for dependent samples or
+a two-sample bootstrap test. The Student t-test assumes that the concordance index is normally distributed
+and uses standard errors estimated with the Noether’s method <span id="id40">[<a class="reference internal" href="#id35" title="Michael J. Pencina and Ralph B. D’Agostino. Overall c as a measure of discrimination in survival analysis: model specific population value and confidence interval estimation. Statistics in Medicine, 23(13):2109–2123, June 2004.">PDAgostino04</a>]</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> (<a class="reference internal" href="#torchsurv.metrics.cindex.ConcordanceIndex" title="torchsurv.metrics.cindex.ConcordanceIndex"><em>ConcordanceIndex</em></a>) – Another instance of the ConcordanceIndex class representing cindex2.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Statistical test used to perform the hypothesis test. Defaults to “noether”.
+Must be one of the following: “noether”, “bootstrap”.</p></li>
+<li><p><strong>n_bootstraps</strong> (<em>int</em>) – Number of bootstrap samples. Defaults to 999.
+Ignored if <code class="docutils literal notranslate"><span class="pre">method</span></code> is not “bootstrap”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>p-value of the statistical test.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.tensor</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex1</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex1</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="n">n</span><span class="p">,)),</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="go">tensor(0.5337)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex2</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex2</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="n">n</span><span class="p">,)),</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="go">tensor(0.5047)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex1</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">cindex2</span><span class="p">)</span> <span class="c1"># default: Noether</span>
+<span class="go">tensor(0.4267)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cindex1</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">cindex2</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;bootstrap&quot;</span><span class="p">)</span>
+<span class="go">tensor(0.3620)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="torchsurv.metrics.auc.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">torchsurv.metrics.auc</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="torchsurv.metrics.brier_score.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">torchsurv.metrics.brier_score</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.metrics.cindex.ConcordanceIndex"><code class="docutils literal notranslate"><span class="pre">ConcordanceIndex</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.metrics.cindex.ConcordanceIndex.__init__"><code class="docutils literal notranslate"><span class="pre">ConcordanceIndex.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.metrics.cindex.ConcordanceIndex.__call__"><code class="docutils literal notranslate"><span class="pre">ConcordanceIndex.__call__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.metrics.cindex.ConcordanceIndex.confidence_interval"><code class="docutils literal notranslate"><span class="pre">ConcordanceIndex.confidence_interval()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.metrics.cindex.ConcordanceIndex.p_value"><code class="docutils literal notranslate"><span class="pre">ConcordanceIndex.p_value()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.metrics.cindex.ConcordanceIndex.compare"><code class="docutils literal notranslate"><span class="pre">ConcordanceIndex.compare()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Novartis Pharma AG.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

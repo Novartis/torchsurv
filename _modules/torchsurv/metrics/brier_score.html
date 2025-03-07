@@ -1,0 +1,1280 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>torchsurv.metrics.brier_score &#8212; torchsurv  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/torchsurv/metrics/brier_score';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo_firecamp.png" class="logo__image only-light" alt="torchsurv  documentation - Home"/>
+    <img src="../../../_static/logo_firecamp.png" class="logo__image only-dark pst-js-only" alt="torchsurv  documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../loss.html">Loss</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.loss.cox.html">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.loss.weibull.html">torchsurv.loss.weibull</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../metrics.html">Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.metrics.cindex.html">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/survival.html">A statistical introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/introduction.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/momentum.html">Survival with MNIST</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../AUTHORS.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../devnotes.html">Development notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../benchmarks.html">Related packages</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for torchsurv.metrics.brier_score</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_inputs</span>
+
+
+<div class="viewcode-block" id="BrierScore">
+<a class="viewcode-back" href="../../../_autosummary/torchsurv.metrics.brier_score.html#torchsurv.metrics.brier_score.BrierScore">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BrierScore</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the Brier Score for survival models.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BrierScore.__init__">
+<a class="viewcode-back" href="../../../_autosummary/torchsurv.metrics.brier_score.html#torchsurv.metrics.brier_score.BrierScore.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a BrierScore for survival class model evaluation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            checks (bool):</span>
+<span class="sd">                Whether to perform input format checks.</span>
+<span class="sd">                Enabling checks can help catch potential issues in the input data.</span>
+<span class="sd">                Defaults to True.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; _ = torch.manual_seed(52)</span>
+<span class="sd">            &gt;&gt;&gt; n = 10</span>
+<span class="sd">            &gt;&gt;&gt; time = torch.randint(low=5, high=250, size=(n,)).float()</span>
+<span class="sd">            &gt;&gt;&gt; event = torch.randint(low=0, high=2, size=(n,)).bool()</span>
+<span class="sd">            &gt;&gt;&gt; estimate = torch.rand((n,len(time)))</span>
+<span class="sd">            &gt;&gt;&gt; brier_score = BrierScore()</span>
+<span class="sd">            &gt;&gt;&gt; brier_score(estimate, event, time)</span>
+<span class="sd">            tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,</span>
+<span class="sd">                    0.1668])</span>
+<span class="sd">            &gt;&gt;&gt; brier_score.integral() # integrated brier score</span>
+<span class="sd">            tensor(0.2862)</span>
+<span class="sd">            &gt;&gt;&gt; brier_score.confidence_interval() # default: parametric, two-sided</span>
+<span class="sd">            tensor([[0.1061, 0.0604, 0.2360, 0.0533, 0.1252, 0.0795, 0.0000, 0.1512, 0.0381,</span>
+<span class="sd">                     0.0051],</span>
+<span class="sd">                    [0.3866, 0.4876, 0.5437, 0.3394, 0.5965, 0.4847, 0.4137, 0.4443, 0.3520,</span>
+<span class="sd">                     0.3285]])</span>
+<span class="sd">            &gt;&gt;&gt; brier_score.p_value() # default: bootstrap permutation test, two-sided</span>
+<span class="sd">            tensor([1.0000, 0.7860, 1.0000, 0.3840, 1.0000, 1.0000, 0.3840, 1.0000, 0.7000,</span>
+<span class="sd">                    0.2380])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checks</span> <span class="o">=</span> <span class="n">checks</span>
+
+        <span class="c1"># init instate attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight_new_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimate</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">residuals</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="BrierScore.__call__">
+<a class="viewcode-back" href="../../../_autosummary/torchsurv.metrics.brier_score.html#torchsurv.metrics.brier_score.BrierScore.__call__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">estimate</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">event</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">new_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">weight_new_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">instate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the Brier Score.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            estimate (torch.Tensor):</span>
+<span class="sd">                Estimated probability of remaining event-free (i.e., survival function).</span>
+<span class="sd">                Can be of shape = (n_samples, n_samples) if subject-specific survival is evaluated at ``time``,</span>
+<span class="sd">                or of shape = (n_samples, n_times) if subject-specific survival is evaluated at ``new_time``.</span>
+<span class="sd">            event (torch.Tensor, boolean):</span>
+<span class="sd">                Event indicator of size n_samples (= True if event occured)</span>
+<span class="sd">            time (torch.Tensor, float):</span>
+<span class="sd">                Time-to-event or censoring of size n_samples.</span>
+<span class="sd">            new_time (torch.Tensor, float, optional):</span>
+<span class="sd">                Time points at which to evaluate the Brier score of size n_times.</span>
+<span class="sd">                Defaults to unique ``time``.</span>
+<span class="sd">            weight (torch.Tensor, optional):</span>
+<span class="sd">                Optional sample weight evaluated at ``time`` of size n_samples.</span>
+<span class="sd">                Defaults to 1.</span>
+<span class="sd">            weight_new_time (torch.tensor, optional):</span>
+<span class="sd">                Optional sample weight evaluated at ``new_time`` of size n_times.</span>
+<span class="sd">                Defaults to 1.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Brier score evaluated at ``new_time``.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The function evaluates the time-dependent Brier score at time :math:`t \in \{t_1, \cdots, t_T\}` (argument ``new_time``).</span>
+
+<span class="sd">            For each subject :math:`i \in \{1, \cdots, N\}`, denote :math:`X_i` as the survival time and :math:`D_i` as the</span>
+<span class="sd">            censoring time. Survival data consist of the event indicator, :math:`\delta_i=(X_i\leq D_i)`</span>
+<span class="sd">            (argument ``event``) and the time-to-event or censoring, :math:`T_i = \min(\{ X_i,D_i \})`</span>
+<span class="sd">            (argument ``time``).</span>
+
+<span class="sd">            The survival function, of subject :math:`i`</span>
+<span class="sd">            is specified through :math:`S_i: [0, \infty) \rightarrow [0,1]`.</span>
+<span class="sd">            The argument ``estimate`` is the estimated survival function. If ``new_time`` is specified, it should be of</span>
+<span class="sd">            shape = (N,T) (:math:`(i,k)` th element is :math:`\hat{S}_i(t_k)`); if ``new_time`` is not specified,</span>
+<span class="sd">            it should be of shape = (N,N) (:math:`(i,j)` th element is :math:`\hat{S}_i(T_j)`).</span>
+
+<span class="sd">            The time-dependent Brier score :cite:p:`Graf1999` at time :math:`t` is the mean squared error of the event status</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                BS(t) = \mathbb{E}\left[\left(1\left(X &gt; t\right) - \hat{S}(t)\right)^2\right]</span>
+
+<span class="sd">            The default Brier score estimate is</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \hat{BS}(t) = \frac{1}{n}\sum_i 1(T_i \leq t, \delta_i = 1) (0 - \hat{S}_i(t))^2 + 1(T_1 &gt; t) (1- \hat{S}_i(t))^2</span>
+
+<span class="sd">            To account for the fact that the event time are censored, the</span>
+<span class="sd">            inverse probability weighting technique can be used. In this context,</span>
+<span class="sd">            each subject associated with time</span>
+<span class="sd">            :math:`t` is weighted by the inverse probability of censoring :math:`\omega(t) = 1 / \hat{D}(t)`, where</span>
+<span class="sd">            :math:`\hat{D}(t)` is the Kaplan-Meier estimate of the censoring distribution, :math:`P(D&gt;t)`.</span>
+<span class="sd">            The censoring-adjusted Brier score is</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \hat{BS}(t) = \frac{1}{n}\sum_i \omega(T_i) 1(T_i \leq t, \delta_i = 1) (0 - \hat{S}_i(t))^2 + \omega(t) 1(T_1 &gt; t) (1- \hat{S}_i(t))^2</span>
+
+<span class="sd">            The censoring-adjusted Brier score can be obtained by specifying the argument</span>
+<span class="sd">            ``weight``, the weights evaluated at each ``time`` (:math:`\omega(T_1), \cdots, \omega(T_N)`).</span>
+<span class="sd">            If ``new_time`` is specified, the argument  ``weight_new_time``</span>
+<span class="sd">            should also be specified accordingly, the weights evaluated at each ``new_time``</span>
+<span class="sd">            (:math:`\omega(t_1), \cdots, \omega(t_K)`).</span>
+<span class="sd">            In the context of train/test split, the weights should be derived from the censoring distribution estimated in the training data.</span>
+
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; from torchsurv.stats.ipcw import get_ipcw</span>
+<span class="sd">            &gt;&gt;&gt; _ = torch.manual_seed(52)</span>
+<span class="sd">            &gt;&gt;&gt; n = 10</span>
+<span class="sd">            &gt;&gt;&gt; time = torch.randint(low=5, high=250, size=(n,)).float()</span>
+<span class="sd">            &gt;&gt;&gt; event = torch.randint(low=0, high=2, size=(n,)).bool()</span>
+<span class="sd">            &gt;&gt;&gt; estimate = torch.rand((n,len(time)))</span>
+<span class="sd">            &gt;&gt;&gt; brier_score = BrierScore()</span>
+<span class="sd">            &gt;&gt;&gt; brier_score(estimate, event, time)</span>
+<span class="sd">            tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,</span>
+<span class="sd">                    0.1668])</span>
+<span class="sd">            &gt;&gt;&gt; ipcw = get_ipcw(event, time) # ipcw at time</span>
+<span class="sd">            &gt;&gt;&gt; brier_score(estimate, event, time, weight=ipcw) # censoring-adjusted brier-score</span>
+<span class="sd">            tensor([0.2463, 0.2740, 0.4282, 0.2163, 0.4465, 0.3826, 0.2630, 0.3888, 0.2219,</span>
+<span class="sd">                    0.1882])</span>
+<span class="sd">            &gt;&gt;&gt; new_time = torch.unique(torch.randint(low=5, high=time.max().int(), size=(n*2,)).float())</span>
+<span class="sd">            &gt;&gt;&gt; ipcw_new_time = get_ipcw(event, time, new_time) # ipcw at new_time</span>
+<span class="sd">            &gt;&gt;&gt; estimate = torch.rand((n,len(new_time)))</span>
+<span class="sd">            &gt;&gt;&gt; brier_score(estimate, event, time, new_time, ipcw, ipcw_new_time) # censoring-adjusted brier-score at new time</span>
+<span class="sd">            tensor([0.4036, 0.3014, 0.2517, 0.3947, 0.4200, 0.3908, 0.3766, 0.3737, 0.3596,</span>
+<span class="sd">                    0.2088, 0.4922, 0.3237, 0.2255, 0.1841, 0.3029, 0.6919, 0.2357, 0.3507,</span>
+<span class="sd">                    0.4364, 0.3312])</span>
+
+<span class="sd">        References:</span>
+
+<span class="sd">            .. bibliography::</span>
+<span class="sd">                :filter: False</span>
+
+<span class="sd">                Graf1999</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># mandatory input format checks</span>
+        <span class="n">BrierScore</span><span class="o">.</span><span class="n">_validate_brier_score_inputs</span><span class="p">(</span>
+            <span class="n">estimate</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">new_time</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">weight_new_time</span>
+        <span class="p">)</span>
+
+        <span class="c1"># update inputs as required</span>
+        <span class="p">(</span>
+            <span class="n">estimate</span><span class="p">,</span>
+            <span class="n">new_time</span><span class="p">,</span>
+            <span class="n">weight</span><span class="p">,</span>
+            <span class="n">weight_new_time</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">BrierScore</span><span class="o">.</span><span class="n">_update_brier_score_new_time</span><span class="p">(</span>
+            <span class="n">estimate</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">new_time</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">weight_new_time</span>
+        <span class="p">)</span>
+        <span class="n">weight</span><span class="p">,</span> <span class="n">weight_new_time</span> <span class="o">=</span> <span class="n">BrierScore</span><span class="o">.</span><span class="n">_update_brier_score_weight</span><span class="p">(</span>
+            <span class="n">time</span><span class="p">,</span> <span class="n">new_time</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">weight_new_time</span>
+        <span class="p">)</span>
+
+        <span class="c1"># further input format checks</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checks</span><span class="p">:</span>
+            <span class="n">validate_inputs</span><span class="o">.</span><span class="n">validate_survival_data</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+            <span class="n">validate_inputs</span><span class="o">.</span><span class="n">validate_evaluation_time</span><span class="p">(</span>
+                <span class="n">new_time</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">within_follow_up</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="n">validate_inputs</span><span class="o">.</span><span class="n">validate_estimate</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">new_time</span><span class="p">)</span>
+
+        <span class="c1"># Calculating the residuals for each subject and time point</span>
+        <span class="n">residuals</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">estimate</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">new_time_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">new_time</span><span class="p">):</span>
+            <span class="n">est</span> <span class="o">=</span> <span class="n">estimate</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span>
+            <span class="n">is_case</span> <span class="o">=</span> <span class="p">((</span><span class="n">time</span> <span class="o">&lt;=</span> <span class="n">new_time_i</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">event</span><span class="p">))</span><span class="o">.</span><span class="n">int</span><span class="p">()</span>
+            <span class="n">is_control</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span> <span class="o">&gt;</span> <span class="n">new_time_i</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">()</span>
+
+            <span class="n">residuals</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">est</span><span class="p">)</span> <span class="o">*</span> <span class="n">is_case</span> <span class="o">*</span> <span class="n">weight</span>
+                <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">est</span><span class="p">)</span> <span class="o">*</span> <span class="n">is_control</span> <span class="o">*</span> <span class="n">weight_new_time</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Calculating the brier scores at each time point</span>
+        <span class="n">brier_score</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Create/overwrite internal attributes states</span>
+        <span class="k">if</span> <span class="n">instate</span><span class="p">:</span>
+            <span class="c1"># sort all objects by time</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">order_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">time</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">order_time</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">order_time</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">order_time</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">new_time</span> <span class="o">=</span> <span class="n">new_time</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weight_new_time</span> <span class="o">=</span> <span class="n">weight_new_time</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">estimate</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order_time</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span> <span class="o">=</span> <span class="n">brier_score</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">residuals</span> <span class="o">=</span> <span class="n">residuals</span>
+
+        <span class="k">return</span> <span class="n">brier_score</span></div>
+
+
+<div class="viewcode-block" id="BrierScore.integral">
+<a class="viewcode-back" href="../../../_autosummary/torchsurv.metrics.brier_score.html#torchsurv.metrics.brier_score.BrierScore.integral">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">integral</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the integrated Brier Score.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Integrated Brier Score.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; _ = torch.manual_seed(52)</span>
+<span class="sd">            &gt;&gt;&gt; n = 10</span>
+<span class="sd">            &gt;&gt;&gt; time = torch.randint(low=5, high=250, size=(n,)).float()</span>
+<span class="sd">            &gt;&gt;&gt; event = torch.randint(low=0, high=2, size=(n,)).bool()</span>
+<span class="sd">            &gt;&gt;&gt; estimate = torch.rand((n,len(time)))</span>
+<span class="sd">            &gt;&gt;&gt; brier_score = BrierScore()</span>
+<span class="sd">            &gt;&gt;&gt; brier_score(estimate, event, time)</span>
+<span class="sd">            tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,</span>
+<span class="sd">                    0.1668])</span>
+<span class="sd">            &gt;&gt;&gt; brier_score.integral() # integrated brier score</span>
+<span class="sd">            tensor(0.2862)</span>
+
+<span class="sd">        Note:</span>
+
+<span class="sd">            The integrated Brier score is the integral of the time-dependent Brier score over the interval</span>
+<span class="sd">            :math:`[t_1, t_2]`, where :math:`t_1 = \min\left(\{T_i\}_{i = 1, \cdots, N}\right)` and :math:`t_2 = \max\left(\{T_i\}_{i = 1, \cdots, N}\right)`.</span>
+<span class="sd">            It is defined by :cite:p:`Graf1999`</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                    \hat{IBS} = \int_{t_1}^{t_2} \hat{BS}(t) dW(t)</span>
+
+<span class="sd">            where :math:`W(t) = t / t_2`.</span>
+
+<span class="sd">            The integral is estimated with the trapzoidal rule.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Single time available</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_time</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">brier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">brier</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">trapezoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_time</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">new_time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">brier</span></div>
+
+
+<div class="viewcode-block" id="BrierScore.confidence_interval">
+<a class="viewcode-back" href="../../../_autosummary/torchsurv.metrics.brier_score.html#torchsurv.metrics.brier_score.BrierScore.confidence_interval">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">confidence_interval</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parametric&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;two_sided&quot;</span><span class="p">,</span>
+        <span class="n">n_bootstraps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">999</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the confidence interval of the Brier Score.</span>
+
+<span class="sd">        This function calculates either the pointwise confidence interval or the bootstrap</span>
+<span class="sd">        confidence interval for the Brier Score. The pointwise confidence interval is computed</span>
+<span class="sd">        assuming that the Brier score is normally distributed and using empirical standard errors.</span>
+<span class="sd">        The bootstrap confidence interval is constructed based on the distribution of bootstrap samples.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (str):</span>
+<span class="sd">                Method for computing confidence interval. Defaults to &quot;parametric&quot;.</span>
+<span class="sd">                Must be one of the following: &quot;parametric&quot;, &quot;bootstrap&quot;.</span>
+<span class="sd">            alpha (float):</span>
+<span class="sd">                Significance level. Defaults to 0.05.</span>
+<span class="sd">            alternative (str):</span>
+<span class="sd">                Alternative hypothesis. Defaults to &quot;two_sided&quot;.</span>
+<span class="sd">                Must be one of the following: &quot;two_sided&quot;, &quot;greater&quot;, &quot;less&quot;.</span>
+<span class="sd">            n_bootstraps (int):</span>
+<span class="sd">                Number of bootstrap samples. Defaults to 999.</span>
+<span class="sd">                Ignored if ``method`` is not &quot;bootstrap&quot;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor([lower,upper]):</span>
+<span class="sd">                Lower and upper bounds of the confidence interval.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; _ = torch.manual_seed(52)</span>
+<span class="sd">            &gt;&gt;&gt; n = 10</span>
+<span class="sd">            &gt;&gt;&gt; time = torch.randint(low=5, high=250, size=(n,)).float()</span>
+<span class="sd">            &gt;&gt;&gt; event = torch.randint(low=0, high=2, size=(n,)).bool()</span>
+<span class="sd">            &gt;&gt;&gt; estimate = torch.rand((n,len(time)))</span>
+<span class="sd">            &gt;&gt;&gt; brier_score = BrierScore()</span>
+<span class="sd">            &gt;&gt;&gt; brier_score(estimate, event, time)</span>
+<span class="sd">            tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,</span>
+<span class="sd">                    0.1668])</span>
+<span class="sd">            &gt;&gt;&gt; brier_score.confidence_interval() # default: parametric, two-sided</span>
+<span class="sd">            tensor([[0.1061, 0.0604, 0.2360, 0.0533, 0.1252, 0.0795, 0.0000, 0.1512, 0.0381,</span>
+<span class="sd">                     0.0051],</span>
+<span class="sd">                    [0.3866, 0.4876, 0.5437, 0.3394, 0.5965, 0.4847, 0.4137, 0.4443, 0.3520,</span>
+<span class="sd">                     0.3285]])</span>
+<span class="sd">            &gt;&gt;&gt; brier_score.confidence_interval(method = &quot;bootstrap&quot;, alternative = &quot;greater&quot;)</span>
+<span class="sd">            tensor([[0.1455, 0.1155, 0.2741, 0.0903, 0.1985, 0.1323, 0.0245, 0.1938, 0.0788,</span>
+<span class="sd">                     0.0440],</span>
+<span class="sd">                    [1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000,</span>
+<span class="sd">                     1.0000]])</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;brier_score&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;Error: Please calculate brier score using `BrierScore()` before calling `confidence_interval()`.&quot;</span>
+
+        <span class="k">if</span> <span class="n">alternative</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;less&quot;</span><span class="p">,</span> <span class="s2">&quot;greater&quot;</span><span class="p">,</span> <span class="s2">&quot;two_sided&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;&#39;alternative&#39; parameter must be one of [&#39;less&#39;, &#39;greater&#39;, &#39;two_sided&#39;].&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span>
+            <span class="n">conf_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_confidence_interval_bootstrap</span><span class="p">(</span>
+                <span class="n">alpha</span><span class="p">,</span> <span class="n">alternative</span><span class="p">,</span> <span class="n">n_bootstraps</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;parametric&quot;</span><span class="p">:</span>
+            <span class="n">conf_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_confidence_interval_parametric</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">alternative</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Method </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> not implemented. Please choose either &#39;parametric&#39; or &#39;bootstrap&#39;.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">conf_int</span></div>
+
+
+<div class="viewcode-block" id="BrierScore.p_value">
+<a class="viewcode-back" href="../../../_autosummary/torchsurv.metrics.brier_score.html#torchsurv.metrics.brier_score.BrierScore.p_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">p_value</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bootstrap&quot;</span><span class="p">,</span>
+        <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;two_sided&quot;</span><span class="p">,</span>
+        <span class="n">n_bootstraps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">999</span><span class="p">,</span>
+        <span class="n">null_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform a one-sample hypothesis test on the Brier score.</span>
+
+<span class="sd">        This function calculates either the pointwise p-value or the bootstrap p-value</span>
+<span class="sd">        for testing the null hypothesis that the estimated brier score is equal to</span>
+<span class="sd">        bs0, where bs0 is the brier score that would be expected if the survival model</span>
+<span class="sd">        was not providing accurate predictions beyond</span>
+<span class="sd">        random chance. The pointwise p-value is computed assuming that the</span>
+<span class="sd">        Brier score is normally distributed and using the empirical standard errors.</span>
+<span class="sd">        To obtain the pointwise p-value, the Brier score under the null, bs0, must</span>
+<span class="sd">        be provided.</span>
+<span class="sd">        The bootstrap p-value is derived by permuting survival function&#39;s predictions</span>
+<span class="sd">        to estimate the the sampling distribution under the null hypothesis.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (str):</span>
+<span class="sd">                Method for computing p-value. Defaults to &quot;bootstrap&quot;.</span>
+<span class="sd">                Must be one of the following: &quot;parametric&quot;, &quot;bootstrap&quot;.</span>
+<span class="sd">            alternative (str):</span>
+<span class="sd">                Alternative hypothesis. Defaults to &quot;two_sided&quot;.</span>
+<span class="sd">                Must be one of the following: &quot;two_sided&quot; (Brier score is not equal to bs0),</span>
+<span class="sd">                &quot;greater&quot; (Brier score is greater than bs0), &quot;less&quot; (Brier score is less than bs0).</span>
+<span class="sd">            n_bootstraps (int):</span>
+<span class="sd">                Number of bootstrap samples. Defaults to 999.</span>
+<span class="sd">                Ignored if ```method``` is not &quot;bootstrap&quot;.</span>
+<span class="sd">            null_value (float):</span>
+<span class="sd">                The Brier score expected if the survival model was not</span>
+<span class="sd">                providing accurate predictions beyond what would be beyond</span>
+<span class="sd">                by random chance alone, i.e., bs0.</span>
+
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: p-value of the statistical test.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; _ = torch.manual_seed(52)</span>
+<span class="sd">            &gt;&gt;&gt; n = 10</span>
+<span class="sd">            &gt;&gt;&gt; time = torch.randint(low=5, high=250, size=(n,)).float()</span>
+<span class="sd">            &gt;&gt;&gt; event = torch.randint(low=0, high=2, size=(n,)).bool()</span>
+<span class="sd">            &gt;&gt;&gt; new_time = torch.unique(time)</span>
+<span class="sd">            &gt;&gt;&gt; estimate = torch.rand((n,len(new_time)))</span>
+<span class="sd">            &gt;&gt;&gt; brier_score = BrierScore()</span>
+<span class="sd">            &gt;&gt;&gt; brier_score(estimate, event, time, new_time)</span>
+<span class="sd">            tensor([0.3465, 0.5310, 0.4222, 0.4582, 0.3601, 0.3395, 0.2285, 0.1975, 0.3120,</span>
+<span class="sd">                    0.3883])</span>
+<span class="sd">            &gt;&gt;&gt; brier_score.p_value() # Default: bootstrap, two_sided</span>
+<span class="sd">            tensor([1.0000, 0.0560, 1.0000, 1.0000, 1.0000, 1.0000, 0.8320, 0.8620, 1.0000,</span>
+<span class="sd">                    1.0000])</span>
+<span class="sd">            &gt;&gt;&gt; brier_score.p_value(method = &quot;parametric&quot;, alternative = &quot;less&quot;, null_value = 0.3) # H0: bs = 0.3, Ha: bs &lt; 0.3</span>
+<span class="sd">            tensor([0.7130, 0.9964, 0.8658, 0.8935, 0.6900, 0.6630, 0.1277, 0.1128, 0.5383,</span>
+<span class="sd">                    0.8041])</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;brier_score&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;Error: Please calculate the brier score using `BrierScore()` before calling `p_value()`.&quot;</span>
+
+        <span class="k">if</span> <span class="n">alternative</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;less&quot;</span><span class="p">,</span> <span class="s2">&quot;greater&quot;</span><span class="p">,</span> <span class="s2">&quot;two_sided&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;&#39;alternative&#39; parameter must be one of [&#39;less&#39;, &#39;greater&#39;, &#39;two_sided&#39;].&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;parametric&quot;</span> <span class="ow">and</span> <span class="n">null_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Error: If the method is &#39;parametric&#39;, you must provide the &#39;null_value&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;parametric&quot;</span><span class="p">:</span>
+            <span class="n">pvalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p_value_parametric</span><span class="p">(</span><span class="n">alternative</span><span class="p">,</span> <span class="n">null_value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span>
+            <span class="n">pvalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p_value_bootstrap</span><span class="p">(</span><span class="n">alternative</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Method </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> not implemented. Please choose either &#39;parametric&#39; or &#39;bootstrap&#39;.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">pvalue</span></div>
+
+
+<div class="viewcode-block" id="BrierScore.compare">
+<a class="viewcode-back" href="../../../_autosummary/torchsurv.metrics.brier_score.html#torchsurv.metrics.brier_score.BrierScore.compare">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compare</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parametric&quot;</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">999</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compare two Brier scores.</span>
+
+<span class="sd">        This function compares two Brier scores computed on the</span>
+<span class="sd">        same data with different risk scores. The statistical hypotheses are</span>
+<span class="sd">        formulated as follows, null hypothesis: brierscore1 = brierscore2 and alternative</span>
+<span class="sd">        hypothesis: brierscore1 &lt; brierscore2.</span>
+<span class="sd">        The statistical test is either a Student t-test for paired samples or a two-sample bootstrap test.</span>
+<span class="sd">        The Student t-test for paired samples assumes that the Brier Scores are normally distributed</span>
+<span class="sd">        and uses the Brier scores&#39; empirical standard errors.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (BrierScore):</span>
+<span class="sd">                Another instance of the BrierScore class representing brierscore2.</span>
+<span class="sd">            method (str):</span>
+<span class="sd">                Statistical test used to perform the hypothesis test. Defaults to &quot;parametric&quot;.</span>
+<span class="sd">                Must be one of the following: &quot;parametric&quot;, &quot;bootstrap&quot;.</span>
+<span class="sd">            n_bootstraps (int):</span>
+<span class="sd">                Number of bootstrap samples. Defaults to 999.</span>
+<span class="sd">                Ignored if ``method`` is not &quot;bootstrap&quot;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.tensor: p-value of the statistical test.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; _ = torch.manual_seed(52)</span>
+<span class="sd">            &gt;&gt;&gt; n = 10</span>
+<span class="sd">            &gt;&gt;&gt; time = torch.randint(low=5, high=250, size=(n,)).float()</span>
+<span class="sd">            &gt;&gt;&gt; event = torch.randint(low=0, high=2, size=(n,)).bool()</span>
+<span class="sd">            &gt;&gt;&gt; brier_score = BrierScore()</span>
+<span class="sd">            &gt;&gt;&gt; brier_score(torch.rand((n,len(time))), event, time)</span>
+<span class="sd">            tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,</span>
+<span class="sd">                    0.1668])</span>
+<span class="sd">            &gt;&gt;&gt; brier_score2 = BrierScore()</span>
+<span class="sd">            &gt;&gt;&gt; brier_score2(torch.rand((n,len(time))), event, time)</span>
+<span class="sd">            tensor([0.4136, 0.2750, 0.3002, 0.2826, 0.2030, 0.2643, 0.2525, 0.2964, 0.1804,</span>
+<span class="sd">                    0.3109])</span>
+<span class="sd">            &gt;&gt;&gt; brier_score.compare(brier_score2) # default: parametric</span>
+<span class="sd">            tensor([0.1793, 0.4972, 0.7105, 0.1985, 0.9254, 0.5591, 0.3455, 0.5060, 0.5437,</span>
+<span class="sd">                    0.0674])</span>
+<span class="sd">            &gt;&gt;&gt; brier_score.compare(brier_score2, method = &quot;bootstrap&quot;)</span>
+<span class="sd">            tensor([0.1360, 0.5030, 0.7310, 0.2090, 0.8630, 0.5490, 0.3120, 0.5110, 0.5460,</span>
+<span class="sd">                    0.1030])</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;brier_score&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;Error: Please calculate the brier score using `BrierScore()` before calling `compare()`.&quot;</span>
+
+        <span class="c1"># assert that the same data were used to compute the two brier score</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">event</span><span class="p">)</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">time</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Mismatched survival data: &#39;time&#39; and &#39;event&#39; should be the same for both brier score computations.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_time</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">new_time</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Mismatched evaluation times: &#39;new_time&#39; should be the same for both brier score computations.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;parametric&quot;</span><span class="p">:</span>
+            <span class="n">pvalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_parametric</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span>
+            <span class="n">pvalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_bootstrap</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Method not implemented. Please choose either &#39;parametric&#39; or &#39;bootstrap&#39;.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">pvalue</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_brier_score_se</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Brier Score&#39;s empirical standard errors.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residuals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_confidence_interval_parametric</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Confidence interval of Brier score assuming that the Brier score</span>
+<span class="sd">        is normally distributed and using empirical standard errors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s2">&quot;two_sided&quot;</span> <span class="k">else</span> <span class="n">alpha</span>
+
+        <span class="n">brier_score_se</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_brier_score_se</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">brier_score_se</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ci</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">normal</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">icdf</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">alpha</span><span class="p">))</span>
+                <span class="o">*</span> <span class="n">brier_score_se</span>
+            <span class="p">)</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span> <span class="o">-</span> <span class="n">ci</span><span class="p">)</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span> <span class="o">+</span> <span class="n">ci</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s2">&quot;less&quot;</span><span class="p">:</span>
+                <span class="n">lower</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">lower</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s2">&quot;greater&quot;</span><span class="p">:</span>
+                <span class="n">upper</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">upper</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The standard error of the brier score must be a positive value.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_confidence_interval_bootstrap</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Bootstrap confidence interval of the Brier Score using Efron percentile method.</span>
+
+<span class="sd">        References:</span>
+<span class="sd">            Efron, Bradley; Tibshirani, Robert J. (1993).</span>
+<span class="sd">                An introduction to the bootstrap, New York: Chapman &amp; Hall, software.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># brier score given bootstrap distribution</span>
+        <span class="n">brier_score_bootstrap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_brier_score</span><span class="p">(</span>
+            <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;confidence_interval&quot;</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="o">=</span><span class="n">n_bootstraps</span>
+        <span class="p">)</span>
+
+        <span class="c1"># intialize tensor to store confidence intervals</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="p">)</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="p">)</span>
+
+        <span class="c1"># iterate over time</span>
+        <span class="k">for</span> <span class="n">index_t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="p">)):</span>
+            <span class="c1"># obtain confidence interval</span>
+            <span class="k">if</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s2">&quot;two_sided&quot;</span><span class="p">:</span>
+                <span class="n">lower</span><span class="p">[</span><span class="n">index_t</span><span class="p">],</span> <span class="n">upper</span><span class="p">[</span><span class="n">index_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span>
+                    <span class="n">brier_score_bootstrap</span><span class="p">[:,</span> <span class="n">index_t</span><span class="p">],</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+                        <span class="p">[</span><span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="o">.</span><span class="n">device</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s2">&quot;less&quot;</span><span class="p">:</span>
+                <span class="n">upper</span><span class="p">[</span><span class="n">index_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span>
+                    <span class="n">brier_score_bootstrap</span><span class="p">[:,</span> <span class="n">index_t</span><span class="p">],</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="n">lower</span><span class="p">[</span><span class="n">index_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s2">&quot;greater&quot;</span><span class="p">:</span>
+                <span class="n">lower</span><span class="p">[</span><span class="n">index_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span>
+                    <span class="n">brier_score_bootstrap</span><span class="p">[:,</span> <span class="n">index_t</span><span class="p">],</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="n">upper</span><span class="p">[</span><span class="n">index_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_p_value_parametric</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">null_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;p-value for a one-sample hypothesis test of the Brier score</span>
+<span class="sd">        assuming that the Brier score is normally distributed and using empirical standard error.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">brier_score_se</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_brier_score_se</span><span class="p">()</span>
+
+        <span class="c1"># get p-value</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">brier_score_se</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">normal</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span> <span class="o">-</span> <span class="n">null_value</span><span class="p">)</span> <span class="o">/</span> <span class="n">brier_score_se</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s2">&quot;two_sided&quot;</span><span class="p">:</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span> <span class="o">&gt;=</span> <span class="mf">0.5</span>
+                <span class="n">p</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+                <span class="n">p</span> <span class="o">*=</span> <span class="mi">2</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">p</span>
+                <span class="p">)</span>  <span class="c1"># in case critical value is below 0.5</span>
+            <span class="k">elif</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s2">&quot;greater&quot;</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The standard error of the brier score must be a positive value.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">p</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_p_value_bootstrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alternative</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;p-value for a one-sample hypothesis test of the Brier score using</span>
+<span class="sd">        permutation of survival distribution prediction to estimate sampling distribution under the null</span>
+<span class="sd">        hypothesis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># brier score bootstraps given null distribution</span>
+        <span class="n">brierscore0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_brier_score</span><span class="p">(</span>
+            <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;p_value&quot;</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="o">=</span><span class="n">n_bootstraps</span>
+        <span class="p">)</span>
+
+        <span class="c1"># intialize empty tensor to store p-values</span>
+        <span class="n">p_values</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="p">)</span>
+
+        <span class="c1"># iterate over time</span>
+        <span class="k">for</span> <span class="n">index_t</span><span class="p">,</span> <span class="n">brier_score_t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="p">):</span>
+            <span class="c1"># Derive p-value</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">brierscore0</span><span class="p">[:,</span> <span class="n">index_t</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">brier_score_t</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="n">n_bootstraps</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s2">&quot;two_sided&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">brier_score_t</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">:</span>
+                    <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p</span>
+                <span class="n">p</span> <span class="o">*=</span> <span class="mi">2</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">p</span>
+                <span class="p">)</span>  <span class="c1"># in case very small bootstrap sample size is used</span>
+            <span class="k">elif</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s2">&quot;greater&quot;</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p</span>
+
+            <span class="n">p_values</span><span class="p">[</span><span class="n">index_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+
+        <span class="k">return</span> <span class="n">p_values</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compare_parametric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Student t-test for paired samples assuming that</span>
+<span class="sd">        the Brier scores are normally distributed and using</span>
+<span class="sd">        empirical standard errors.&quot;&quot;&quot;</span>
+
+        <span class="c1"># sample size</span>
+        <span class="n">n_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># intialize empty vector to store p_values</span>
+        <span class="n">p_values</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="p">)</span>
+
+        <span class="c1"># iterate over time</span>
+        <span class="k">for</span> <span class="n">index_t</span><span class="p">,</span> <span class="n">brier_score_t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="p">):</span>
+            <span class="c1"># compute standard error of the difference</span>
+            <span class="n">paired_se</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">std</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">residuals</span><span class="p">[:,</span> <span class="n">index_t</span><span class="p">]</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">residuals</span><span class="p">[:,</span> <span class="n">index_t</span><span class="p">]</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_samples</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+
+            <span class="c1"># compute t-stat</span>
+            <span class="n">t_stat</span> <span class="o">=</span> <span class="p">(</span><span class="n">brier_score_t</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">brier_score</span><span class="p">[</span><span class="n">index_t</span><span class="p">])</span> <span class="o">/</span> <span class="n">paired_se</span>
+
+            <span class="c1"># p-value</span>
+            <span class="n">p_values</span><span class="p">[</span><span class="n">index_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+                <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span>
+                    <span class="n">t_stat</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">n_samples</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="p">),</span>  <span class="c1"># student-t cdf not available on torch</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">p_values</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compare_bootstrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Boostrap two-sample test to compare two Brier scores.&quot;&quot;&quot;</span>
+
+        <span class="c1"># bootstrap brier scores given null hypothesis that brierscore1 and</span>
+        <span class="c1"># brierscore2 come from the same distribution</span>
+        <span class="n">brier_score1_null</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_brier_score</span><span class="p">(</span>
+            <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;compare&quot;</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="o">=</span><span class="n">n_bootstraps</span>
+        <span class="p">)</span>
+        <span class="n">brier_score2_null</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_brier_score</span><span class="p">(</span>
+            <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;compare&quot;</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="o">=</span><span class="n">n_bootstraps</span>
+        <span class="p">)</span>
+
+        <span class="c1"># bootsrapped test statistics</span>
+        <span class="n">t_boot</span> <span class="o">=</span> <span class="n">brier_score1_null</span> <span class="o">-</span> <span class="n">brier_score2_null</span>
+
+        <span class="c1"># observed test statistics</span>
+        <span class="n">t_obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">brier_score</span>
+
+        <span class="c1"># intialize empty tensor to store p-values</span>
+        <span class="n">p_values</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="p">)</span>
+
+        <span class="c1"># iterate over time</span>
+        <span class="k">for</span> <span class="n">index_t</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brier_score</span><span class="p">):</span>
+            <span class="n">p_values</span><span class="p">[</span><span class="n">index_t</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="mi">1</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">t_boot</span><span class="p">[:,</span> <span class="n">index_t</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">t_obs</span><span class="p">[</span><span class="n">index_t</span><span class="p">])</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_bootstraps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">p_values</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_bootstrap_brier_score</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute bootstrap samples of the Brier Score.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric (str): Must be one of the following: &quot;confidence_interval&quot;, &quot;compare&quot;.</span>
+<span class="sd">                If &quot;confidence_interval&quot;, computes bootstrap</span>
+<span class="sd">                samples of the Brier score given the data distribution. If &quot;compare&quot;, computes</span>
+<span class="sd">                bootstrap samples of the Brier score given the sampling distribution under the comparison test</span>
+<span class="sd">                null hypothesis (brierscore1 = brierscore2).</span>
+<span class="sd">            n_bootstraps (int): Number of boostrap samples.</span>
+<span class="sd">            other (optional, BrierScore):</span>
+<span class="sd">                Another instance of the BrierScore class representing brierscore2.</span>
+<span class="sd">                Only required if ``metric`` is &quot;compare&quot;.</span>
+
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.tensor: Bootstrap samples of Brier score.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Initiate empty list to store brier score</span>
+        <span class="n">brier_scores</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Get the bootstrap samples of brier score</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bootstraps</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;confidence_interval&quot;</span>
+            <span class="p">):</span>  <span class="c1"># bootstrap samples given data distribution</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span>
+                    <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">high</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span>
+                <span class="p">)</span>
+                <span class="n">brier_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="p">:],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">new_time</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">weight_new_time</span><span class="p">,</span>
+                        <span class="n">instate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>  <span class="c1"># Run without saving internal state</span>
+            <span class="k">elif</span> <span class="p">(</span>
+                <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;compare&quot;</span>
+            <span class="p">):</span>  <span class="c1"># bootstrap samples given null distribution (brierscore1 = brierscore2)</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span>
+                    <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">high</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span>
+                <span class="p">)</span>
+
+                <span class="c1"># with prob 0.5, take the weight_new_time from self and with prob 0.5 from other</span>
+                <span class="n">weight_new_time</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">weight_new_time</span>
+                    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.5</span>
+                    <span class="k">else</span> <span class="n">other</span><span class="o">.</span><span class="n">weight_new_time</span>
+                <span class="p">)</span>
+
+                <span class="n">brier_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">(</span>  <span class="c1"># sample with replacement from pooled sample</span>
+                        <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">estimate</span><span class="p">))[</span><span class="n">index</span><span class="p">,</span> <span class="p">:],</span>
+                        <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">event</span><span class="p">))[</span><span class="n">index</span><span class="p">],</span>
+                        <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">time</span><span class="p">))[</span><span class="n">index</span><span class="p">],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">new_time</span><span class="p">,</span>
+                        <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">weight</span><span class="p">))[</span><span class="n">index</span><span class="p">],</span>
+                        <span class="n">weight_new_time</span><span class="p">,</span>
+                        <span class="n">instate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span>
+                <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;p_value&quot;</span>
+            <span class="p">):</span>  <span class="c1"># bootstrap samples given null distribution (estimate are not informative)</span>
+                <span class="n">estimate</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="p">)</span>
+                <span class="n">estimate</span> <span class="o">=</span> <span class="n">estimate</span><span class="p">[</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">estimate</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">:</span>
+                <span class="p">]</span>  <span class="c1"># Shuffle estimate</span>
+                <span class="n">brier_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">(</span>
+                        <span class="n">estimate</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">new_time</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">weight_new_time</span><span class="p">,</span>
+                        <span class="n">instate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>  <span class="c1"># Run without saving internal state</span>
+
+        <span class="n">brier_scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">brier_scores</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">brier_scores</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The brier score computed using bootstrap should not be NaN.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">brier_scores</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_torch_unique_indices</span><span class="p">(</span>
+        <span class="n">inverse_indices</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="n">counts</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;return unique_sorted_indices such that</span>
+<span class="sd">        sorted_unique_tensor[inverse_indices] = original_tensor</span>
+<span class="sd">        original_tensor[unique_sorted_indices] = sorted_unique_tensor</span>
+
+<span class="sd">        Usage:</span>
+<span class="sd">            _, inverse_indices, counts = torch.unique(</span>
+<span class="sd">                    x, sorted=True, return_inverse=True, return_counts=True</span>
+<span class="sd">            )</span>
+<span class="sd">            sorted_unique_indices = Auc._find_torch_unique_indices(</span>
+<span class="sd">                    inverse_indices, counts</span>
+<span class="sd">            )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">ind_sorted</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">inverse_indices</span><span class="p">,</span> <span class="n">stable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">cum_sum</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">cum_sum</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">]),</span> <span class="n">cum_sum</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">ind_sorted</span><span class="p">[</span><span class="n">cum_sum</span><span class="p">]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_brier_score_inputs</span><span class="p">(</span>
+        <span class="n">estimate</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+        <span class="n">new_time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+        <span class="n">weight</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+        <span class="n">weight_new_time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+        <span class="c1"># check new_time and weight are provided, weight_new_time should be provided</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">new_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">weight_new_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Please provide &#39;weight_new_time&#39;, the weight evaluated at &#39;new_time&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># check that estimate has 2 dimensions estimate are probabilities</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">estimate</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">estimate</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The &#39;estimate&#39; input should contain estimated survival probabilities between 0 and 1.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># check if estimate is of the correct dimension</span>
+        <span class="k">if</span> <span class="n">estimate</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The &#39;estimate&#39; input should have two dimensions.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># check if new_time are not specified and estimate are not evaluated at time</span>
+        <span class="k">if</span> <span class="n">new_time</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">!=</span> <span class="n">estimate</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Mismatched dimensions: The number of columns in &#39;estimate&#39; does not match the length of &#39;time&#39;. &quot;</span>
+                <span class="s2">&quot;Please provide the times at which &#39;estimate&#39; is evaluated using the &#39;new_time&#39; input.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_brier_score_new_time</span><span class="p">(</span>
+        <span class="n">estimate</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+        <span class="n">new_time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+        <span class="n">weight</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+        <span class="n">weight_new_time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+        <span class="c1"># check format of new_time</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">new_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>  <span class="c1"># if new_time are specified: ensure it has the correct format</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_time</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">new_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">new_time</span><span class="p">])</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">new_time</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">new_time</span> <span class="o">=</span> <span class="n">new_time</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># else: find new_time</span>
+            <span class="c1"># if new_time are not specified, use unique time</span>
+            <span class="n">new_time</span><span class="p">,</span> <span class="n">inverse_indices</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
+                <span class="n">time</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">sorted_unique_indices</span> <span class="o">=</span> <span class="n">BrierScore</span><span class="o">.</span><span class="n">_find_torch_unique_indices</span><span class="p">(</span>
+                <span class="n">inverse_indices</span><span class="p">,</span> <span class="n">counts</span>
+            <span class="p">)</span>
+
+            <span class="c1"># for time-dependent estimate, select those corresponding to new time</span>
+            <span class="n">estimate</span> <span class="o">=</span> <span class="n">estimate</span><span class="p">[:,</span> <span class="n">sorted_unique_indices</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># select weight corresponding at new time</span>
+                <span class="n">weight_new_time</span> <span class="o">=</span> <span class="n">weight</span><span class="p">[</span><span class="n">sorted_unique_indices</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">estimate</span><span class="p">,</span> <span class="n">new_time</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">weight_new_time</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_brier_score_weight</span><span class="p">(</span>
+        <span class="n">time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+        <span class="n">new_time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+        <span class="n">weight</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+        <span class="n">weight_new_time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+        <span class="c1"># if weight was not specified, weight of 1</span>
+        <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+            <span class="n">weight_new_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">new_time</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">weight</span><span class="p">,</span> <span class="n">weight_new_time</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">doctest</span>
+
+    <span class="c1"># Run doctest</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">failed</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All tests passed.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Some doctests failed.&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Novartis Pharma AG.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

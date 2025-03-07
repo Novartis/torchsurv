@@ -1,0 +1,664 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>torchsurv.loss.cox &#8212; torchsurv  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/torchsurv/loss/cox';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo_firecamp.png" class="logo__image only-light" alt="torchsurv  documentation - Home"/>
+    <img src="../../../_static/logo_firecamp.png" class="logo__image only-dark pst-js-only" alt="torchsurv  documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../loss.html">Loss</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.loss.cox.html">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.loss.weibull.html">torchsurv.loss.weibull</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../metrics.html">Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.metrics.cindex.html">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/survival.html">A statistical introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/introduction.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/momentum.html">Survival with MNIST</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../AUTHORS.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../devnotes.html">Development notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../benchmarks.html">Related packages</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for torchsurv.loss.cox</h1><div class="highlight"><pre>
+<span></span><span class="c1"># pylint: disable=C0103</span>
+<span class="c1"># pylint: disable=C0301</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+
+<div class="viewcode-block" id="neg_partial_log_likelihood">
+<a class="viewcode-back" href="../../../_autosummary/torchsurv.loss.cox.html#torchsurv.loss.cox.neg_partial_log_likelihood">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">neg_partial_log_likelihood</span><span class="p">(</span>
+    <span class="n">log_hz</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">event</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">ties_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;efron&quot;</span><span class="p">,</span>
+    <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+    <span class="n">checks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the negative of the partial log likelihood for the Cox proportional hazards model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        log_hz (torch.Tensor, float):</span>
+<span class="sd">            Log relative hazard of length n_samples.</span>
+<span class="sd">        event (torch.Tensor, bool):</span>
+<span class="sd">            Event indicator of length n_samples (= True if event occured).</span>
+<span class="sd">        time (torch.Tensor):</span>
+<span class="sd">            Time-to-event or censoring of length n_samples.</span>
+<span class="sd">        ties_method (str):</span>
+<span class="sd">            Method to handle ties in event time. Defaults to &quot;efron&quot;.</span>
+<span class="sd">            Must be one of the following: &quot;efron&quot;, &quot;breslow&quot;.</span>
+<span class="sd">        reduction (str):</span>
+<span class="sd">            Method to reduce losses. Defaults to &quot;mean&quot;.</span>
+<span class="sd">            Must be one of the following: &quot;sum&quot;, &quot;mean&quot;.</span>
+<span class="sd">        checks (bool):</span>
+<span class="sd">            Whether to perform input format checks.</span>
+<span class="sd">            Enabling checks can help catch potential issues in the input data.</span>
+<span class="sd">            Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (torch.tensor, float):</span>
+<span class="sd">            Negative of the partial log likelihood.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        For each subject :math:`i \in \{1, \cdots, N\}`, denote :math:`X_i` as the survival time and :math:`D_i` as the</span>
+<span class="sd">        censoring time. Survival data consist of the event indicator, :math:`\delta_i=1(X_i\leq D_i)`</span>
+<span class="sd">        (argument ``event``) and the time-to-event or censoring, :math:`T_i = \min(\{ X_i,D_i \})`</span>
+<span class="sd">        (argument ``time``).</span>
+
+<span class="sd">        The log hazard function for the Cox proportional hazards model has the form:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \log \lambda_i (t) = \log \lambda_{0}(t) + \log \theta_i</span>
+
+<span class="sd">        where :math:`\log \theta_i` is the log relative hazard (argument ``log_hz``).</span>
+
+<span class="sd">        **No ties in event time.**</span>
+<span class="sd">        If the set :math:`\{T_i: \delta_i = 1\}_{i = 1, \cdots, N}` represent unique event times (i.e., no ties),</span>
+<span class="sd">        the standard Cox partial likelihood can be used :cite:p:`Cox1972`. Let :math:`\tau_1 &lt; \tau_2 &lt; \cdots &lt; \tau_N`</span>
+<span class="sd">        be the ordered times and let  :math:`R(\tau_i) = \{ j: \tau_j \geq \tau_i\}`</span>
+<span class="sd">        be the risk set at :math:`\tau_i`. The partial log likelihood is defined as:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            pll = \sum_{i: \: \delta_i = 1} \left(\log \theta_i - \log\left(\sum_{j \in R(\tau_i)} \theta_j \right) \right)</span>
+
+<span class="sd">        **Ties in event time handled with Breslow&#39;s method.**</span>
+<span class="sd">        Breslow&#39;s method :cite:p:`Breslow1975` describes the approach in which the procedure described above is used unmodified,</span>
+<span class="sd">        even when ties are present. If two subjects A and B have the same event time, subject A will be at risk for the</span>
+<span class="sd">        event that happened to B, and B will be at risk for the event that happened to A.</span>
+<span class="sd">        Let :math:`\xi_1 &lt; \xi_2 &lt; \cdots` denote the unique ordered times (i.e., unique :math:`\tau_i`). Let :math:`H_k` be the set of</span>
+<span class="sd">        subjects that have an event at time :math:`\xi_k` such that :math:`H_k = \{i: \tau_i = \xi_k, \delta_i = 1\}`, and let :math:`m_k`</span>
+<span class="sd">        be the number of subjects that have an event at time :math:`\xi_k` such that :math:`m_k = |H_k|`.</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            pll = \sum_{k} \left( {\sum_{i\in H_{k}}\log \theta_i} - m_k \: \log\left(\sum_{j \in R(\tau_k)} \theta_j \right) \right)</span>
+
+
+<span class="sd">        **Ties in event time handled with Efron&#39;s method.**</span>
+<span class="sd">        An alternative approach that is considered to give better results is the Efron&#39;s method :cite:p:`Efron1977`.</span>
+<span class="sd">        As a compromise between the Cox&#39;s and Breslow&#39;s method, Efron suggested to use the average</span>
+<span class="sd">        risk among the subjects that have an event at time :math:`\xi_k`:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \bar{\theta}_{k} = {\frac {1}{m_{k}}}\sum_{i\in H_{k}}\theta_i</span>
+
+<span class="sd">        Efron approximation of the partial log likelihood is defined by</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            pll = \sum_{k} \left( {\sum_{i\in H_{k}}\log \theta_i} - \sum_{r =0}^{m_{k}-1} \log\left(\sum_{j \in R(\xi_k)}\theta_j-r\:\bar{\theta}_{j}\right)\right)</span>
+
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; log_hz = torch.tensor([0.1, 0.2, 0.3, 0.4, 0.5])</span>
+<span class="sd">        &gt;&gt;&gt; event = torch.tensor([1, 0, 1, 0, 1], dtype=torch.bool)</span>
+<span class="sd">        &gt;&gt;&gt; time = torch.tensor([1., 2., 3., 4., 5.])</span>
+<span class="sd">        &gt;&gt;&gt; neg_partial_log_likelihood(log_hz, event, time) # default, mean of log likelihoods across patients</span>
+<span class="sd">        tensor(1.0071)</span>
+<span class="sd">        &gt;&gt;&gt; neg_partial_log_likelihood(log_hz, event, time, reduction = &#39;sum&#39;) # sum of log likelihoods across patients</span>
+<span class="sd">        tensor(3.0214)</span>
+<span class="sd">        &gt;&gt;&gt; time = torch.tensor([1., 2., 2., 4., 5.])  # Dealing with ties (default: Efron)</span>
+<span class="sd">        &gt;&gt;&gt; neg_partial_log_likelihood(log_hz, event, time, ties_method = &quot;efron&quot;)</span>
+<span class="sd">        tensor(1.0873)</span>
+<span class="sd">        &gt;&gt;&gt; neg_partial_log_likelihood(log_hz, event, time, ties_method = &quot;breslow&quot;)  # Dealing with ties (Breslow)</span>
+<span class="sd">        tensor(1.0873)</span>
+
+<span class="sd">    References:</span>
+
+<span class="sd">        .. bibliography::</span>
+<span class="sd">            :filter: False</span>
+
+<span class="sd">            Cox1972</span>
+<span class="sd">            Breslow1975</span>
+<span class="sd">            Efron1977</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">checks</span><span class="p">:</span>
+        <span class="n">_check_inputs</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">event</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">log_hz</span><span class="o">.</span><span class="n">size</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No events OR single sample. Returning zero loss for the batch&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># sort data by time-to-event or censoring</span>
+    <span class="n">time_sorted</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+    <span class="n">log_hz_sorted</span> <span class="o">=</span> <span class="n">log_hz</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">event_sorted</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">time_unique</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">time_sorted</span><span class="p">)</span>  <span class="c1"># time-to-event or censoring without ties</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_unique</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_sorted</span><span class="p">):</span>
+        <span class="c1"># if not ties, use traditional cox partial likelihood</span>
+        <span class="n">pll</span> <span class="o">=</span> <span class="n">_partial_likelihood_cox</span><span class="p">(</span><span class="n">log_hz_sorted</span><span class="p">,</span> <span class="n">event_sorted</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># add warning about ties</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Ties in event time detected; using </span><span class="si">{</span><span class="n">ties_method</span><span class="si">}</span><span class="s2">&#39;s method to handle ties.&quot;</span>
+        <span class="p">)</span>
+        <span class="c1"># if ties, use either efron or breslow approximation of partial likelihood</span>
+        <span class="k">if</span> <span class="n">ties_method</span> <span class="o">==</span> <span class="s2">&quot;efron&quot;</span><span class="p">:</span>
+            <span class="n">pll</span> <span class="o">=</span> <span class="n">_partial_likelihood_efron</span><span class="p">(</span>
+                <span class="n">log_hz_sorted</span><span class="p">,</span>
+                <span class="n">event_sorted</span><span class="p">,</span>
+                <span class="n">time_sorted</span><span class="p">,</span>
+                <span class="n">time_unique</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ties_method</span> <span class="o">==</span> <span class="s2">&quot;breslow&quot;</span><span class="p">:</span>
+            <span class="n">pll</span> <span class="o">=</span> <span class="n">_partial_likelihood_breslow</span><span class="p">(</span><span class="n">log_hz_sorted</span><span class="p">,</span> <span class="n">event_sorted</span><span class="p">,</span> <span class="n">time_sorted</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Ties method </span><span class="si">{</span><span class="n">ties_method</span><span class="si">}</span><span class="s1"> should be one of [&quot;efron&quot;, &quot;breslow&quot;]&#39;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Negative partial log likelihood</span>
+    <span class="n">pll</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">neg</span><span class="p">(</span><span class="n">pll</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">reduction</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">pll</span><span class="o">.</span><span class="n">nanmean</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">reduction</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">pll</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="p">(</span>
+            <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Reduction </span><span class="si">{</span><span class="n">reduction</span><span class="si">}</span><span class="s2"> is not implemented yet, should be one of [&#39;mean&#39;, &#39;sum&#39;].&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">loss</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_partial_likelihood_cox</span><span class="p">(</span>
+    <span class="n">log_hz_sorted</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">event_sorted</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the partial log likelihood for the Cox proportional hazards model</span>
+<span class="sd">    in the absence of ties in event time.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        log_hz_sorted (torch.Tensor, float):</span>
+<span class="sd">            Log relative hazard of length n_samples, ordered by time-to-event or censoring.</span>
+<span class="sd">        event_sorted (torch.Tensor, bool):</span>
+<span class="sd">            Event indicator of length n_samples (= True if event occured), ordered by time-to-event or censoring.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (torch.tensor, float):</span>
+<span class="sd">            Vector of the partial log likelihoods.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Let :math:`\tau_1 &lt; \tau_2 &lt; \cdots &lt; \tau_N`</span>
+<span class="sd">        be the ordered times and let  :math:`R(\tau_i) = \{ j: \tau_j \geq \tau_i\}`</span>
+<span class="sd">        be the risk set at :math:`\tau_i`. The partial log likelihood is defined as:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            pll = \sum_{i: \: \delta_i = 1} \left(\log \theta_i - \log\left(\sum_{j \in R(\tau_i)} \theta_j \right) \right)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_denominator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">logcumsumexp</span><span class="p">(</span><span class="n">log_hz_sorted</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">log_hz_sorted</span> <span class="o">-</span> <span class="n">log_denominator</span><span class="p">)[</span><span class="n">event_sorted</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_partial_likelihood_efron</span><span class="p">(</span>
+    <span class="n">log_hz_sorted</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">event_sorted</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">time_sorted</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">time_unique</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the partial log likelihood for the Cox proportional hazards model</span>
+<span class="sd">    using Efron&#39;s method to handle ties in event time.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        log_hz_sorted (torch.Tensor, float):</span>
+<span class="sd">            Log relative hazard of length n_samples, ordered by time-to-event or censoring.</span>
+<span class="sd">        event_sorted (torch.Tensor, bool):</span>
+<span class="sd">            Event indicator of length n_samples (= True if event occured), ordered by time-to-event or censoring.</span>
+<span class="sd">        time_sorted (torch.Tensor):</span>
+<span class="sd">            Time-to-event values sorted in order.</span>
+<span class="sd">        time_unique (torch.Tensor):</span>
+<span class="sd">            Set of unique time-to-event values.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (torch.tensor, float):</span>
+<span class="sd">            Vector of partial log likelihood estimated using Efron&#39;s method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_unique</span><span class="p">)</span>
+
+    <span class="n">H</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">time_sorted</span> <span class="o">==</span> <span class="n">time_unique</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">event_sorted</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">time_sorted</span> <span class="o">&gt;=</span> <span class="n">time_unique</span><span class="p">[</span><span class="n">j</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">J</span><span class="p">)]</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">H</span><span class="p">])</span>
+    <span class="n">include</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">H</span><span class="p">])</span>
+
+    <span class="n">log_nominator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">log_hz_sorted</span><span class="p">[</span><span class="n">h</span><span class="p">])</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">H</span><span class="p">])</span>
+
+    <span class="n">denominator_naive</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_hz_sorted</span><span class="p">[</span><span class="n">r</span><span class="p">]))</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">R</span><span class="p">])</span>
+    <span class="n">denominator_ties</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_hz_sorted</span><span class="p">[</span><span class="n">h</span><span class="p">]))</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">H</span><span class="p">])</span>
+
+    <span class="n">log_denominator_efron</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">J</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">log_hz_sorted</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">J</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">log_denominator_efron</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="n">denominator_naive</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">m</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">denominator_ties</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">log_nominator</span> <span class="o">-</span> <span class="n">log_denominator_efron</span><span class="p">)[</span><span class="n">include</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_partial_likelihood_breslow</span><span class="p">(</span>
+    <span class="n">log_hz_sorted</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">event_sorted</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">time_sorted</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the partial log likelihood for the Cox proportional hazards model</span>
+<span class="sd">    using Breslow&#39;s method to handle ties in event time.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        log_hz_sorted (torch.Tensor, float):</span>
+<span class="sd">            Log relative hazard of length n_samples, ordered by time-to-event or censoring.</span>
+<span class="sd">        event_sorted (torch.Tensor, bool):</span>
+<span class="sd">            Event indicator of length n_samples (= True if event occured), ordered by time-to-event or censoring.</span>
+<span class="sd">        time_sorted (torch.Tensor):</span>
+<span class="sd">            Time-to-event values sorted in order.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (torch.tensor, float):</span>
+<span class="sd">            Vector containing partial log likelihood estimated using Breslow&#39;s method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_sorted</span><span class="p">)</span>
+
+    <span class="n">R</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">time_sorted</span> <span class="o">&gt;=</span> <span class="n">time_sorted</span><span class="p">[</span><span class="n">i</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="n">log_denominator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">logsumexp</span><span class="p">(</span><span class="n">log_hz_sorted</span><span class="p">[</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">log_hz_sorted</span> <span class="o">-</span> <span class="n">log_denominator</span><span class="p">)[</span><span class="n">event_sorted</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_inputs</span><span class="p">(</span><span class="n">log_hz</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input &#39;log_hz&#39; must be a tensor.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input &#39;event&#39; must be a tensor.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input &#39;time&#39; must be a tensor.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">log_hz</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Length mismatch: &#39;log_hz&#39; and &#39;event&#39; must have the same length.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Length mismatch: &#39;time&#39; must have the same length as &#39;event&#39;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">val</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">time</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid values: All elements in &#39;time&#39; must be non-negative.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">val</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Invalid values: &#39;event&#39; must contain only boolean values (True/False or 1/0)&quot;</span>
+        <span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">doctest</span>
+
+    <span class="c1"># Run doctest</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">failed</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All tests passed.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Some doctests failed.&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Novartis Pharma AG.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
