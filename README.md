@@ -1,6 +1,6 @@
 <p align="center">
-    <!-- <img src="https://github.com/Novartis/torchsurv/blob/main/docs/source/logo_firecamp.png" width="300"> -->
-    <img src="./docs/source/logo_firecamp.png" width="300">
+    <img src="https://github.com/Novartis/torchsurv/blob/main/docs/source/logo_firecamp.png" width="300">
+<!--     <img src="./docs/source/logo_firecamp.png" width="300"> -->
 
 </p>
 
@@ -16,9 +16,11 @@ https://anaconda.org/conda-forge/torchsurv)
 
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
+[![CodeFactor](https://www.codefactor.io/repository/github/novartis/torchsurv/badge/main)](https://www.codefactor.io/repository/github/novartis/torchsurv/overview/main)
 [![JOSS](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d/status.svg)](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d)
 [![License](https://img.shields.io/badge/License-MIT-black)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
+
 
 
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
@@ -220,13 +222,13 @@ While several libraries offer survival modelling functionalities, no existing li
 
 The outputs of both the log-likelihood functions and the evaluation metrics functions have **undergone thorough comparison with benchmarks generated** using `Python` and `R` packages. The comparisons (at time of publication) are summarised in the [Related packages summary](https://opensource.nibr.com/torchsurv/benchmarks.html).
 
-![Survival analysis libraries in Python](docs/source/table_python_benchmark.png)
-![Survival analysis libraries in Python](docs/source/table_python_benchmark_legend.png)
+![Survival analysis libraries in Python](https://github.com/Novartis/torchsurv/blob/main/docs/source/table_python_benchmark.png)
+![Survival analysis libraries in Python](https://github.com/Novartis/torchsurv/blob/main/docs/source/table_python_benchmark_legend.png)
 
 Survival analysis libraries in R. For obtaining the evaluation metrics, packages `survival`, `riskRegression`, `SurvMetrics` and `pec` require the fitted model object as input (a specific object format) and `RisksetROC` imposes a smoothing method. Packages `timeROC`, `riskRegression` and pec force the user to choose a form for subject-specific
 weights (e.g., inverse probability of censoring weighting (IPCW)). Packages `survcomp` and `SurvivalROC` do not implement the general AUC but the censoring-adjusted AUC estimator proposed by Heagerty et al. (2000).
 
-![Survival analysis libraries in R](docs/source/table_r_benchmark.png)
+![Survival analysis libraries in R](https://github.com/Novartis/torchsurv/blob/main/docs/source/table_r_benchmark.png)
 
 ## Contributing
 

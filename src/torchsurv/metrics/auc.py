@@ -1252,7 +1252,7 @@ class Auc:
                 weight_new_time = (weight[mask])[sorted_unique_indices]
 
             # for time-dependent estimate, select those corresponding to new time
-            if estimate.ndim == 2 and estimate.Size[1] > 1:
+            if estimate.ndim == 2 and estimate.size(1) > 1:
                 estimate = estimate[:, sorted_unique_indices]
 
         return estimate, new_time, weight, weight_new_time
