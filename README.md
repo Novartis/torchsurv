@@ -1,6 +1,6 @@
 <p align="center">
-    <!-- <img src="https://github.com/Novartis/torchsurv/blob/main/docs/source/logo_firecamp.png" width="300"> -->
-    <img src="./docs/source/logo_firecamp.png" width="300">
+    <img src="https://github.com/Novartis/torchsurv/blob/main/docs/source/logo_firecamp.png" width="300">
+<!--     <img src="./docs/source/logo_firecamp.png" width="300"> -->
 
 </p>
 
@@ -222,13 +222,13 @@ While several libraries offer survival modelling functionalities, no existing li
 
 The outputs of both the log-likelihood functions and the evaluation metrics functions have **undergone thorough comparison with benchmarks generated** using `Python` and `R` packages. The comparisons (at time of publication) are summarised in the [Related packages summary](https://opensource.nibr.com/torchsurv/benchmarks.html).
 
-![Survival analysis libraries in Python](docs/source/table_python_benchmark.png)
-![Survival analysis libraries in Python](docs/source/table_python_benchmark_legend.png)
+![Survival analysis libraries in Python](https://github.com/Novartis/torchsurv/blob/main/docs/source/table_python_benchmark.png)
+![Survival analysis libraries in Python](https://github.com/Novartis/torchsurv/blob/main/docs/source/table_python_benchmark_legend.png)
 
 Survival analysis libraries in R. For obtaining the evaluation metrics, packages `survival`, `riskRegression`, `SurvMetrics` and `pec` require the fitted model object as input (a specific object format) and `RisksetROC` imposes a smoothing method. Packages `timeROC`, `riskRegression` and pec force the user to choose a form for subject-specific
 weights (e.g., inverse probability of censoring weighting (IPCW)). Packages `survcomp` and `SurvivalROC` do not implement the general AUC but the censoring-adjusted AUC estimator proposed by Heagerty et al. (2000).
 
-![Survival analysis libraries in R](docs/source/table_r_benchmark.png)
+![Survival analysis libraries in R](https://github.com/Novartis/torchsurv/blob/main/docs/source/table_r_benchmark.png)
 
 ## Contributing
 
