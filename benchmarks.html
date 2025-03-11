@@ -1,0 +1,554 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Related packages &#8212; torchsurv  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'benchmarks';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Development notes" href="devnotes.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo_firecamp.png" class="logo__image only-light" alt="torchsurv  documentation - Home"/>
+    <img src="_static/logo_firecamp.png" class="logo__image only-dark pst-js-only" alt="torchsurv  documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="loss.html">Loss</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.loss.cox.html">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.loss.weibull.html">torchsurv.loss.weibull</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="metrics.html">Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.metrics.cindex.html">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/survival.html">A statistical introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/introduction.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/momentum.html">Survival with MNIST</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="AUTHORS.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devnotes.html">Development notes</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Related packages</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/benchmarks.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Related packages</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure">Structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmark-comparison">Benchmark Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#obtaining-benchmarks-on-r">Obtaining Benchmarks on R</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmark-comparison-figures">Benchmark Comparison Figures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-cox-partial-log-likelihood-of-cox-proportional-hazards-model"><code class="docutils literal notranslate"><span class="pre">loss.cox</span></code>: Partial log likelihood of Cox proportional hazards model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-weibull-log-likelihood-of-weibull-accelerated-failure-time-aft-model"><code class="docutils literal notranslate"><span class="pre">loss.weibull</span></code>: Log likelihood of Weibull accelerated failure time (AFT) model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrics-auc-area-under-the-receiver-operating-characteristic-curve-auc"><code class="docutils literal notranslate"><span class="pre">metrics.auc</span></code>: Area Under the Receiver Operating Characteristic Curve (AUC)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrics-cindex-concordance-index"><code class="docutils literal notranslate"><span class="pre">metrics.cindex</span></code>: Concordance index</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrics-brier-score-brier-score"><code class="docutils literal notranslate"><span class="pre">metrics.brier_score</span></code>: Brier score</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="related-packages">
+<h1>Related packages<a class="headerlink" href="#related-packages" title="Link to this heading">#</a></h1>
+<section id="structure">
+<h2>Structure<a class="headerlink" href="#structure" title="Link to this heading">#</a></h2>
+<p>Comprehensive tests on API functionalities help maintain their reliability, accuracy, and robustness. Each functionality of the API is thoroughly tested in separate files named <code class="docutils literal notranslate"><span class="pre">test_$FUNCTIONALITY.py</span></code>. The tests cover various aspects:</p>
+<ul class="simple">
+<li><p><strong>Value Comparison:</strong> The values returned by the functions are compared against benchmarks on real data (e.g., North Central Cancer Treatment Group’s <a class="reference external" href="https://lifelines.readthedocs.io/en/latest/lifelines.datasets.html#lifelines.datasets.load_lung">lung dataset</a> and the German Breast Cancer Study Group <a class="reference external" href="https://lifelines.readthedocs.io/en/latest/lifelines.datasets.html#lifelines.datasets.load_gbsg2">gbsg dataset</a>) as well as simulated data, including edge cases. This ensures that the functions produce accurate results across different scenarios.</p></li>
+<li><p><strong>Output Format:</strong> The expected format of the function outputs is rigorously tested to ensure consistency and compatibility with other parts of the system or downstream processes.</p></li>
+<li><p><strong>Error Handling:</strong> Input or edge cases that should raise errors are explicitly tested to verify that the functions behave as expected.</p></li>
+</ul>
+</section>
+<section id="benchmark-comparison">
+<h2>Benchmark Comparison<a class="headerlink" href="#benchmark-comparison" title="Link to this heading">#</a></h2>
+<p>The values obtained from the unit tests are compared against benchmarks generated using R and Python packages. Below is a table indicating the packages used for benchmarking each functionality:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">torchsurv</span></code> functionality</p></th>
+<th class="head"><p>R Package</p></th>
+<th class="head"><p>Python Package</p></th>
+<th class="head"><p>File name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loss.cox</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">survival</span></code></p></td>
+<td><p>/</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tests/test_cox.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loss.weibull</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">survival</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">lifelines</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tests/test_weibull.py</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">metrics.auc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">survAUC</span></code>, <code class="docutils literal notranslate"><span class="pre">RiskRegression</span></code>,  <code class="docutils literal notranslate"><span class="pre">timeROC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sksurv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tests/test_auc.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metrics.cindex</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">survival</span></code>, <code class="docutils literal notranslate"><span class="pre">survcomp</span></code>,  <code class="docutils literal notranslate"><span class="pre">survAUC</span></code>, <code class="docutils literal notranslate"><span class="pre">survC1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sksurv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tests/test_cindex.py</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">metrics.brier_score</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">survAUC</span></code>, <code class="docutils literal notranslate"><span class="pre">survMetrics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sksurv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tests/test_brier_score.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stats.ipcw</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pec</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sksurv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tests/test_ipcw.py</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stats.kaplan_meier</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">survival</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sksurv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tests/test_kaplan_meier.py</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="obtaining-benchmarks-on-r">
+<h2>Obtaining Benchmarks on R<a class="headerlink" href="#obtaining-benchmarks-on-r" title="Link to this heading">#</a></h2>
+<p>Benchmark values from R packages are obtained using R Scripts in <code class="docutils literal notranslate"><span class="pre">benchmark_script/</span></code> and are saved in <code class="docutils literal notranslate"><span class="pre">benchmark_data/</span></code>. Make sure to install the following R libraries before running the scripts:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">jsonlite</span></code>, v.1.8.7</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">survival</span></code>, v3.5-7 (2023-08-14)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">riskRegression</span></code>, v.2023.12.21 (2023-12-19)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timeROC</span></code>, v.0.4 (2019-12-18)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">survAUC</span></code>, v.1.2-0 (2023-03-21)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SurvMetrics</span></code>, v.0.5.0 (2022-09-03)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">survcomp</span></code>, v.1.52.0 (2023-10-24)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">survC1</span></code>,  v.1.0-3 (2021-02-10)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pec</span></code>, v.2023.04.12 (2023-04-11)</p></li>
+</ul>
+</section>
+<section id="benchmark-comparison-figures">
+<h2>Benchmark Comparison Figures<a class="headerlink" href="#benchmark-comparison-figures" title="Link to this heading">#</a></h2>
+<p>Below are the comparison figures showing the values of the API functionalities against benchmarks generated using different packages:</p>
+<section id="loss-cox-partial-log-likelihood-of-cox-proportional-hazards-model">
+<h3><code class="docutils literal notranslate"><span class="pre">loss.cox</span></code>: Partial log likelihood of Cox proportional hazards model<a class="headerlink" href="#loss-cox-partial-log-likelihood-of-cox-proportional-hazards-model" title="Link to this heading">#</a></h3>
+<p>The partial log likelihood of Cox proportional hazards models fitted on two real datasets. Models are parameterized with one, two, or all covariates. The standard Cox partial log likelihood was evaluated using only observations with unique time-to-event (without ties), while Efron’s and Breslow’s corrections were applied using all observations, accounting for ties in event times.</p>
+<p><img alt="" src="_images/benchmark_cox.png" /></p>
+</section>
+<section id="loss-weibull-log-likelihood-of-weibull-accelerated-failure-time-aft-model">
+<h3><code class="docutils literal notranslate"><span class="pre">loss.weibull</span></code>: Log likelihood of Weibull accelerated failure time (AFT) model<a class="headerlink" href="#loss-weibull-log-likelihood-of-weibull-accelerated-failure-time-aft-model" title="Link to this heading">#</a></h3>
+<p>The log likelihood of Weibull Accelerated Failure Time (AFT) models fitted to two real datasets. Models are parameterized with one, two, or all covariates. In the ‘scale only’ model, only the scale parameter was estimated with a fixed shape, while in the ‘shape and scale’ model, both the scale and shape parameters were estimated.</p>
+<p><img alt="" src="_images/benchmark_weibull.png" /></p>
+</section>
+<section id="metrics-auc-area-under-the-receiver-operating-characteristic-curve-auc">
+<h3><code class="docutils literal notranslate"><span class="pre">metrics.auc</span></code>: Area Under the Receiver Operating Characteristic Curve (AUC)<a class="headerlink" href="#metrics-auc-area-under-the-receiver-operating-characteristic-curve-auc" title="Link to this heading">#</a></h3>
+<p>Time-dependent Uno’s AUC evaluated using the log hazard estimated with a Cox proportional hazards model fitted on the ‘lung’ dataset. In the unit tests, the AUC evaluated on other model specifications (with one, two, or all covariates) and a second dataset were also compared to this benchmark.</p>
+<p><img alt="" src="_images/benchmark_auc.png" /></p>
+</section>
+<section id="metrics-cindex-concordance-index">
+<h3><code class="docutils literal notranslate"><span class="pre">metrics.cindex</span></code>: Concordance index<a class="headerlink" href="#metrics-cindex-concordance-index" title="Link to this heading">#</a></h3>
+<p>Harrell’s and Uno’s C-index evaluated using the log hazard estimated with a Cox proportional hazards model fitted on the ‘lung’ dataset. In the unit tests, the C-index evaluated on other model specifications (with one, two, or all covariates) and a second dataset were also compared to this benchmark.</p>
+<p><img alt="" src="_images/benchmark_harrell_cindex.png" /></p>
+<p><img alt="" src="_images/benchmark_uno_cindex.png" /></p>
+</section>
+<section id="metrics-brier-score-brier-score">
+<h3><code class="docutils literal notranslate"><span class="pre">metrics.brier_score</span></code>: Brier score<a class="headerlink" href="#metrics-brier-score-brier-score" title="Link to this heading">#</a></h3>
+<p>Time-dependent Brier score evaluated using the survival function estimated with a Weibull AFT model fitted on the ‘lung’ dataset. In the unit tests, the Brier score evaluated on other model specifications (with one, two, or all covariates) and a second dataset were also compared to this benchmark.</p>
+<p><img alt="" src="_images/benchmark_brier_score.png" /></p>
+<p><strong><em>NOTE:</em></strong> All three curves are superposed.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="devnotes.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Development notes</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure">Structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmark-comparison">Benchmark Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#obtaining-benchmarks-on-r">Obtaining Benchmarks on R</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmark-comparison-figures">Benchmark Comparison Figures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-cox-partial-log-likelihood-of-cox-proportional-hazards-model"><code class="docutils literal notranslate"><span class="pre">loss.cox</span></code>: Partial log likelihood of Cox proportional hazards model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-weibull-log-likelihood-of-weibull-accelerated-failure-time-aft-model"><code class="docutils literal notranslate"><span class="pre">loss.weibull</span></code>: Log likelihood of Weibull accelerated failure time (AFT) model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrics-auc-area-under-the-receiver-operating-characteristic-curve-auc"><code class="docutils literal notranslate"><span class="pre">metrics.auc</span></code>: Area Under the Receiver Operating Characteristic Curve (AUC)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrics-cindex-concordance-index"><code class="docutils literal notranslate"><span class="pre">metrics.cindex</span></code>: Concordance index</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrics-brier-score-brier-score"><code class="docutils literal notranslate"><span class="pre">metrics.brier_score</span></code>: Brier score</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Novartis Pharma AG.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
