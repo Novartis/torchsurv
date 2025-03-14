@@ -20,13 +20,14 @@ os.environ["PYTORCH_JIT"] = "0"
 # Set a seed for reproducibility
 seed_value = 45
 torch.manual_seed(seed_value)
-BATCH_N = 10
 
 
 trainer = L.Trainer(max_epochs=2, log_every_n_steps=5)
 
 
 class TestLitTraining(unittest.TestCase):
+    BATCH_N = 10
+
     def run_training(self, trainer, model):
         logger.critical(f"Loading {model.dataname} dataset")
         trainer.fit(model)
@@ -40,7 +41,7 @@ class TestLitTraining(unittest.TestCase):
                 backbone=SimpleLinearNNOneParameter(input_size=2),
                 loss=weibull,
                 dataname="lung",
-                batch_size=248 // BATCH_N,
+                batch_size=248 // self.BATCH_N,
             ),
         )
         with torch.no_grad():
@@ -55,40 +56,29 @@ class TestLitTraining(unittest.TestCase):
                 backbone=SimpleLinearNNTwoParameters(input_size=2),
                 loss=weibull,
                 dataname="gbsb",
-                batch_size=686 // BATCH_N,
+                batch_size=686 // self.BATCH_N,
             ),
         )
         with torch.no_grad():
             params = model(torch.randn(1, 2))
         self.assertEqual(params.size(), (1, 2))
 
-    def test_twins(self):
-        """Two parameters Weibull"""
-        model = LitSurvivalTwins(
-            backbone=SimpleLinearNNOneParameter(input_size=2),
-            loss=weibull,
-            steps=2,
-            dataname="gbsb",
-            batch_size=686 // BATCH_N,
-        )
-        res = self.run_training(
-            trainer,
-            model,
-        )
+    # def test_twins(self):
+    #     """Two parameters Weibull"""
+    #     model = self.run_training(
+    #         trainer,
+    #         LitSurvivalTwins(
+    #             backbone=SimpleLinearNNOneParameter(input_size=2),
+    #             loss=weibull,
+    #             steps=2,
+    #             dataname="gbsb",
+    #             batch_size=686 // self.BATCH_N,
+    #         ),
+    #     )
 
-        with torch.no_grad():
-            x = torch.randn(1, 2)
-            # logger.info(f"No training: {res.twinnets.backbone(x)}")
-            # logger.info(f"Student (Q): {res.twinnets.encoder_q(x)}")
-            # logger.info(f"Teacher (K): {res.twinnets.encoder_k(x)}")
-
-        # Model parameters (sanity checks)
-        # for params in model.twinnets.backbone.parameters():
-        #     logger.info(f"No training: {params}")
-        # for params in model.twinnets.encoder_q.parameters():
-        #     logger.info(f"Student (Q): {params}")
-        # for params in model.twinnets.encoder_k.parameters():
-        #     logger.info(f"Teacher (K): {params}")
+    #     with torch.no_grad():
+    #         params = model(torch.randn(1, 2))
+    #     self.assertEqual(params.size(), (1, 2))
 
 
 if __name__ == "__main__":

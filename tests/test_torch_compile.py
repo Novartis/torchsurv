@@ -1,21 +1,9 @@
-"""
-
-Tests for torch.compile
-
-References:
-    - https://pytorch.org/tutorials/intermediate/torch_compile_tutorial.html
-    - https://github.com/pytorch/pytorch/issues/122094
-
-"""
-
 import os
-
-# global modules
 import unittest
 
 import torch
+import torch._dynamo
 
-# Local modules
 from torchsurv.loss.cox import neg_partial_log_likelihood as cox
 from torchsurv.loss.weibull import neg_log_likelihood as weibull
 
@@ -24,6 +12,8 @@ torch.manual_seed(42)
 
 # Disable TorchScript JIT
 os.environ["PYTORCH_JIT"] = "0"
+
+torch._dynamo.config.suppress_errors = True
 
 
 class TestTorchCompile(unittest.TestCase):

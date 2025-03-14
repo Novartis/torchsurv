@@ -3,7 +3,6 @@ import warnings
 import torch
 
 
-@torch.jit.script
 def validate_log_shape(log_params: torch.Tensor) -> torch.Tensor:
     """Private function, check if the log shape is missing and impute it with 0
     if needed.
@@ -26,7 +25,6 @@ def validate_log_shape(log_params: torch.Tensor) -> torch.Tensor:
     return log_params
 
 
-@torch.jit.script
 def check_within_follow_up(
     new_time: torch.Tensor, time: torch.Tensor, within_follow_up: bool
 ) -> None:
@@ -39,13 +37,10 @@ def check_within_follow_up(
             max_time = time.max().item()
             # Raise a ValueError if new_time is not within the follow-up time range
             raise ValueError(
-                "Value error: All new_time must be within follow-up time of test data: [{}; {}[".format(
-                    min_time, max_time
-                )
+                f"Value error: All new_time must be within follow-up time of test data: [{min_time}; {max_time}"
             )
 
 
-@torch.jit.script
 def validate_new_time(
     new_time: torch.Tensor, time: torch.Tensor, within_follow_up: bool = True
 ) -> None:
@@ -84,8 +79,7 @@ def validate_new_time(
     check_within_follow_up(new_time, time, within_follow_up)
 
 
-@torch.jit.script
-def validate_survival_data(event, time):
+def validate_survival_data(event: torch.Tensor, time: torch.Tensor):
     """Perform format and validity checks for survival data.
 
     Args:
@@ -101,8 +95,8 @@ def validate_survival_data(event, time):
         ValueError: If all ``event`` are False.
         ValueError: If any ``time`` are negative.
     """
-    if not isinstance(event, torch.Tensor) or not isinstance(time, torch.Tensor):
-        raise TypeError("Inputs 'event' and 'time' should be tensors")
+    validate_tensor(event, "event")
+    validate_tensor(time, "time")
 
     if not event.dtype == torch.bool:
         raise ValueError("Input 'event' should be of boolean type.")
@@ -122,65 +116,25 @@ def validate_survival_data(event, time):
         raise ValueError("Input 'time' should be non-negative.")
 
 
-@torch.jit.script
-def validate_loss(
-    log_params: torch.Tensor, event: torch.Tensor, time: torch.Tensor, model_type: str
-) -> None:
-    """
-    Validate the inputs for survival analysis functions.
+def validate_tensor(tensor: torch.Tensor, name: str) -> None:
+    if not isinstance(tensor, torch.Tensor):
+        raise TypeError(f"Input '{name}' should be a tensor")
 
-    Args:
-        log_params (torch.Tensor): Parameters of the model (log hazards or log parameters).
-        event (torch.Tensor): Event indicator tensor.
-        time (torch.Tensor): Time-to-event or censoring tensor.
-        model_type (str): Type of the model ('weibull' or 'cox').
 
-    Raises:
-        TypeError: If inputs are not tensors.
-        ValueError: If any `time` are negative.
-        ValueError: If `event` contains invalid values.
-        ValueError: If lengths of inputs do not match.
-    """
-
-    if not isinstance(log_params, torch.Tensor):
-        raise TypeError("Input 'log_params' must be a tensor.")
-
-    if not isinstance(event, torch.Tensor):
-        raise TypeError("Input 'event' must be a tensor.")
-
-    if not isinstance(time, torch.Tensor):
-        raise TypeError("Input 'time' must be a tensor.")
-
-    # Reshape if necessary
-    log_params = log_params.squeeze()
-    event = event.squeeze()
-    time = time.squeeze()
-
-    if log_params.shape[0] != len(event):
-        raise ValueError(
-            "Length mismatch: The length of 'log_params' must match the length of 'event'."
-        )
-
-    if time.shape != event.shape:
-        raise ValueError(
-            "Dimension mismatch: The shape of 'time' must match the shape of 'event'."
-        )
-
-    if torch.any(time < 0):
-        raise ValueError("All elements in 'time' must be non-negative.")
-
-    # Check if event contains only boolean values (0 or 1)
-    if isinstance(event, torch.Tensor) and event.dtype == torch.bool:
+def validate_event(event: torch.Tensor) -> torch.Tensor:
+    if event.dtype == torch.bool:
         warnings.warn("Converting boolean 'event' to float.")
         event = event.float()
-
     if not torch.all((event == 0) | (event == 1)):
         raise ValueError("Invalid values: 'event' must contain only [0, 1] values")
+    return event
 
+
+def validate_model_type(log_params: torch.Tensor, model_type: str) -> None:
     if model_type.lower() == "weibull":
         if log_params.dim() not in [1, 2]:
             raise ValueError(
-                f"For Weibull model, 'log_params' must have shape (n_samples, 2) or (n_samples, 1)."
+                f"For Weibull model, 'log_params' must have shape (n_samples, 2) or (n_samples, 1). Found {log_params.dim()} dimensions."
             )
     elif model_type.lower() == "cox":
         if log_params.dim() != 1:
@@ -191,28 +145,58 @@ def validate_loss(
         raise ValueError("Invalid model type. Must be 'weibull' or 'cox'.")
 
 
-# Example usage
+def validate_loss(
+    log_params: torch.Tensor, event: torch.Tensor, time: torch.Tensor, model_type: str
+) -> None:
+    # sanity checks
+    validate_tensor(log_params, "log_params")
+    validate_tensor(event, "event")
+    validate_tensor(time, "time")
+
+    log_params = log_params.squeeze()
+    event = event.squeeze()
+    time = time.squeeze()
+
+    if log_params.shape[0] != len(event):
+        raise ValueError(
+            "Dimension mismatch: 'log_params' and 'event' must have the same length"
+        )
+
+    if time.shape != event.shape:
+        raise ValueError(
+            "Dimension mismatch: 'time' and 'event' must have the same shape"
+        )
+
+    if torch.any(time < 0):
+        raise ValueError("All elements in 'time' must be non-negative.")
+
+    event = validate_event(event)
+    validate_model_type(log_params, model_type)
+
+
 if __name__ == "__main__":
-    import unittest
 
     log_params_weibull = torch.randn((5, 2))
     log_params_cox = torch.randn((5, 1))
-    event = torch.tensor([1, 0, 1, 1, 0])
-    time = torch.tensor([10, 20, 30, 40, 50])
+    event_data = torch.tensor([1, 0, 1, 1, 0])
+    time_data = torch.tensor([10, 20, 30, 40, 50])
 
     # Validate Weibull model inputs
-    validate_loss(log_params_weibull, event, time, model_type="weibull")
+    validate_loss(log_params_weibull, event_data, time_data, model_type="weibull")
 
     # Validate Cox model inputs
-    validate_loss(log_params_cox, event, time, model_type="cox")
+    validate_loss(log_params_cox, event_data, time_data, model_type="cox")
 
     # Valide booleans values
-    validate_loss(log_params_cox, event.bool(), time, model_type="cox")
+    validate_loss(log_params_cox, event_data.bool(), time_data, model_type="cox")
 
     # check that the ouput is a ValueError
-    # try:
-    #     validate_loss(
-    #         log_params_weibull, torch.tensor([1, 0, 1]), time, model_type="weibull"
-    #     )
-    # except ValueError as e:
-    #     print(f"ValueError: {e}")
+    try:
+        validate_loss(
+            log_params_weibull,
+            torch.tensor([1, 0, 1]),
+            time_data,
+            model_type="weibull",
+        )
+    except ValueError as e:
+        print(f"ValueError: {e}")

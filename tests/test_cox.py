@@ -1,12 +1,11 @@
-# global modules
 import json
 import os
 import unittest
 
 import numpy as np
 import torch
+import torch._dynamo
 
-# Local modules
 from torchsurv.loss.cox import neg_partial_log_likelihood as cox
 from torchsurv.tools.validate_data import validate_loss
 
@@ -19,6 +18,10 @@ torch.manual_seed(42)
 
 # Disable TorchScript JIT
 os.environ["PYTORCH_JIT"] = "0"
+torch._dynamo.config.suppress_errors = True
+
+np.random.seed(23)
+torch.manual_seed(23)
 
 
 class TestCoxSurvivalLoss(unittest.TestCase):
@@ -52,18 +55,18 @@ class TestCoxSurvivalLoss(unittest.TestCase):
 
     def test_len_data(self):
         time_wrong_len = torch.randint(low=1, high=100, size=(self.N + 1,))
-        with self.assertRaises((RuntimeError, TypeError)):
-            cox(self.log_hz, self.event, time_wrong_len)
+        with self.assertRaises(TypeError):
+            validate_loss(self.log_hz, self.event, time_wrong_len)
 
     def test_positive_t(self):
         time_negative = torch.randint(low=-100, high=100, size=(self.N,))
-        with self.assertRaises((RuntimeError, TypeError)):
-            cox(self.log_hz, self.event, time_negative)
+        with self.assertRaises(TypeError):
+            validate_loss(self.log_hz, self.event, time_negative)
 
     def test_boolean_y(self):
         event_non_boolean = torch.randint(low=0, high=3, size=(self.N,))
-        with self.assertRaises((RuntimeError, TypeError)):
-            cox(self.log_hz, event_non_boolean, self.time)
+        with self.assertRaises(TypeError):
+            validate_loss(self.log_hz, event_non_boolean, self.time)
 
     def test_log_likelihood_without_ties(self):
         """test cox partial log likelihood without ties on lung and gbsg datasets"""

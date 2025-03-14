@@ -166,7 +166,7 @@ class TestCIndex(unittest.TestCase):
                 "ties_score_censoring",
             ],
         )
-        for i, batch in enumerate(batch_container.batches):
+        for _, batch in enumerate(batch_container.batches):
             (
                 train_time,
                 train_event,
