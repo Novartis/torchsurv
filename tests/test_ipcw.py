@@ -1,5 +1,6 @@
 # global modules
 import json
+import os
 import unittest
 
 import numpy as np
@@ -16,6 +17,9 @@ with open("tests/benchmark_data/benchmark_ipcw.json", "r") as file:
 
 # set seed for reproducibility
 torch.manual_seed(42)
+
+# Disable TorchScript JIT
+os.environ["PYTORCH_JIT"] = "0"
 
 
 class TestIPCW(unittest.TestCase):

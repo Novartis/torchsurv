@@ -1,6 +1,6 @@
+import os
 import unittest
 
-# Global
 import lightning as L
 import torch
 from loguru import logger
@@ -12,6 +12,10 @@ from utils import (
 )
 
 from torchsurv.loss.weibull import neg_log_likelihood as weibull
+
+# Disable TorchScript JIT
+os.environ["PYTORCH_JIT"] = "0"
+
 
 # Set a seed for reproducibility
 seed_value = 45

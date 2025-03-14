@@ -1,5 +1,6 @@
 # global modules
 import json
+import os
 import unittest
 
 import numpy as np
@@ -13,6 +14,10 @@ from torchsurv.metrics.brier_score import BrierScore
 from torchsurv.stats.ipcw import get_ipcw
 
 torch.manual_seed(23)
+
+# Disable TorchScript JIT
+os.environ["PYTORCH_JIT"] = "0"
+
 
 # Load the benchmark metrics from R
 with open("tests/benchmark_data/benchmark_brier_score.json", "r") as file:

@@ -1,5 +1,6 @@
 # global modules
 import json
+import os
 import unittest
 
 import numpy as np
@@ -12,6 +13,9 @@ from torchsurv.metrics.cindex import ConcordanceIndex
 from torchsurv.stats.ipcw import get_ipcw
 
 torch.manual_seed(23)
+
+# Disable TorchScript JIT
+os.environ["PYTORCH_JIT"] = "0"
 
 # Load the benchmark metrics from R
 with open("tests/benchmark_data/benchmark_cindex.json", "r") as file:

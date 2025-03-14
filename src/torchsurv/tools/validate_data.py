@@ -1,10 +1,14 @@
+import warnings
+
 import torch
 
 
 @torch.jit.script
 def validate_log_shape(log_params: torch.Tensor) -> torch.Tensor:
     """Private function, check if the log shape is missing and impute it with 0
-    if needed."""
+    if needed.
+    Used only for Weibull loss, as it can handle either log_scale alone or both
+    log_scale and log_shape."""
     if any(
         [
             log_params.dim() == 0,
@@ -80,6 +84,7 @@ def validate_new_time(
     check_within_follow_up(new_time, time, within_follow_up)
 
 
+@torch.jit.script
 def validate_survival_data(event, time):
     """Perform format and validity checks for survival data.
 
@@ -96,7 +101,7 @@ def validate_survival_data(event, time):
         ValueError: If all ``event`` are False.
         ValueError: If any ``time`` are negative.
     """
-    if not torch.is_tensor(event) or not torch.is_tensor(time):
+    if not isinstance(event, torch.Tensor) or not isinstance(time, torch.Tensor):
         raise TypeError("Inputs 'event' and 'time' should be tensors")
 
     if not event.dtype == torch.bool:
@@ -136,6 +141,7 @@ def validate_loss(
         ValueError: If `event` contains invalid values.
         ValueError: If lengths of inputs do not match.
     """
+
     if not isinstance(log_params, torch.Tensor):
         raise TypeError("Input 'log_params' must be a tensor.")
 
@@ -145,32 +151,39 @@ def validate_loss(
     if not isinstance(time, torch.Tensor):
         raise TypeError("Input 'time' must be a tensor.")
 
+    # Reshape if necessary
+    log_params = log_params.squeeze()
+    event = event.squeeze()
+    time = time.squeeze()
+
     if log_params.shape[0] != len(event):
         raise ValueError(
             "Length mismatch: The length of 'log_params' must match the length of 'event'."
         )
 
-    if len(time) != len(event):
+    if time.shape != event.shape:
         raise ValueError(
-            "Length mismatch: The length of 'time' must match the length of 'event'."
+            "Dimension mismatch: The shape of 'time' must match the shape of 'event'."
         )
 
     if torch.any(time < 0):
         raise ValueError("All elements in 'time' must be non-negative.")
 
-    if torch.any((event != 0) & (event != 1)):
-        raise ValueError(
-            "Invalid values: 'event' must contain only boolean values (True/False or 1/0)"
-        )
+    # Check if event contains only boolean values (0 or 1)
+    if isinstance(event, torch.Tensor) and event.dtype == torch.bool:
+        warnings.warn("Converting boolean 'event' to float.")
+        event = event.float()
 
-    if model_type == "weibull":
-        # if log_params.shape[1] is not 1 or 2:
-        if log_params.shape[1] not in [1, 2]:
+    if not torch.all((event == 0) | (event == 1)):
+        raise ValueError("Invalid values: 'event' must contain only [0, 1] values")
+
+    if model_type.lower() == "weibull":
+        if log_params.dim() not in [1, 2]:
             raise ValueError(
                 f"For Weibull model, 'log_params' must have shape (n_samples, 2) or (n_samples, 1)."
             )
-    elif model_type == "cox":
-        if log_params.shape[1] != 1:
+    elif model_type.lower() == "cox":
+        if log_params.dim() != 1:
             raise ValueError(
                 "For Cox model, 'log_params' must have shape (n_samples, 1)."
             )
@@ -180,13 +193,26 @@ def validate_loss(
 
 # Example usage
 if __name__ == "__main__":
+    import unittest
+
     log_params_weibull = torch.randn((5, 2))
     log_params_cox = torch.randn((5, 1))
-    event = torch.tensor([1, 0, 1, 1, 0], dtype=torch.float32)
-    time = torch.tensor([10, 20, 30, 40, 50], dtype=torch.float32)
+    event = torch.tensor([1, 0, 1, 1, 0])
+    time = torch.tensor([10, 20, 30, 40, 50])
 
     # Validate Weibull model inputs
     validate_loss(log_params_weibull, event, time, model_type="weibull")
 
     # Validate Cox model inputs
     validate_loss(log_params_cox, event, time, model_type="cox")
+
+    # Valide booleans values
+    validate_loss(log_params_cox, event.bool(), time, model_type="cox")
+
+    # check that the ouput is a ValueError
+    # try:
+    #     validate_loss(
+    #         log_params_weibull, torch.tensor([1, 0, 1]), time, model_type="weibull"
+    #     )
+    # except ValueError as e:
+    #     print(f"ValueError: {e}")

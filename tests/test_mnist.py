@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import torch
@@ -9,6 +10,9 @@ from torchvision.transforms import v2
 
 from torchsurv.loss.cox import neg_partial_log_likelihood
 from torchsurv.metrics.cindex import ConcordanceIndex
+
+# Disable TorchScript JIT
+os.environ["PYTORCH_JIT"] = "0"
 
 
 class LitMNIST(LightningModule):
