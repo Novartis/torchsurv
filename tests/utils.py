@@ -4,7 +4,7 @@ import lifelines
 import lightning as L
 import numpy as np
 import torch
-import torch.nn as nn
+from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
 # Local module
@@ -587,6 +587,8 @@ class SurvivalDataGenerator:
 
 
 class DataBatchContainer:
+    """Container for batches of simulated survival data."""
+
     def __init__(self):
         self.batches = []
 

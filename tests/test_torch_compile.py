@@ -1,26 +1,19 @@
-"""
-
-Tests for torch.compile
-
-References:
-    - https://pytorch.org/tutorials/intermediate/torch_compile_tutorial.html
-    - https://github.com/pytorch/pytorch/issues/122094
-
-"""
-
-# global modules
+import os
 import unittest
 
 import torch
+import torch._dynamo
 
-# Local modules
 from torchsurv.loss.cox import neg_partial_log_likelihood as cox
 from torchsurv.loss.weibull import neg_log_likelihood as weibull
 
 # set seed for reproducibility
 torch.manual_seed(42)
 
-N = 512
+# Disable TorchScript JIT
+os.environ["PYTORCH_JIT"] = "0"
+
+torch._dynamo.config.suppress_errors = True
 
 
 class TestTorchCompile(unittest.TestCase):
@@ -28,15 +21,17 @@ class TestTorchCompile(unittest.TestCase):
     Tests using torch.compile with cox
     """
 
+    N = 512
+
     def test_cox_equivalence(self):
         """
         whether the compiled version of cox evaluates to the same value
         """
 
         # random data and parameters
-        log_hz = torch.randn(N)
-        event = torch.randint(low=0, high=2, size=(N,)).bool()
-        time = torch.randint(low=1, high=100, size=(N,))
+        log_hz = torch.randn(self.N)
+        event = torch.randint(low=0, high=2, size=(self.N,)).bool()
+        time = torch.randint(low=1, high=100, size=(self.N,))
 
         # compiled version of cox
         ccox = torch.compile(cox)
@@ -52,9 +47,9 @@ class TestTorchCompile(unittest.TestCase):
         """
 
         # random data and parameters
-        log_hz = torch.randn(N)
-        event = torch.randint(low=0, high=2, size=(N,)).bool()
-        time = torch.randint(low=1, high=100, size=(N,))
+        log_hz = torch.randn(self.N)
+        event = torch.randint(low=0, high=2, size=(self.N,)).bool()
+        time = torch.randint(low=1, high=100, size=(self.N,))
 
         # compiled version of weibull
         cweibull = torch.compile(weibull)

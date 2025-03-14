@@ -1,5 +1,6 @@
 # global modules
 import json
+import os
 import unittest
 
 import numpy as np
@@ -10,6 +11,10 @@ from utils import DataBatchContainer, conditions_ci, conditions_p_value
 # Local modules
 from torchsurv.metrics.auc import Auc
 from torchsurv.stats.ipcw import get_ipcw
+
+# Disable TorchScript JIT
+os.environ["PYTORCH_JIT"] = "0"
+
 
 torch.manual_seed(23)
 

@@ -1,5 +1,5 @@
+import os
 import unittest
-from functools import partial
 
 import torch
 from torch import nn
@@ -10,6 +10,9 @@ from torchsurv.loss.weibull import neg_log_likelihood
 
 # Set a seed for reproducibility
 torch.manual_seed(45)
+
+# Disable TorchScript JIT
+os.environ["PYTORCH_JIT"] = "0"
 
 
 class TestMometum(unittest.TestCase):
