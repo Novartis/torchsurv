@@ -9,7 +9,6 @@ import torch
 from torchsurv.tools.validate_data import validate_loss
 
 
-@torch.jit.script
 def _partial_likelihood_cox(
     log_hz_sorted: torch.Tensor,
     event_sorted: torch.Tensor,
@@ -22,7 +21,6 @@ def _partial_likelihood_cox(
     return (log_hz_sorted - log_denominator)[event_sorted]
 
 
-@torch.jit.script
 def _partial_likelihood_efron(
     log_hz_sorted: torch.Tensor,
     event_sorted: torch.Tensor,
@@ -61,7 +59,6 @@ def _partial_likelihood_efron(
     return (log_nominator - log_denominator_efron)[include]
 
 
-@torch.jit.script
 def _partial_likelihood_breslow(
     log_hz_sorted: torch.Tensor,
     event_sorted: torch.Tensor,
@@ -87,7 +84,6 @@ def _partial_likelihood_breslow(
     return (log_hz_sorted - log_denominator)[event_sorted]
 
 
-@torch.jit.script
 def neg_partial_log_likelihood(
     log_hz: torch.Tensor,
     event: torch.Tensor,

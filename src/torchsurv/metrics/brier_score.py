@@ -85,7 +85,7 @@ class BrierScore:
             weight (torch.Tensor, optional):
                 Optional sample weight evaluated at ``time`` of size n_samples.
                 Defaults to 1.
-            weight_new_time (torch.tensor, optional):
+            weight_new_time (torch.Tensor, optional):
                 Optional sample weight evaluated at ``new_time`` of size n_times.
                 Defaults to 1.
 
@@ -428,7 +428,7 @@ class BrierScore:
 
     def compare(
         self, other, method: str = "parametric", n_bootstraps: int = 999
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """Compare two Brier scores.
 
         This function compares two Brier scores computed on the
@@ -450,7 +450,7 @@ class BrierScore:
                 Ignored if ``method`` is not "bootstrap".
 
         Returns:
-            torch.tensor: p-value of the statistical test.
+            torch.Tensor: p-value of the statistical test.
 
         Examples:
             >>> _ = torch.manual_seed(52)
@@ -535,7 +535,7 @@ class BrierScore:
 
     def _confidence_interval_bootstrap(
         self, alpha: float, alternative: str, n_bootstraps: int
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """Bootstrap confidence interval of the Brier Score using Efron percentile method.
 
         References:
@@ -579,7 +579,7 @@ class BrierScore:
 
     def _p_value_parametric(
         self, alternative: str, null_value: float = 0.5
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """p-value for a one-sample hypothesis test of the Brier score
         assuming that the Brier score is normally distributed and using empirical standard error.
         """
@@ -607,7 +607,7 @@ class BrierScore:
 
         return p
 
-    def _p_value_bootstrap(self, alternative, n_bootstraps) -> torch.tensor:
+    def _p_value_bootstrap(self, alternative, n_bootstraps) -> torch.Tensor:
         """p-value for a one-sample hypothesis test of the Brier score using
         permutation of survival distribution prediction to estimate sampling distribution under the null
         hypothesis.
@@ -673,7 +673,7 @@ class BrierScore:
 
         return p_values
 
-    def _compare_bootstrap(self, other, n_bootstraps):
+    def _compare_bootstrap(self, other, n_bootstraps) -> torch.Tensor:
         """Boostrap two-sample test to compare two Brier scores."""
 
         # bootstrap brier scores given null hypothesis that brierscore1 and
@@ -704,7 +704,7 @@ class BrierScore:
 
     def _bootstrap_brier_score(
         self, metric: str, n_bootstraps: int, other=None
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """Compute bootstrap samples of the Brier Score.
 
         Args:
@@ -720,7 +720,7 @@ class BrierScore:
 
 
         Returns:
-            torch.tensor: Bootstrap samples of Brier score.
+            torch.Tensor: Bootstrap samples of Brier score.
         """
 
         # Initiate empty list to store brier score
@@ -805,7 +805,7 @@ class BrierScore:
     @staticmethod
     def _find_torch_unique_indices(
         inverse_indices: torch.Tensor, counts: torch.Tensor
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """return unique_sorted_indices such that
         sorted_unique_tensor[inverse_indices] = original_tensor
         original_tensor[unique_sorted_indices] = sorted_unique_tensor
@@ -831,7 +831,7 @@ class BrierScore:
         new_time: torch.Tensor,
         weight: torch.Tensor,
         weight_new_time: torch.Tensor,
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         # check new_time and weight are provided, weight_new_time should be provided
         if all([new_time is not None, weight is not None, weight_new_time is None]):
             raise ValueError(
@@ -862,7 +862,7 @@ class BrierScore:
         new_time: torch.Tensor,
         weight: torch.Tensor,
         weight_new_time: torch.Tensor,
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         # check format of new_time
         if (
             new_time is not None
@@ -897,7 +897,7 @@ class BrierScore:
         new_time: torch.Tensor,
         weight: torch.Tensor,
         weight_new_time: torch.Tensor,
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         # if weight was not specified, weight of 1
         if weight is None:
             weight = torch.ones_like(time)
