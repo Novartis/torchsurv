@@ -33,13 +33,21 @@ class TestTorchCompile(unittest.TestCase):
         event = torch.randint(low=0, high=2, size=(self.N,)).bool()
         time = torch.randint(low=1, high=100, size=(self.N,))
 
-        # compiled version of cox
-        ccox = torch.compile(cox)
+        ccox = torch.compile(cox)  # scripted version of cox
+        scox = torch.jit.script(cox)  # compiled version of cox
 
         loss_cox = cox(log_hz, event, time)
+        loss_scox = scox(log_hz, event, time)
         loss_ccox = ccox(log_hz, event, time)
 
-        self.assertTrue(torch.allclose(loss_cox, loss_ccox, rtol=1e-3, atol=1e-3))
+        self.assertTrue(
+            torch.allclose(loss_cox, loss_scox, rtol=1e-3, atol=1e-3),
+            msg="scripted failed",
+        )
+        self.assertTrue(
+            torch.allclose(loss_cox, loss_ccox, rtol=1e-3, atol=1e-3),
+            msg="compiled failed",
+        )
 
     def test_weibull_equivalence(self):
         """
@@ -51,14 +59,20 @@ class TestTorchCompile(unittest.TestCase):
         event = torch.randint(low=0, high=2, size=(self.N,)).bool()
         time = torch.randint(low=1, high=100, size=(self.N,))
 
-        # compiled version of weibull
-        cweibull = torch.compile(weibull)
+        cweibull = torch.compile(weibull)  # scripted version of cox
+        sweibull = torch.jit.script(weibull)  # compiled version of cox
 
         loss_weibull = weibull(log_hz, event, time)
         loss_cweibull = cweibull(log_hz, event, time)
+        loss_sweibull = sweibull(log_hz, event, time)
 
         self.assertTrue(
-            torch.allclose(loss_weibull, loss_cweibull, rtol=1e-3, atol=1e-3)
+            torch.allclose(loss_weibull, loss_sweibull, rtol=1e-3, atol=1e-3),
+            msg="scripted failed",
+        )
+        self.assertTrue(
+            torch.allclose(loss_weibull, loss_cweibull, rtol=1e-3, atol=1e-3),
+            msg="compiled failed",
         )
 
 
