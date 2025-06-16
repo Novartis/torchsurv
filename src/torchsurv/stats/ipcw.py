@@ -6,6 +6,11 @@ import torch
 from torchsurv.stats import kaplan_meier
 from torchsurv.tools.validate_data import validate_survival_data
 
+__all__ = [
+    "get_ipcw",
+    "_inverse_censoring_dist",
+]
+
 
 # pylint: disable=anomalous-backslash-in-string
 def get_ipcw(

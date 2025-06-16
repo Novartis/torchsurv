@@ -13,6 +13,8 @@ from torchsurv.tools.validate_data import (
     validate_survival_data,
 )
 
+__all__ = ["Auc"]
+
 
 class Auc:
     """Area Under the Curve class for survival models."""

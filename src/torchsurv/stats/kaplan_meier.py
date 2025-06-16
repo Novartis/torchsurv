@@ -6,6 +6,10 @@ import torch
 
 from torchsurv.tools.validate_data import validate_survival_data
 
+__all__ = [
+    "KaplanMeierEstimator",
+]
+
 
 class KaplanMeierEstimator:
     """Kaplan-Meier estimate of survival or censoring distribution for right-censored data :cite:p:`Kaplan1958`."""

@@ -9,6 +9,8 @@ from torchmetrics import regression
 
 from torchsurv.tools.validate_data import validate_log_shape, validate_survival_data
 
+__all__ = ["ConcordanceIndex"]
+
 
 class ConcordanceIndex:
     """Compute the Concordance Index (C-index) for survival models."""

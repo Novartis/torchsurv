@@ -11,6 +11,8 @@ from torchsurv.tools.validate_data import (
     validate_survival_data,
 )
 
+__all__ = ["BrierScore"]
+
 
 class BrierScore:
     r"""Compute the Brier Score for survival models."""
