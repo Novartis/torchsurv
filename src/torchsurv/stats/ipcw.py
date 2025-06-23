@@ -19,7 +19,7 @@ def get_ipcw(
     new_time: Optional[torch.Tensor] = None,
     checks: bool = True,
 ) -> torch.Tensor:
-    """Calculate the inverse probability censoring weights (IPCW).
+    r"""Calculate the inverse probability censoring weights (IPCW).
 
     Args:
         event (torch.Tensor, boolean):
