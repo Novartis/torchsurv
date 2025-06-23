@@ -15,5 +15,4 @@ fi
 export PYTHONPATH=${DIR}/../src
 
 isort ${CHECK} src tests
-black ${CHECK} src tests
 pylint src

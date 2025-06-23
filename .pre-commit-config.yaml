@@ -1,17 +1,20 @@
 # see https://pre-commit.com/ for more information
 
 repos:
+  # No large files - prevent committing large files
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
       - id: check-added-large-files
         args:
           - '--maxkb=500'  # Set the maximum file size in kilobytes (e.g., 500 KB)
+  # Black - Python code formatter
   - repo: https://github.com/psf/black
     rev: 23.9.1  # Use the latest stable version of Black
     hooks:
       - id: black
         files: ^(src|tests)/.*\.py$  # Restrict to files under src and tests directories
+  # Notebook black - formatting Jupyter notebooks
   - repo: https://github.com/nbQA-dev/nbQA
     rev: 1.9.1
     hooks:
