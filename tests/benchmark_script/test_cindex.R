@@ -8,19 +8,19 @@ library(survAUC)
 
 # function to get metrics
 get_cindex <- function(TR, TE, train.fit){
-  
+
   # survival data object
   Surv.rsp <- survival::Surv(TR$time, TR$status)
   Surv.rsp.new <- survival::Surv(TE$time, TE$status)
-  
+
   # survival probability KM estimate
   surv.prob <- unique(survfit(Surv(TE$time,TE$status)~1)$surv)
   surv.prob = surv.prob[-length(surv.prob)]
-  
+
   # predictors train and test data
   lp <- predict(train.fit, newdata = TR)
   lpnew <- predict(train.fit, newdata = TE)
-  
+
   # max time
   times <- sort(unique(TE$time[TE$status == 1]))
   last_time_event = F
@@ -29,76 +29,76 @@ get_cindex <- function(TR, TE, train.fit){
     times <- times[times < max(TE$time)]
   }
   max_times <- max(times)
-  
-  
+
+
   #
   # survival
-  
+
   # survival: Harrell's C-index
   c_Harrell_survival <- survival::concordance(train.fit, newdata = TE)$concordance
-  
-  
+
+
   #
   # SurvAUC
-  
-  # SurvAUC: Uno's c index 
+
+  # SurvAUC: Uno's c index
   c_Uno_survAUC = survAUC::UnoC(Surv.rsp, Surv.rsp.new, lpnew, time = max_times)
-  
-  
+
+
   #
   # survC1
-  
-  # survC1: Uno's C-index 
+
+  # survC1: Uno's C-index
   c_Uno_survC1 = Est.Cval(cbind(TE$time, TE$status, lpnew), tau = max_times, nofit = TRUE)$Dhat
-  
+
   #
-  # survcomp: 
+  # survcomp:
   c_survcomp <- survcomp_concordance.index_modified(lpnew, TE$time, TE$status, method='noether')
   c_survcomp_conservative <- survcomp_concordance.index_modified(lpnew, TE$time, TE$status, method='conservative')
-  
+
   # Harrell's c-index
   c_Harrell_survcomp = c_survcomp$c.index
-  
-  # Noether standard error 
+
+  # Noether standard error
   c_se_noether_survcomp = c_survcomp$se
-  ch_survcomp = c_survcomp$ch 
-  dh_survcomp = c_survcomp$dh 
-  weights_survcomp = c_survcomp$weights 
-  
+  ch_survcomp = c_survcomp$ch
+  dh_survcomp = c_survcomp$dh
+  weights_survcomp = c_survcomp$weights
+
   # conservative confidence interval (symmetric)
   c_lower_conservative_survcomp = c_survcomp_conservative$lower
 
 
-  return(list(train_time = TR$time, train_status = TR$status, 
+  return(list(train_time = TR$time, train_status = TR$status,
               test_time = TE$time, test_status = TE$status,
               estimate = lpnew, times = times,
               surv.prob = surv.prob,
-              c_Uno_survAUC = c_Uno_survAUC, 
-              c_Uno_survC1 = c_Uno_survC1, 
+              c_Uno_survAUC = c_Uno_survAUC,
+              c_Uno_survC1 = c_Uno_survC1,
               c_Harrell_survival = c_Harrell_survival,
               c_Harrell_survcomp = c_Harrell_survcomp,
               c_se_noether_survcomp = c_se_noether_survcomp,
               c_lower_conservative_survcomp = c_lower_conservative_survcomp,
-              ch_survcomp = ch_survcomp, 
+              ch_survcomp = ch_survcomp,
               dh_survcomp = dh_survcomp,
               weights_survcomp = weights_survcomp
-              
+
   ))
-  
-  
+
+
 }
 
 # print more outputs from function
 add_survcomp_ouputs <- function(){
   survcomp_concordance.index_modified <<- survcomp::concordance.index
-  
+
   print(body(survcomp_concordance.index_modified)[[46]])
-  body(survcomp_concordance.index_modified)[[46]] <<- substitute(return(list(c.index = cindex, 
+  body(survcomp_concordance.index_modified)[[46]] <<- substitute(return(list(c.index = cindex,
                                                                              se = se, weights=weights,
-                                                                             lower = lower, upper = upper, 
-                                                                             p.value = p, n = length(x2), 
-                                                                             data = data, comppairs = cscount, 
-                                                                             ch = ch, 
+                                                                             lower = lower, upper = upper,
+                                                                             p.value = p, n = length(x2),
+                                                                             data = data, comppairs = cscount,
+                                                                             ch = ch,
                                                                              dh = dh)))
   print(body(survcomp_concordance.index_modified)[[46]])
 }
@@ -111,7 +111,7 @@ i = 1
 
 
 #
-# lung dataset 
+# lung dataset
 #
 
 
@@ -131,7 +131,7 @@ TE_complete <- TE[complete.cases(TE),]
 # one and two covariates and all covariates ignore missing values
 train.fit_1 <- coxph(Surv(time, status) ~ age, data = TR, method = 'efron', x= T, y = T)
 train.fit_2 <- coxph(Surv(time, status) ~ age + sex, data = TR, method = 'efron', x= T, y = T)
-train.fit_3 <- coxph(Surv(time, status) ~ age + sex + ph.ecog + ph.karno + 
+train.fit_3 <- coxph(Surv(time, status) ~ age + sex + ph.ecog + ph.karno +
                        pat.karno + meal.cal + wt.loss, data = TR_complete, method = 'efron', x= T, y = T)
 
 # save metrics
@@ -141,7 +141,7 @@ cindexs[[i]] <- get_cindex(TR_complete, TE_complete, train.fit_3); i = i + 1
 
 
 #
-# gbsg dataset 
+# gbsg dataset
 #
 
 gbsg <- survival::gbsg
@@ -154,10 +154,10 @@ mask = 1:nrow(gbsg) %in% 1:midpoint
 TR <- gbsg[1:midpoint,]
 TE <- gbsg[(midpoint + 1):nrow(gbsg),]
 
-# one and two covariates and all covariates 
+# one and two covariates and all covariates
 train.fit_1 <- coxph(Surv(rfstime, status) ~ age, data = TR, method = 'efron', x= T, y = T)
 train.fit_2 <- coxph(Surv(rfstime, status) ~ age + size, data = TR, method = 'efron', x= T, y = T)
-train.fit_3 <- coxph(Surv(rfstime, status) ~ age + size + grade + 
+train.fit_3 <- coxph(Surv(rfstime, status) ~ age + size + grade +
                        nodes + pgr + er + hormon, data = TR, method = 'efron', x= T, y = T)
 
 cindexs[[i]] <- get_cindex(TR, TE, train.fit_1); i = i + 1

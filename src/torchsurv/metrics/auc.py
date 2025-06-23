@@ -81,7 +81,7 @@ class Auc:
         Args:
             estimate (torch.Tensor):
                 Estimated risk of event occurrence (i.e., risk score).
-                Can be of shape = (n_samples,) if subject-specific risk score is time-independent, 
+                Can be of shape = (n_samples,) if subject-specific risk score is time-independent,
                 of shape = (n_samples, n_samples) if subject-specific risk score is evaluated at ``time``,
                 or of shape = (n_samples, n_times) if subject-specific risk score is evaluated at ``new_time``.
             event (torch.Tensor, boolean):
@@ -106,7 +106,7 @@ class Auc:
 
         Note:
             The function evaluates either the cumulative/dynamic (C/D) or the incident/dynamic (I/D) AUC (argument ``auc_type``)
-            at time :math:`t \in \{t_1, \cdots, t_K\}` (argument ``new_time``). 
+            at time :math:`t \in \{t_1, \cdots, t_K\}` (argument ``new_time``).
 
             For each subject :math:`i \in \{1, \cdots, N\}`, denote :math:`X_i` as the survival time and :math:`D_i` as the
             censoring time. Survival data consist of the event indicator, :math:`\delta_i=(X_i\leq D_i)`
@@ -119,10 +119,10 @@ class Auc:
             The time-independent risk score of subject :math:`i` is specified by a constant :math:`q_i`.
             The argument ``estimate`` is the estimated risk score.
             For time-dependent risk score: if ``new_time`` is specified, the argument ``estimate`` should be of shape = (N,K)
-            (:math:`(i,k)` th element is :math:`\hat{q}_i(t_k)`); 
-            if ``new_time`` is not specified, the argument ``estimate`` should be of shape = (N,N) 
+            (:math:`(i,k)` th element is :math:`\hat{q}_i(t_k)`);
+            if ``new_time`` is not specified, the argument ``estimate`` should be of shape = (N,N)
             (:math:`(i,j)` th element is :math:`\hat{q}_i(T_j)`) .
-            For time-independent risk score, the argument ``estimate`` should be of length 
+            For time-independent risk score, the argument ``estimate`` should be of length
             N (:math:`i` th element is :math:`\hat{q}_i`).
 
             The AUC C/D and AUC I/D evaluated at time :math:`t` are defined by
@@ -131,8 +131,8 @@ class Auc:
                 \text{AUC}^{C/D}(t) = p(q_i(t) > q_j(t) \: | \: X_i \leq t, X_j > t) \\
                 \text{AUC}^{I/D}(t) = p(q_i(t) > q_j(t) \: | \: X_i = t, X_j > t).
 
-            
-            The default estimators of the AUC C/D and AUC I/D at time :math:`t` :cite:p:`Blanche2013` returned by the function are 
+
+            The default estimators of the AUC C/D and AUC I/D at time :math:`t` :cite:p:`Blanche2013` returned by the function are
 
             .. math::
 
@@ -140,11 +140,11 @@ class Auc:
                 \hat{\text{AUC}}^{I/D}(t) = \frac{\sum_i \sum_j \delta_i \: I(T_i = t, T_j > t) I(\hat{q}_i(t) > \hat{q}_j(t))}{\sum_i \delta_i \: I(T_i = t) \sum_j I(T_j > t)}.
 
             These estimators are considered naive because, when the event times are censored, all subjects censored
-            before time point :math:`t` are ignored. Additionally, the naive estimators 
-            converge to an association measure that involves the censoring distribution. 
+            before time point :math:`t` are ignored. Additionally, the naive estimators
+            converge to an association measure that involves the censoring distribution.
             To address this shortcoming, :cite:t:`Uno2007` proposed to employ the
             inverse probability weighting technique. In this context, each subject included at time
-            :math:`t` is weighted by the inverse probability of censoring :math:`\omega(t) = 1 / \hat{D}(t)`, where 
+            :math:`t` is weighted by the inverse probability of censoring :math:`\omega(t) = 1 / \hat{D}(t)`, where
             :math:`\hat{D}(t)` is the Kaplan-Meier estimate of the censoring distribution, :math:`P(D>t)`.
             The censoring-adjusted AUC C/D estimate at time :math:`t` is
 
@@ -154,11 +154,11 @@ class Auc:
 
             Note that the censoring-adjusted AUC I/D estimate is the same as the "naive" estimate because the weights are all equal to :math:`\omega(t)`.
 
-            The censoring-adjusted AUC C/D estimate can be obtained by specifying the argument 
-            ``weight``, the weights evaluated at each ``time`` (:math:`\omega(T_1), \cdots, \omega(T_N)`). 
+            The censoring-adjusted AUC C/D estimate can be obtained by specifying the argument
+            ``weight``, the weights evaluated at each ``time`` (:math:`\omega(T_1), \cdots, \omega(T_N)`).
             If ``new_time`` is specified, the argument  ``weight_new_time``
             should also be specified accordingly, the weights evaluated at each ``new_time``
-            (:math:`\omega(t_1), \cdots, \omega(t_K)`). The latter is required to compute the standard error of the AUC. 
+            (:math:`\omega(t_1), \cdots, \omega(t_K)`). The latter is required to compute the standard error of the AUC.
             In the context of train/test split, the weights should be derived from the censoring distribution estimated in the training data.
             Specifically, the censoring distribution is estimated using the training set and then evaluated at the subject time within the test set.
 
@@ -170,7 +170,7 @@ class Auc:
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
             >>> estimate = torch.randn((n,))
             >>> auc = Auc()
-            >>> auc(estimate, event, time) # default: naive auc c/d 
+            >>> auc(estimate, event, time) # default: naive auc c/d
             tensor([0.9474, 0.5556, 0.5294, 0.6429, 0.5846, 0.6389, 0.5844, 0.5139, 0.4028,
                     0.5400, 0.4545, 0.7500])
             >>> auc(estimate, event, time, auc_type = "incident") # naive auc i/d

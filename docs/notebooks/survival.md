@@ -17,7 +17,7 @@ Assume we have a binary response $Y_i \in \{0,1\}$, for any individual $i$. The 
 The predicted response for individual $i$, denoted $\hat{Y}_i$, is obtained by comparing the score to a threshold $c$,
 
 $$
-\hat{Y}_i  = 
+\hat{Y}_i  =
 \begin{cases}
     1, \text{ if } \pi_i > c \\
     0, \text{ if } \pi_i \leq c. \\
@@ -51,7 +51,7 @@ y(c) = \text{TPR}(c) = p(\pi_i > c | Y_i = 1),\\
 x(c) = \text{FPR}(c) = p(\pi_i > c | Y_i = 0).
 $$
 
-Let us denote $f_1(c) = p(\pi_i = c | Y_i = 1)$ and $F_1(c) = p(\pi_i \leq c | Y_i = 1)$ and similarly $f_0(c) = p(\pi_i = c | Y_i = 0)$ and $F_0(c) = p(\pi_i \leq c | Y_i = 0)$. Notice that $y(c) = 1 - F_1(c)$ and $x(c) = 1 - F_0(c)$. 
+Let us denote $f_1(c) = p(\pi_i = c | Y_i = 1)$ and $F_1(c) = p(\pi_i \leq c | Y_i = 1)$ and similarly $f_0(c) = p(\pi_i = c | Y_i = 0)$ and $F_0(c) = p(\pi_i \leq c | Y_i = 0)$. Notice that $y(c) = 1 - F_1(c)$ and $x(c) = 1 - F_0(c)$.
 
 The AUC is defined as
 $$
@@ -92,7 +92,7 @@ The risk score chosen can either predicts prevalence or incidence (Heagerty and 
 If the predicted classification of $i$ is based on a risk score measuring prevalence, it is defined as:
 
 $$
-\hat{N}_i(t) = 
+\hat{N}_i(t) =
 \begin{cases}
     1, \text{ if } q_i(t) > c \\
     0, \text{ if } q_i(t) \leq c. \\
@@ -110,7 +110,7 @@ $$
 If the prediction classification of $i$ is based on a risk score measuring incidence, it is defined as:
 
 $$
-d\hat{N}_i(t)  = 
+d\hat{N}_i(t)  =
 \begin{cases}
     1, \text{ if } q_i(t) > c \\
     0, \text{ if } q_i(t) \leq c. \\
@@ -141,7 +141,7 @@ If the risk score measures prevalence, a cumulative/dynamic ROC curve can be def
 $$
 \begin{align*}
 AUC^{\mathbb{C}/\mathbb{D}}(t) &= p(q_i(t)>q_j(t)|N_i(t) = 1, N_j(t) = 0) \\
-&= p(q_i(t)>q_j(t)|X_i \leq t, X_j >t) 
+&= p(q_i(t)>q_j(t)|X_i \leq t, X_j >t)
 \end{align*}
 $$
 
@@ -153,7 +153,7 @@ If the risk score measures incidence, a incident/dynamic ROC curve can be define
 $$
 \begin{align*}
 \text{AUC}^{\mathbb{I}/\mathbb{D}}(t) &= p(q_i(t)>q_j(t)|dN_i(t) = 1, N_j(t) = 0) \\
-& = p(q_i(t)>q_j(t)|X_i = t, X_j >t) 
+& = p(q_i(t)>q_j(t)|X_i = t, X_j >t)
 \end{align*}
 $$
 
@@ -161,7 +161,7 @@ The proof of the probabilitic interpretation of $AUC^{\mathbb{I}/\mathbb{D}}$ is
 
 ### Extension of the C-index for time-to-event response
 
-The C-index is the probability that a model correctly predict which of two comparable samples experiences an event first based on their predicted risk scores. 
+The C-index is the probability that a model correctly predict which of two comparable samples experiences an event first based on their predicted risk scores.
 
 $$
 C = p(q_i(X_i) > q_j(X_i) | X_i < X_j)
@@ -190,7 +190,7 @@ where in the third line we used the fact that $p(X_i < X_j) = 1/2$ by independen
 
 
 
-## Discussion 
+## Discussion
 
 ### How to estimate the AUC and C-index?
 In other documentation, we presented the [estimators for the AUC]((../_autosummary/torchsurv.metrics.auc.html)) and the [estimators for the C-index](../_autosummary/torchsurv.metrics.cindex.html). In particular, these estimator needs to account for censored time-to-event data.
@@ -202,7 +202,7 @@ As explained previously, the risk score can either measure incidence or prevalen
 
 Choosing between AUC I/D and AUC C/D depends on the type of risk score, as previously explained. However, the question remains whether to use the AUC or the C-index. The AUCs are time-dependent and provide a measure of predictive performance at specific time points. In contrast, the concordance index (C-index) offers a global assessment of a fitted survival model over the entire observational period. It is recommended to use AUC instead of the concordance index for time-dependent predictions (e.g., 10-year mortality), as AUC is proper in this context, while the concordance index is not (Blanche et al., 2018).
 
-Below, we summarize the pros and cons of the C-index, AUC I/D, and AUC C/D (Lambert and Chevret, 2016). 
+Below, we summarize the pros and cons of the C-index, AUC I/D, and AUC C/D (Lambert and Chevret, 2016).
 
 |  | C-index | AUC cumulative/dynamic| AUC incident/dynamic|
 |----------|----------|----------|----------|
@@ -214,12 +214,12 @@ Below, we summarize the pros and cons of the C-index, AUC I/D, and AUC C/D (Lamb
 There are three main limits of the AUC and C-index (Hartman et al., 2023):
 
 * **Ties in predicted risk score (C-index)**:
-A model that assigns the same risk score to individuals with extremely different survival experiences is not performing well, but the C-Index does not detect this inadequacy. 
-On the other hand, a model that assigns the same risk score to individuals with very similar survival experiences may be appropriately capturing the similarities in underlying risk. 
+A model that assigns the same risk score to individuals with extremely different survival experiences is not performing well, but the C-Index does not detect this inadequacy.
+On the other hand, a model that assigns the same risk score to individuals with very similar survival experiences may be appropriately capturing the similarities in underlying risk.
 While these two scenarios have very different interpretations, they are treated as the same in the C-Index calculation, since each of these pairs contributes a score of 0.5.
 
 * **Time dependence (AUC and C-index)**:
-Time-to-event outcome is dichotomized at each time point, which potentially generates many comparable pairs that are difficult to discriminate and are not clinically meaningful. 
+Time-to-event outcome is dichotomized at each time point, which potentially generates many comparable pairs that are difficult to discriminate and are not clinically meaningful.
 For example, if a individual experiences the event of interest on day t of the study, and another individual, with similar underlying risk, experiences the event shortly afterwards on day t + 1, then these two individuals would be deemed comparable according to the time-dependent C-Index definition.
 
 * **Discrimination (AUC and C-index)**:
@@ -230,7 +230,7 @@ The concordance index disregards the actual values of predicted risk scores – 
 
 ### Brier-score and Integrated Brier Score
 
-Suppose that the probabilistic survival model can output for any individual $i$ an estimate of the survival function $P(X_i > t)$, denoted by $\xi_i(t) \in [0,1]$. The Time-dependent Brier Score (BS) and integrated Brier Score (Graf et al., 1999) are defined as 
+Suppose that the probabilistic survival model can output for any individual $i$ an estimate of the survival function $P(X_i > t)$, denoted by $\xi_i(t) \in [0,1]$. The Time-dependent Brier Score (BS) and integrated Brier Score (Graf et al., 1999) are defined as
 
 $$
 \text{BS}(t) = \mathbb{E}\big[\big(1(X > t) - \xi(t)\big)^2\big],
@@ -253,8 +253,8 @@ The Brier score assesses both calibration and discrimination and serves as an al
 ## Conclusion in practice
 
 A meta-analysis by Zhou et al. (2022) recorded the proportion of evaluation metrics for survival models used from 2010 to 2021 in prominent journals such as "Annals of Statistics," "Biometrika," "Journal of the American Statistical Association," "Journal of the Royal Statistical Society, Series B," "Statistics in Medicine," "Artificial Intelligence in Medicine," and "Lifetime Data Analysis." This analysis indicates that the use of the C-index has been steadily increasing and has recently become a dominant predictive measure. In 2021, the C-index was used in more than 75% of the readings.
- 
- 
+
+
 ## Reference
  * Heagerty, P. J., & Zheng, Y. (2005). Survival Model Predictive Accuracy and ROC Curves. In Biometrics (Vol. 61, Issue 1, pp. 92–105). Oxford University Press (OUP). https://doi.org/10.1111/j.0006-341x.2005.030814.x
  * Lambert, J., & Chevret, S. (2016). Summary measure of discrimination in survival models based on cumulative/dynamic time-dependent ROC curves. In Statistical Methods in Medical Research (Vol. 25, Issue 5, pp. 2088–2102). SAGE Publications

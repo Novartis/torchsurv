@@ -1,13 +1,13 @@
 library(survival)
 
 get_kaplan_meier <- function(data){
-  
+
   surv_fit <- survfit(Surv(time, status) ~ 1, data=data)
   times = surv_fit$time
   surv_prob_survival <- surv_fit$surv
 
-  return(list(time=data$time, status=data$status, 
-              times = times, 
+  return(list(time=data$time, status=data$status,
+              times = times,
               surv_prob_survival=surv_prob_survival))
 }
 
@@ -16,7 +16,7 @@ kaplan_meiers <- list()
 i = 1
 
 #
-# lung dataset 
+# lung dataset
 
 lung <- survival::lung
 lung$sex = lung$sex  == 1
@@ -26,7 +26,7 @@ lung$age = (lung$age - mean(lung$age)) / sd(lung$age)
 kaplan_meiers[[1]] <- get_kaplan_meier(lung)
 
 #
-# gbsg dataset 
+# gbsg dataset
 
 gbsg <- survival::gbsg
 gbsg$age = (gbsg$age - mean(gbsg$age)) / sd(gbsg$age)

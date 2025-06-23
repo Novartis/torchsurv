@@ -529,7 +529,9 @@ class ConcordanceIndex:
             * 2
         ) / (N * (pc + pd))
 
-        ci = torch.sqrt(w**2 + 4 * w * self.cindex * (1 - self.cindex)) / (2 * (1 + w))
+        ci = torch.sqrt(w**2 + 4 * w * self.cindex * (1 - self.cindex)) / (
+            2 * (1 + w)
+        )
         point = (w + 2 * self.cindex) / (2 * (1 + w))
 
         lower = point - ci
@@ -707,7 +709,9 @@ class ConcordanceIndex:
         pcd = (1 / (N * (N - 1) * (N - 2))) * torch.sum(
             self.concordant * self.discordant
         )
-        varp = (4 / (pc + pd) ** 4) * (pd**2 * pcc - 2 * pc * pd * pcd + pc**2 * pdd)
+        varp = (4 / (pc + pd) ** 4) * (
+            pd**2 * pcc - 2 * pc * pd * pcd + pc**2 * pdd
+        )
 
         return torch.sqrt(varp / N)
 
