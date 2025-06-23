@@ -30,15 +30,15 @@ class TestTorchCompile(unittest.TestCase):
 
         # random data and parameters
         log_hz = torch.randn(self.N)
-        event = torch.randint(low=0, high=2, size=(self.N,)).bool()
+        event = torch.randint(low=0, high=2, size=(self.N,)).float()
         time = torch.randint(low=1, high=100, size=(self.N,))
 
         ccox = torch.compile(cox)  # scripted version of cox
         scox = torch.jit.script(cox)  # compiled version of cox
 
-        loss_cox = cox(log_hz, event, time)
-        loss_scox = scox(log_hz, event, time)
-        loss_ccox = ccox(log_hz, event, time)
+        loss_cox = cox(log_hz, event, time, ties_method="efron")
+        loss_scox = scox(log_hz, event, time, ties_method="efron")
+        loss_ccox = ccox(log_hz, event, time, ties_method="efron")
 
         self.assertTrue(
             torch.allclose(loss_cox, loss_scox, rtol=1e-3, atol=1e-3),
@@ -56,7 +56,7 @@ class TestTorchCompile(unittest.TestCase):
 
         # random data and parameters
         log_hz = torch.randn(self.N)
-        event = torch.randint(low=0, high=2, size=(self.N,)).bool()
+        event = torch.randint(low=0, high=2, size=(self.N,)).float()
         time = torch.randint(low=1, high=100, size=(self.N,))
 
         cweibull = torch.compile(weibull)  # scripted version of cox
