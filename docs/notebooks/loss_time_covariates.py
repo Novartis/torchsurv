@@ -65,7 +65,6 @@ def neg_partial_time_log_likelihood(
     return loss
 
 
-@torch.jit.script
 def _partial_likelihood_time_cox(
     log_hz: torch.Tensor,
     time: torch.Tensor,
