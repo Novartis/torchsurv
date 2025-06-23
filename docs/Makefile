@@ -18,6 +18,6 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 # cat command on top fixes relative locations in the README file
 %: Makefile
-	cat ../README.md | > README-copy.md
+	cat ../README.md | sed 's/^## /# /' | sed 's/^### /## /' > README-copy.md
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
