@@ -15,7 +15,7 @@ from torchsurv.stats.ipcw import get_ipcw
 torch.manual_seed(23)
 
 # Load the benchmark metrics from R
-with open("tests/benchmark_data/benchmark_brier_score.json", "r") as file:
+with open("tests/benchmark_data/benchmark_brier_score.json") as file:
     benchmark_brier_scores = json.load(file)
 
 brier_score = BrierScore()

@@ -14,7 +14,7 @@ from torchsurv.stats.ipcw import get_ipcw
 torch.manual_seed(23)
 
 # Load the benchmark metrics from R
-with open("tests/benchmark_data/benchmark_cindex.json", "r") as file:
+with open("tests/benchmark_data/benchmark_cindex.json") as file:
     benchmark_cindexs = json.load(file)
 
 

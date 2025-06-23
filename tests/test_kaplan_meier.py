@@ -10,7 +10,7 @@ from utils import DataBatchContainer
 from torchsurv.stats.kaplan_meier import KaplanMeierEstimator
 
 # Load the benchmark cox log likelihoods from R
-with open("tests/benchmark_data/benchmark_kaplan_meier.json", "r") as file:
+with open("tests/benchmark_data/benchmark_kaplan_meier.json") as file:
     benchmark_kaplan_meiers = json.load(file)
 
 torch.manual_seed(23)

@@ -19,3 +19,9 @@ repos:
     rev: 1.9.1
     hooks:
       - id: nbqa-black
+  # Upgrade Python syntax - automatically upgrade Python syntax to the latest version
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
+    hooks:
+    -   id: pyupgrade
+        files: ^(src|tests)/.*\.py$  # Restrict to files under src and tests directories

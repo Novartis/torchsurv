@@ -49,7 +49,7 @@ class LitSurvivalTwins(LitSurvival):
     """Survival Model Fitter"""
 
     def __init__(self, steps: int = 5, **kw):
-        super(LitSurvivalTwins, self).__init__(**kw)
+        super().__init__(**kw)
         self.momentum = Momentum(
             backbone=self.backbone,
             loss=self.loss,
@@ -73,7 +73,7 @@ class SimpleLinearNNOneParameter(L.LightningModule):
     """Neural network with output = bias + weight * x"""
 
     def __init__(self, input_size: int):
-        super(SimpleLinearNNOneParameter, self).__init__()
+        super().__init__()
         self.linear = nn.Linear(input_size, 1)
 
     def forward(self, x: torch.Tensor):
@@ -84,7 +84,7 @@ class SimpleLinearNNTwoParameters(L.LightningModule):
     """Neural network with output1 = bias_2 + weight_2 * x and output2 = bias_1 + 0 * x"""
 
     def __init__(self, input_size: int):
-        super(SimpleLinearNNTwoParameters, self).__init__()
+        super().__init__()
         self.linear1 = nn.Linear(input_size, 1)
         self.linear2 = nn.Linear(input_size, 1)
         self.freeze_linear2_weights()
