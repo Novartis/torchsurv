@@ -1,5 +1,4 @@
 import json
-import os
 import unittest
 
 import numpy as np
@@ -10,13 +9,13 @@ from utils import DataBatchContainer
 # local
 from torchsurv.stats.kaplan_meier import KaplanMeierEstimator
 
-# Disable TorchScript JIT
-os.environ["PYTORCH_JIT"] = "0"
 # Load the benchmark cox log likelihoods from R
 with open("tests/benchmark_data/benchmark_kaplan_meier.json", "r") as file:
     benchmark_kaplan_meiers = json.load(file)
 
-torch.manual_seed(23)
+# set seed for reproducibility
+torch.manual_seed(42)
+np.random.seed(42)
 
 
 class TestNonParametric(unittest.TestCase):

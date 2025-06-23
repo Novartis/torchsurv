@@ -12,7 +12,6 @@ torch.manual_seed(42)
 
 # Disable TorchScript JIT
 os.environ["PYTORCH_JIT"] = "0"
-
 torch._dynamo.config.suppress_errors = True
 
 
@@ -30,7 +29,7 @@ class TestTorchCompile(unittest.TestCase):
 
         # random data and parameters
         log_hz = torch.randn(self.N)
-        event = torch.randint(low=0, high=2, size=(self.N,)).float()
+        event = torch.randint(low=0, high=2, size=(self.N,)).bool()
         time = torch.randint(low=1, high=100, size=(self.N,))
 
         ccox = torch.compile(cox)  # scripted version of cox

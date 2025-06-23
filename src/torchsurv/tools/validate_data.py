@@ -1,5 +1,3 @@
-import warnings
-
 import torch
 
 
@@ -123,8 +121,7 @@ def validate_tensor(tensor: torch.Tensor, name: str) -> None:
 
 def validate_event(event: torch.Tensor) -> torch.Tensor:
     if event.dtype == torch.bool:
-        warnings.warn("Converting boolean 'event' to float.")
-        event = event.float()
+        event = event.float()  # convert boolean to float for internal computation
     if not torch.all((event == 0) | (event == 1)):
         raise ValueError("Invalid values: 'event' must contain only [0, 1] values")
     return event

@@ -4,7 +4,6 @@ import unittest
 
 import numpy as np
 import torch
-import torch._dynamo
 
 from torchsurv.loss.cox import neg_partial_log_likelihood as cox
 from torchsurv.tools.validate_data import validate_loss
@@ -15,13 +14,7 @@ with open("tests/benchmark_data/benchmark_cox.json", "r") as file:
 
 # set seed for reproducibility
 torch.manual_seed(42)
-
-# Disable TorchScript JIT
-os.environ["PYTORCH_JIT"] = "0"
-torch._dynamo.config.suppress_errors = True
-
-np.random.seed(23)
-torch.manual_seed(23)
+np.random.seed(42)
 
 
 class TestCoxSurvivalLoss(unittest.TestCase):

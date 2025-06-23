@@ -1,4 +1,3 @@
-import os
 import unittest
 
 import lightning as L
@@ -13,14 +12,8 @@ from utils import (
 
 from torchsurv.loss.weibull import neg_log_likelihood as weibull
 
-# Disable TorchScript JIT
-os.environ["PYTORCH_JIT"] = "0"
-
-
-# Set a seed for reproducibility
-seed_value = 45
-torch.manual_seed(seed_value)
-
+# set seed for reproducibility
+torch.manual_seed(42)
 
 trainer = L.Trainer(max_epochs=2, log_every_n_steps=5)
 
@@ -63,22 +56,22 @@ class TestLitTraining(unittest.TestCase):
             params = model(torch.randn(1, 2))
         self.assertEqual(params.size(), (1, 2))
 
-    # def test_twins(self):
-    #     """Two parameters Weibull"""
-    #     model = self.run_training(
-    #         trainer,
-    #         LitSurvivalTwins(
-    #             backbone=SimpleLinearNNOneParameter(input_size=2),
-    #             loss=weibull,
-    #             steps=2,
-    #             dataname="gbsb",
-    #             batch_size=686 // self.BATCH_N,
-    #         ),
-    #     )
+    def test_twins(self):
+        """Two parameters Weibull"""
+        model = self.run_training(
+            trainer,
+            LitSurvivalTwins(
+                backbone=SimpleLinearNNOneParameter(input_size=2),
+                loss=weibull,
+                steps=2,
+                dataname="gbsb",
+                batch_size=686 // self.BATCH_N,
+            ),
+        )
 
-    #     with torch.no_grad():
-    #         params = model(torch.randn(1, 2))
-    #     self.assertEqual(params.size(), (1, 2))
+        with torch.no_grad():
+            params = model.momentum.infer(torch.randn(4, 2))
+        self.assertEqual(params.size(), (4, 1))
 
 
 if __name__ == "__main__":
