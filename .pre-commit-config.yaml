@@ -14,17 +14,12 @@
 #     rev: 1.9.1
 #     hooks:
 #       - id: nbqa-black
-#   # Upgrade Python syntax - automatically upgrade Python syntax to the latest version
-#   - repo: https://github.com/asottile/pyupgrade
-#     rev: v3.20.0
-#     hooks:
-#     -   id: pyupgrade
-#         files: ^(src|tests)/.*\.py$  # Restrict to files under src and tests directories
 
 default_language_version:
   python: python3
 
 repos:
+  # >>>>> Base precommits <<<<<<
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
@@ -39,6 +34,13 @@ repos:
       - id: check-added-large-files
         args: ["--maxkb=1000", "--enforce-all"]
       - id: detect-private-key
+
+  # >>>>> Custom precommits <<<<<<
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
+    hooks:
+    -   id: pyupgrade
+        files: ^(src|tests)/.*\.py$  # Restrict to files under src and tests directories
 
   - repo: https://github.com/psf/black
     rev: 23.9.1  # Use the latest stable version of Black
@@ -63,3 +65,13 @@ repos:
       - id: codespell
         additional_dependencies: [tomli]
         args: ["--write-changes"]
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2 # Use the latest stable version
+    hooks:
+      - id: isort
+
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.9.1
+    hooks:
+      - id: nbqa-black

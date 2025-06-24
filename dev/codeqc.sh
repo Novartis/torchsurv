@@ -14,5 +14,4 @@ fi
 
 export PYTHONPATH=${DIR}/../src
 
-isort ${CHECK} src tests
 pylint src
