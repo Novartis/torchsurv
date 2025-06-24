@@ -6,7 +6,7 @@ def validate_survival_data(event, time):
 
     Args:
         event (torch.Tensor, boolean):
-            Event indicator of size n_samples (= True if event occured).
+            Event indicator of size n_samples (= True if event occurred).
         time (torch.Tensor, float):
             Event or censoring time of size n_samples.
 

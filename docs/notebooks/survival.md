@@ -167,7 +167,7 @@ $$
 C = p(q_i(X_i) > q_j(X_i) | X_i < X_j)
 $$
 
-It can be shown that the C-index is related to the incidence/dynamic AUC, specifically $C = \int_t \text{AUC}^{\mathbb{I}/\mathbb{D}}(t) g(t) dt$ where $g(t) = 2f(t)S(t)$, $f(t)$ is the time-to-event densitity and $S(t)$ is the survival function.
+It can be shown that the C-index is related to the incidence/dynamic AUC, specifically $C = \int_t \text{AUC}^{\mathbb{I}/\mathbb{D}}(t) g(t) dt$ where $g(t) = 2f(t)S(t)$, $f(t)$ is the time-to-event density and $S(t)$ is the survival function.
 
 <details>
 <summary> Proof of the relation between the C-index and the AUC I/D </summary>

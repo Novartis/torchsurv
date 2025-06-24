@@ -55,3 +55,7 @@ profile = "black"
 
 [tool.mypy]
 show_error_codes = true
+
+[tool.codespell]
+ignore-words-list = ["TE", "FPR", "tOI", "te"]  # Known false positives
+skip= ["*.bib", "*.toml"]  # Exclude references, which may contain names confusing the spell checker

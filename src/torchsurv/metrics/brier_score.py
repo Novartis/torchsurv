@@ -72,7 +72,7 @@ class BrierScore:
                 Can be of shape = (n_samples, n_samples) if subject-specific survival is evaluated at ``time``,
                 or of shape = (n_samples, n_times) if subject-specific survival is evaluated at ``new_time``.
             event (torch.Tensor, boolean):
-                Event indicator of size n_samples (= True if event occured)
+                Event indicator of size n_samples (= True if event occurred)
             time (torch.Tensor, float):
                 Time-to-event or censoring of size n_samples.
             new_time (torch.Tensor, float, optional):
@@ -546,7 +546,7 @@ class BrierScore:
             metric="confidence_interval", n_bootstraps=n_bootstraps
         )
 
-        # intialize tensor to store confidence intervals
+        # initialize tensor to store confidence intervals
         lower = torch.zeros_like(self.brier_score)
         upper = torch.zeros_like(self.brier_score)
 
@@ -616,7 +616,7 @@ class BrierScore:
             metric="p_value", n_bootstraps=n_bootstraps
         )
 
-        # intialize empty tensor to store p-values
+        # initialize empty tensor to store p-values
         p_values = torch.zeros_like(self.brier_score)
 
         # iterate over time
@@ -647,7 +647,7 @@ class BrierScore:
         # sample size
         n_samples = self.time.shape[0]
 
-        # intialize empty vector to store p_values
+        # initialize empty vector to store p_values
         p_values = torch.zeros_like(self.brier_score)
 
         # iterate over time
@@ -672,7 +672,7 @@ class BrierScore:
         return p_values
 
     def _compare_bootstrap(self, other, n_bootstraps):
-        """Boostrap two-sample test to compare two Brier scores."""
+        """Bootstrap two-sample test to compare two Brier scores."""
 
         # bootstrap brier scores given null hypothesis that brierscore1 and
         # brierscore2 come from the same distribution
@@ -683,13 +683,13 @@ class BrierScore:
             metric="compare", other=other, n_bootstraps=n_bootstraps
         )
 
-        # bootsrapped test statistics
+        # bootstrapped test statistics
         t_boot = brier_score1_null - brier_score2_null
 
         # observed test statistics
         t_obs = self.brier_score - other.brier_score
 
-        # intialize empty tensor to store p-values
+        # initialize empty tensor to store p-values
         p_values = torch.zeros_like(self.brier_score)
 
         # iterate over time
@@ -711,7 +711,7 @@ class BrierScore:
                 samples of the Brier score given the data distribution. If "compare", computes
                 bootstrap samples of the Brier score given the sampling distribution under the comparison test
                 null hypothesis (brierscore1 = brierscore2).
-            n_bootstraps (int): Number of boostrap samples.
+            n_bootstraps (int): Number of bootstrap samples.
             other (optional, BrierScore):
                 Another instance of the BrierScore class representing brierscore2.
                 Only required if ``metric`` is "compare".

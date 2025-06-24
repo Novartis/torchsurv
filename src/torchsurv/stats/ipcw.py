@@ -19,7 +19,7 @@ def get_ipcw(
 
     Args:
         event (torch.Tensor, boolean):
-            Event indicator of size n_samples (= True if event occured).
+            Event indicator of size n_samples (= True if event occurred).
         time (torch.Tensor, float):
             Time-to-event or censoring of size n_samples.
         new_time (torch.Tensor, float, optional):
@@ -69,7 +69,7 @@ def get_ipcw(
     # predict censoring distribution at time
     ct = km.predict(new_time)
 
-    # caclulate ipcw
+    # calculate ipcw
     mask = ct > 0
     ipcw = torch.zeros_like(new_time, dtype=time.dtype)
     ipcw[mask] = _inverse_censoring_dist(ct[mask])

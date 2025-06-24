@@ -85,7 +85,7 @@ class Auc:
                 of shape = (n_samples, n_samples) if subject-specific risk score is evaluated at ``time``,
                 or of shape = (n_samples, n_times) if subject-specific risk score is evaluated at ``new_time``.
             event (torch.Tensor, boolean):
-                Event indicator of size n_samples (= True if event occured).
+                Event indicator of size n_samples (= True if event occurred).
             time (torch.Tensor, float):
                 Time-to-event or censoring of size n_samples.
             auc_type (str, optional):
@@ -698,7 +698,7 @@ class Auc:
             metric="confidence_interval", n_bootstraps=n_bootstraps
         )
 
-        # intialize tensor to store confidence intervals
+        # initialize tensor to store confidence intervals
         lower = torch.zeros_like(self.auc)
         upper = torch.zeros_like(self.auc)
 
@@ -757,10 +757,10 @@ class Auc:
         hypothesis.
         """
 
-        # auc boostraps given null distribution auc = 0.5
+        # auc bootstraps given null distribution auc = 0.5
         auc0 = self._bootstrap_auc(metric="p_value", n_bootstraps=n_bootstraps)
 
-        # intialize empty tensor to store p-values
+        # initialize empty tensor to store p-values
         p_values = torch.zeros_like(self.auc)
 
         # iterate over time
@@ -796,7 +796,7 @@ class Auc:
         # pylint: disable=protected-access
         auc2_se = other._auc_se()
 
-        # intialize empty vector to store p_values
+        # initialize empty vector to store p_values
         p_values = torch.zeros_like(self.auc)
 
         # iterate over time
@@ -830,7 +830,7 @@ class Auc:
         return p_values
 
     def _compare_bootstrap(self, other, n_bootstraps):
-        """Boostrap two-sample test to compare two AUCs."""
+        """Bootstrap two-sample test to compare two AUCs."""
 
         # auc bootstraps given null hypothesis that auc1 and
         # auc2 come from the same distribution
@@ -841,13 +841,13 @@ class Auc:
             metric="compare", other=other, n_bootstraps=n_bootstraps
         )
 
-        # Bootsrapped test statistics
+        # Bootstrapped test statistics
         t_boot = auc1_null - auc2_null
 
         # observed test statistics
         t_obs = self.auc - other.auc
 
-        # intialize empty tensor to store p-values
+        # initialize empty tensor to store p-values
         p_values = torch.zeros_like(self.auc)
 
         # iterate over time
@@ -1045,7 +1045,7 @@ class Auc:
                 samples of the AUC given the data distribution. If "compare", computes
                 bootstrap samples of the AUC given the sampling distribution under the comparison test
                 null hypothesis (auc1 = auc2).
-            n_bootstraps (int): Number of boostrap samples.
+            n_bootstraps (int): Number of bootstrap samples.
             other (optional, Auc):
                 Another instance of the Auc class representing auc2.
                 Only required for ``metric`` is equal to "compare".
@@ -1057,7 +1057,7 @@ class Auc:
         # Initiate empty list to store auc
         aucs = []
 
-        # Get the boostrap samples of auc
+        # Get the bootstrap samples of auc
         for _ in range(n_bootstraps):
             if (
                 metric == "p_value"

@@ -21,7 +21,7 @@ def neg_partial_log_likelihood(
         log_hz (torch.Tensor, float):
             Log relative hazard of length n_samples.
         event (torch.Tensor, bool):
-            Event indicator of length n_samples (= True if event occured).
+            Event indicator of length n_samples (= True if event occurred).
         time (torch.Tensor):
             Time-to-event or censoring of length n_samples.
         ties_method (str):
@@ -179,7 +179,7 @@ def _partial_likelihood_cox(
         log_hz_sorted (torch.Tensor, float):
             Log relative hazard of length n_samples, ordered by time-to-event or censoring.
         event_sorted (torch.Tensor, bool):
-            Event indicator of length n_samples (= True if event occured), ordered by time-to-event or censoring.
+            Event indicator of length n_samples (= True if event occurred), ordered by time-to-event or censoring.
 
     Returns:
         (torch.tensor, float):
@@ -212,7 +212,7 @@ def _partial_likelihood_efron(
         log_hz_sorted (torch.Tensor, float):
             Log relative hazard of length n_samples, ordered by time-to-event or censoring.
         event_sorted (torch.Tensor, bool):
-            Event indicator of length n_samples (= True if event occured), ordered by time-to-event or censoring.
+            Event indicator of length n_samples (= True if event occurred), ordered by time-to-event or censoring.
         time_sorted (torch.Tensor):
             Time-to-event values sorted in order.
         time_unique (torch.Tensor):
@@ -259,7 +259,7 @@ def _partial_likelihood_breslow(
         log_hz_sorted (torch.Tensor, float):
             Log relative hazard of length n_samples, ordered by time-to-event or censoring.
         event_sorted (torch.Tensor, bool):
-            Event indicator of length n_samples (= True if event occured), ordered by time-to-event or censoring.
+            Event indicator of length n_samples (= True if event occurred), ordered by time-to-event or censoring.
         time_sorted (torch.Tensor):
             Time-to-event values sorted in order.
 
