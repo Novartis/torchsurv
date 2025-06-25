@@ -1,5 +1,16 @@
 # Development notes
 
+## Clone and set up pre-commit hooks
+
+We use [pre-commit](https://pre-commit.com/) to ensure clean commits in the repository. To set up
+pre-commit in a fresh repository clone, please run:
+
+```bash
+pre-commit install
+```
+
+This only needs to do once and ensures code formatting & checks are performed on each commit.
+
 ## Set up a development environment via conda
 
 If you use Conda, you can install requirements into a conda environment
