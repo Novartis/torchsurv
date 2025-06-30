@@ -16,6 +16,7 @@ with open("tests/benchmark_data/benchmark_weibull.json") as file:
 
 # set seed for reproducibility
 torch.manual_seed(42)
+np.random.seed(42)
 
 
 class TestWeibullSurvivalLoss(unittest.TestCase):

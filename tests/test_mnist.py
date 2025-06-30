@@ -10,6 +10,9 @@ from torchvision.transforms import v2
 from torchsurv.loss.cox import neg_partial_log_likelihood
 from torchsurv.metrics.cindex import ConcordanceIndex
 
+# set seed for reproducibility
+torch.manual_seed(42)
+
 
 class LitMNIST(LightningModule):
     def __init__(self, hidden_size=128, learning_rate=5e-4):
