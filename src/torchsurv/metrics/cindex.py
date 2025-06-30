@@ -7,7 +7,9 @@ import torch
 from scipy import stats
 from torchmetrics import regression
 
-from ..tools import validate_inputs
+from torchsurv.tools.validate_data import validate_log_shape, validate_survival_data
+
+__all__ = ["ConcordanceIndex"]
 
 
 class ConcordanceIndex:
@@ -185,8 +187,8 @@ class ConcordanceIndex:
 
         # Inputs checks
         if self.checks:
-            validate_inputs.validate_survival_data(event, time)
-            validate_inputs.validate_estimate(estimate, time)
+            validate_survival_data(event, time)
+            validate_log_shape(estimate)
 
         # find comparable pairs
         comparable = self._get_comparable_and_tied_time(event, time)
@@ -399,7 +401,7 @@ class ConcordanceIndex:
 
     def compare(
         self, other, method: str = "noether", n_bootstraps: int = 999
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """Compare two Concordance indices.
 
         This function compares two concordance indices computed on the
@@ -421,7 +423,7 @@ class ConcordanceIndex:
                 Ignored if ``method`` is not "bootstrap".
 
         Returns:
-            torch.tensor: p-value of the statistical test.
+            torch.Tensor: p-value of the statistical test.
 
         Examples:
             >>> _ = torch.manual_seed(42)
@@ -508,7 +510,7 @@ class ConcordanceIndex:
     # pylint: disable=invalid-name
     def _confidence_interval_conservative(
         self, alpha: float, alternative: str
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """Confidence interval of Concordance index assuming that the concordance index
         is normally distributed and using the conservative method.
         """
@@ -543,7 +545,7 @@ class ConcordanceIndex:
 
     def _confidence_interval_bootstrap(
         self, alpha: float, alternative: str, n_bootstraps: int
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """Bootstrap confidence interval of the Concordance index using
         Efron's percentile method.
 
@@ -576,7 +578,7 @@ class ConcordanceIndex:
 
         return torch.stack([lower, upper])
 
-    def _p_value_noether(self, alternative, null_value: float = 0.5) -> torch.tensor:
+    def _p_value_noether(self, alternative, null_value: float = 0.5) -> torch.Tensor:
         """p-value for a one-sample hypothesis test of the Concordance index
         assuming that the concordance index is normally distributed and using standard
         errors estimated with Noether's method.
@@ -602,7 +604,7 @@ class ConcordanceIndex:
 
         return p
 
-    def _p_value_bootstrap(self, alternative, n_bootstraps) -> torch.tensor:
+    def _p_value_bootstrap(self, alternative, n_bootstraps) -> torch.Tensor:
         """p-value for a one-sample hypothesis test of the Concordance Index using
         permutation of risk prediction to estimate sampling distribution under the null
         hypothesis.
@@ -713,7 +715,7 @@ class ConcordanceIndex:
 
     def _bootstrap_cindex(
         self, metric: str, n_bootstraps: int, other=None
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """Compute bootstrap samples of the Concordance Index (C-index).
 
         Args:
@@ -730,7 +732,7 @@ class ConcordanceIndex:
 
 
         Returns:
-            torch.tensor: bootstrap samples of Concordance index.
+            torch.Tensor: bootstrap samples of Concordance index.
         """
 
         # Initiate empty list to store concordance index

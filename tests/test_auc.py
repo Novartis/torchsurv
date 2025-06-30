@@ -11,7 +11,9 @@ from utils import DataBatchContainer, conditions_ci, conditions_p_value
 from torchsurv.metrics.auc import Auc
 from torchsurv.stats.ipcw import get_ipcw
 
-torch.manual_seed(23)
+# set seed for reproducibility
+torch.manual_seed(42)
+np.random.seed(42)
 
 # Load the benchmark metrics from R
 with open("tests/benchmark_data/benchmark_auc.json", "r") as file:

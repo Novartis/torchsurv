@@ -6,8 +6,14 @@ import torch
 from scipy import stats
 from torchmetrics import regression
 
-from ..stats import kaplan_meier
-from ..tools import validate_inputs
+from torchsurv.stats import kaplan_meier
+from torchsurv.tools.validate_data import (
+    validate_log_shape,
+    validate_new_time,
+    validate_survival_data,
+)
+
+__all__ = ["Auc"]
 
 
 class Auc:
@@ -97,7 +103,7 @@ class Auc:
             new_time (torch.Tensor, optional):
                 Time points at which to evaluate the AUC of size n_times. Values must be within the range of follow-up in ``time``.
                 Defaults to the event times excluding maximum (because number of controls for t > max(time) is 0).
-            weight_new_time (torch.tensor):
+            weight_new_time (torch.Tensor):
                 Optional sample weight evaluated at ``new_time`` of size n_times.
                 Defaults to 1.
 
@@ -212,9 +218,9 @@ class Auc:
 
         # further input format checks
         if self.checks:
-            validate_inputs.validate_survival_data(event, time)
-            validate_inputs.validate_evaluation_time(new_time, time)
-            validate_inputs.validate_estimate(estimate, time, new_time)
+            validate_survival_data(event, time)
+            validate_new_time(new_time, time)
+            validate_log_shape(estimate)
 
         # sample size and length of time
         n_samples, n_times = estimate.shape[0], new_time.shape[0]
@@ -508,7 +514,7 @@ class Auc:
 
     def compare(
         self, other, method: str = "blanche", n_bootstraps: int = 999
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """Compare two AUCs.
 
         This function compares two AUCs computed on the same data with different
@@ -530,7 +536,7 @@ class Auc:
                 Ignored if ``method`` is not "bootstrap".
 
         Returns:
-            torch.tensor: p-value of the statistical test.
+            torch.Tensor: p-value of the statistical test.
 
         Examples:
             >>> _ = torch.manual_seed(42)
@@ -579,7 +585,7 @@ class Auc:
         return pvalue
 
     # pylint: disable=invalid-name
-    def _integrate_incident(self, S: torch.tensor, tmax: torch.tensor) -> torch.Tensor:
+    def _integrate_incident(self, S: torch.Tensor, tmax: torch.Tensor) -> torch.Tensor:
         """Integrates the incident/dynamic AUC, int_t AUC(t) x w(t) dt
         where w(t) = 2*f(t)*S(t) and f(t) is the lifeline distribution,
         S(t) is the survival distribution estimated with the Kaplan
@@ -617,7 +623,7 @@ class Auc:
 
     # pylint: disable=invalid-name
     def _integrate_cumulative(
-        self, S: torch.tensor, tmax: torch.tensor
+        self, S: torch.Tensor, tmax: torch.Tensor
     ) -> torch.Tensor:
         """Integrates the cumulative/dynamic AUC, int_t AUC(t) · f(t) dt
         where f(t) is the lifeline distribution estimated from the discrete
@@ -685,7 +691,7 @@ class Auc:
 
     def _confidence_interval_bootstrap(
         self, alpha: float, alternative: str, n_bootstraps: int
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """Bootstrap confidence interval of the AUC using Efron percentile method.
 
         References:
@@ -727,7 +733,7 @@ class Auc:
 
     def _p_value_blanche(
         self, alternative: str, null_value: float = 0.5
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """p-value for a one-sample hypothesis test of the AUC
         assuming that the AUC is normally distributed and using standard error estimated
         with Blanche et al's method.
@@ -736,7 +742,7 @@ class Auc:
         auc_se = self._auc_se()
 
         # get p-value
-        if torch.all(auc_se) >= torch.tensor(0.0):
+        if torch.all(auc_se >= 0.0):
             p = torch.distributions.normal.Normal(0, 1).cdf(
                 (self.auc - null_value) / auc_se
             )
@@ -751,7 +757,7 @@ class Auc:
 
         return p
 
-    def _p_value_bootstrap(self, alternative, n_bootstraps) -> torch.tensor:
+    def _p_value_bootstrap(self, alternative, n_bootstraps) -> torch.Tensor:
         """p-value for a one-sample hypothesis test of the AUC using
         permutation of risk prediction to estimate sampling distribution under the null
         hypothesis.
@@ -783,7 +789,7 @@ class Auc:
 
         return p_values
 
-    def _compare_blanche(self, other):
+    def _compare_blanche(self, other) -> torch.Tensor:
         """Student t-test for dependent samples given Blanche's standard error to
         compare two AUCs.
         """
@@ -829,7 +835,7 @@ class Auc:
 
         return p_values
 
-    def _compare_bootstrap(self, other, n_bootstraps):
+    def _compare_bootstrap(self, other, n_bootstraps) -> torch.Tensor:
         """Boostrap two-sample test to compare two AUCs."""
 
         # auc bootstraps given null hypothesis that auc1 and
@@ -858,7 +864,7 @@ class Auc:
 
         return p_values
 
-    def _auc_se(self):
+    def _auc_se(self) -> torch.Tensor:
         """AUC's standard error estimated using Blanche et al's method."""
 
         # sample size and length of time
@@ -941,7 +947,7 @@ class Auc:
 
         return auc_se
 
-    def _integral_censoring_martingale_divided_survival(self) -> torch.tensor:
+    def _integral_censoring_martingale_divided_survival(self) -> torch.Tensor:
         """Compute the integral of the censoring martingale divided by the survival distribution."""
 
         # Number of samples
@@ -1035,7 +1041,7 @@ class Auc:
 
     def _bootstrap_auc(
         self, metric: str, n_bootstraps: int, other=None
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """Compute bootstrap samples of the AUC.
 
         Args:
@@ -1052,7 +1058,7 @@ class Auc:
 
 
         Returns:
-            torch.tensor: Bootstrap samples of AUC.
+            torch.Tensor: Bootstrap samples of AUC.
         """
         # Initiate empty list to store auc
         aucs = []
@@ -1168,8 +1174,8 @@ class Auc:
 
     @staticmethod
     def _find_torch_unique_indices(
-        inverse_indices: torch.tensor, counts: torch.tensor
-    ) -> torch.tensor:
+        inverse_indices: torch.Tensor, counts: torch.Tensor
+    ) -> torch.Tensor:
         """return unique_sorted_indices such that
         sorted_unique_tensor[inverse_indices] = original_tensor
         original_tensor[unique_sorted_indices] = sorted_unique_tensor
@@ -1214,13 +1220,13 @@ class Auc:
 
     @staticmethod
     def _update_auc_new_time(
-        estimate: torch.tensor,
-        event: torch.tensor,
-        time: torch.tensor,
-        new_time: torch.tensor,
-        weight: torch.tensor,
-        weight_new_time: torch.tensor,
-    ) -> torch.tensor:
+        estimate: torch.Tensor,
+        event: torch.Tensor,
+        time: torch.Tensor,
+        new_time: torch.Tensor,
+        weight: torch.Tensor,
+        weight_new_time: torch.Tensor,
+    ) -> torch.Tensor:
         # update new time
         if (
             new_time is not None
@@ -1255,8 +1261,8 @@ class Auc:
 
     @staticmethod
     def _update_auc_estimate(
-        estimate: torch.tensor, new_time: torch.tensor
-    ) -> torch.tensor:
+        estimate: torch.Tensor, new_time: torch.Tensor
+    ) -> torch.Tensor:
         # squeeze estimate if shape = (n_samples, 1)
         if estimate.ndim == 2 and estimate.shape[1] == 1:
             estimate = estimate.squeeze(1)
@@ -1271,11 +1277,11 @@ class Auc:
 
     @staticmethod
     def _update_auc_weight(
-        time: torch.tensor,
-        new_time: torch.tensor,
-        weight: torch.tensor,
-        weight_new_time: torch.tensor,
-    ) -> torch.tensor:
+        time: torch.Tensor,
+        new_time: torch.Tensor,
+        weight: torch.Tensor,
+        weight_new_time: torch.Tensor,
+    ) -> torch.Tensor:
         # if weight was not specified, weight of 1
         if weight is None:
             weight = torch.ones_like(time)

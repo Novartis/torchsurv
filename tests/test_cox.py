@@ -1,12 +1,12 @@
-# global modules
 import json
+import os
 import unittest
 
 import numpy as np
 import torch
 
-# Local modules
 from torchsurv.loss.cox import neg_partial_log_likelihood as cox
+from torchsurv.tools.validate_data import validate_loss
 
 # Load the benchmark cox log likelihoods from R
 with open("tests/benchmark_data/benchmark_cox.json", "r") as file:
@@ -14,6 +14,7 @@ with open("tests/benchmark_data/benchmark_cox.json", "r") as file:
 
 # set seed for reproducibility
 torch.manual_seed(42)
+np.random.seed(42)
 
 
 class TestCoxSurvivalLoss(unittest.TestCase):
@@ -30,29 +31,35 @@ class TestCoxSurvivalLoss(unittest.TestCase):
 
     def test_y_tensor(self):
         event_np_array = np.random.randint(0, 1 + 1, size=(self.N,), dtype="bool")
-        self.assertRaises(TypeError, cox, self.log_hz, event_np_array, self.time)
+        with self.assertRaises((RuntimeError, TypeError)):
+            cox(self.log_hz, event_np_array, self.time)
 
     def test_t_tensor(self):
         time_np_array = np.random.randint(0, 100, size=(self.N,))
-        self.assertRaises(TypeError, cox, self.log_hz, self.event, time_np_array)
+        with self.assertRaises((RuntimeError, TypeError)):
+            cox(self.log_hz, self.event, time_np_array)
 
     def test_log_hz_tensor(self):
         log_hz_np_array = np.random.randn(
             self.N,
         )
-        self.assertRaises(TypeError, cox, log_hz_np_array, self.event, self.time)
+        with self.assertRaises((RuntimeError, TypeError)):
+            cox(log_hz_np_array, self.event, self.time)
 
     def test_len_data(self):
         time_wrong_len = torch.randint(low=1, high=100, size=(self.N + 1,))
-        self.assertRaises(ValueError, cox, self.log_hz, self.event, time_wrong_len)
+        with self.assertRaises(TypeError):
+            validate_loss(self.log_hz, self.event, time_wrong_len)
 
     def test_positive_t(self):
         time_negative = torch.randint(low=-100, high=100, size=(self.N,))
-        self.assertRaises(ValueError, cox, self.log_hz, self.event, time_negative)
+        with self.assertRaises(TypeError):
+            validate_loss(self.log_hz, self.event, time_negative)
 
     def test_boolean_y(self):
         event_non_boolean = torch.randint(low=0, high=3, size=(self.N,))
-        self.assertRaises(ValueError, cox, self.log_hz, event_non_boolean, self.time)
+        with self.assertRaises(TypeError):
+            validate_loss(self.log_hz, event_non_boolean, self.time)
 
     def test_log_likelihood_without_ties(self):
         """test cox partial log likelihood without ties on lung and gbsg datasets"""

@@ -1,5 +1,5 @@
+import os
 import unittest
-from functools import partial
 
 import torch
 from torch import nn
@@ -8,8 +8,8 @@ from torchsurv.loss.cox import neg_partial_log_likelihood
 from torchsurv.loss.momentum import Momentum
 from torchsurv.loss.weibull import neg_log_likelihood
 
-# Set a seed for reproducibility
-torch.manual_seed(45)
+# set seed for reproducibility
+torch.manual_seed(42)
 
 
 class TestMometum(unittest.TestCase):

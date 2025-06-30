@@ -11,7 +11,9 @@ from utils import DataBatchContainer, conditions_ci, conditions_p_value
 from torchsurv.metrics.cindex import ConcordanceIndex
 from torchsurv.stats.ipcw import get_ipcw
 
-torch.manual_seed(23)
+# set seed for reproducibility
+torch.manual_seed(42)
+np.random.seed(42)
 
 # Load the benchmark metrics from R
 with open("tests/benchmark_data/benchmark_cindex.json", "r") as file:
@@ -162,7 +164,7 @@ class TestCIndex(unittest.TestCase):
                 "ties_score_censoring",
             ],
         )
-        for i, batch in enumerate(batch_container.batches):
+        for _, batch in enumerate(batch_container.batches):
             (
                 train_time,
                 train_event,

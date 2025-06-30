@@ -4,7 +4,11 @@ from typing import Tuple
 
 import torch
 
-from ..tools import validate_inputs
+from torchsurv.tools.validate_data import validate_survival_data
+
+__all__ = [
+    "KaplanMeierEstimator",
+]
 
 
 class KaplanMeierEstimator:
@@ -12,8 +16,8 @@ class KaplanMeierEstimator:
 
     def __call__(
         self,
-        event: torch.tensor,
-        time: torch.tensor,
+        event: torch.Tensor,
+        time: torch.Tensor,
         censoring_dist: bool = False,
         check: bool = True,
     ):
@@ -62,7 +66,7 @@ class KaplanMeierEstimator:
 
         # Check input validity if required
         if check:
-            validate_inputs.validate_survival_data(event, time)
+            validate_survival_data(event, time)
 
         # Compute the counts of events, censorings, and the number at risk at each unique time
         uniq_times, n_events, n_at_risk, n_censored = self._compute_counts()
@@ -197,7 +201,7 @@ class KaplanMeierEstimator:
 
     def _compute_counts(
         self,
-    ) -> Tuple[torch.tensor, torch.tensor, torch.tensor, torch.tensor]:
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """Compute the counts of events, censorings and risk set at ``time``.
 
         Returns: Tuple[torch.tensor, torch.tensor, torch.tensor, torch.tensor]
