@@ -82,7 +82,7 @@ def validate_survival_data(event: torch.Tensor, time: torch.Tensor):
 
     Args:
         event (torch.Tensor, boolean):
-            Event indicator of size n_samples (= True if event occured).
+            Event indicator of size n_samples (= True if event occurred).
         time (torch.Tensor, float):
             Event or censoring time of size n_samples.
 
@@ -172,7 +172,6 @@ def validate_loss(
 
 
 if __name__ == "__main__":
-
     log_params_weibull = torch.randn((5, 2))
     log_params_cox = torch.randn((5, 1))
     event_data = torch.tensor([1, 0, 1, 1, 0])
@@ -184,10 +183,10 @@ if __name__ == "__main__":
     # Validate Cox model inputs
     validate_loss(log_params_cox, event_data, time_data, model_type="cox")
 
-    # Valide booleans values
+    # Valid booleans values
     validate_loss(log_params_cox, event_data.bool(), time_data, model_type="cox")
 
-    # check that the ouput is a ValueError
+    # check that the output is a ValueError
     try:
         validate_loss(
             log_params_weibull,

@@ -88,7 +88,7 @@ We recommend starting with the [introductory guide](https://opensource.nibr.com/
 
 ### Survival data
 
-We simulate a random batch of 64 subjects. Each subject is associated with a binary event status (= `True` if event occured), a time-to-event or censoring and 16 covariates.
+We simulate a random batch of 64 subjects. Each subject is associated with a binary event status (= `True` if event occurred), a time-to-event or censoring and 16 covariates.
 
 ```python
 >>> import torch
@@ -245,7 +245,7 @@ By contributing to this project, you agree to license your contributions under t
 * [Peter Krusche](mailto:peter.krusche@novartis.com?subject=TorchSurv) (**Novartis**): `(author, maintainer)`
 * [Qian Cao](mailto:qian.cao@fda.hhs.gov?subject=TorchSurv) (**FDA**): `(author, maintainer)`
 
-If you have any questions, suggestions, or feedback, feel free to reach out the developement team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
+If you have any questions, suggestions, or feedback, feel free to reach out the development team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
 
 ## Cite
 

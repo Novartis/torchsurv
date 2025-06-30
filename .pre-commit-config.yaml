@@ -1,0 +1,81 @@
+# # see https://pre-commit.com/ for more information
+
+# repos:
+#   # No large files - prevent committing large files
+#   - repo: https://github.com/pre-commit/pre-commit-hooks
+#     rev: v4.4.0
+#     hooks:
+#       - id: check-added-large-files
+#         args:
+#           - '--maxkb=500'  # Set the maximum file size in kilobytes (e.g., 500 KB)
+
+#   # Notebook black - formatting Jupyter notebooks
+#   - repo: https://github.com/nbQA-dev/nbQA
+#     rev: 1.9.1
+#     hooks:
+#       - id: nbqa-black
+
+default_language_version:
+  python: python3
+
+repos:
+  # >>>>> Base precommits <<<<<<
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-json
+      - id: check-yaml
+      - id: check-toml
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: check-case-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=1000", "--enforce-all"]
+      - id: detect-private-key
+
+  # >>>>> Custom precommits <<<<<<
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
+    hooks:
+    -   id: pyupgrade
+        files: ^(src|tests)/.*\.py$  # Restrict to files under src and tests directories
+
+  - repo: https://github.com/psf/black
+    rev: 23.9.1  # Use the latest stable version of Black
+    hooks:
+      - id: black
+        files: ^(src|tests)/.*\.py$  # Restrict to files under src and tests directories
+
+  - repo: https://github.com/lorenzwalthert/precommit
+    rev: v0.4.3.9009
+    hooks:
+    -   id: style-files
+        args: [--style_pkg=styler, --style_fun=tidyverse_style]
+        files: ^(tests)/.*\.R$  # Style R files
+
+  - repo: https://github.com/sphinx-contrib/sphinx-lint
+    rev: v1.0.0
+    hooks:
+      - id: sphinx-lint
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        additional_dependencies: [tomli]
+        args: ["--write-changes"]  # Automatically fix spelling errors if only one suggestion
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2 # Use the latest stable version
+    hooks:
+      - id: isort  # Sort imports in Python files
+        files: \.py$  # Restrict to python files under
+
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.9.1
+    hooks:
+      - id: nbqa-black
+        additional_dependencies: [black==23.9.1]  # Ensure nbQA uses the same version of Black
+        files: \.ipynb$  # Restrict to Jupyter notebook files

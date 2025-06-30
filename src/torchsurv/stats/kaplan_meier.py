@@ -25,7 +25,7 @@ class KaplanMeierEstimator:
 
         Args:
             event (torch.tensor, bool):
-                Event indicator of size n_samples (= True if event occured).
+                Event indicator of size n_samples (= True if event occurred).
             time (torch.tensor, float):
                 Time-to-event or censoring of size n_samples.
             censoring_dist (bool, optional):

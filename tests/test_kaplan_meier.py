@@ -10,7 +10,7 @@ from utils import DataBatchContainer
 from torchsurv.stats.kaplan_meier import KaplanMeierEstimator
 
 # Load the benchmark cox log likelihoods from R
-with open("tests/benchmark_data/benchmark_kaplan_meier.json", "r") as file:
+with open("tests/benchmark_data/benchmark_kaplan_meier.json") as file:
     benchmark_kaplan_meiers = json.load(file)
 
 # set seed for reproducibility
@@ -210,9 +210,9 @@ class TestNonParametric(unittest.TestCase):
         for batch in batch_container.batches:
             (train_time, train_event, test_time, *_) = batch
 
-            train_event[-1] = (
-                False  # if last event is censoring, the last KM is > 0 and it cannot predict beyond this time
-            )
+            train_event[
+                -1
+            ] = False  # if last event is censoring, the last KM is > 0 and it cannot predict beyond this time
             km = KaplanMeierEstimator()
             km(train_event, train_time, censoring_dist=False)
 

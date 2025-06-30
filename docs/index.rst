@@ -28,8 +28,8 @@ Welcome to TorchSurv's documentation!
     AUTHORS
     devnotes
     benchmarks
-    
-    
+
+
 Indices and tables
 ==================
 

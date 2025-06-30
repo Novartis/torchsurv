@@ -83,7 +83,7 @@ class ConcordanceIndex:
                 Can be of shape = (n_samples,) if subject-specific risk score is time-independent,
                 or of shape = (n_samples, n_samples) if subject-specific risk score is evaluated at ``time``.
             event (torch.Tensor, boolean):
-                Event indicator of size n_samples (= True if event occured).
+                Event indicator of size n_samples (= True if event occurred).
             time (torch.Tensor, float):
                 Time-to-event or censoring of size n_samples.
             weight (torch.Tensor, optional):
@@ -121,7 +121,7 @@ class ConcordanceIndex:
             (:math:`(i,j)` th element is :math:`\hat{q}_i(T_j)`). For time-independent risk score, the argument ``estimate``
             should be a tensor of size N (:math:`i` th element is :math:`\hat{q}_i`).
 
-            For a pair :math:`(i,j)`, we say that the pair is comparable if the event of :math:`i` has occured before
+            For a pair :math:`(i,j)`, we say that the pair is comparable if the event of :math:`i` has occurred before
             the event of :math:`j`, i.e., :math:`X_i < X_j`. Given that the pair is comparable, we say that the pair is
             concordant if :math:`q_i(X_i) > q_j(X_i)`.
 
@@ -203,7 +203,7 @@ class ConcordanceIndex:
         numerator, denominator = 0.0, 0.0
 
         # Iterate through the comparable items over time
-        # (dictionary with indices that have an event occured at time and boolean masks of comparable pair a time)
+        # (dictionary with indices that have an event occurred at time and boolean masks of comparable pair a time)
         for ind, mask in comparable.items():
             # Extract risk score, event indicator and weight for the current sample
             est_i, event_i, w_i = (
@@ -531,7 +531,9 @@ class ConcordanceIndex:
             * 2
         ) / (N * (pc + pd))
 
-        ci = torch.sqrt(w**2 + 4 * w * self.cindex * (1 - self.cindex)) / (2 * (1 + w))
+        ci = torch.sqrt(w**2 + 4 * w * self.cindex * (1 - self.cindex)) / (
+            2 * (1 + w)
+        )
         point = (w + 2 * self.cindex) / (2 * (1 + w))
 
         lower = point - ci
@@ -610,7 +612,7 @@ class ConcordanceIndex:
         hypothesis.
         """
 
-        # c-index boostraps given null distribution cindex = 0.5
+        # c-index bootstraps given null distribution cindex = 0.5
         cindex0 = self._bootstrap_cindex(metric="p_value", n_bootstraps=n_bootstraps)
 
         # Derive p-value
@@ -671,7 +673,7 @@ class ConcordanceIndex:
         )  # student-t cdf not available on torch
 
     def _compare_bootstrap(self, other, n_bootstraps):
-        """Boostrap two-sample test to compare two concordance indices."""
+        """Bootstrap two-sample test to compare two concordance indices."""
 
         # c-index bootstraps given null hypothesis that cindex1
         # and cindex2 come from the same distribution
@@ -682,7 +684,7 @@ class ConcordanceIndex:
             metric="compare", other=other, n_bootstraps=n_bootstraps
         )
 
-        # bootsrapped test statistics
+        # bootstrapped test statistics
         t_boot = cindex1_null - cindex2_null
 
         # observed test statistics
@@ -709,7 +711,9 @@ class ConcordanceIndex:
         pcd = (1 / (N * (N - 1) * (N - 2))) * torch.sum(
             self.concordant * self.discordant
         )
-        varp = (4 / (pc + pd) ** 4) * (pd**2 * pcc - 2 * pc * pd * pcd + pc**2 * pdd)
+        varp = (4 / (pc + pd) ** 4) * (
+            pd**2 * pcc - 2 * pc * pd * pcd + pc**2 * pdd
+        )
 
         return torch.sqrt(varp / N)
 
@@ -725,7 +729,7 @@ class ConcordanceIndex:
                 samples of the c-index given the data distribution. If "compare", computes
                 bootstrap samples of the c-index given the sampling distribution under the comparison test
                 null hypothesis (c-index1 = cindex2).
-            n_bootstraps (int): Number of boostrap samples.
+            n_bootstraps (int): Number of bootstrap samples.
             other (optional, ConcordanceIndex):
                  Another instance of the ConcordanceIndex class representing cindex2.
                 Only required for the ``metric`` is "compare".
@@ -738,7 +742,7 @@ class ConcordanceIndex:
         # Initiate empty list to store concordance index
         cindexes = []
 
-        # Get the boostrap samples of concordance index
+        # Get the bootstrap samples of concordance index
         for _ in range(n_bootstraps):
             if (
                 metric == "p_value"
@@ -838,10 +842,10 @@ class ConcordanceIndex:
         # Sort indices based on time
         order = torch.argsort(time)
 
-        # Initalize dictionary to store comparable samples
+        # Initialize dictionary to store comparable samples
         comparable = {}
 
-        # Initalize count
+        # Initialize count
         tied_time = 0
 
         # Initialize index for storing unique values
@@ -863,7 +867,7 @@ class ConcordanceIndex:
 
             # Iterate through the sample with the same time point
             for j in range(i, end):
-                # If event occured at time
+                # If event occurred at time
                 if event[order[j]]:
                     # Create a boolean mask for comparability
                     mask = torch.zeros_like(time).bool()

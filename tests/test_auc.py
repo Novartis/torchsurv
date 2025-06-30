@@ -16,7 +16,7 @@ torch.manual_seed(42)
 np.random.seed(42)
 
 # Load the benchmark metrics from R
-with open("tests/benchmark_data/benchmark_auc.json", "r") as file:
+with open("tests/benchmark_data/benchmark_auc.json") as file:
     benchmark_aucs = json.load(file)
 
 auc = Auc()

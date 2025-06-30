@@ -11,7 +11,7 @@ from lifelines.datasets import load_gbsg2, load_lung
 from torchsurv.loss.weibull import neg_log_likelihood as weibull
 
 # Load the benchmark cox log likelihoods from R
-with open("tests/benchmark_data/benchmark_weibull.json", "r") as file:
+with open("tests/benchmark_data/benchmark_weibull.json") as file:
     benchmark_weibull_logliks = json.load(file)
 
 # set seed for reproducibility

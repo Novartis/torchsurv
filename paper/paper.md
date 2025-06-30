@@ -42,8 +42,8 @@ bibliography: paper.bib
 
 # Statement of need
 
-Survival analysis plays a crucial role in various domains, such as medicine, economics or engineering. Sophisticated survival analysis using deep learning, often referred to as "deep survival analysis," unlocks new opportunities to leverage new data types and uncover intricate relationships. 
-However, performing comprehensive deep survival analysis remains challenging. Key issues include the lack of flexibility in existing tools to define survival model parameters with custom architectures and limitations in handling complex, high-dimensional datasets. Indeed, existing frameworks often lack the computational efficiency necessary to process large datasets efficiently, making them less suitable for real-world applications where time and resource constraints are paramount. 
+Survival analysis plays a crucial role in various domains, such as medicine, economics or engineering. Sophisticated survival analysis using deep learning, often referred to as "deep survival analysis," unlocks new opportunities to leverage new data types and uncover intricate relationships.
+However, performing comprehensive deep survival analysis remains challenging. Key issues include the lack of flexibility in existing tools to define survival model parameters with custom architectures and limitations in handling complex, high-dimensional datasets. Indeed, existing frameworks often lack the computational efficiency necessary to process large datasets efficiently, making them less suitable for real-world applications where time and resource constraints are paramount.
 
 To address these gaps, we propose a library that allows users to define survival model parameters using custom `PyTorch`-based neural network architectures. By combining computational efficiency with ease of use, this toolbox opens new opportunities to advance deep survival analysis research and application. \autoref{tab:bibliography} compares the functionalities of `TorchSurv` with those of
 `auton-survival` [@nagpal2022auton],
@@ -73,7 +73,7 @@ my_cox_model = MyPyTorchCoxModel()
 
 for data in dataloader:
     x, event, time = data  # covariate, event indicator, time
-    log_hzs = my_cox_model(x)  # torch.Size([64, 1]), if batch size is 64 
+    log_hzs = my_cox_model(x)  # torch.Size([64, 1]), if batch size is 64
     loss = cox.neg_partial_log_likelihood(log_hzs, event, time)
     loss.backward()  # native torch backend
 ```
@@ -84,11 +84,11 @@ for data in dataloader:
 from torchsurv.loss import weibull
 
 # PyTorch model outputs two Weibull parameters per observation
-my_weibull_model = MyPyTorchWeibullModel() 
+my_weibull_model = MyPyTorchWeibullModel()
 
 for data in dataloader:
     x, event, time = data
-    log_params = my_weibull_model(x)  # torch.Size([64, 2]), if batch size is 64 
+    log_params = my_weibull_model(x)  # torch.Size([64, 2]), if batch size is 64
     loss = weibull.neg_log_likelihood(log_params, event, time)
     loss.backward()
 
@@ -101,7 +101,7 @@ log_hzs = weibull.log_hazard(log_params, time)
 ```python
 from torchsurv.loss import Momentum
 
-my_cox_model = MyPyTorchCoxModel()  
+my_cox_model = MyPyTorchCoxModel()
 my_cox_loss = cox.neg_partial_log_likelihood  # works with any TorchSurv loss
 model_momentum = Momentum(backbone=my_cox_model, loss=my_cox_loss)
 
@@ -123,7 +123,7 @@ The `TorchSurv` package offers a comprehensive set of metrics to evaluate the pr
 ```python
 from torchsurv.metrics.auc import Auc
 auc = Auc()
-auc(log_hzs, event, time)  # AUC at each time 
+auc(log_hzs, event, time)  # AUC at each time
 auc(log_hzs, event, time, new_time=torch.tensor(10.))  # AUC at time 10
 ```
 
@@ -139,7 +139,7 @@ cindex(log_hzs, event, time)
 
 ```python
 from torchsurv.metrics.brier_score import BrierScore
-surv = weibull.survival_function(log_params, time) 
+surv = weibull.survival_function(log_params, time)
 brier = Brier()
 brier(surv, event, time)  # Brier score at each time
 brier.integral()  # Integrated Brier score over time

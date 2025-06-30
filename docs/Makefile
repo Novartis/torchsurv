@@ -20,4 +20,3 @@ help:
 %: Makefile
 	cat ../README.md | sed 's/^## /# /' | sed 's/^### /## /' > README-copy.md
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-

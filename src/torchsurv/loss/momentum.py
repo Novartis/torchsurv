@@ -10,7 +10,7 @@ from torch import nn
 class Momentum(nn.Module):
     r"""
     Survival framework to momentum update learning to decouple batch size during model training.
-    Two networks are concurently trained, an online network and a target network. The online network outputs batches
+    Two networks are concurrently trained, an online network and a target network. The online network outputs batches
     are concanetaed and used by the target network, so it virtually increase its batchsize.
 
     The target network (k)is updated using an exponential momentum average (**EMA**) using parameters from the online network (q).
@@ -70,7 +70,7 @@ class Momentum(nn.Module):
 
         Args:
             backbone (nn.Module):
-                Torch model to be use as backbone. The model must return either one (Cox) or two ouputs (Weibull)
+                Torch model to be use as backbone. The model must return either one (Cox) or two outputs (Weibull)
             loss (Callable): Torchsurv loss function (Cox, Weibull)
             batchsize (int, optional):
                 Number of samples per batch. Defaults to 16.
@@ -86,7 +86,7 @@ class Momentum(nn.Module):
             >>> params = torch.randn((n, 16))
             >>> events = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
             >>> times = torch.randint(low=1, high=100, size=(n,))
-            >>> backbone = torch.nn.Sequential(torch.nn.Linear(16, 1))  # Cox expect one ouput
+            >>> backbone = torch.nn.Sequential(torch.nn.Linear(16, 1))  # Cox expect one output
             >>> model = Momentum(backbone=backbone, loss=cox.neg_partial_log_likelihood)
             >>> model(params, events, times)
             tensor(0.0978, grad_fn=<DivBackward0>)
@@ -175,7 +175,7 @@ class Momentum(nn.Module):
         Examples:
             >>> from torchsurv.loss import weibull
             >>> _ = torch.manual_seed(42)
-            >>> backbone = torch.nn.Sequential(torch.nn.Linear(8, 2))  # Weibull expect two ouputs
+            >>> backbone = torch.nn.Sequential(torch.nn.Linear(8, 2))  # Weibull expect two outputs
             >>> model = Momentum(backbone=backbone, loss=weibull.neg_log_likelihood)
             >>> model.infer(torch.randn((3, 8)))
             tensor([[ 0.5342,  0.0062],

@@ -9,7 +9,7 @@ from torchsurv.loss.cox import neg_partial_log_likelihood as cox
 from torchsurv.tools.validate_data import validate_loss
 
 # Load the benchmark cox log likelihoods from R
-with open("tests/benchmark_data/benchmark_cox.json", "r") as file:
+with open("tests/benchmark_data/benchmark_cox.json") as file:
     benchmark_cox_logliks = json.load(file)
 
 # set seed for reproducibility

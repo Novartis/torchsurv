@@ -105,7 +105,7 @@ def neg_partial_log_likelihood(
         log_hz (torch.Tensor, float):
             Log relative hazard of length n_samples.
         event (torch.Tensor, bool):
-            Event indicator of length n_samples (= True if event occured).
+            Event indicator of length n_samples (= True if event occurred).
         time (torch.Tensor):
             Time-to-event or censoring of length n_samples.
         ties_method (str):

@@ -164,7 +164,7 @@ def neg_log_likelihood(
             corresponds to the log shape parameter.  If the log shape parameter is missing, it is
             imputed with 0.
         event (torch.Tensor, bool):
-            Event indicator of length n_samples (= True if event occured).
+            Event indicator of length n_samples (= True if event occurred).
         time (torch.Tensor, float):
             Time-to-event or censoring of length n_samples.
         reduction (str):
