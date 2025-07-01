@@ -14,7 +14,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "s
 
 project = "TorchSurv"
 copyright = "2024, Novartis Pharma AG"
-author = 'Thibaud Coroller, Mélodie Monod, Peter Krusche, Qian Cao'
+author = "Thibaud Coroller, Mélodie Monod, Peter Krusche, Qian Cao"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
