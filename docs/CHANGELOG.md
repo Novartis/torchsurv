@@ -1,6 +1,14 @@
 Change log
 =========
 
+Version 0.1.5
+-------------
+
+* Fixed bugs (#94), (#97)
+* Improved codebase to match Torch.jit.script (#67)
+* Added precommit (#105)
+* Fixed logo issue (#95)
+
 Version 0.1.4
 -------------
 
