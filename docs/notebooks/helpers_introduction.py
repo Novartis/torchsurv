@@ -5,7 +5,6 @@ from torch.utils.data import Dataset
 
 
 def plot_losses(train_losses, val_losses, title: str = "Cox") -> None:
-
     train_losses = torch.stack(train_losses) / train_losses[0]
     val_losses = torch.stack(val_losses) / val_losses[0]
 

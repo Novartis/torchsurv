@@ -8,7 +8,6 @@ from torchsurv.metrics.cindex import ConcordanceIndex
 
 
 class LitMNIST(L.LightningModule):
-
     def __init__(
         self,
         backbone,
@@ -74,7 +73,6 @@ class LitMNIST(L.LightningModule):
 
 
 class LitMomentum(L.LightningModule):
-
     def __init__(self, backbone):
         super().__init__()
         # Set our init args as class attributes

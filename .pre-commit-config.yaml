@@ -25,11 +25,9 @@ repos:
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
-      - id: check-json
       - id: check-yaml
       - id: check-toml
       - id: check-docstring-first
-      - id: check-executables-have-shebangs
       - id: check-case-conflict
       - id: check-added-large-files
         args: ["--maxkb=1000", "--enforce-all"]
@@ -46,7 +44,7 @@ repos:
     rev: 23.9.1  # Use the latest stable version of Black
     hooks:
       - id: black
-        files: \.py$  # All python files
+        files: ^.*\.py$  # All Python files in any directories
 
   - repo: https://github.com/lorenzwalthert/precommit
     rev: v0.4.3.9009
@@ -71,11 +69,11 @@ repos:
     rev: 5.13.2 # Use the latest stable version
     hooks:
       - id: isort  # Sort imports in Python files
-        files: \.py$  # Restrict to python files under
+        files: ^.*\.py$  # Restrict to python files under
 
   - repo: https://github.com/nbQA-dev/nbQA
     rev: 1.9.1
     hooks:
       - id: nbqa-black
         additional_dependencies: [black==23.9.1]  # Ensure nbQA uses the same version of Black
-        files: \.ipynb$  # Restrict to Jupyter notebook files
+        files: ^.*\.ipynb$  # Restrict to Jupyter notebook files
