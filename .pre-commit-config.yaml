@@ -46,7 +46,7 @@ repos:
     rev: 23.9.1  # Use the latest stable version of Black
     hooks:
       - id: black
-        files: ^(src|tests)/.*\.py$  # Restrict to files under src and tests directories
+        files: \.py$  # All python files
 
   - repo: https://github.com/lorenzwalthert/precommit
     rev: v0.4.3.9009
