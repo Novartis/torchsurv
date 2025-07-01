@@ -1,19 +1,4 @@
-# # see https://pre-commit.com/ for more information
-
-# repos:
-#   # No large files - prevent committing large files
-#   - repo: https://github.com/pre-commit/pre-commit-hooks
-#     rev: v4.4.0
-#     hooks:
-#       - id: check-added-large-files
-#         args:
-#           - '--maxkb=500'  # Set the maximum file size in kilobytes (e.g., 500 KB)
-
-#   # Notebook black - formatting Jupyter notebooks
-#   - repo: https://github.com/nbQA-dev/nbQA
-#     rev: 1.9.1
-#     hooks:
-#       - id: nbqa-black
+# see https://pre-commit.com/ for more information
 
 default_language_version:
   python: python3
@@ -46,6 +31,14 @@ repos:
       - id: black
         files: ^.*\.py$  # All Python files in any directories
 
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.9.1
+    hooks:
+      - id: nbqa-black
+        additional_dependencies: [black==23.9.1]  # Ensure nbQA uses the same version of Black
+        files: ^.*\.ipynb$  # Restrict to Jupyter notebook files
+
+
   - repo: https://github.com/lorenzwalthert/precommit
     rev: v0.4.3.9009
     hooks:
@@ -70,10 +63,3 @@ repos:
     hooks:
       - id: isort  # Sort imports in Python files
         files: ^.*\.py$  # Restrict to python files under
-
-  - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.9.1
-    hooks:
-      - id: nbqa-black
-        additional_dependencies: [black==23.9.1]  # Ensure nbQA uses the same version of Black
-        files: ^.*\.ipynb$  # Restrict to Jupyter notebook files
