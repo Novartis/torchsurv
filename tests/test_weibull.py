@@ -73,9 +73,7 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
         """test weibull log likelihood with only 1 param (log scale) on lung and gbsg data"""
         for benchmark_weibull_loglik in benchmark_weibull_logliks:
             log_lik = -weibull(
-                torch.tensor(
-                    benchmark_weibull_loglik["log_shape"], dtype=torch.float32
-                ).squeeze(0),
+                torch.tensor(benchmark_weibull_loglik["log_shape"], dtype=torch.float32).squeeze(0),
                 torch.tensor(benchmark_weibull_loglik["status"]).bool(),
                 torch.tensor(benchmark_weibull_loglik["time"], dtype=torch.float32),
                 reduction="sum",
@@ -125,13 +123,8 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             duration_col="time",
             event_col="status",
         )
-        log_scale = (
-            wbf.summary.loc[:, "coef"].lambda_.Intercept
-            + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
-        )
-        log_shape = (
-            np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
-        )
+        log_scale = wbf.summary.loc[:, "coef"].lambda_.Intercept + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
+        log_shape = np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = np.column_stack((log_scale, log_shape))
         log_likelihood_lifelines = wbf.log_likelihood_
         log_likelihood = -weibull(
@@ -156,14 +149,8 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             duration_col="time",
             event_col="status",
         )
-        log_scale = (
-            wbf.summary.loc[:, "coef"].lambda_.Intercept
-            + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
-            + np.array(self.lung["sex"]) * wbf.summary.loc[:, "coef"].lambda_.sex
-        )
-        log_shape = (
-            np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
-        )
+        log_scale = wbf.summary.loc[:, "coef"].lambda_.Intercept + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age + np.array(self.lung["sex"]) * wbf.summary.loc[:, "coef"].lambda_.sex
+        log_shape = np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = np.column_stack((log_scale, log_shape))
         log_likelihood_lifelines = wbf.log_likelihood_
         log_likelihood = -weibull(
@@ -214,13 +201,8 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             duration_col="time",
             event_col="cens",
         )
-        log_scale = (
-            wbf.summary.loc[:, "coef"].lambda_.Intercept
-            + np.array(self.gbsg["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
-        )
-        log_shape = (
-            np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
-        )
+        log_scale = wbf.summary.loc[:, "coef"].lambda_.Intercept + np.array(self.gbsg["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
+        log_shape = np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = np.column_stack((log_scale, log_shape))
         log_likelihood_lifelines = wbf.log_likelihood_
         log_likelihood = -weibull(
@@ -245,14 +227,8 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             duration_col="time",
             event_col="cens",
         )
-        log_scale = (
-            wbf.summary.loc[:, "coef"].lambda_.Intercept
-            + np.array(self.gbsg["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
-            + np.array(self.gbsg["tsize"]) * wbf.summary.loc[:, "coef"].lambda_.tsize
-        )
-        log_shape = (
-            np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
-        )
+        log_scale = wbf.summary.loc[:, "coef"].lambda_.Intercept + np.array(self.gbsg["age"]) * wbf.summary.loc[:, "coef"].lambda_.age + np.array(self.gbsg["tsize"]) * wbf.summary.loc[:, "coef"].lambda_.tsize
+        log_shape = np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = np.column_stack((log_scale, log_shape))
         log_likelihood_lifelines = wbf.log_likelihood_
         log_likelihood = -weibull(

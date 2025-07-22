@@ -5,10 +5,10 @@ import unittest
 import numpy as np
 import torch
 from sksurv.nonparametric import CensoringDistributionEstimator
-from utils import DataBatchContainer
 
 # Local modules
 from torchsurv.stats.ipcw import get_ipcw
+from utils import DataBatchContainer
 
 # Load the benchmark cox log likelihoods from R
 with open("tests/benchmark_data/benchmark_ipcw.json") as file:
@@ -51,11 +51,7 @@ class TestIPCW(unittest.TestCase):
                 )
             )
 
-            self.assertTrue(
-                np.allclose(
-                    ipcw_new_time.numpy(), ipcw_new_time_pec, rtol=1e-4, atol=1e-8
-                )
-            )
+            self.assertTrue(np.allclose(ipcw_new_time.numpy(), ipcw_new_time_pec, rtol=1e-4, atol=1e-8))
 
     def test_ipcw_simulated_data(self):
         """test ipcw on simulated batches including edge cases"""
@@ -96,16 +92,14 @@ class TestIPCW(unittest.TestCase):
 
             # sksurv imposes survival data (event and time) for ipcw prediction
             # instead of just time. And then force icpw to be 0 if event == False
-            ipcw[test_event == False] = 0.0
+            ipcw[test_event is False] = 0.0
 
             # ipcw with sksurv
             cens = CensoringDistributionEstimator()
             cens.fit(y_train_array)
             ipcw_sksurv = cens.predict_ipcw(y_test_array)
 
-            self.assertTrue(
-                np.all(np.isclose(ipcw.numpy(), ipcw_sksurv, rtol=1e-4, atol=1e-8))
-            )
+            self.assertTrue(np.all(np.isclose(ipcw.numpy(), ipcw_sksurv, rtol=1e-4, atol=1e-8)))
 
 
 if __name__ == "__main__":

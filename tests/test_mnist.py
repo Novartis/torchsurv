@@ -4,11 +4,10 @@ import torch
 from pytorch_lightning import LightningModule, Trainer
 from torch import nn
 from torch.utils.data import DataLoader, random_split
-from torchvision.datasets import MNIST
-from torchvision.transforms import v2
-
 from torchsurv.loss.cox import neg_partial_log_likelihood
 from torchsurv.metrics.cindex import ConcordanceIndex
+from torchvision.datasets import MNIST
+from torchvision.transforms import v2
 
 # set seed for reproducibility
 torch.manual_seed(42)
@@ -69,9 +68,7 @@ class LitMNIST(LightningModule):
         y[y == 0] = 10  # Offset 0 to prevent log(0)
         params = self(x)
         loss = self.loss(params, torch.ones_like(y, device=y.device).bool(), y)
-        cindex = self.cindex(
-            params, torch.ones_like(y, device=y.device).bool(), y.float()
-        )
+        cindex = self.cindex(params, torch.ones_like(y, device=y.device).bool(), y.float())
         self.log("val_loss", loss, prog_bar=True, on_step=True, on_epoch=True)
         self.log(
             "cindex",
@@ -107,9 +104,7 @@ class LitMNIST(LightningModule):
 
         # Assign test dataset for use in dataloader(s)
         if stage == "test" or stage is None:
-            self.mnist_test = MNIST(
-                self.data_dir, train=False, transform=self.transform
-            )
+            self.mnist_test = MNIST(self.data_dir, train=False, transform=self.transform)
 
     def train_dataloader(self):
         return DataLoader(

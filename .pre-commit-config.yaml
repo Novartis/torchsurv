@@ -17,6 +17,7 @@ repos:
       - id: check-added-large-files
         args: ["--maxkb=1000", "--enforce-all"]
       - id: detect-private-key
+      - id: debug-statements
 
   # >>>>> Custom precommits <<<<<<
   - repo: https://github.com/asottile/pyupgrade
@@ -25,19 +26,19 @@ repos:
     -   id: pyupgrade
         files: ^(src|tests)/.*\.py$  # Restrict to files under src and tests directories
 
-  - repo: https://github.com/psf/black
-    rev: 23.9.1  # Use the latest stable version of Black
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.8
     hooks:
-      - id: black
-        files: ^.*\.py$  # All Python files in any directories
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
 
-  - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.9.1
-    hooks:
-      - id: nbqa-black
-        additional_dependencies: [black==23.9.1]  # Ensure nbQA uses the same version of Black
-        files: ^.*\.ipynb$  # Restrict to Jupyter notebook files
-
+  # - repo: https://github.com/nbQA-dev/nbQA
+  #   rev: 1.7.1
+  #   hooks:
+  #     - id: nbqa-ruff
+  #       args: [--fix]
+  #       files: ^docs/notebooks/.*\.ipynb$
 
   - repo: https://github.com/lorenzwalthert/precommit
     rev: v0.4.3.9009
@@ -58,8 +59,8 @@ repos:
         additional_dependencies: [tomli]
         args: ["--write-changes"]  # Automatically fix spelling errors if only one suggestion
 
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2 # Use the latest stable version
-    hooks:
-      - id: isort  # Sort imports in Python files
-        files: ^.*\.py$  # Restrict to python files under
+
+ci:
+  autofix_prs: true
+  autoupdate_commit_msg: "[pre-commit.ci] pre-commit suggestions"
+  autoupdate_schedule: monthly

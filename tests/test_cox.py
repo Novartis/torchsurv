@@ -1,10 +1,8 @@
 import json
-import os
 import unittest
 
 import numpy as np
 import torch
-
 from torchsurv.loss.cox import neg_partial_log_likelihood as cox
 from torchsurv.tools.validate_data import validate_loss
 
@@ -64,11 +62,9 @@ class TestCoxSurvivalLoss(unittest.TestCase):
     def test_log_likelihood_without_ties(self):
         """test cox partial log likelihood without ties on lung and gbsg datasets"""
         for benchmark_cox_loglik in benchmark_cox_logliks:
-            if benchmark_cox_loglik["no_ties"][0] == True:
+            if benchmark_cox_loglik["no_ties"][0]:
                 log_lik = -cox(
-                    torch.tensor(
-                        benchmark_cox_loglik["log_hazard"], dtype=torch.float32
-                    ).squeeze(0),
+                    torch.tensor(benchmark_cox_loglik["log_hazard"], dtype=torch.float32).squeeze(0),
                     torch.tensor(benchmark_cox_loglik["status"]).bool(),
                     torch.tensor(benchmark_cox_loglik["time"], dtype=torch.float32),
                     reduction="sum",
@@ -87,12 +83,10 @@ class TestCoxSurvivalLoss(unittest.TestCase):
     def test_log_likelihood_with_ties(self):
         """test Efron and Breslow's approximation of cox partial log likelihood with ties on lung and gbsg data"""
         for benchmark_cox_loglik in benchmark_cox_logliks:
-            if benchmark_cox_loglik["no_ties"][0] == False:
+            if benchmark_cox_loglik["no_ties"][0] is False:
                 # efron approximation of partial log likelihood
                 log_lik_efron = -cox(
-                    torch.tensor(
-                        benchmark_cox_loglik["log_hazard_efron"], dtype=torch.float32
-                    ).squeeze(0),
+                    torch.tensor(benchmark_cox_loglik["log_hazard_efron"], dtype=torch.float32).squeeze(0),
                     torch.tensor(benchmark_cox_loglik["status"]).bool(),
                     torch.tensor(benchmark_cox_loglik["time"], dtype=torch.float32),
                     ties_method="efron",
@@ -102,17 +96,13 @@ class TestCoxSurvivalLoss(unittest.TestCase):
 
                 # breslow approximation of partial log likelihood
                 log_lik_breslow = -cox(
-                    torch.tensor(
-                        benchmark_cox_loglik["log_hazard_breslow"], dtype=torch.float32
-                    ).squeeze(0),
+                    torch.tensor(benchmark_cox_loglik["log_hazard_breslow"], dtype=torch.float32).squeeze(0),
                     torch.tensor(benchmark_cox_loglik["status"]).bool(),
                     torch.tensor(benchmark_cox_loglik["time"], dtype=torch.float32),
                     ties_method="breslow",
                     reduction="sum",
                 )
-                log_lik_breslow_survival = benchmark_cox_loglik[
-                    "log_likelihood_breslow"
-                ]
+                log_lik_breslow_survival = benchmark_cox_loglik["log_likelihood_breslow"]
 
                 self.assertTrue(
                     np.allclose(

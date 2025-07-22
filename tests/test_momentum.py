@@ -1,9 +1,7 @@
-import os
 import unittest
 
 import torch
 from torch import nn
-
 from torchsurv.loss.cox import neg_partial_log_likelihood
 from torchsurv.loss.momentum import Momentum
 from torchsurv.loss.weibull import neg_log_likelihood

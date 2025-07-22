@@ -79,18 +79,11 @@ class KaplanMeierEstimator:
         # Compute the Kaplan-Meier estimator
         ratio = torch.where(
             n_events != 0,  # Check if the number of events is not equal to zero
-            n_events
-            / n_at_risk,  # Element-wise division when the number of events is not zero
-            torch.zeros_like(
-                n_events, dtype=torch.float
-            ),  # Set to zero when the number of events is zero to avoid division by zero
+            n_events / n_at_risk,  # Element-wise division when the number of events is not zero
+            torch.zeros_like(n_events, dtype=torch.float),  # Set to zero when the number of events is zero to avoid division by zero
         )
-        values = (
-            1.0 - ratio
-        )  # Compute the survival (or censoring) probabilities at each unique time
-        y = torch.cumprod(
-            values, dim=0
-        )  # Cumulative product to get the Kaplan-Meier estimator
+        values = 1.0 - ratio  # Compute the survival (or censoring) probabilities at each unique time
+        y = torch.cumprod(values, dim=0)  # Cumulative product to get the Kaplan-Meier estimator
 
         # Keep track of the unique times and Kaplan-Meier estimator values
         self.time = uniq_times
@@ -159,11 +152,7 @@ class KaplanMeierEstimator:
         extends = new_time > torch.max(ref_time)
         if km_est_[torch.argmax(ref_time)] > 0 and extends.any():
             # pylint: disable=consider-using-f-string
-            raise ValueError(
-                "Cannot predict survival/censoring distribution after the largest observed training event time point: {}".format(
-                    ref_time[-1].item()
-                )
-            )
+            raise ValueError(f"Cannot predict survival/censoring distribution after the largest observed training event time point: {ref_time[-1].item()}")
 
         # beyond last time point is zero probability
         km_pred = torch.zeros_like(new_time, dtype=km_est_.dtype)
@@ -222,9 +211,7 @@ class KaplanMeierEstimator:
         uniq_counts = torch.empty_like(self.time, dtype=torch.long)
 
         # Group indices by unique time values
-        groups = itertools.groupby(
-            range(len(self.time)), key=lambda i: self.time[order[i]]
-        )
+        groups = itertools.groupby(range(len(self.time)), key=lambda i: self.time[order[i]])
 
         # Initialize index for storing unique values
         j = 0
@@ -250,9 +237,7 @@ class KaplanMeierEstimator:
         n_censored = total_count - n_events
 
         # Offset cumulative sum by one to get the number at risk
-        n_at_risk = n_samples - torch.cumsum(
-            torch.cat([torch.tensor([0]), total_count]), dim=0
-        )
+        n_at_risk = n_samples - torch.cumsum(torch.cat([torch.tensor([0]), total_count]), dim=0)
 
         return times, n_events, n_at_risk[:-1], n_censored
 

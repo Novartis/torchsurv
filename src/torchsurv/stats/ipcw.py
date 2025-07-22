@@ -103,7 +103,8 @@ def _inverse_censoring_dist(ct: torch.Tensor) -> torch.Tensor:
         zero_indices = torch.nonzero(ct.eq(0.0)).squeeze()
         zero_indices_list = zero_indices.tolist()  # Explicitly convert to list
         warnings.warn(
-            f"Censoring distribution zero at time points: {zero_indices_list}. Returning ones as weight"
+            f"Censoring distribution zero at time points: {zero_indices_list}. Returning ones as weight",
+            stacklevel=2,
         )
     weight = 1.0 / ct
     weight = torch.ones_like(ct) / ct

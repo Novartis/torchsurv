@@ -53,18 +53,11 @@ def cumulative_hazard(
     if all_times:
         # Use all times for each sample
         time = time.unsqueeze(0).expand(len(time), len(time))  # expand across rows
-        log_scale = log_scale.unsqueeze(1).expand(
-            len(time), len(time)
-        )  # expand across columns
-        log_shape = log_shape.unsqueeze(1).expand(
-            len(time), len(time)
-        )  # expand across columns
+        log_scale = log_scale.unsqueeze(1).expand(len(time), len(time))  # expand across columns
+        log_shape = log_shape.unsqueeze(1).expand(len(time), len(time))  # expand across columns
 
     return torch.clamp(
-        torch.exp(
-            torch.exp(log_shape)
-            * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale)
-        ),
+        torch.exp(torch.exp(log_shape) * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale)),
         min=0,
         max=clamp_value,
     )
@@ -126,22 +119,13 @@ def log_hazard(
     elif time.size(0) == log_params.size(0) and all_times:
         # Use all times for each sample
         time = time.unsqueeze(0).expand(len(time), len(time))  # expand across rows
-        log_scale = log_scale.unsqueeze(1).expand(
-            len(time), len(time)
-        )  # expand across columns
-        log_shape = log_shape.unsqueeze(1).expand(
-            len(time), len(time)
-        )  # expand across columns
+        log_scale = log_scale.unsqueeze(1).expand(len(time), len(time))  # expand across columns
+        log_shape = log_shape.unsqueeze(1).expand(len(time), len(time))  # expand across columns
     if time.size(0) != log_params.size(0):
-        raise ValueError(
-            f"Dimension mismatch: 'time' ({len(time)}) does not match the length of 'log_params' ({len(log_params)})."
-        )
+        raise ValueError(f"Dimension mismatch: 'time' ({len(time)}) does not match the length of 'log_params' ({len(log_params)}).")
 
     return torch.clamp(
-        log_shape
-        - log_scale
-        + torch.expm1(log_shape)
-        * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale),
+        log_shape - log_scale + torch.expm1(log_shape) * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale),
         min=-clamp_value,
         max=clamp_value,
     )
@@ -241,8 +225,7 @@ def neg_log_likelihood(
 
     # Negative log likelihood
     nll = torch.neg(
-        event * log_hazard(log_params, time, False)
-        - cumulative_hazard(log_params, time, False)  # Huge values here
+        event * log_hazard(log_params, time, False) - cumulative_hazard(log_params, time, False)  # Huge values here
     )
 
     if any(torch.isinf(nll)):
@@ -254,17 +237,11 @@ def neg_log_likelihood(
     elif reduction.lower() == "sum":
         loss = nll.sum()
     else:
-        raise (
-            ValueError(
-                f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."
-            )
-        )
+        raise (ValueError(f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."))
     return loss
 
 
-def survival_function(
-    log_params: torch.Tensor, time: torch.Tensor, all_times: bool = True
-) -> torch.Tensor:
+def survival_function(log_params: torch.Tensor, time: torch.Tensor, all_times: bool = True) -> torch.Tensor:
     """Survival function for the Weibull Accelerated Time Failure (AFT) survival model.
 
     Args:
@@ -313,19 +290,11 @@ def survival_function(
     elif all([time.size(0) == log_params.size(0), all_times]):
         # Use all times for each sample
         time = time.unsqueeze(0).expand(len(time), len(time))  # expand across rows
-        log_scale = log_scale.unsqueeze(1).expand(
-            len(time), len(time)
-        )  # expand across columns
-        log_shape = log_shape.unsqueeze(1).expand(
-            len(time), len(time)
-        )  # expand across columns
+        log_scale = log_scale.unsqueeze(1).expand(len(time), len(time))  # expand across columns
+        log_shape = log_shape.unsqueeze(1).expand(len(time), len(time))  # expand across columns
     if time.size(0) != log_params.size(0):
-        raise ValueError(
-            f"Dimension mismatch: 'time' ({len(time)}) does not match the length of 'log_params' ({len(log_params)})."
-        )
-    return 1 - torch.distributions.weibull.Weibull(
-        torch.exp(log_scale), torch.exp(log_shape)
-    ).cdf(time)
+        raise ValueError(f"Dimension mismatch: 'time' ({len(time)}) does not match the length of 'log_params' ({len(log_params)}).")
+    return 1 - torch.distributions.weibull.Weibull(torch.exp(log_scale), torch.exp(log_shape)).cdf(time)
 
 
 if __name__ == "__main__":

@@ -112,17 +112,13 @@ class Momentum(nn.Module):
         self.loss = loss
 
         # survival data structure
-        self.survtuple = collections.namedtuple(
-            "survival", ["estimate", "event", "time"]
-        )
+        self.survtuple = collections.namedtuple("survival", ["estimate", "event", "time"])
 
         # Hazards: current batch & memory
         self.memory_q = collections.deque(maxlen=batchsize)  # online (q)
         self.memory_k = collections.deque(maxlen=batchsize * steps)  # target (k)
 
-    def forward(
-        self, inputs: torch.Tensor, event: torch.Tensor, time: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, inputs: torch.Tensor, event: torch.Tensor, time: torch.Tensor) -> torch.Tensor:
         """Compute the loss for the current batch and update the memory bank using momentum class.
 
         Args:
@@ -191,9 +187,7 @@ class Momentum(nn.Module):
 
         # Combine current batch and momentum
         bank = self.memory_k + self.memory_q
-        assert all(
-            x in bank[0]._fields for x in ["estimate", "event", "time"]
-        ), "All fields must be present"
+        assert all(x in bank[0]._fields for x in ["estimate", "event", "time"]), "All fields must be present"
         log_estimates = torch.stack([mem.estimate.cpu() for mem in bank]).squeeze()
         events = torch.stack([mem.event.cpu() for mem in bank]).squeeze()
         times = torch.stack([mem.time.cpu() for mem in bank]).squeeze()

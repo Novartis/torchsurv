@@ -39,10 +39,7 @@ def _partial_likelihood_efron(
     """
     J = len(time_unique)
 
-    H = [
-        torch.where((time_sorted == time_unique[j]) & (event_sorted == 1))[0]
-        for j in range(J)
-    ]
+    H = [torch.where((time_sorted == time_unique[j]) & (event_sorted == 1))[0] for j in range(J)]
     R = [torch.where(time_sorted >= time_unique[j])[0] for j in range(J)]
 
     # Calculate the length of each element in H and store it in a tensor
@@ -59,10 +56,8 @@ def _partial_likelihood_efron(
     log_denominator_efron = torch.zeros(J, device=log_hz_sorted.device)
     for j in range(J):
         mj = int(m[j].item())
-        for l in range(1, mj + 1):
-            log_denominator_efron[j] += torch.log(
-                denominator_naive[j] - (l - 1) / float(m[j]) * denominator_ties[j]
-            )
+        for sample in range(1, mj + 1):
+            log_denominator_efron[j] += torch.log(denominator_naive[j] - (sample - 1) / float(m[j]) * denominator_ties[j])
     return (log_nominator - log_denominator_efron)[include]
 
 
@@ -84,9 +79,7 @@ def _partial_likelihood_breslow(
     """
     N = len(time_sorted)
     R = [torch.where(time_sorted >= time_sorted[i])[0] for i in range(N)]
-    log_denominator = torch.stack(
-        [torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(N)]
-    )
+    log_denominator = torch.stack([torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(N)])
 
     return (log_hz_sorted - log_denominator)[event_sorted]
 
@@ -205,7 +198,10 @@ def neg_partial_log_likelihood(
         validate_loss(log_hz, event, time, model_type="cox")
 
     if any([event.sum().item() == 0, len(log_hz.size()) == 0]):
-        warnings.warn("No events OR single sample. Returning zero loss for the batch")
+        warnings.warn(
+            "No events OR single sample. Returning zero loss for the batch",
+            stacklevel=2,
+        )
         return torch.tensor(0.0, requires_grad=True)
 
     # sort data by time-to-event or censoring
@@ -220,7 +216,8 @@ def neg_partial_log_likelihood(
     else:
         # add warning about ties
         warnings.warn(
-            f"Ties in event time detected; using {ties_method}'s method to handle ties."
+            f"Ties in event time detected; using {ties_method}'s method to handle ties.",
+            stacklevel=2,
         )
         # if ties, use either efron or breslow approximation of partial likelihood
         if ties_method == "efron":
@@ -233,9 +230,7 @@ def neg_partial_log_likelihood(
         elif ties_method == "breslow":
             pll = _partial_likelihood_breslow(log_hz_sorted, event_sorted, time_sorted)
         else:
-            raise ValueError(
-                f'Ties method {ties_method} should be one of ["efron", "breslow"]'
-            )
+            raise ValueError(f'Ties method {ties_method} should be one of ["efron", "breslow"]')
 
     # Negative partial log likelihood
     pll = torch.neg(pll)
@@ -244,11 +239,7 @@ def neg_partial_log_likelihood(
     elif reduction.lower() == "sum":
         loss = pll.sum()
     else:
-        raise (
-            ValueError(
-                f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."
-            )
-        )
+        raise (ValueError(f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."))
     return loss
 
 
