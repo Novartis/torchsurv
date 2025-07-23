@@ -58,9 +58,7 @@ docs = [
     "numpydoc",
     "jupyter-book",
 ]
-benchmark = [
-    "pytest-benchmark",
-]
+
 
 [tool.hatch.version]
 path = "src/torchsurv/__init__.py"
@@ -93,7 +91,18 @@ ignore_missing_imports = true
 # pyproject.toml
 [tool.ruff]
 target-version = "py38"
-line-length = 300
+line-length = 120
+
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = false
+
+[tool.ruff.lint]
+ignore = ["E501"]
 select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -103,10 +112,6 @@ select = [
     "C4", # flake8-comprehensions
     "UP", # pyupgrade
 ]
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -119,11 +124,6 @@ addopts = [
     "--cov-fail-under=80",
 ]
 testpaths = ["tests"]
-markers = [
-    "slow: marks tests as slow",
-    "integration: marks tests as integration tests",
-    "gpu: marks tests requiring GPU",
-]
 
 [tool.doctest]
 modules = ["torchsurv"]

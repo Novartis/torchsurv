@@ -3,6 +3,7 @@ import unittest
 
 import numpy as np
 import torch
+
 from torchsurv.loss.cox import neg_partial_log_likelihood as cox
 from torchsurv.tools.validate_data import validate_loss
 

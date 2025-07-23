@@ -206,7 +206,9 @@ class Auc:
         self._validate_auc_inputs(estimate, time, auc_type, new_time, weight, weight_new_time)
 
         # update inputs as required
-        estimate, new_time, weight, weight_new_time = self._update_auc_new_time(estimate, event, time, new_time, weight, weight_new_time)
+        estimate, new_time, weight, weight_new_time = self._update_auc_new_time(
+            estimate, event, time, new_time, weight, weight_new_time
+        )
         estimate = self._update_auc_estimate(estimate, new_time)
         weight, weight_new_time = self._update_auc_weight(time, new_time, weight, weight_new_time)
 
@@ -227,7 +229,9 @@ class Auc:
 
         # sort each time point (columns) by risk score (descending)
         index = torch.argsort(-estimate, dim=0)
-        time_long, event_long, estimate, weight_long = (torch.gather(x, 0, index) for x in [time_long, event_long, estimate, weight_long])
+        time_long, event_long, estimate, weight_long = (
+            torch.gather(x, 0, index) for x in [time_long, event_long, estimate, weight_long]
+        )
 
         # find case and control
         if auc_type == "incident":
@@ -406,7 +410,9 @@ class Auc:
                 Blanche2013b
         """
 
-        assert hasattr(self, "auc") and self.auc is not None, "Error: Please calculate AUC using `Auc()` before calling `confidence_interval()`."
+        assert hasattr(self, "auc") and self.auc is not None, (
+            "Error: Please calculate AUC using `Auc()` before calling `confidence_interval()`."
+        )
 
         if alternative not in ["less", "greater", "two_sided"]:
             raise ValueError("'alternative' parameter must be one of ['less', 'greater', 'two_sided'].")
@@ -465,7 +471,9 @@ class Auc:
 
         """
 
-        assert hasattr(self, "auc") and self.auc is not None, "Error: Please calculate AUC using `Auc()` before calling `p_value()`."
+        assert hasattr(self, "auc") and self.auc is not None, (
+            "Error: Please calculate AUC using `Auc()` before calling `p_value()`."
+        )
 
         if alternative not in ["less", "greater", "two_sided"]:
             raise ValueError("'alternative' parameter must be one of ['less', 'greater', 'two_sided'].")
@@ -520,11 +528,15 @@ class Auc:
 
         """
 
-        assert hasattr(self, "auc") and self.auc is not None, "Error: Please calculate AUC using `Auc()` before calling `compare()`."
+        assert hasattr(self, "auc") and self.auc is not None, (
+            "Error: Please calculate AUC using `Auc()` before calling `compare()`."
+        )
 
         # assert that the same data were used to compute the two auc
         if torch.any(self.event != other.event) or torch.any(self.time != other.time):
-            raise ValueError("Mismatched survival data: 'time' and 'event' should be the same for both AUC computations.")
+            raise ValueError(
+                "Mismatched survival data: 'time' and 'event' should be the same for both AUC computations."
+            )
         if torch.any(self.new_time != other.new_time):
             raise ValueError("Mismatched evaluation times: 'new_time' should be the same for both AUC computations.")
         if self.auc_type != other.auc_type:
@@ -711,12 +723,16 @@ class Auc:
         # iterate over time
         for index_t, _ in enumerate(self.auc):
             # Derive p-value
-            p = (torch.tensor(1.0) + torch.sum(auc0[:, index_t] <= self.auc[index_t])) / torch.tensor(n_bootstraps + 1.0)
+            p = (torch.tensor(1.0) + torch.sum(auc0[:, index_t] <= self.auc[index_t])) / torch.tensor(
+                n_bootstraps + 1.0
+            )
             if alternative == "two_sided":
                 if self.auc[index_t] >= torch.tensor(0.5):
                     p = torch.tensor(1.0) - p
                 p *= torch.tensor(2.0)
-                p = torch.min(torch.tensor(1.0, device=self.auc.device), p)  # in case very small bootstrap sample size is used
+                p = torch.min(
+                    torch.tensor(1.0, device=self.auc.device), p
+                )  # in case very small bootstrap sample size is used
             elif alternative == "greater":
                 p = torch.tensor(1.0) - p
 
@@ -750,7 +766,9 @@ class Auc:
                 p_values[index_t] = 1.0
             else:
                 # compute t-stat
-                t_stat = (self.auc[index_t] - other.auc[index_t]) / torch.sqrt(auc1_se[index_t] ** 2 + auc2_se[index_t] ** 2 - 2 * corr * auc1_se[index_t] * auc2_se[index_t])
+                t_stat = (self.auc[index_t] - other.auc[index_t]) / torch.sqrt(
+                    auc1_se[index_t] ** 2 + auc2_se[index_t] ** 2 - 2 * corr * auc1_se[index_t] * auc2_se[index_t]
+                )
 
                 # p-value
                 p_values[index_t] = torch.tensor(
@@ -819,7 +837,9 @@ class Auc:
         for index_t in range(n_times):
             # element(i,j) given t = h*_tij = I(T_i <= t, delta_i = 1)  * I(U_j > t) * (I(M_i > M_j) + 0.5 * I(M_i > M_j)) * W(T_i) * W(t)
             h_t = (self.is_case[:, index_t].unsqueeze(1) * self.is_control[:, index_t]).float()
-            h_t *= (self.estimate[:, index_t].unsqueeze(1) > self.estimate[:, index_t].unsqueeze(0)).float() + 0.5 * (self.estimate[:, index_t].unsqueeze(1) == self.estimate[:, index_t].unsqueeze(0)).float()
+            h_t *= (self.estimate[:, index_t].unsqueeze(1) > self.estimate[:, index_t].unsqueeze(0)).float() + 0.5 * (
+                self.estimate[:, index_t].unsqueeze(1) == self.estimate[:, index_t].unsqueeze(0)
+            ).float()
             h_t *= self.weight.unsqueeze(1)
             h_t *= self.weight_new_time[index_t]
 
@@ -1082,7 +1102,10 @@ class Auc:
         # check if new_time are not specified and time-dependent estimate are not evaluated at time
         if new_time is None and estimate.ndim == 2 and estimate.shape[1] != 1:
             if len(time) != estimate.shape[1]:
-                raise ValueError("Mismatched dimensions: The number of columns in 'estimate' does not match the length of 'time'. " "Please provide the times at which 'estimate' is evaluated using the 'new_time' input.")
+                raise ValueError(
+                    "Mismatched dimensions: The number of columns in 'estimate' does not match the length of 'time'. "
+                    "Please provide the times at which 'estimate' is evaluated using the 'new_time' input."
+                )
 
     @staticmethod
     def _update_auc_new_time(
@@ -1106,7 +1129,9 @@ class Auc:
         else:  # else: find new_time
             # if new_time are not specified, use unique event time
             mask = event & (time < torch.max(time))
-            new_time, inverse_indices, counts = torch.unique(time[mask], sorted=True, return_inverse=True, return_counts=True)
+            new_time, inverse_indices, counts = torch.unique(
+                time[mask], sorted=True, return_inverse=True, return_counts=True
+            )
             sorted_unique_indices = Auc._find_torch_unique_indices(inverse_indices, counts)
 
             # select weight corresponding at new time

@@ -14,4 +14,4 @@ fi
 
 export PYTHONPATH=${DIR}/../src
 
-pylint src
+ruff check

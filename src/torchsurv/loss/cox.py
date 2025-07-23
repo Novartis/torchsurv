@@ -57,7 +57,9 @@ def _partial_likelihood_efron(
     for j in range(J):
         mj = int(m[j].item())
         for sample in range(1, mj + 1):
-            log_denominator_efron[j] += torch.log(denominator_naive[j] - (sample - 1) / float(m[j]) * denominator_ties[j])
+            log_denominator_efron[j] += torch.log(
+                denominator_naive[j] - (sample - 1) / float(m[j]) * denominator_ties[j]
+            )
     return (log_nominator - log_denominator_efron)[include]
 
 
@@ -172,15 +174,15 @@ def neg_partial_log_likelihood(
     Examples:
         >>> log_hz = torch.tensor([0.1, 0.2, 0.3, 0.4, 0.5])
         >>> event = torch.tensor([1, 0, 1, 0, 1], dtype=torch.bool)
-        >>> time = torch.tensor([1., 2., 3., 4., 5.])
-        >>> neg_partial_log_likelihood(log_hz, event, time) # default, mean of log likelihoods across patients
+        >>> time = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
+        >>> neg_partial_log_likelihood(log_hz, event, time)  # default, mean of log likelihoods across patients
         tensor(1.0071)
-        >>> neg_partial_log_likelihood(log_hz, event, time, reduction = 'sum') # sum of log likelihoods across patients
+        >>> neg_partial_log_likelihood(log_hz, event, time, reduction="sum")  # sum of log likelihoods across patients
         tensor(3.0214)
-        >>> time = torch.tensor([1., 2., 2., 4., 5.])  # Dealing with ties (default: Efron)
-        >>> neg_partial_log_likelihood(log_hz, event, time, ties_method = "efron")
+        >>> time = torch.tensor([1.0, 2.0, 2.0, 4.0, 5.0])  # Dealing with ties (default: Efron)
+        >>> neg_partial_log_likelihood(log_hz, event, time, ties_method="efron")
         tensor(1.0873)
-        >>> neg_partial_log_likelihood(log_hz, event, time, ties_method = "breslow")  # Dealing with ties (Breslow)
+        >>> neg_partial_log_likelihood(log_hz, event, time, ties_method="breslow")  # Dealing with ties (Breslow)
         tensor(1.0873)
 
     References:

@@ -325,7 +325,9 @@ class SurvivalDataGenerator:
         self.test_time = test_time[index]
         self.test_event = test_event[index].bool()
 
-    def _enforce_conditions_data(self, time: torch.tensor, event: torch.tensor, dataset_type: str) -> Tuple[torch.tensor, torch.tensor]:
+    def _enforce_conditions_data(
+        self, time: torch.tensor, event: torch.tensor, dataset_type: str
+    ) -> Tuple[torch.tensor, torch.tensor]:
         # if test max time should be greater than train max time
         if dataset_type == "test":
             if self.test_max_time_gt_train_max_time:
@@ -336,15 +338,21 @@ class SurvivalDataGenerator:
                 event = event[index_time]
 
         # if there should be ties in two event times
-        if (dataset_type == "train" and self.train_ties_time_event) or (dataset_type == "test" and self.test_ties_time_event):
+        if (dataset_type == "train" and self.train_ties_time_event) or (
+            dataset_type == "test" and self.test_ties_time_event
+        ):
             time[torch.where(event == 1.0)[0][0]] = time[torch.where(event == 1.0)[0][1]]
 
         # if there should be ties in two censoring times
-        if (dataset_type == "train" and self.train_ties_time_censoring) or (dataset_type == "test" and self.test_ties_time_censoring):
+        if (dataset_type == "train" and self.train_ties_time_censoring) or (
+            dataset_type == "test" and self.test_ties_time_censoring
+        ):
             time[torch.where(event == 0.0)[0][0]] = time[torch.where(event == 0.0)[0][1]]
 
         # if there should be a tie in an event time and a censoring time
-        if (dataset_type == "train" and self.train_ties_time_event_censoring) or (dataset_type == "test" and self.test_ties_time_event_censoring):
+        if (dataset_type == "train" and self.train_ties_time_event_censoring) or (
+            dataset_type == "test" and self.test_ties_time_event_censoring
+        ):
             time[torch.where(event == 1.0)[0][0]] = time[torch.where(event == 0.0)[0][0]]
 
         # if there should be an event at the last time

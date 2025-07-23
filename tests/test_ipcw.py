@@ -5,10 +5,10 @@ import unittest
 import numpy as np
 import torch
 from sksurv.nonparametric import CensoringDistributionEstimator
+from utils import DataBatchContainer
 
 # Local modules
 from torchsurv.stats.ipcw import get_ipcw
-from utils import DataBatchContainer
 
 # Load the benchmark cox log likelihoods from R
 with open("tests/benchmark_data/benchmark_ipcw.json") as file:

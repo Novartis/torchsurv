@@ -5,11 +5,11 @@ import unittest
 import numpy as np
 import torch
 from sksurv.metrics import cumulative_dynamic_auc
+from utils import DataBatchContainer, conditions_ci, conditions_p_value
 
 # Local modules
 from torchsurv.metrics.auc import Auc
 from torchsurv.stats.ipcw import get_ipcw
-from utils import DataBatchContainer, conditions_ci, conditions_p_value
 
 # set seed for reproducibility
 torch.manual_seed(42)
@@ -216,7 +216,9 @@ class TestAUC(unittest.TestCase):
                 new_time=new_time,
             )
 
-            auc_cd_sksurv, _ = cumulative_dynamic_auc(y_train_array, y_test_array, estimate.numpy(), new_time_array)  # sksurv
+            auc_cd_sksurv, _ = cumulative_dynamic_auc(
+                y_train_array, y_test_array, estimate.numpy(), new_time_array
+            )  # sksurv
 
             self.assertTrue(np.allclose(auc_cd.numpy(), auc_cd_sksurv, rtol=1e-5, atol=1e-8))
 
@@ -274,7 +276,9 @@ class TestAUC(unittest.TestCase):
         estimate_informative = torch.randn((n,))  # estimate used to define time-to-event
         estimate_non_informative = torch.randn((n,))  # random estimate
         event = torch.randint(low=0, high=2, size=(n,)).bool()
-        time = torch.randn(size=(n,)) * 10 - estimate_informative * 5.0 + 200  # + estimate for auc < 0.5 and - for auc > 0.5
+        time = (
+            torch.randn(size=(n,)) * 10 - estimate_informative * 5.0 + 200
+        )  # + estimate for auc < 0.5 and - for auc > 0.5
 
         Auc_informative = Auc()
         auc_informative = Auc_informative(estimate_informative, event, time)

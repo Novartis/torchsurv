@@ -123,7 +123,10 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             duration_col="time",
             event_col="status",
         )
-        log_scale = wbf.summary.loc[:, "coef"].lambda_.Intercept + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
+        log_scale = (
+            wbf.summary.loc[:, "coef"].lambda_.Intercept
+            + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
+        )
         log_shape = np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = np.column_stack((log_scale, log_shape))
         log_likelihood_lifelines = wbf.log_likelihood_
@@ -149,7 +152,11 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             duration_col="time",
             event_col="status",
         )
-        log_scale = wbf.summary.loc[:, "coef"].lambda_.Intercept + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age + np.array(self.lung["sex"]) * wbf.summary.loc[:, "coef"].lambda_.sex
+        log_scale = (
+            wbf.summary.loc[:, "coef"].lambda_.Intercept
+            + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
+            + np.array(self.lung["sex"]) * wbf.summary.loc[:, "coef"].lambda_.sex
+        )
         log_shape = np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = np.column_stack((log_scale, log_shape))
         log_likelihood_lifelines = wbf.log_likelihood_
@@ -201,7 +208,10 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             duration_col="time",
             event_col="cens",
         )
-        log_scale = wbf.summary.loc[:, "coef"].lambda_.Intercept + np.array(self.gbsg["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
+        log_scale = (
+            wbf.summary.loc[:, "coef"].lambda_.Intercept
+            + np.array(self.gbsg["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
+        )
         log_shape = np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = np.column_stack((log_scale, log_shape))
         log_likelihood_lifelines = wbf.log_likelihood_
@@ -227,7 +237,11 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             duration_col="time",
             event_col="cens",
         )
-        log_scale = wbf.summary.loc[:, "coef"].lambda_.Intercept + np.array(self.gbsg["age"]) * wbf.summary.loc[:, "coef"].lambda_.age + np.array(self.gbsg["tsize"]) * wbf.summary.loc[:, "coef"].lambda_.tsize
+        log_scale = (
+            wbf.summary.loc[:, "coef"].lambda_.Intercept
+            + np.array(self.gbsg["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
+            + np.array(self.gbsg["tsize"]) * wbf.summary.loc[:, "coef"].lambda_.tsize
+        )
         log_shape = np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = np.column_stack((log_scale, log_shape))
         log_likelihood_lifelines = wbf.log_likelihood_

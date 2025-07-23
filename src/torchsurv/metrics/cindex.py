@@ -307,7 +307,9 @@ class ConcordanceIndex:
 
         assert isinstance(method, str)
         assert isinstance(alternative, str)
-        assert hasattr(self, "cindex") and self.cindex is not None, "Error: Please calculate the concordance index using `ConcordanceIndex()` before calling `confidence_interval()`."
+        assert hasattr(self, "cindex") and self.cindex is not None, (
+            "Error: Please calculate the concordance index using `ConcordanceIndex()` before calling `confidence_interval()`."
+        )
 
         if alternative not in ["less", "greater", "two_sided"]:
             raise ValueError(f"'alternative' {alternative} must be one of ['less', 'greater', 'two_sided'].")
@@ -319,7 +321,9 @@ class ConcordanceIndex:
         elif method == "conservative":
             conf_int = self._confidence_interval_conservative(alpha, alternative)
         else:
-            raise ValueError(f"Method {method} not implemented. Please choose either 'noether', 'conservative' or 'bootstrap'.")
+            raise ValueError(
+                f"Method {method} not implemented. Please choose either 'noether', 'conservative' or 'bootstrap'."
+            )
         return conf_int
 
     def p_value(
@@ -368,7 +372,9 @@ class ConcordanceIndex:
 
         """
 
-        assert hasattr(self, "cindex") and self.cindex is not None, "Error: Please calculate the concordance index using `ConcordanceIndex()` before calling `p_value()`."
+        assert hasattr(self, "cindex") and self.cindex is not None, (
+            "Error: Please calculate the concordance index using `ConcordanceIndex()` before calling `p_value()`."
+        )
 
         if alternative not in ["less", "greater", "two_sided"]:
             raise ValueError("'alternative' parameter must be one of ['less', 'greater', 'two_sided'].")
@@ -426,14 +432,20 @@ class ConcordanceIndex:
         assert isinstance(other, ConcordanceIndex)
         assert isinstance(method, str)
 
-        assert hasattr(self, "cindex") and self.cindex is not None, "Error: Please calculate the concordance index using `ConcordanceIndex()` before calling `compare()`."
+        assert hasattr(self, "cindex") and self.cindex is not None, (
+            "Error: Please calculate the concordance index using `ConcordanceIndex()` before calling `compare()`."
+        )
 
         # assert that the same data were used to compute the two c-index
         if torch.any(self.event != other.event) or torch.any(self.time != other.time):
-            raise ValueError("Mismatched survival data: 'time' and 'event' should be the same for both concordance index computations.")
+            raise ValueError(
+                "Mismatched survival data: 'time' and 'event' should be the same for both concordance index computations."
+            )
 
         if self.tmax != other.tmax:
-            raise ValueError("Mismatched truncation time: 'tmax' should be the same for both concordance index computations.")
+            raise ValueError(
+                "Mismatched truncation time: 'tmax' should be the same for both concordance index computations."
+            )
 
         if method == "noether":
             pvalue = self._compare_noether(other)
@@ -453,7 +465,10 @@ class ConcordanceIndex:
         cindex_se = self._concordance_index_se()
 
         if cindex_se > 0:
-            ci = -torch.distributions.normal.Normal(0, 1).icdf(torch.tensor(alpha, device=self.cindex.device)) * cindex_se
+            ci = (
+                -torch.distributions.normal.Normal(0, 1).icdf(torch.tensor(alpha, device=self.cindex.device))
+                * cindex_se
+            )
             lower = torch.max(torch.tensor(0.0, device=self.cindex.device), self.cindex - ci)
             upper = torch.min(torch.tensor(1.0, device=self.cindex.device), self.cindex + ci)
 
@@ -478,7 +493,9 @@ class ConcordanceIndex:
         pc = (1 / (N * (N - 1))) * torch.sum(self.concordant)
         pd = (1 / (N * (N - 1))) * torch.sum(self.discordant)
 
-        w = ((torch.distributions.normal.Normal(0, 1).icdf(torch.tensor(alpha, device=self.cindex.device)) ** 2) * 2) / (N * (pc + pd))
+        w = (
+            (torch.distributions.normal.Normal(0, 1).icdf(torch.tensor(alpha, device=self.cindex.device)) ** 2) * 2
+        ) / (N * (pc + pd))
 
         ci = torch.sqrt(w**2 + 4 * w * self.cindex * (1 - self.cindex)) / (2 * (1 + w))
         point = (w + 2 * self.cindex) / (2 * (1 + w))
@@ -556,7 +573,9 @@ class ConcordanceIndex:
             if self.cindex >= torch.tensor(0.5):
                 p = torch.tensor(1.0) - p
             p *= torch.tensor(2.0)
-            p = torch.min(torch.tensor(1.0, device=self.cindex.device), p)  # in case very small bootstrap sample size is used
+            p = torch.min(
+                torch.tensor(1.0, device=self.cindex.device), p
+            )  # in case very small bootstrap sample size is used
         elif alternative == "greater":
             p = torch.tensor(1.0) - p
 
@@ -590,7 +609,9 @@ class ConcordanceIndex:
             return 1.0
 
         # compute t-stat
-        t_stat = (self.cindex - other.cindex) / torch.sqrt(cindex1_se**2 + cindex2_se**2 - 2 * corr * cindex1_se * cindex2_se)
+        t_stat = (self.cindex - other.cindex) / torch.sqrt(
+            cindex1_se**2 + cindex2_se**2 - 2 * corr * cindex1_se * cindex2_se
+        )
 
         # return p-value
         return torch.tensor(
@@ -800,7 +821,9 @@ class ConcordanceIndex:
 
         # If tmax is provided, truncate time after tmax (mask = False)
         masks = torch.ones_like(time).bool() if tmax is None else time < tmax
-        weight_updated[masks] = torch.tensor(1.0, dtype=weight_updated.dtype, device=time.device) if weight is None else weight[masks]
+        weight_updated[masks] = (
+            torch.tensor(1.0, dtype=weight_updated.dtype, device=time.device) if weight is None else weight[masks]
+        )
 
         return weight_updated
 

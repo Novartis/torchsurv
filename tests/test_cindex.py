@@ -5,11 +5,11 @@ import unittest
 import numpy as np
 import torch
 from sksurv.metrics import concordance_index_censored, concordance_index_ipcw
+from utils import DataBatchContainer, conditions_ci, conditions_p_value
 
 # Local modules
 from torchsurv.metrics.cindex import ConcordanceIndex
 from torchsurv.stats.ipcw import get_ipcw
-from utils import DataBatchContainer, conditions_ci, conditions_p_value
 
 # set seed for reproducibility
 torch.manual_seed(42)
@@ -162,13 +162,17 @@ class TestCIndex(unittest.TestCase):
                 test_event,
                 test_time,
             )
-            c_harrell_sksurv = concordance_index_censored(y_test_array["survival"], y_test_array["futime"], estimate_array)[0]
+            c_harrell_sksurv = concordance_index_censored(
+                y_test_array["survival"], y_test_array["futime"], estimate_array
+            )[0]
 
             # uno's c-index
             ipcw = get_ipcw(train_event, train_time, test_time)
             c_uno = cindex(estimate, test_event, test_time, weight=ipcw, tmax=new_time[-1]).numpy()
 
-            c_uno_sksurv = concordance_index_ipcw(y_train_array, y_test_array, estimate_array, tau=new_time_array[-1])[0]
+            c_uno_sksurv = concordance_index_ipcw(y_train_array, y_test_array, estimate_array, tau=new_time_array[-1])[
+                0
+            ]
 
             self.assertTrue(np.isclose(c_harrell.numpy(), c_harrell_sksurv, rtol=1e-2, atol=1e-8))
             self.assertTrue(np.isclose(c_uno, c_uno_sksurv, rtol=1e-2, atol=1e-8))
@@ -233,7 +237,9 @@ class TestCIndex(unittest.TestCase):
         estimate_informative = torch.randn((n,))  # estimate used to define time-to-event
         estimate_non_informative = torch.randn((n,))  # random estimate
         event = torch.randint(low=0, high=2, size=(n,)).bool()
-        time = torch.randn(size=(n,)) * 10 - estimate_informative * 5.0 + 200  # + estimate for cindex < 0.5 and - for cindex > 0.5
+        time = (
+            torch.randn(size=(n,)) * 10 - estimate_informative * 5.0 + 200
+        )  # + estimate for cindex < 0.5 and - for cindex > 0.5
 
         cindex_informative = ConcordanceIndex()
         c1 = cindex_informative(estimate_informative, event, time)

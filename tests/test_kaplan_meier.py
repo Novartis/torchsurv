@@ -4,10 +4,10 @@ import unittest
 import numpy as np
 import torch
 from sksurv.metrics import CensoringDistributionEstimator, SurvivalFunctionEstimator
+from utils import DataBatchContainer
 
 # local
 from torchsurv.stats.kaplan_meier import KaplanMeierEstimator
-from utils import DataBatchContainer
 
 # Load the benchmark cox log likelihoods from R
 with open("tests/benchmark_data/benchmark_kaplan_meier.json") as file:
@@ -202,7 +202,9 @@ class TestNonParametric(unittest.TestCase):
         for batch in batch_container.batches:
             (train_time, train_event, test_time, *_) = batch
 
-            train_event[-1] = False  # if last event is censoring, the last KM is > 0 and it cannot predict beyond this time
+            train_event[-1] = (
+                False  # if last event is censoring, the last KM is > 0 and it cannot predict beyond this time
+            )
             km = KaplanMeierEstimator()
             km(train_event, train_time, censoring_dist=False)
 
@@ -232,7 +234,17 @@ class TestNonParametric(unittest.TestCase):
                 km.print_survival_table()
 
                 # Check if the survival table is printed correctly
-                expected_output = "Time\tSurvival\n" "----------------\n" "1.00\t1.0000\n" "2.00\t0.8889\n" "3.00\t0.6667\n" "4.00\t0.5000\n" "5.00\t0.5000\n" "6.00\t0.3333\n" "7.00\t0.0000\n"
+                expected_output = (
+                    "Time\tSurvival\n"
+                    "----------------\n"
+                    "1.00\t1.0000\n"
+                    "2.00\t0.8889\n"
+                    "3.00\t0.6667\n"
+                    "4.00\t0.5000\n"
+                    "5.00\t0.5000\n"
+                    "6.00\t0.3333\n"
+                    "7.00\t0.0000\n"
+                )
                 with self.assertLogs(level="INFO") as log:
                     km.print_survival_table()
                     self.assertIn(expected_output, log.output)

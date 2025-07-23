@@ -122,10 +122,14 @@ def log_hazard(
         log_scale = log_scale.unsqueeze(1).expand(len(time), len(time))  # expand across columns
         log_shape = log_shape.unsqueeze(1).expand(len(time), len(time))  # expand across columns
     if time.size(0) != log_params.size(0):
-        raise ValueError(f"Dimension mismatch: 'time' ({len(time)}) does not match the length of 'log_params' ({len(log_params)}).")
+        raise ValueError(
+            f"Dimension mismatch: 'time' ({len(time)}) does not match the length of 'log_params' ({len(log_params)})."
+        )
 
     return torch.clamp(
-        log_shape - log_scale + torch.expm1(log_shape) * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale),
+        log_shape
+        - log_scale
+        + torch.expm1(log_shape) * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale),
         min=-clamp_value,
         max=clamp_value,
     )
@@ -293,7 +297,9 @@ def survival_function(log_params: torch.Tensor, time: torch.Tensor, all_times: b
         log_scale = log_scale.unsqueeze(1).expand(len(time), len(time))  # expand across columns
         log_shape = log_shape.unsqueeze(1).expand(len(time), len(time))  # expand across columns
     if time.size(0) != log_params.size(0):
-        raise ValueError(f"Dimension mismatch: 'time' ({len(time)}) does not match the length of 'log_params' ({len(log_params)}).")
+        raise ValueError(
+            f"Dimension mismatch: 'time' ({len(time)}) does not match the length of 'log_params' ({len(log_params)})."
+        )
     return 1 - torch.distributions.weibull.Weibull(torch.exp(log_scale), torch.exp(log_shape)).cdf(time)
 
 

@@ -196,7 +196,9 @@ class BrierScore:
             is_case = ((time <= new_time_i) & (event)).int()
             is_control = (time > new_time_i).int()
 
-            residuals[:, index] = torch.square(est) * is_case * weight + torch.square(1.0 - est) * is_control * weight_new_time[index]
+            residuals[:, index] = (
+                torch.square(est) * is_case * weight + torch.square(1.0 - est) * is_control * weight_new_time[index]
+            )
 
         # Calculating the brier scores at each time point
         brier_score = torch.mean(residuals, axis=0)
@@ -312,7 +314,9 @@ class BrierScore:
 
         """
 
-        assert hasattr(self, "brier_score") and self.brier_score is not None, "Error: Please calculate brier score using `BrierScore()` before calling `confidence_interval()`."
+        assert hasattr(self, "brier_score") and self.brier_score is not None, (
+            "Error: Please calculate brier score using `BrierScore()` before calling `confidence_interval()`."
+        )
 
         if alternative not in ["less", "greater", "two_sided"]:
             raise ValueError("'alternative' parameter must be one of ['less', 'greater', 'two_sided'].")
@@ -385,7 +389,9 @@ class BrierScore:
 
         """
 
-        assert hasattr(self, "brier_score") and self.brier_score is not None, "Error: Please calculate the brier score using `BrierScore()` before calling `p_value()`."
+        assert hasattr(self, "brier_score") and self.brier_score is not None, (
+            "Error: Please calculate the brier score using `BrierScore()` before calling `p_value()`."
+        )
 
         if alternative not in ["less", "greater", "two_sided"]:
             raise ValueError("'alternative' parameter must be one of ['less', 'greater', 'two_sided'].")
@@ -447,13 +453,19 @@ class BrierScore:
 
         """
 
-        assert hasattr(self, "brier_score") and self.brier_score is not None, "Error: Please calculate the brier score using `BrierScore()` before calling `compare()`."
+        assert hasattr(self, "brier_score") and self.brier_score is not None, (
+            "Error: Please calculate the brier score using `BrierScore()` before calling `compare()`."
+        )
 
         # assert that the same data were used to compute the two brier score
         if torch.any(self.event != other.event) or torch.any(self.time != other.time):
-            raise ValueError("Mismatched survival data: 'time' and 'event' should be the same for both brier score computations.")
+            raise ValueError(
+                "Mismatched survival data: 'time' and 'event' should be the same for both brier score computations."
+            )
         if torch.any(self.new_time != other.new_time):
-            raise ValueError("Mismatched evaluation times: 'new_time' should be the same for both brier score computations.")
+            raise ValueError(
+                "Mismatched evaluation times: 'new_time' should be the same for both brier score computations."
+            )
 
         if method == "parametric":
             pvalue = self._compare_parametric(other)
@@ -543,7 +555,9 @@ class BrierScore:
                 mask = self.brier_score >= 0.5
                 p[mask] = 1 - p[mask]
                 p *= 2
-                p = torch.min(torch.tensor(1.0, device=self.brier_score.device), p)  # in case critical value is below 0.5
+                p = torch.min(
+                    torch.tensor(1.0, device=self.brier_score.device), p
+                )  # in case critical value is below 0.5
             elif alternative == "greater":
                 p = 1 - p
         else:
@@ -571,7 +585,9 @@ class BrierScore:
                 if brier_score_t >= 0.5:
                     p = 1 - p
                 p *= 2
-                p = torch.min(torch.tensor(1.0, device=self.brier_score.device), p)  # in case very small bootstrap sample size is used
+                p = torch.min(
+                    torch.tensor(1.0, device=self.brier_score.device), p
+                )  # in case very small bootstrap sample size is used
             elif alternative == "greater":
                 p = 1 - p
 
@@ -756,7 +772,10 @@ class BrierScore:
 
         # check if new_time are not specified and estimate are not evaluated at time
         if new_time is None and len(time) != estimate.shape[1]:
-            raise ValueError("Mismatched dimensions: The number of columns in 'estimate' does not match the length of 'time'. " "Please provide the times at which 'estimate' is evaluated using the 'new_time' input.")
+            raise ValueError(
+                "Mismatched dimensions: The number of columns in 'estimate' does not match the length of 'time'. "
+                "Please provide the times at which 'estimate' is evaluated using the 'new_time' input."
+            )
 
     @staticmethod
     def _update_brier_score_new_time(

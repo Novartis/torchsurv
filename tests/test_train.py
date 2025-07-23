@@ -3,13 +3,14 @@ import unittest
 import lightning as L
 import torch
 from loguru import logger
-from torchsurv.loss.weibull import neg_log_likelihood as weibull
 from utils import (
     LitSurvival,
     LitSurvivalTwins,
     SimpleLinearNNOneParameter,
     SimpleLinearNNTwoParameters,
 )
+
+from torchsurv.loss.weibull import neg_log_likelihood as weibull
 
 # set seed for reproducibility
 torch.manual_seed(42)

@@ -6,11 +6,11 @@ import numpy as np
 import torch
 from sksurv.metrics import brier_score as brier_score_sksurv
 from sksurv.metrics import integrated_brier_score as integrated_brier_score_sksurv
+from utils import DataBatchContainer, conditions_ci, conditions_p_value
 
 # Local modules
 from torchsurv.metrics.brier_score import BrierScore
 from torchsurv.stats.ipcw import get_ipcw
-from utils import DataBatchContainer, conditions_ci, conditions_p_value
 
 # set seed for reproducibility
 torch.manual_seed(42)
@@ -128,7 +128,9 @@ class TestBrierScore(unittest.TestCase):
 
             if len(new_time) > 2:
                 ibs = brier_score.integral()
-                ibs_sksurv = integrated_brier_score_sksurv(y_train_array, y_test_array, estimate.numpy(), new_time_array)
+                ibs_sksurv = integrated_brier_score_sksurv(
+                    y_train_array, y_test_array, estimate.numpy(), new_time_array
+                )
                 self.assertTrue(np.allclose(ibs.numpy(), ibs_sksurv, rtol=1e-5, atol=1e-8))
 
     def test_brier_score_confidence_interval_pvalue(self):
@@ -164,7 +166,9 @@ class TestBrierScore(unittest.TestCase):
                         alternative=alternative,
                         n_bootstraps=n_bootstraps,
                     )
-                    self.assertTrue(all(conditions_ci(brier_score_ci[:, i]) for i in range(len(brier_score.brier_score))))
+                    self.assertTrue(
+                        all(conditions_ci(brier_score_ci[:, i]) for i in range(len(brier_score.brier_score)))
+                    )
 
             for alternative in ["two_sided", "less", "greater"]:
                 brier_score_pvalue = brier_score.p_value(
@@ -172,14 +176,18 @@ class TestBrierScore(unittest.TestCase):
                     alternative=alternative,
                     n_bootstraps=n_bootstraps,
                 )
-                self.assertTrue(all(conditions_p_value(brier_score_pvalue[i]) for i in range(len(brier_score.brier_score))))
+                self.assertTrue(
+                    all(conditions_p_value(brier_score_pvalue[i]) for i in range(len(brier_score.brier_score)))
+                )
                 brier_score_pvalue = brier_score.p_value(
                     method="parametric",
                     alternative=alternative,
                     n_bootstraps=n_bootstraps,
                     null_value=0.3,
                 )
-                self.assertTrue(all(conditions_p_value(brier_score_pvalue[i]) for i in range(len(brier_score.brier_score))))
+                self.assertTrue(
+                    all(conditions_p_value(brier_score_pvalue[i]) for i in range(len(brier_score.brier_score)))
+                )
 
     def test_brier_score_compare(self):
         """test compare function of brier score behaves as expected"""
@@ -194,7 +202,9 @@ class TestBrierScore(unittest.TestCase):
         estimate_informative = estimate_informative.unsqueeze(1).expand(n, n)
 
         mask = event & (time < torch.max(time))
-        new_time, inverse_indices, counts = torch.unique(time[mask], sorted=True, return_inverse=True, return_counts=True)
+        new_time, inverse_indices, counts = torch.unique(
+            time[mask], sorted=True, return_inverse=True, return_counts=True
+        )
         sorted_unique_indices = BrierScore._find_torch_unique_indices(inverse_indices, counts)
         estimate_informative = (estimate_informative[:, mask])[:, sorted_unique_indices]
         estimate_non_informative = (estimate_non_informative[:, mask])[:, sorted_unique_indices]
@@ -207,7 +217,9 @@ class TestBrierScore(unittest.TestCase):
         ibs_informative = brier_score_informative.integral()
 
         brier_score_non_informative = BrierScore()
-        bs_non_informative = brier_score_non_informative(estimate_non_informative, event, time, new_time, ipcw, ipcw_new_time)[0:-1]
+        bs_non_informative = brier_score_non_informative(
+            estimate_non_informative, event, time, new_time, ipcw, ipcw_new_time
+        )[0:-1]
         ibs_non_informative = brier_score_non_informative.integral()
 
         p_value_compare_informative = brier_score_informative.compare(brier_score_non_informative)

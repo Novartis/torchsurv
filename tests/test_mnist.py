@@ -4,10 +4,11 @@ import torch
 from pytorch_lightning import LightningModule, Trainer
 from torch import nn
 from torch.utils.data import DataLoader, random_split
-from torchsurv.loss.cox import neg_partial_log_likelihood
-from torchsurv.metrics.cindex import ConcordanceIndex
 from torchvision.datasets import MNIST
 from torchvision.transforms import v2
+
+from torchsurv.loss.cox import neg_partial_log_likelihood
+from torchsurv.metrics.cindex import ConcordanceIndex
 
 # set seed for reproducibility
 torch.manual_seed(42)

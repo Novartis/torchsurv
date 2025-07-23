@@ -80,7 +80,9 @@ class KaplanMeierEstimator:
         ratio = torch.where(
             n_events != 0,  # Check if the number of events is not equal to zero
             n_events / n_at_risk,  # Element-wise division when the number of events is not zero
-            torch.zeros_like(n_events, dtype=torch.float),  # Set to zero when the number of events is zero to avoid division by zero
+            torch.zeros_like(
+                n_events, dtype=torch.float
+            ),  # Set to zero when the number of events is zero to avoid division by zero
         )
         values = 1.0 - ratio  # Compute the survival (or censoring) probabilities at each unique time
         y = torch.cumprod(values, dim=0)  # Cumulative product to get the Kaplan-Meier estimator
@@ -152,7 +154,9 @@ class KaplanMeierEstimator:
         extends = new_time > torch.max(ref_time)
         if km_est_[torch.argmax(ref_time)] > 0 and extends.any():
             # pylint: disable=consider-using-f-string
-            raise ValueError(f"Cannot predict survival/censoring distribution after the largest observed training event time point: {ref_time[-1].item()}")
+            raise ValueError(
+                f"Cannot predict survival/censoring distribution after the largest observed training event time point: {ref_time[-1].item()}"
+            )
 
         # beyond last time point is zero probability
         km_pred = torch.zeros_like(new_time, dtype=km_est_.dtype)

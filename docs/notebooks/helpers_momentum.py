@@ -1,9 +1,10 @@
 import lightning as L
 import torch
 from torch.utils.data import DataLoader, random_split
+from torchvision.datasets import MNIST
+
 from torchsurv.loss.cox import neg_partial_log_likelihood
 from torchsurv.metrics.cindex import ConcordanceIndex
-from torchvision.datasets import MNIST
 
 
 class LitMNIST(L.LightningModule):

@@ -20,25 +20,21 @@ repos:
       - id: debug-statements
 
   # >>>>> Custom precommits <<<<<<
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.20.0
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
     hooks:
-    -   id: pyupgrade
-        files: ^(src|tests)/.*\.py$  # Restrict to files under src and tests directories
+      - id: codespell
+        additional_dependencies: [tomli]
+        args: ["--write-changes"]  # Automatically fix spelling errors if only one suggestion
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.8
+    rev: v0.12.4
     hooks:
-      - id: ruff
-        args: [--fix]
+      # Run the linter.
+      - id: ruff-check
+        args: [ --fix ]
+      # Run the formatter.
       - id: ruff-format
-
-  # - repo: https://github.com/nbQA-dev/nbQA
-  #   rev: 1.7.1
-  #   hooks:
-  #     - id: nbqa-ruff
-  #       args: [--fix]
-  #       files: ^docs/notebooks/.*\.ipynb$
 
   - repo: https://github.com/lorenzwalthert/precommit
     rev: v0.4.3.9009
@@ -52,12 +48,6 @@ repos:
     hooks:
       - id: sphinx-lint
 
-  - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
-    hooks:
-      - id: codespell
-        additional_dependencies: [tomli]
-        args: ["--write-changes"]  # Automatically fix spelling errors if only one suggestion
 
 
 ci:

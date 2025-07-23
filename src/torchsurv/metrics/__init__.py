@@ -1,1 +1,1 @@
-""" Module with metrics for model evaluation. """
+"""Module with metrics for model evaluation."""
