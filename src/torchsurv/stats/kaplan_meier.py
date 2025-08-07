@@ -42,12 +42,12 @@ class KaplanMeierEstimator:
             >>> n = 32
             >>> time = torch.randint(low=0, high=8, size=(n,)).float()
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> s = KaplanMeierEstimator() # estimate survival distribution
+            >>> s = KaplanMeierEstimator()  # estimate survival distribution
             >>> s(event, time)
             >>> s.km_est
             tensor([1.0000, 1.0000, 0.8214, 0.7143, 0.6391, 0.6391, 0.5113, 0.2556])
-            >>> c = KaplanMeierEstimator() # estimate censoring distribution
-            >>> c(event, time, censoring_dist = True)
+            >>> c = KaplanMeierEstimator()  # estimate censoring distribution
+            >>> c(event, time, censoring_dist=True)
             >>> c.km_est
             tensor([0.9688, 0.8750, 0.8750, 0.8312, 0.6357, 0.4890, 0.3667, 0.0000])
 
@@ -141,7 +141,7 @@ class KaplanMeierEstimator:
             >>> event = torch.randint(low=0, high=2, size=(n * 4,)).bool()
             >>> km = KaplanMeierEstimator()
             >>> km(event, time)
-            >>> km.predict(torch.randint(low=0, high=10, size=(n,))) # predict survival distribution
+            >>> km.predict(torch.randint(low=0, high=10, size=(n,)))  # predict survival distribution
             tensor([1.0000, 0.9062, 0.8700, 1.0000, 0.9062, 0.9062, 0.4386, 0.0000])
 
         """

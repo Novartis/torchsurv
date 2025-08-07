@@ -5,7 +5,9 @@ import unittest
 import numpy as np
 import torch
 from sksurv.metrics import brier_score as brier_score_sksurv
-from sksurv.metrics import integrated_brier_score as integrated_brier_score_sksurv
+from sksurv.metrics import (
+    integrated_brier_score as integrated_brier_score_sksurv,
+)
 from utils import DataBatchContainer, conditions_ci, conditions_p_value
 
 # Local modules
@@ -129,7 +131,10 @@ class TestBrierScore(unittest.TestCase):
             if len(new_time) > 2:
                 ibs = brier_score.integral()
                 ibs_sksurv = integrated_brier_score_sksurv(
-                    y_train_array, y_test_array, estimate.numpy(), new_time_array
+                    y_train_array,
+                    y_test_array,
+                    estimate.numpy(),
+                    new_time_array,
                 )
                 self.assertTrue(np.allclose(ibs.numpy(), ibs_sksurv, rtol=1e-5, atol=1e-8))
 

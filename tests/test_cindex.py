@@ -170,9 +170,12 @@ class TestCIndex(unittest.TestCase):
             ipcw = get_ipcw(train_event, train_time, test_time)
             c_uno = cindex(estimate, test_event, test_time, weight=ipcw, tmax=new_time[-1]).numpy()
 
-            c_uno_sksurv = concordance_index_ipcw(y_train_array, y_test_array, estimate_array, tau=new_time_array[-1])[
-                0
-            ]
+            c_uno_sksurv = concordance_index_ipcw(
+                y_train_array,
+                y_test_array,
+                estimate_array,
+                tau=new_time_array[-1],
+            )[0]
 
             self.assertTrue(np.isclose(c_harrell.numpy(), c_harrell_sksurv, rtol=1e-2, atol=1e-8))
             self.assertTrue(np.isclose(c_uno, c_uno_sksurv, rtol=1e-2, atol=1e-8))

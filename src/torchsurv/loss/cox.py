@@ -78,7 +78,7 @@ def _partial_likelihood_breslow(
 
     Returns:
         torch.Tensor: The partial likelihood for the observed events.
-    """
+    """  # noqa: E501
     N = len(time_sorted)
     R = [torch.where(time_sorted >= time_sorted[i])[0] for i in range(N)]
     log_denominator = torch.stack([torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(N)])
@@ -194,7 +194,7 @@ def neg_partial_log_likelihood(
             Breslow1975
             Efron1977
 
-    """
+    """  # noqa: E501
 
     if checks:
         validate_loss(log_hz, event, time, model_type="cox")

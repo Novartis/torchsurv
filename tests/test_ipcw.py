@@ -51,7 +51,14 @@ class TestIPCW(unittest.TestCase):
                 )
             )
 
-            self.assertTrue(np.allclose(ipcw_new_time.numpy(), ipcw_new_time_pec, rtol=1e-4, atol=1e-8))
+            self.assertTrue(
+                np.allclose(
+                    ipcw_new_time.numpy(),
+                    ipcw_new_time_pec,
+                    rtol=1e-4,
+                    atol=1e-8,
+                )
+            )
 
     def test_ipcw_simulated_data(self):
         """test ipcw on simulated batches including edge cases"""
@@ -92,7 +99,7 @@ class TestIPCW(unittest.TestCase):
 
             # sksurv imposes survival data (event and time) for ipcw prediction
             # instead of just time. And then force icpw to be 0 if event == False
-            ipcw[test_event is False] = 0.0
+            ipcw[~test_event] = 0.0
 
             # ipcw with sksurv
             cens = CensoringDistributionEstimator()

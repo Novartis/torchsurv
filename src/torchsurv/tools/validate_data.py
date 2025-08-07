@@ -129,7 +129,12 @@ def validate_model_type(log_params: torch.Tensor, model_type: str) -> None:
         raise ValueError("Invalid model type. Must be 'weibull' or 'cox'.")
 
 
-def validate_loss(log_params: torch.Tensor, event: torch.Tensor, time: torch.Tensor, model_type: str) -> None:
+def validate_loss(
+    log_params: torch.Tensor,
+    event: torch.Tensor,
+    time: torch.Tensor,
+    model_type: str,
+) -> None:
     # sanity checks
     validate_tensor(log_params, "log_params")
     validate_tensor(event, "event")

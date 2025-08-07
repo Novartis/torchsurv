@@ -31,19 +31,19 @@ class BrierScore:
             >>> n = 10
             >>> time = torch.randint(low=5, high=250, size=(n,)).float()
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.rand((n,len(time)))
+            >>> estimate = torch.rand((n, len(time)))
             >>> brier_score = BrierScore()
             >>> brier_score(estimate, event, time)
             tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,
                     0.1668])
-            >>> brier_score.integral() # integrated brier score
+            >>> brier_score.integral()  # integrated brier score
             tensor(0.2862)
-            >>> brier_score.confidence_interval() # default: parametric, two-sided
+            >>> brier_score.confidence_interval()  # default: parametric, two-sided
             tensor([[0.1061, 0.0604, 0.2360, 0.0533, 0.1252, 0.0795, 0.0000, 0.1512, 0.0381,
                      0.0051],
                     [0.3866, 0.4876, 0.5437, 0.3394, 0.5965, 0.4847, 0.4137, 0.4443, 0.3520,
                      0.3285]])
-            >>> brier_score.p_value() # default: bootstrap permutation test, two-sided
+            >>> brier_score.p_value()  # default: bootstrap permutation test, two-sided
             tensor([1.0000, 0.7860, 1.0000, 0.3840, 1.0000, 1.0000, 0.3840, 1.0000, 0.7000,
                     0.2380])
         """
@@ -145,19 +145,21 @@ class BrierScore:
             >>> n = 10
             >>> time = torch.randint(low=5, high=250, size=(n,)).float()
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.rand((n,len(time)))
+            >>> estimate = torch.rand((n, len(time)))
             >>> brier_score = BrierScore()
             >>> brier_score(estimate, event, time)
             tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,
                     0.1668])
-            >>> ipcw = get_ipcw(event, time) # ipcw at time
-            >>> brier_score(estimate, event, time, weight=ipcw) # censoring-adjusted brier-score
+            >>> ipcw = get_ipcw(event, time)  # ipcw at time
+            >>> brier_score(estimate, event, time, weight=ipcw)  # censoring-adjusted brier-score
             tensor([0.2463, 0.2740, 0.4282, 0.2163, 0.4465, 0.3826, 0.2630, 0.3888, 0.2219,
                     0.1882])
-            >>> new_time = torch.unique(torch.randint(low=5, high=time.max().int(), size=(n*2,)).float())
-            >>> ipcw_new_time = get_ipcw(event, time, new_time) # ipcw at new_time
-            >>> estimate = torch.rand((n,len(new_time)))
-            >>> brier_score(estimate, event, time, new_time, ipcw, ipcw_new_time) # censoring-adjusted brier-score at new time
+            >>> new_time = torch.unique(torch.randint(low=5, high=time.max().int(), size=(n * 2,)).float())
+            >>> ipcw_new_time = get_ipcw(event, time, new_time)  # ipcw at new_time
+            >>> estimate = torch.rand((n, len(new_time)))
+            >>> brier_score(
+            ...     estimate, event, time, new_time, ipcw, ipcw_new_time
+            ... )  # censoring-adjusted brier-score at new time
             tensor([0.4036, 0.3014, 0.2517, 0.3947, 0.4200, 0.3908, 0.3766, 0.3737, 0.3596,
                     0.2088, 0.4922, 0.3237, 0.2255, 0.1841, 0.3029, 0.6919, 0.2357, 0.3507,
                     0.4364, 0.3312])
@@ -229,12 +231,12 @@ class BrierScore:
             >>> n = 10
             >>> time = torch.randint(low=5, high=250, size=(n,)).float()
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.rand((n,len(time)))
+            >>> estimate = torch.rand((n, len(time)))
             >>> brier_score = BrierScore()
             >>> brier_score(estimate, event, time)
             tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,
                     0.1668])
-            >>> brier_score.integral() # integrated brier score
+            >>> brier_score.integral()  # integrated brier score
             tensor(0.2862)
 
         Note:
@@ -295,17 +297,17 @@ class BrierScore:
             >>> n = 10
             >>> time = torch.randint(low=5, high=250, size=(n,)).float()
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.rand((n,len(time)))
+            >>> estimate = torch.rand((n, len(time)))
             >>> brier_score = BrierScore()
             >>> brier_score(estimate, event, time)
             tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,
                     0.1668])
-            >>> brier_score.confidence_interval() # default: parametric, two-sided
+            >>> brier_score.confidence_interval()  # default: parametric, two-sided
             tensor([[0.1061, 0.0604, 0.2360, 0.0533, 0.1252, 0.0795, 0.0000, 0.1512, 0.0381,
                      0.0051],
                     [0.3866, 0.4876, 0.5437, 0.3394, 0.5965, 0.4847, 0.4137, 0.4443, 0.3520,
                      0.3285]])
-            >>> brier_score.confidence_interval(method = "bootstrap", alternative = "greater")
+            >>> brier_score.confidence_interval(method="bootstrap", alternative="greater")
             tensor([[0.1455, 0.1155, 0.2741, 0.0903, 0.1985, 0.1323, 0.0245, 0.1938, 0.0788,
                      0.0440],
                     [1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000,
@@ -375,15 +377,17 @@ class BrierScore:
             >>> time = torch.randint(low=5, high=250, size=(n,)).float()
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
             >>> new_time = torch.unique(time)
-            >>> estimate = torch.rand((n,len(new_time)))
+            >>> estimate = torch.rand((n, len(new_time)))
             >>> brier_score = BrierScore()
             >>> brier_score(estimate, event, time, new_time)
             tensor([0.3465, 0.5310, 0.4222, 0.4582, 0.3601, 0.3395, 0.2285, 0.1975, 0.3120,
                     0.3883])
-            >>> brier_score.p_value() # Default: bootstrap, two_sided
+            >>> brier_score.p_value()  # Default: bootstrap, two_sided
             tensor([1.0000, 0.0560, 1.0000, 1.0000, 1.0000, 1.0000, 0.8320, 0.8620, 1.0000,
                     1.0000])
-            >>> brier_score.p_value(method = "parametric", alternative = "less", null_value = 0.3) # H0: bs = 0.3, Ha: bs < 0.3
+            >>> brier_score.p_value(
+            ...     method="parametric", alternative="less", null_value=0.3
+            ... )  # H0: bs = 0.3, Ha: bs < 0.3
             tensor([0.7130, 0.9964, 0.8658, 0.8935, 0.6900, 0.6630, 0.1277, 0.1128, 0.5383,
                     0.8041])
 
@@ -437,17 +441,17 @@ class BrierScore:
             >>> time = torch.randint(low=5, high=250, size=(n,)).float()
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
             >>> brier_score = BrierScore()
-            >>> brier_score(torch.rand((n,len(time))), event, time)
+            >>> brier_score(torch.rand((n, len(time))), event, time)
             tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,
                     0.1668])
             >>> brier_score2 = BrierScore()
-            >>> brier_score2(torch.rand((n,len(time))), event, time)
+            >>> brier_score2(torch.rand((n, len(time))), event, time)
             tensor([0.4136, 0.2750, 0.3002, 0.2826, 0.2030, 0.2643, 0.2525, 0.2964, 0.1804,
                     0.3109])
-            >>> brier_score.compare(brier_score2) # default: parametric
+            >>> brier_score.compare(brier_score2)  # default: parametric
             tensor([0.1793, 0.4972, 0.7105, 0.1985, 0.9254, 0.5591, 0.3455, 0.5060, 0.5437,
                     0.0674])
-            >>> brier_score.compare(brier_score2, method = "bootstrap")
+            >>> brier_score.compare(brier_score2, method="bootstrap")
             tensor([0.1360, 0.5030, 0.7310, 0.2090, 0.8630, 0.5490, 0.3120, 0.5110, 0.5460,
                     0.1030])
 
@@ -524,7 +528,10 @@ class BrierScore:
             if alternative == "two_sided":
                 lower[index_t], upper[index_t] = torch.quantile(
                     brier_score_bootstrap[:, index_t],
-                    torch.tensor([alpha / 2, 1 - alpha / 2], device=self.brier_score.device),
+                    torch.tensor(
+                        [alpha / 2, 1 - alpha / 2],
+                        device=self.brier_score.device,
+                    ),
                 )
             elif alternative == "less":
                 upper[index_t] = torch.quantile(

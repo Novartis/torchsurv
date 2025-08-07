@@ -98,7 +98,11 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
 
         # intercept only
         wbf = WeibullAFTFitter()
-        wbf.fit(self.lung[["time", "status"]], duration_col="time", event_col="status")
+        wbf.fit(
+            self.lung[["time", "status"]],
+            duration_col="time",
+            event_col="status",
+        )
         log_params = np.ones((len(event), 1)) * wbf.summary.loc[:, "coef"].values
         log_likelihood_lifelines = wbf.log_likelihood_
         log_likelihood = -weibull(

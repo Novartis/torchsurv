@@ -61,7 +61,14 @@ class TestAUC(unittest.TestCase):
             auc_cd_survAUC = benchmark_auc["auc_cd_survAUC"]  # survAUC
             auc_cd_Uno_riskRegression = benchmark_auc["auc_cd_Uno_riskRegression"]  # riskRegression
 
-            self.assertTrue(np.allclose(auc_cd.numpy(), np.array(auc_cd_survAUC), rtol=1e-1, atol=1e-8))
+            self.assertTrue(
+                np.allclose(
+                    auc_cd.numpy(),
+                    np.array(auc_cd_survAUC),
+                    rtol=1e-1,
+                    atol=1e-8,
+                )
+            )
             self.assertTrue(
                 np.allclose(
                     auc_cd.numpy(),
@@ -146,7 +153,14 @@ class TestAUC(unittest.TestCase):
 
             i_auc_cd_survAUC = benchmark_auc["iauc_cd_survAUC"]  # survAUC
 
-            self.assertTrue(np.isclose(i_auc_cd.numpy(), np.array(i_auc_cd_survAUC), rtol=1e-3, atol=1e-8))
+            self.assertTrue(
+                np.isclose(
+                    i_auc_cd.numpy(),
+                    np.array(i_auc_cd_survAUC),
+                    rtol=1e-3,
+                    atol=1e-8,
+                )
+            )
 
             # integral of auc incident/dynamic
             auc_id_sz_survAUC = torch.tensor(benchmark_auc["auc_id_sz_survAUC"], dtype=torch.float64)

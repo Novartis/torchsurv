@@ -14,4 +14,4 @@ fi
 
 export PYTHONPATH=${DIR}/../src
 
-ruff check
+ruff format --check

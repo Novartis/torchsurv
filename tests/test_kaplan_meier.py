@@ -3,7 +3,10 @@ import unittest
 
 import numpy as np
 import torch
-from sksurv.metrics import CensoringDistributionEstimator, SurvivalFunctionEstimator
+from sksurv.metrics import (
+    CensoringDistributionEstimator,
+    SurvivalFunctionEstimator,
+)
 from utils import DataBatchContainer
 
 # local

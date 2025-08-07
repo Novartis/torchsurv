@@ -27,18 +27,18 @@ class Momentum(nn.Module):
     .. highlight:: python
     .. code-block:: python
 
-        model_q = model_k                 # Same architecture, random weights
-        model_k.require_grad = False      # No gradient update for target network (k)
+        model_q = model_k  # Same architecture, random weights
+        model_k.require_grad = False  # No gradient update for target network (k)
         hz_memory_bank = deque(maxlen=n * batch_size)  # Double-ended queue size n * batch_size
 
         for epoch in epochs:
-            hz_q = model_q(batch)            # Compute current estmate w/ ONLINE network (q)
+            hz_q = model_q(batch)  # Compute current estmate w/ ONLINE network (q)
             hz_loss = hz_memory_bank + hz_q  # Combine current log hz and memory bank
-            loss = loss_function(hz_loss)    # Compute loss with pooled log hz
-            loss.backward()                  # Update online model (q) w/ PyTorch autograd
-            model_k.ema_update(model_q)      # Update target model (k) with Exponential Moving Average (EMA)
-            hz_k = model_k(batch)            # Compute batch estimate w/ TARGET network (k)
-            hz_memory_bank += hz_k           # Replace oldest batch with current from memory bank
+            loss = loss_function(hz_loss)  # Compute loss with pooled log hz
+            loss.backward()  # Update online model (q) w/ PyTorch autograd
+            model_k.ema_update(model_q)  # Update target model (k) with Exponential Moving Average (EMA)
+            hz_k = model_k(batch)  # Compute batch estimate w/ TARGET network (k)
+            hz_memory_bank += hz_k  # Replace oldest batch with current from memory bank
 
     Note:
         This code is inspired from MoCo :cite:p:`he2019` and its ability to decouple batch size from training size.
@@ -138,11 +138,13 @@ class Momentum(nn.Module):
             >>> t = torch.randint(low=1, high=100, size=(n,))
             >>> backbone = torch.nn.Sequential(torch.nn.Linear(16, 1))  # (log hazards)
             >>> model_cox = Momentum(backbone, loss=cox.neg_partial_log_likelihood)  # Cox loss
-            >>> with torch.no_grad(): model_cox.forward(x, y, t)
+            >>> with torch.no_grad():
+            ...     model_cox.forward(x, y, t)
             tensor(2.1366)
             >>> backbone = torch.nn.Sequential(torch.nn.Linear(16, 2))  # (lambda, rho)
             >>> model_weibull = Momentum(backbone, loss=weibull.neg_log_likelihood)  # Weibull loss
-            >>> with torch.no_grad(): torch.round(model_weibull.forward(x, y, t), decimals=2)
+            >>> with torch.no_grad():
+            ...     torch.round(model_weibull.forward(x, y, t), decimals=2)
             tensor(68.0400)
 
         """

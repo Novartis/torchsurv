@@ -7,7 +7,10 @@ import torch
 from scipy import stats
 from torchmetrics import regression
 
-from torchsurv.tools.validate_data import validate_log_shape, validate_survival_data
+from torchsurv.tools.validate_data import (
+    validate_log_shape,
+    validate_survival_data,
+)
 
 __all__ = ["ConcordanceIndex"]
 
@@ -40,9 +43,9 @@ class ConcordanceIndex:
             >>> cindex = ConcordanceIndex()
             >>> cindex(estimate, event, time)
             tensor(0.5337)
-            >>> cindex.confidence_interval() # default: Noether, two_sided
+            >>> cindex.confidence_interval()  # default: Noether, two_sided
             tensor([0.3251, 0.7423])
-            >>> cindex.p_value(method='bootstrap', alternative='greater')
+            >>> cindex.p_value(method="bootstrap", alternative="greater")
             tensor(0.2620)
         """
         self.tied_tol = tied_tol
@@ -162,10 +165,10 @@ class ConcordanceIndex:
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
             >>> estimate = torch.randn((n,))
             >>> cindex = ConcordanceIndex()
-            >>> cindex(estimate, event, time) # Harrell's c-index
+            >>> cindex(estimate, event, time)  # Harrell's c-index
             tensor(0.5337)
-            >>> ipcw = get_ipcw(event, time) # ipcw at subject time
-            >>> cindex(estimate, event, time, weight=ipcw) # Uno's c-index
+            >>> ipcw = get_ipcw(event, time)  # ipcw at subject time
+            >>> cindex(estimate, event, time, weight=ipcw)  # Uno's c-index
             tensor(0.5453)
 
         References:
@@ -291,7 +294,7 @@ class ConcordanceIndex:
             >>> cindex = ConcordanceIndex()
             >>> cindex(estimate, event, time)
             tensor(0.5337)
-            >>> cindex.confidence_interval() # default: Noether, two_sided
+            >>> cindex.confidence_interval()  # default: Noether, two_sided
             tensor([0.3251, 0.7423])
             >>> cindex.confidence_interval(method="bootstrap", alternative="greater")
             tensor([0.4459, 1.0000])
@@ -365,7 +368,7 @@ class ConcordanceIndex:
             >>> cindex = ConcordanceIndex()
             >>> cindex(estimate, event, time)
             tensor(0.5337)
-            >>> cindex.p_value() # default: Noether, two_sided
+            >>> cindex.p_value()  # default: Noether, two_sided
             tensor(0.7516)
             >>> cindex.p_value(method="bootstrap", alternative="greater")
             tensor(0.2620)
@@ -422,9 +425,9 @@ class ConcordanceIndex:
             >>> cindex2 = ConcordanceIndex()
             >>> cindex2(torch.randn((n,)), event, time)
             tensor(0.5047)
-            >>> cindex1.compare(cindex2) # default: Noether
+            >>> cindex1.compare(cindex2)  # default: Noether
             tensor(0.4267)
-            >>> cindex1.compare(cindex2, method = "bootstrap")
+            >>> cindex1.compare(cindex2, method="bootstrap")
             tensor(0.3620)
 
         """
@@ -528,7 +531,10 @@ class ConcordanceIndex:
                 torch.tensor([alpha / 2, 1 - alpha / 2], device=self.cindex.device),
             )
         elif alternative == "less":
-            upper = torch.quantile(cindex_bootstrap, torch.tensor(1 - alpha, device=self.cindex.device))
+            upper = torch.quantile(
+                cindex_bootstrap,
+                torch.tensor(1 - alpha, device=self.cindex.device),
+            )
             lower = torch.tensor(0.0, device=self.cindex.device)
         elif alternative == "greater":
             lower = torch.quantile(cindex_bootstrap, torch.tensor(alpha, device=self.cindex.device))

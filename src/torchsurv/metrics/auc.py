@@ -38,11 +38,11 @@ class Auc:
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
             >>> estimate = torch.randn((n,))
             >>> auc = Auc()
-            >>> auc(estimate, event, time) # default: auc cumulative/dynamic
+            >>> auc(estimate, event, time)  # default: auc cumulative/dynamic
             tensor([0.7500, 0.4286, 0.3333])
             >>> auc.integral()
             tensor(0.5040)
-            >>> auc.confidence_interval() # default: Blanche, two_sided
+            >>> auc.confidence_interval()  # default: Blanche, two_sided
             tensor([[0.4213, 0.0000, 0.0000],
                     [1.0000, 0.9358, 0.7289]])
             >>> auc.p_value()
@@ -313,9 +313,9 @@ class Auc:
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
             >>> estimate = torch.randn((n,))
             >>> auc = Auc()
-            >>> auc(estimate, event, time, auc_type = "incident")
+            >>> auc(estimate, event, time, auc_type="incident")
             tensor([0.7500, 0.1429, 0.1667])
-            >>> auc.integral() # integral of the auc incident/dynamic
+            >>> auc.integral()  # integral of the auc incident/dynamic
             tensor(0.4667)
 
         Notes:
@@ -395,10 +395,10 @@ class Auc:
             >>> auc = Auc()
             >>> auc(estimate, event, time)
             tensor([0.7500, 0.4286, 0.3333])
-            >>> auc.confidence_interval() # Default: Blanche, two_sided
+            >>> auc.confidence_interval()  # Default: Blanche, two_sided
             tensor([[0.4213, 0.0000, 0.0000],
                     [1.0000, 0.9358, 0.7289]])
-            >>> auc.confidence_interval(method = "bootstrap", alternative = "greater")
+            >>> auc.confidence_interval(method="bootstrap", alternative="greater")
             tensor([[0.3750, 0.1667, 0.0833],
                     [1.0000, 1.0000, 1.0000]])
 
@@ -464,9 +464,9 @@ class Auc:
             >>> auc = Auc()
             >>> auc(estimate, event, time)
             tensor([0.7500, 0.4286, 0.3333])
-            >>> auc.p_value() # Default: Blanche, two_sided
+            >>> auc.p_value()  # Default: Blanche, two_sided
             tensor([0.1360, 0.7826, 0.4089])
-            >>> auc.p_value(method = "bootstrap", alternative = "greater")
+            >>> auc.p_value(method="bootstrap", alternative="greater")
             tensor([0.2400, 0.5800, 0.7380])
 
         """
@@ -521,9 +521,9 @@ class Auc:
             >>> auc2 = Auc()
             >>> auc2(torch.randn((n,)), event, time)
             tensor([0.0000, 0.1429, 0.0556])
-            >>> auc1.compare(auc2) # default: Blanche
+            >>> auc1.compare(auc2)  # default: Blanche
             tensor([0.0008, 0.2007, 0.1358])
-            >>> auc1.compare(auc2, method = "bootstrap")
+            >>> auc1.compare(auc2, method="bootstrap")
             tensor([0.0220, 0.1970, 0.1650])
 
         """
