@@ -10,8 +10,7 @@ def validate_log_shape(log_params: torch.Tensor) -> torch.Tensor:
         [
             log_params.dim() == 0,
             log_params.dim() == 1,  # if shape = [n_samples]
-            log_params.dim() > 1
-            and log_params.size(1) == 1,  # if shape = [n_samples, 1]
+            log_params.dim() > 1 and log_params.size(1) == 1,  # if shape = [n_samples, 1]
         ]
     ):
         if log_params.dim() == 1:
@@ -23,9 +22,7 @@ def validate_log_shape(log_params: torch.Tensor) -> torch.Tensor:
     return log_params
 
 
-def check_within_follow_up(
-    new_time: torch.Tensor, time: torch.Tensor, within_follow_up: bool
-) -> None:
+def check_within_follow_up(new_time: torch.Tensor, time: torch.Tensor, within_follow_up: bool) -> None:
     # Check if the within_follow_up flag is set to True
     if within_follow_up:
         # Check if any value in new_time is outside the range of time
@@ -39,9 +36,7 @@ def check_within_follow_up(
             )
 
 
-def validate_new_time(
-    new_time: torch.Tensor, time: torch.Tensor, within_follow_up: bool = True
-) -> None:
+def validate_new_time(new_time: torch.Tensor, time: torch.Tensor, within_follow_up: bool = True) -> None:
     """
     Validate the new_time tensor for survival analysis functions.
 
@@ -61,15 +56,11 @@ def validate_new_time(
         raise TypeError("Type error: Input 'new_time' should be a tensor.")
 
     if not torch.is_floating_point(new_time):
-        raise ValueError(
-            "Value error: Input 'new_time' should be of floating-point type."
-        )
+        raise ValueError("Value error: Input 'new_time' should be of floating-point type.")
 
     new_time_sorted, _ = torch.sort(new_time)
     if not torch.equal(new_time_sorted, new_time):
-        raise ValueError(
-            "Value error: Input 'new_time' should be sorted from the smallest time to the largest."
-        )
+        raise ValueError("Value error: Input 'new_time' should be sorted from the smallest time to the largest.")
 
     if len(new_time_sorted) != len(torch.unique(new_time_sorted)):
         raise ValueError("Value error: Input 'new_time' should contain unique values.")
@@ -77,7 +68,7 @@ def validate_new_time(
     check_within_follow_up(new_time, time, within_follow_up)
 
 
-def validate_survival_data(event: torch.Tensor, time: torch.Tensor):
+def validate_survival_data(event: torch.Tensor, time: torch.Tensor) -> None:
     """Perform format and validity checks for survival data.
 
     Args:
@@ -103,9 +94,7 @@ def validate_survival_data(event: torch.Tensor, time: torch.Tensor):
         raise ValueError("Input 'time' should be of float type.")
 
     if len(event) != len(time):
-        raise ValueError(
-            "Dimension mismatch: Incompatible length between inputs 'time' and 'event'."
-        )
+        raise ValueError("Dimension mismatch: Incompatible length between inputs 'time' and 'event'.")
 
     if torch.sum(event) <= 0:
         raise ValueError("All samples are censored.")
@@ -135,15 +124,16 @@ def validate_model_type(log_params: torch.Tensor, model_type: str) -> None:
             )
     elif model_type.lower() == "cox":
         if log_params.dim() != 1:
-            raise ValueError(
-                "For Cox model, 'log_params' must have shape (n_samples, 1)."
-            )
+            raise ValueError("For Cox model, 'log_params' must have shape (n_samples, 1).")
     else:
         raise ValueError("Invalid model type. Must be 'weibull' or 'cox'.")
 
 
 def validate_loss(
-    log_params: torch.Tensor, event: torch.Tensor, time: torch.Tensor, model_type: str
+    log_params: torch.Tensor,
+    event: torch.Tensor,
+    time: torch.Tensor,
+    model_type: str,
 ) -> None:
     # sanity checks
     validate_tensor(log_params, "log_params")
@@ -155,14 +145,10 @@ def validate_loss(
     time = time.squeeze()
 
     if log_params.shape[0] != len(event):
-        raise ValueError(
-            "Dimension mismatch: 'log_params' and 'event' must have the same length"
-        )
+        raise ValueError("Dimension mismatch: 'log_params' and 'event' must have the same length")
 
     if time.shape != event.shape:
-        raise ValueError(
-            "Dimension mismatch: 'time' and 'event' must have the same shape"
-        )
+        raise ValueError("Dimension mismatch: 'time' and 'event' must have the same shape")
 
     if torch.any(time < 0):
         raise ValueError("All elements in 'time' must be non-negative.")

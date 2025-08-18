@@ -41,10 +41,10 @@ def get_ipcw(
             >>> n = 5
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
             >>> time = torch.randint(low=1, high=100, size=(n,)).float()
-            >>> new_time = torch.randint(low=1, high=100, size=(n*2,))
-            >>> get_ipcw(event, time) # ipcw evaluated at time
+            >>> new_time = torch.randint(low=1, high=100, size=(n * 2,))
+            >>> get_ipcw(event, time)  # ipcw evaluated at time
             tensor([1.8750, 1.2500, 3.7500, 0.0000, 1.2500])
-            >>> get_ipcw(event, time, new_time) # ipcw evaluated at new_time
+            >>> get_ipcw(event, time, new_time)  # ipcw evaluated at new_time
             tensor([1.8750, 1.8750, 3.7500, 3.7500, 0.0000, 1.2500, 0.0000, 1.2500, 1.2500,
                     1.2500])
 
@@ -103,7 +103,8 @@ def _inverse_censoring_dist(ct: torch.Tensor) -> torch.Tensor:
         zero_indices = torch.nonzero(ct.eq(0.0)).squeeze()
         zero_indices_list = zero_indices.tolist()  # Explicitly convert to list
         warnings.warn(
-            f"Censoring distribution zero at time points: {zero_indices_list}. Returning ones as weight"
+            f"Censoring distribution zero at time points: {zero_indices_list}. Returning ones as weight",
+            stacklevel=2,
         )
     weight = 1.0 / ct
     weight = torch.ones_like(ct) / ct

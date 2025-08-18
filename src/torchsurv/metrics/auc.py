@@ -38,11 +38,11 @@ class Auc:
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
             >>> estimate = torch.randn((n,))
             >>> auc = Auc()
-            >>> auc(estimate, event, time) # default: auc cumulative/dynamic
+            >>> auc(estimate, event, time)  # default: auc cumulative/dynamic
             tensor([0.7500, 0.4286, 0.3333])
             >>> auc.integral()
             tensor(0.5040)
-            >>> auc.confidence_interval() # default: Blanche, two_sided
+            >>> auc.confidence_interval()  # default: Blanche, two_sided
             tensor([[0.4213, 0.0000, 0.0000],
                     [1.0000, 0.9358, 0.7289]])
             >>> auc.p_value()
@@ -203,18 +203,14 @@ class Auc:
         """
 
         # mandatory input format checks
-        self._validate_auc_inputs(
-            estimate, time, auc_type, new_time, weight, weight_new_time
-        )
+        self._validate_auc_inputs(estimate, time, auc_type, new_time, weight, weight_new_time)
 
         # update inputs as required
         estimate, new_time, weight, weight_new_time = self._update_auc_new_time(
             estimate, event, time, new_time, weight, weight_new_time
         )
         estimate = self._update_auc_estimate(estimate, new_time)
-        weight, weight_new_time = self._update_auc_weight(
-            time, new_time, weight, weight_new_time
-        )
+        weight, weight_new_time = self._update_auc_weight(time, new_time, weight, weight_new_time)
 
         # further input format checks
         if self.checks:
@@ -229,15 +225,12 @@ class Auc:
         time_long = time.unsqueeze(1).expand((n_samples, n_times))
         event_long = event.unsqueeze(1).expand((n_samples, n_times))
         weight_long = weight.unsqueeze(1).expand((n_samples, n_times))
-        new_time_long = new_time.unsqueeze(0).expand(
-            n_samples, n_times
-        )  # Size n_times, unsqueeze(0) instead
+        new_time_long = new_time.unsqueeze(0).expand(n_samples, n_times)  # Size n_times, unsqueeze(0) instead
 
         # sort each time point (columns) by risk score (descending)
         index = torch.argsort(-estimate, dim=0)
-        time_long, event_long, estimate, weight_long = map(
-            lambda x: torch.gather(x, 0, index),
-            [time_long, event_long, estimate, weight_long],
+        time_long, event_long, estimate, weight_long = (
+            torch.gather(x, 0, index) for x in [time_long, event_long, estimate, weight_long]
         )
 
         # find case and control
@@ -255,9 +248,7 @@ class Auc:
         false_pos = cumsum_fp / n_controls
 
         # prepend row of infinity values
-        estimate_diff = torch.cat(
-            (torch.full((1, n_times), float("inf")), estimate), dim=0
-        )
+        estimate_diff = torch.cat((torch.full((1, n_times), float("inf")), estimate), dim=0)
         is_tied = torch.abs(torch.diff(estimate_diff, dim=0)) <= self.tied_tol
 
         # initialize empty tensor to store auc
@@ -287,10 +278,7 @@ class Auc:
         # Create/overwrite internal attributes states
         if instate:
             index_rev = torch.argsort(index, dim=0)
-            estimate, is_case, is_control = map(
-                lambda x: torch.gather(x, 0, index_rev),
-                [estimate, is_case, is_control],
-            )
+            estimate, is_case, is_control = (torch.gather(x, 0, index_rev) for x in [estimate, is_case, is_control])
 
             # sort all objects by time
             self.order_time = torch.argsort(time, dim=0)
@@ -325,9 +313,9 @@ class Auc:
             >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
             >>> estimate = torch.randn((n,))
             >>> auc = Auc()
-            >>> auc(estimate, event, time, auc_type = "incident")
+            >>> auc(estimate, event, time, auc_type="incident")
             tensor([0.7500, 0.1429, 0.1667])
-            >>> auc.integral() # integral of the auc incident/dynamic
+            >>> auc.integral()  # integral of the auc incident/dynamic
             tensor(0.4667)
 
         Notes:
@@ -352,11 +340,7 @@ class Auc:
         else:
             # handle cases where tmax is not specified
             if tmax is None:
-                tmax = (
-                    self.new_time[-1]
-                    if self.auc_type == "cumulative"
-                    else self.new_time[-1] - 1
-                )
+                tmax = self.new_time[-1] if self.auc_type == "cumulative" else self.new_time[-1] - 1
 
             # estimate of survival distribution
             km = kaplan_meier.KaplanMeierEstimator()
@@ -411,10 +395,10 @@ class Auc:
             >>> auc = Auc()
             >>> auc(estimate, event, time)
             tensor([0.7500, 0.4286, 0.3333])
-            >>> auc.confidence_interval() # Default: Blanche, two_sided
+            >>> auc.confidence_interval()  # Default: Blanche, two_sided
             tensor([[0.4213, 0.0000, 0.0000],
                     [1.0000, 0.9358, 0.7289]])
-            >>> auc.confidence_interval(method = "bootstrap", alternative = "greater")
+            >>> auc.confidence_interval(method="bootstrap", alternative="greater")
             tensor([[0.3750, 0.1667, 0.0833],
                     [1.0000, 1.0000, 1.0000]])
 
@@ -426,25 +410,19 @@ class Auc:
                 Blanche2013b
         """
 
-        assert (
-            hasattr(self, "auc") and self.auc is not None
-        ), "Error: Please calculate AUC using `Auc()` before calling `confidence_interval()`."
+        assert hasattr(self, "auc") and self.auc is not None, (
+            "Error: Please calculate AUC using `Auc()` before calling `confidence_interval()`."
+        )
 
         if alternative not in ["less", "greater", "two_sided"]:
-            raise ValueError(
-                "'alternative' parameter must be one of ['less', 'greater', 'two_sided']."
-            )
+            raise ValueError("'alternative' parameter must be one of ['less', 'greater', 'two_sided'].")
 
         if method == "blanche":
             conf_int = self._confidence_interval_blanche(alpha, alternative)
         elif method == "bootstrap":
-            conf_int = self._confidence_interval_bootstrap(
-                alpha, alternative, n_bootstraps
-            )
+            conf_int = self._confidence_interval_bootstrap(alpha, alternative, n_bootstraps)
         else:
-            raise ValueError(
-                "Method not implemented. Please choose either 'blanche' or 'bootstrap'."
-            )
+            raise ValueError("Method not implemented. Please choose either 'blanche' or 'bootstrap'.")
         return conf_int
 
     def p_value(
@@ -486,35 +464,29 @@ class Auc:
             >>> auc = Auc()
             >>> auc(estimate, event, time)
             tensor([0.7500, 0.4286, 0.3333])
-            >>> auc.p_value() # Default: Blanche, two_sided
+            >>> auc.p_value()  # Default: Blanche, two_sided
             tensor([0.1360, 0.7826, 0.4089])
-            >>> auc.p_value(method = "bootstrap", alternative = "greater")
+            >>> auc.p_value(method="bootstrap", alternative="greater")
             tensor([0.2400, 0.5800, 0.7380])
 
         """
 
-        assert (
-            hasattr(self, "auc") and self.auc is not None
-        ), "Error: Please calculate AUC using `Auc()` before calling `p_value()`."
+        assert hasattr(self, "auc") and self.auc is not None, (
+            "Error: Please calculate AUC using `Auc()` before calling `p_value()`."
+        )
 
         if alternative not in ["less", "greater", "two_sided"]:
-            raise ValueError(
-                "'alternative' parameter must be one of ['less', 'greater', 'two_sided']."
-            )
+            raise ValueError("'alternative' parameter must be one of ['less', 'greater', 'two_sided'].")
 
         if method == "blanche":
             pvalue = self._p_value_blanche(alternative)
         elif method == "bootstrap":
             pvalue = self._p_value_bootstrap(alternative, n_bootstraps)
         else:
-            raise ValueError(
-                "Method not implemented. Please choose either 'blanche' or 'bootstrap'."
-            )
+            raise ValueError("Method not implemented. Please choose either 'blanche' or 'bootstrap'.")
         return pvalue
 
-    def compare(
-        self, other, method: str = "blanche", n_bootstraps: int = 999
-    ) -> torch.Tensor:
+    def compare(self, other, method: str = "blanche", n_bootstraps: int = 999) -> torch.Tensor:
         """Compare two AUCs.
 
         This function compares two AUCs computed on the same data with different
@@ -549,16 +521,16 @@ class Auc:
             >>> auc2 = Auc()
             >>> auc2(torch.randn((n,)), event, time)
             tensor([0.0000, 0.1429, 0.0556])
-            >>> auc1.compare(auc2) # default: Blanche
+            >>> auc1.compare(auc2)  # default: Blanche
             tensor([0.0008, 0.2007, 0.1358])
-            >>> auc1.compare(auc2, method = "bootstrap")
+            >>> auc1.compare(auc2, method="bootstrap")
             tensor([0.0220, 0.1970, 0.1650])
 
         """
 
-        assert (
-            hasattr(self, "auc") and self.auc is not None
-        ), "Error: Please calculate AUC using `Auc()` before calling `compare()`."
+        assert hasattr(self, "auc") and self.auc is not None, (
+            "Error: Please calculate AUC using `Auc()` before calling `compare()`."
+        )
 
         # assert that the same data were used to compute the two auc
         if torch.any(self.event != other.event) or torch.any(self.time != other.time):
@@ -566,22 +538,16 @@ class Auc:
                 "Mismatched survival data: 'time' and 'event' should be the same for both AUC computations."
             )
         if torch.any(self.new_time != other.new_time):
-            raise ValueError(
-                "Mismatched evaluation times: 'new_time' should be the same for both AUC computations."
-            )
+            raise ValueError("Mismatched evaluation times: 'new_time' should be the same for both AUC computations.")
         if self.auc_type != other.auc_type:
-            raise ValueError(
-                "Mismatched AUC types: 'auc_type' should be the same for both AUC computations."
-            )
+            raise ValueError("Mismatched AUC types: 'auc_type' should be the same for both AUC computations.")
 
         if method == "blanche":
             pvalue = self._compare_blanche(other)
         elif method == "bootstrap":
             pvalue = self._compare_bootstrap(other, n_bootstraps)
         else:
-            raise ValueError(
-                f"Method {method} not implemented. Please choose either 'blanche' or 'bootstrap'."
-            )
+            raise ValueError(f"Method {method} not implemented. Please choose either 'blanche' or 'bootstrap'.")
         return pvalue
 
     # pylint: disable=invalid-name
@@ -622,9 +588,7 @@ class Auc:
         return i_auc
 
     # pylint: disable=invalid-name
-    def _integrate_cumulative(
-        self, S: torch.Tensor, tmax: torch.Tensor
-    ) -> torch.Tensor:
+    def _integrate_cumulative(self, S: torch.Tensor, tmax: torch.Tensor) -> torch.Tensor:
         """Integrates the cumulative/dynamic AUC, int_t AUC(t) · f(t) dt
         where f(t) is the lifeline distribution estimated from the discrete
         incremental changes of the Kalpan-Meier estimate of the survival function.
@@ -661,9 +625,7 @@ class Auc:
 
         return i_auc
 
-    def _confidence_interval_blanche(
-        self, alpha: float, alternative: str
-    ) -> torch.Tensor:
+    def _confidence_interval_blanche(self, alpha: float, alternative: str) -> torch.Tensor:
         """Confidence interval of AUC assuming that the AUC
         is normally distributed and using
         standard error estimated with Blanche et al.'s method."""
@@ -673,10 +635,7 @@ class Auc:
         auc_se = self._auc_se()
 
         if torch.all(auc_se) >= 0:
-            ci = (
-                -torch.distributions.normal.Normal(0, 1).icdf(torch.tensor(alpha))
-                * auc_se
-            )
+            ci = -torch.distributions.normal.Normal(0, 1).icdf(torch.tensor(alpha)) * auc_se
             lower = torch.max(torch.tensor(0.0), self.auc - ci)
             upper = torch.min(torch.tensor(1.0), self.auc + ci)
 
@@ -689,9 +648,7 @@ class Auc:
 
         return torch.stack([lower, upper], dim=0).squeeze()
 
-    def _confidence_interval_bootstrap(
-        self, alpha: float, alternative: str, n_bootstraps: int
-    ) -> torch.Tensor:
+    def _confidence_interval_bootstrap(self, alpha: float, alternative: str, n_bootstraps: int) -> torch.Tensor:
         """Bootstrap confidence interval of the AUC using Efron percentile method.
 
         References:
@@ -700,9 +657,7 @@ class Auc:
         """
 
         # auc bootstraps given bootstrap distribution
-        auc_bootstrap = self._bootstrap_auc(
-            metric="confidence_interval", n_bootstraps=n_bootstraps
-        )
+        auc_bootstrap = self._bootstrap_auc(metric="confidence_interval", n_bootstraps=n_bootstraps)
 
         # initialize tensor to store confidence intervals
         lower = torch.zeros_like(self.auc)
@@ -731,9 +686,7 @@ class Auc:
 
         return torch.stack([lower, upper], dim=0).squeeze()
 
-    def _p_value_blanche(
-        self, alternative: str, null_value: float = 0.5
-    ) -> torch.Tensor:
+    def _p_value_blanche(self, alternative: str, null_value: float = 0.5) -> torch.Tensor:
         """p-value for a one-sample hypothesis test of the AUC
         assuming that the AUC is normally distributed and using standard error estimated
         with Blanche et al's method.
@@ -743,9 +696,7 @@ class Auc:
 
         # get p-value
         if torch.all(auc_se >= 0.0):
-            p = torch.distributions.normal.Normal(0, 1).cdf(
-                (self.auc - null_value) / auc_se
-            )
+            p = torch.distributions.normal.Normal(0, 1).cdf((self.auc - null_value) / auc_se)
             if alternative == "two_sided":
                 mask = self.auc >= torch.tensor(0.5)
                 p[mask] = torch.tensor(1.0) - p[mask]
@@ -772,9 +723,9 @@ class Auc:
         # iterate over time
         for index_t, _ in enumerate(self.auc):
             # Derive p-value
-            p = (
-                torch.tensor(1.0) + torch.sum(auc0[:, index_t] <= self.auc[index_t])
-            ) / torch.tensor(n_bootstraps + 1.0)
+            p = (torch.tensor(1.0) + torch.sum(auc0[:, index_t] <= self.auc[index_t])) / torch.tensor(
+                n_bootstraps + 1.0
+            )
             if alternative == "two_sided":
                 if self.auc[index_t] >= torch.tensor(0.5):
                     p = torch.tensor(1.0) - p
@@ -808,9 +759,7 @@ class Auc:
         # iterate over time
         for index_t, _ in enumerate(self.auc):
             # compute spearman correlation between risk prediction
-            corr = regression.SpearmanCorrCoef()(
-                self.estimate[:, index_t], other.estimate[:, index_t]
-            )
+            corr = regression.SpearmanCorrCoef()(self.estimate[:, index_t], other.estimate[:, index_t])
 
             # check for perfect positive monotonic relationship between two variables
             if 1 - torch.abs(corr) < 1e-15:
@@ -818,17 +767,12 @@ class Auc:
             else:
                 # compute t-stat
                 t_stat = (self.auc[index_t] - other.auc[index_t]) / torch.sqrt(
-                    auc1_se[index_t] ** 2
-                    + auc2_se[index_t] ** 2
-                    - 2 * corr * auc1_se[index_t] * auc2_se[index_t]
+                    auc1_se[index_t] ** 2 + auc2_se[index_t] ** 2 - 2 * corr * auc1_se[index_t] * auc2_se[index_t]
                 )
 
                 # p-value
                 p_values[index_t] = torch.tensor(
-                    1
-                    - stats.t.cdf(
-                        t_stat, df=N - 1
-                    ),  # student-t cdf not available on torch
+                    1 - stats.t.cdf(t_stat, df=N - 1),  # student-t cdf not available on torch
                     dtype=self.auc.dtype,
                     device=self.auc.device,
                 )
@@ -840,12 +784,8 @@ class Auc:
 
         # auc bootstraps given null hypothesis that auc1 and
         # auc2 come from the same distribution
-        auc1_null = self._bootstrap_auc(
-            metric="compare", other=other, n_bootstraps=n_bootstraps
-        )
-        auc2_null = self._bootstrap_auc(
-            metric="compare", other=other, n_bootstraps=n_bootstraps
-        )
+        auc1_null = self._bootstrap_auc(metric="compare", other=other, n_bootstraps=n_bootstraps)
+        auc2_null = self._bootstrap_auc(metric="compare", other=other, n_bootstraps=n_bootstraps)
 
         # Bootstrapped test statistics
         t_boot = auc1_null - auc2_null
@@ -858,9 +798,7 @@ class Auc:
 
         # iterate over time
         for index_t in range(len(self.auc)):
-            p_values[index_t] = 1 - (
-                1 + torch.sum(t_boot[:, index_t] <= t_obs[index_t])
-            ) / (n_bootstraps + 1)
+            p_values[index_t] = 1 - (1 + torch.sum(t_boot[:, index_t] <= t_obs[index_t])) / (n_bootstraps + 1)
 
         return p_values
 
@@ -898,15 +836,9 @@ class Auc:
         # iterate over time
         for index_t in range(n_times):
             # element(i,j) given t = h*_tij = I(T_i <= t, delta_i = 1)  * I(U_j > t) * (I(M_i > M_j) + 0.5 * I(M_i > M_j)) * W(T_i) * W(t)
-            h_t = (
-                self.is_case[:, index_t].unsqueeze(1) * self.is_control[:, index_t]
-            ).float()
-            h_t *= (
-                self.estimate[:, index_t].unsqueeze(1)
-                > self.estimate[:, index_t].unsqueeze(0)
-            ).float() + 0.5 * (
-                self.estimate[:, index_t].unsqueeze(1)
-                == self.estimate[:, index_t].unsqueeze(0)
+            h_t = (self.is_case[:, index_t].unsqueeze(1) * self.is_control[:, index_t]).float()
+            h_t *= (self.estimate[:, index_t].unsqueeze(1) > self.estimate[:, index_t].unsqueeze(0)).float() + 0.5 * (
+                self.estimate[:, index_t].unsqueeze(1) == self.estimate[:, index_t].unsqueeze(0)
             ).float()
             h_t *= self.weight.unsqueeze(1)
             h_t *= self.weight_new_time[index_t]
@@ -928,15 +860,9 @@ class Auc:
 
             # sum of phi
             sum_phi = (
-                torch.sum(
-                    phi, axis=(1, 2)
-                )  # sum_j sum_k phi_ijk = Les_sum_jk_a_i_fixe * n_samples in Blanche's code
-                + torch.sum(
-                    phi, axis=(0, 2)
-                )  # sum_i sum_k phi_ijk = Les_sum_ik_a_j_fixe * n_samples in Blanche's code
-                + torch.sum(
-                    phi, axis=(0, 1)
-                )  # sum_i sum_j phi_ijk = Les_sum_ij_a_k_fixe * n_samples in Blanche's code
+                torch.sum(phi, axis=(1, 2))  # sum_j sum_k phi_ijk = Les_sum_jk_a_i_fixe * n_samples in Blanche's code
+                + torch.sum(phi, axis=(0, 2))  # sum_i sum_k phi_ijk = Les_sum_ik_a_j_fixe * n_samples in Blanche's code
+                + torch.sum(phi, axis=(0, 1))  # sum_i sum_j phi_ijk = Les_sum_ij_a_k_fixe * n_samples in Blanche's code
             )
 
             # estimate of influence function
@@ -955,9 +881,7 @@ class Auc:
 
         # check that time is ordered
         if torch.any(self.time != self.time[torch.argsort(self.time, dim=0)]):
-            raise ValueError(
-                "The 'time' values in `self.time` should be ordered in ascending order."
-            )
+            raise ValueError("The 'time' values in `self.time` should be ordered in ascending order.")
 
         # find censoring events
         censoring = self.event == 0.0
@@ -971,9 +895,7 @@ class Auc:
         # censoring martingale, denoted M_C in in Blanche et al's paper
         censoring_martingale = torch.zeros((n_samples, n_samples), dtype=torch.float32)
         for i in range(n_samples):
-            censoring_martingale[:, i] = censoring[i].float() * (
-                self.time[i] <= self.time
-            ).float() - torch.cat(
+            censoring_martingale[:, i] = censoring[i].float() * (self.time[i] <= self.time).float() - torch.cat(
                 (
                     cumsum_censoring_hazard[0:i],
                     torch.full((n_samples - i,), cumsum_censoring_hazard[i]),
@@ -989,15 +911,10 @@ class Auc:
         )
 
         def divide_by_empirical_survival(v):
-            return v / torch.cat(
-                (torch.tensor([1.0]), 1 - torch.arange(1, len(v)) / len(v))
-            )
+            return v / torch.cat((torch.tensor([1.0]), 1 - torch.arange(1, len(v)) / len(v)))
 
         d_censoring_martingale_div_s = torch.stack(
-            [
-                divide_by_empirical_survival(d_censoring_martingale[:, i])
-                for i in range(n_samples)
-            ],
+            [divide_by_empirical_survival(d_censoring_martingale[:, i]) for i in range(n_samples)],
             dim=1,
         )
 
@@ -1030,18 +947,14 @@ class Auc:
             _phi += ipsw_t
             _phi *= -H_t
             _phi = _phi.unsqueeze(1).expand(-1, n_samples)
-            _phi = _phi + (
-                h_t * ((1 + integral_m_div_s[:, i]).unsqueeze(1).expand(-1, n_samples))
-            )
+            _phi = _phi + (h_t * ((1 + integral_m_div_s[:, i]).unsqueeze(1).expand(-1, n_samples)))
             _phi /= S_t * F_t
 
             phi[:, :, i] = _phi
 
         return phi
 
-    def _bootstrap_auc(
-        self, metric: str, n_bootstraps: int, other=None
-    ) -> torch.Tensor:
+    def _bootstrap_auc(self, metric: str, n_bootstraps: int, other=None) -> torch.Tensor:
         """Compute bootstrap samples of the AUC.
 
         Args:
@@ -1065,13 +978,9 @@ class Auc:
 
         # Get the bootstrap samples of auc
         for _ in range(n_bootstraps):
-            if (
-                metric == "p_value"
-            ):  # bootstrap samples given null distribution (auc = 0.5)
+            if metric == "p_value":  # bootstrap samples given null distribution (auc = 0.5)
                 estimate = copy.deepcopy(self.estimate)
-                estimate = estimate[
-                    torch.randperm(estimate.shape[0]), :
-                ]  # Shuffle estimate
+                estimate = estimate[torch.randperm(estimate.shape[0]), :]  # Shuffle estimate
                 aucs.append(
                     self(
                         estimate,
@@ -1084,9 +993,7 @@ class Auc:
                         instate=False,
                     )
                 )  # Run without saving internal state
-            elif (
-                metric == "confidence_interval"
-            ):  # bootstrap samples given data distribution
+            elif metric == "confidence_interval":  # bootstrap samples given data distribution
                 index = torch.randint(
                     low=0,
                     high=self.estimate.shape[0],
@@ -1095,9 +1002,7 @@ class Auc:
                 # auc is evaluated at new_time:
                 # so need to keep the min and max time to ensure that new_time is within follow-up time
                 index_max_time = torch.argmax(self.time).unsqueeze(0)
-                index_min_time = torch.nonzero(
-                    self.time == self.time[self.event].min()
-                ).squeeze(1)
+                index_min_time = torch.nonzero(self.time == self.time[self.event].min()).squeeze(1)
                 index = torch.cat(
                     (
                         index,
@@ -1120,9 +1025,7 @@ class Auc:
                     )
                 )  # Run without saving internal state
 
-            elif (
-                metric == "compare"
-            ):  # bootstrap samples given null distribution (auc1 = auc2)
+            elif metric == "compare":  # bootstrap samples given null distribution (auc1 = auc2)
                 # index included in bootstrap samples
                 index = torch.randint(
                     low=0,
@@ -1136,9 +1039,7 @@ class Auc:
                 # same for min time
                 index_max_time = torch.argmax(self.time).unsqueeze(0)
                 index_max_time += (torch.rand(1) < 0.5) * self.estimate.shape[0]
-                index_min_time = torch.nonzero(
-                    self.time == self.time[self.event].min()
-                ).squeeze(1)
+                index_min_time = torch.nonzero(self.time == self.time[self.event].min()).squeeze(1)
                 index_min_time += (torch.rand(1) < 0.5) * self.estimate.shape[0]
                 index = torch.cat(
                     (index, index_min_time, index_max_time),
@@ -1146,11 +1047,7 @@ class Auc:
                 )
 
                 # with prob 0.5, take the weight_new_time from self and with prob 0.5 from other
-                weight_new_time = (
-                    self.weight_new_time
-                    if torch.rand(1) < 0.5
-                    else other.weight_new_time
-                )
+                weight_new_time = self.weight_new_time if torch.rand(1) < 0.5 else other.weight_new_time
 
                 aucs.append(
                     self(  # sample with replacement from pooled sample
@@ -1173,9 +1070,7 @@ class Auc:
         return aucs
 
     @staticmethod
-    def _find_torch_unique_indices(
-        inverse_indices: torch.Tensor, counts: torch.Tensor
-    ) -> torch.Tensor:
+    def _find_torch_unique_indices(inverse_indices: torch.Tensor, counts: torch.Tensor) -> torch.Tensor:
         """return unique_sorted_indices such that
         sorted_unique_tensor[inverse_indices] = original_tensor
         original_tensor[unique_sorted_indices] = sorted_unique_tensor
@@ -1195,20 +1090,14 @@ class Auc:
         return ind_sorted[cum_sum]
 
     @staticmethod
-    def _validate_auc_inputs(
-        estimate, time, auc_type, new_time, weight, weight_new_time
-    ):
+    def _validate_auc_inputs(estimate, time, auc_type, new_time, weight, weight_new_time):
         # check new_time and weight are provided, weight_new_time should be provided
         if all([new_time is not None, weight is not None, weight_new_time is None]):
-            raise ValueError(
-                "Please provide 'weight_new_time', the weight evaluated at 'new_time'."
-            )
+            raise ValueError("Please provide 'weight_new_time', the weight evaluated at 'new_time'.")
 
         # check if auc type is correct
         if auc_type not in ["cumulative", "incident"]:
-            raise ValueError(
-                "The 'auc_type' parameter must be either 'cumulative' or 'incident'."
-            )
+            raise ValueError("The 'auc_type' parameter must be either 'cumulative' or 'incident'.")
 
         # check if new_time are not specified and time-dependent estimate are not evaluated at time
         if new_time is None and estimate.ndim == 2 and estimate.shape[1] != 1:
@@ -1228,9 +1117,7 @@ class Auc:
         weight_new_time: torch.Tensor,
     ) -> torch.Tensor:
         # update new time
-        if (
-            new_time is not None
-        ):  # if new_time are specified: ensure it has the correct format
+        if new_time is not None:  # if new_time are specified: ensure it has the correct format
             # ensure that new_time are float
             if isinstance(new_time, int):
                 new_time = torch.tensor([new_time]).float()
@@ -1245,9 +1132,7 @@ class Auc:
             new_time, inverse_indices, counts = torch.unique(
                 time[mask], sorted=True, return_inverse=True, return_counts=True
             )
-            sorted_unique_indices = Auc._find_torch_unique_indices(
-                inverse_indices, counts
-            )
+            sorted_unique_indices = Auc._find_torch_unique_indices(inverse_indices, counts)
 
             # select weight corresponding at new time
             if weight is not None:
@@ -1260,18 +1145,14 @@ class Auc:
         return estimate, new_time, weight, weight_new_time
 
     @staticmethod
-    def _update_auc_estimate(
-        estimate: torch.Tensor, new_time: torch.Tensor
-    ) -> torch.Tensor:
+    def _update_auc_estimate(estimate: torch.Tensor, new_time: torch.Tensor) -> torch.Tensor:
         # squeeze estimate if shape = (n_samples, 1)
         if estimate.ndim == 2 and estimate.shape[1] == 1:
             estimate = estimate.squeeze(1)
 
         # Ensure estimate is (n_samples, n_times) shape
         if estimate.ndim == 1:
-            estimate = estimate.unsqueeze(1).expand(
-                (estimate.shape[0], new_time.shape[0])
-            )
+            estimate = estimate.unsqueeze(1).expand((estimate.shape[0], new_time.shape[0]))
 
         return estimate
 

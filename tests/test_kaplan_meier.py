@@ -3,7 +3,10 @@ import unittest
 
 import numpy as np
 import torch
-from sksurv.metrics import CensoringDistributionEstimator, SurvivalFunctionEstimator
+from sksurv.metrics import (
+    CensoringDistributionEstimator,
+    SurvivalFunctionEstimator,
+)
 from utils import DataBatchContainer
 
 # local
@@ -31,9 +34,7 @@ class TestNonParametric(unittest.TestCase):
         for benchmark_kaplan_meier in benchmark_kaplan_meiers:
             event = torch.tensor(benchmark_kaplan_meier["status"]).bool()
             time = torch.tensor(benchmark_kaplan_meier["time"], dtype=torch.float32)
-            new_time = torch.tensor(
-                benchmark_kaplan_meier["times"], dtype=torch.float32
-            )
+            new_time = torch.tensor(benchmark_kaplan_meier["times"], dtype=torch.float32)
 
             km = KaplanMeierEstimator()
             km(event, time, censoring_dist=False)
@@ -140,9 +141,7 @@ class TestNonParametric(unittest.TestCase):
             cens.fit(y_train_array)
             ct_pred_sksurv = cens.predict_proba(y_test_array["futime"])
 
-            self.assertTrue(
-                np.allclose(ct_pred.numpy(), ct_pred_sksurv, rtol=1e-5, atol=1e-8)
-            )
+            self.assertTrue(np.allclose(ct_pred.numpy(), ct_pred_sksurv, rtol=1e-5, atol=1e-8))
 
     def test_kaplan_meier_predict_survival_distribution_simulated_data(self):
         """test Kaplan Meier prediction of survival distribution on simulated batches including edge cases"""
@@ -182,9 +181,7 @@ class TestNonParametric(unittest.TestCase):
             surv.fit(y_train_array)
             st_pred_sksurv = surv.predict_proba(y_test_array["futime"])
 
-            self.assertTrue(
-                np.allclose(st_pred.numpy(), st_pred_sksurv, rtol=1e-5, atol=1e-8)
-            )
+            self.assertTrue(np.allclose(st_pred.numpy(), st_pred_sksurv, rtol=1e-5, atol=1e-8))
 
     def test_kaplan_meier_estimate_error_raised(self):
         """test that errors are raised for estimation in not-accepted edge cases."""
@@ -196,9 +193,7 @@ class TestNonParametric(unittest.TestCase):
         for batch in batch_container.batches:
             (train_time, train_event, *_) = batch
 
-            self.assertRaises(
-                ValueError, KaplanMeierEstimator(), train_event, train_time
-            )
+            self.assertRaises(ValueError, KaplanMeierEstimator(), train_event, train_time)
 
     def test_kaplan_meier_prediction_error_raised(self):
         """test that errors are raised for prediction in not-accepted edge cases."""
@@ -210,9 +205,9 @@ class TestNonParametric(unittest.TestCase):
         for batch in batch_container.batches:
             (train_time, train_event, test_time, *_) = batch
 
-            train_event[
-                -1
-            ] = False  # if last event is censoring, the last KM is > 0 and it cannot predict beyond this time
+            train_event[-1] = (
+                False  # if last event is censoring, the last KM is > 0 and it cannot predict beyond this time
+            )
             km = KaplanMeierEstimator()
             km(train_event, train_time, censoring_dist=False)
 

@@ -37,9 +37,7 @@ class TestCIndex(unittest.TestCase):
         """test point estimate concordance index on lung and gbsg datasets"""
         for benchmark_cindex in benchmark_cindexs:
             train_event = torch.tensor(benchmark_cindex["train_status"]).bool()
-            train_time = torch.tensor(
-                benchmark_cindex["train_time"], dtype=torch.float32
-            )
+            train_time = torch.tensor(benchmark_cindex["train_time"], dtype=torch.float32)
             test_event = torch.tensor(benchmark_cindex["test_status"]).bool()
             test_time = torch.tensor(benchmark_cindex["test_time"], dtype=torch.float32)
             estimate = torch.tensor(benchmark_cindex["estimate"], dtype=torch.float32)
@@ -52,18 +50,12 @@ class TestCIndex(unittest.TestCase):
                 test_time,
             ).numpy()
 
-            c_harrell_survival = np.array(
-                benchmark_cindex["c_Harrell_survival"]
-            )  # survival
-            c_harrell_survcomp = np.array(
-                benchmark_cindex["c_Harrell_survcomp"]
-            )  # survcomp
+            c_harrell_survival = np.array(benchmark_cindex["c_Harrell_survival"])  # survival
+            c_harrell_survcomp = np.array(benchmark_cindex["c_Harrell_survcomp"])  # survcomp
 
             # uno's c-index
             ipcw = get_ipcw(train_event, train_time, test_time)
-            c_uno = cindex(
-                estimate, test_event, test_time, weight=ipcw, tmax=new_time[-1]
-            )
+            c_uno = cindex(estimate, test_event, test_time, weight=ipcw, tmax=new_time[-1])
 
             c_uno_survAUC = benchmark_cindex["c_Uno_survAUC"]  # survAUC
             c_uno_survC1 = benchmark_cindex["c_Uno_survC1"]  # survC1
@@ -86,25 +78,17 @@ class TestCIndex(unittest.TestCase):
                 )
             )
 
-            self.assertTrue(
-                np.isclose(c_uno.numpy(), np.array(c_uno_survAUC), rtol=1e-1, atol=1e-8)
-            )
+            self.assertTrue(np.isclose(c_uno.numpy(), np.array(c_uno_survAUC), rtol=1e-1, atol=1e-8))
 
-            self.assertTrue(
-                np.isclose(c_uno.numpy(), np.array(c_uno_survC1), rtol=1e-1, atol=1e-8)
-            )
+            self.assertTrue(np.isclose(c_uno.numpy(), np.array(c_uno_survC1), rtol=1e-1, atol=1e-8))
 
     def test_cindex_se_real_data(self):
         """test standard error of concordance index on lung and gbsg datasets"""
         for benchmark_cindex in benchmark_cindexs:
             concordant = torch.tensor(benchmark_cindex["ch_survcomp"], dtype=torch.int)
             discordant = torch.tensor(benchmark_cindex["dh_survcomp"], dtype=torch.int)
-            weight = torch.tensor(
-                benchmark_cindex["weights_survcomp"], dtype=torch.float32
-            )
-            c_harrell_survcomp = torch.tensor(
-                benchmark_cindex["c_Harrell_survcomp"], dtype=torch.float32
-            )
+            weight = torch.tensor(benchmark_cindex["weights_survcomp"], dtype=torch.float32)
+            c_harrell_survcomp = torch.tensor(benchmark_cindex["c_Harrell_survcomp"], dtype=torch.float32)
 
             # overwrite objects used to calculate standard error
             cindex.concordant = concordant
@@ -114,17 +98,11 @@ class TestCIndex(unittest.TestCase):
 
             # Noether standard error
             cindex_se = cindex._concordance_index_se()
-            cindex_se_survcomp = np.array(
-                benchmark_cindex["c_se_noether_survcomp"]
-            )  # survcomp
+            cindex_se_survcomp = np.array(benchmark_cindex["c_se_noether_survcomp"])  # survcomp
 
             # conservative confidence interval
-            cindex_lower = cindex._confidence_interval_conservative(
-                alpha=0.05, alternative="two_sided"
-            )[0]
-            cindex_lower_survcomp = np.array(
-                benchmark_cindex["c_lower_conservative_survcomp"]
-            )  # survcomp
+            cindex_lower = cindex._confidence_interval_conservative(alpha=0.05, alternative="two_sided")[0]
+            cindex_lower_survcomp = np.array(benchmark_cindex["c_lower_conservative_survcomp"])  # survcomp
 
             self.assertTrue(
                 np.isclose(
@@ -190,17 +168,16 @@ class TestCIndex(unittest.TestCase):
 
             # uno's c-index
             ipcw = get_ipcw(train_event, train_time, test_time)
-            c_uno = cindex(
-                estimate, test_event, test_time, weight=ipcw, tmax=new_time[-1]
-            ).numpy()
+            c_uno = cindex(estimate, test_event, test_time, weight=ipcw, tmax=new_time[-1]).numpy()
 
             c_uno_sksurv = concordance_index_ipcw(
-                y_train_array, y_test_array, estimate_array, tau=new_time_array[-1]
+                y_train_array,
+                y_test_array,
+                estimate_array,
+                tau=new_time_array[-1],
             )[0]
 
-            self.assertTrue(
-                np.isclose(c_harrell.numpy(), c_harrell_sksurv, rtol=1e-2, atol=1e-8)
-            )
+            self.assertTrue(np.isclose(c_harrell.numpy(), c_harrell_sksurv, rtol=1e-2, atol=1e-8))
             self.assertTrue(np.isclose(c_uno, c_uno_sksurv, rtol=1e-2, atol=1e-8))
 
     def test_cindex_confidence_interval_pvalue(self):
@@ -260,9 +237,7 @@ class TestCIndex(unittest.TestCase):
 
         _ = torch.manual_seed(42)
         n = 128
-        estimate_informative = torch.randn(
-            (n,)
-        )  # estimate used to define time-to-event
+        estimate_informative = torch.randn((n,))  # estimate used to define time-to-event
         estimate_non_informative = torch.randn((n,))  # random estimate
         event = torch.randint(low=0, high=2, size=(n,)).bool()
         time = (
