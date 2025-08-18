@@ -91,7 +91,6 @@ ignore_missing_imports = true
 target-version = "py38"
 line-length = 120
 
-
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"

@@ -77,69 +77,8 @@ class TestBrierScore(unittest.TestCase):
             self.assertTrue(np.allclose(bs.numpy(), bs_survMetrics, rtol=1e-2, atol=1e-3))
             self.assertTrue(np.allclose(ibs.numpy(), ibs_survMetrics, rtol=1e-2, atol=1e-3))
 
-    def test_brier_score_simulated_data(self):
-        """test point estimate of brier score and integrated brier score on simulated batches including edge cases"""
-        batch_container = DataBatchContainer()
-        batch_container.generate_batches(
-            n_batch=20,
-            flags_to_set=[
-                "train_ties_time_event",
-                "test_ties_time_event",
-                "train_ties_time_censoring",
-                "test_ties_time_censoring",
-                "train_ties_time_event_censoring",
-                "test_ties_time_event_censoring",
-                "test_no_censoring",
-                # "train_no_censoring", sksurv fails
-                "test_event_at_last_time",
-                "ties_score_events",
-                "ties_score_event_censoring",
-                "ties_score_censoring",
-            ],
-        )
-        for batch in batch_container.batches:
-            (
-                train_time,
-                train_event,
-                test_time,
-                test_event,
-                _,
-                new_time,
-                y_train_array,
-                y_test_array,
-                _,
-                new_time_array,
-            ) = batch
-
-            estimate = torch.rand((len(test_time), len(new_time)))
-
-            ipcw = get_ipcw(train_event, train_time, test_time)
-            ipcw_new_time = get_ipcw(train_event, train_time, new_time)
-            bs = brier_score(
-                estimate,
-                test_event,
-                test_time,
-                new_time=new_time,
-                weight=ipcw,
-                weight_new_time=ipcw_new_time,
-            )
-
-            _, bs_sksurv = brier_score_sksurv(y_train_array, y_test_array, estimate.numpy(), new_time_array)
-
-            self.assertTrue(np.allclose(bs.numpy(), bs_sksurv, rtol=1e-5, atol=1e-8))
-
-            if len(new_time) > 2:
-                ibs = brier_score.integral()
-                ibs_sksurv = integrated_brier_score_sksurv(
-                    y_train_array,
-                    y_test_array,
-                    estimate.numpy(),
-                    new_time_array,
-                )
-                self.assertTrue(np.allclose(ibs.numpy(), ibs_sksurv, rtol=1e-5, atol=1e-8))
-
     def test_brier_score_confidence_interval_pvalue(self):
-        """test brier score confidence interval and p value are as expected"""
+        """test brier score confidense interval and p value are as expected"""
         batch_container = DataBatchContainer()
         batch_container.generate_batches(
             n_batch=20,
@@ -234,6 +173,68 @@ class TestBrierScore(unittest.TestCase):
         self.assertTrue(np.all(ibs_informative.numpy() < ibs_non_informative.numpy()))
         self.assertTrue(np.any(p_value_compare_informative.numpy() < 0.05))
         self.assertTrue(np.all(p_value_compare_non_informative.numpy() > 0.05))
+
+
+def test_brier_score_simulated_data(self):
+    """test point estimate of brier score and integrated brier score on simulated batches including edge cases"""
+    batch_container = DataBatchContainer()
+    batch_container.generate_batches(
+        n_batch=20,
+        flags_to_set=[
+            "train_ties_time_event",
+            "test_ties_time_event",
+            "train_ties_time_censoring",
+            "test_ties_time_censoring",
+            "train_ties_time_event_censoring",
+            "test_ties_time_event_censoring",
+            "test_no_censoring",
+            # "train_no_censoring", sksurv fails
+            "test_event_at_last_time",
+            "ties_score_events",
+            "ties_score_event_censoring",
+            "ties_score_censoring",
+        ],
+    )
+    for batch in batch_container.batches:
+        (
+            train_time,
+            train_event,
+            test_time,
+            test_event,
+            _,
+            new_time,
+            y_train_array,
+            y_test_array,
+            _,
+            new_time_array,
+        ) = batch
+
+        estimate = torch.rand((len(test_time), len(new_time)))
+
+        ipcw = get_ipcw(train_event, train_time, test_time)
+        ipcw_new_time = get_ipcw(train_event, train_time, new_time)
+        bs = brier_score(
+            estimate,
+            test_event,
+            test_time,
+            new_time=new_time,
+            weight=ipcw,
+            weight_new_time=ipcw_new_time,
+        )
+
+        _, bs_sksurv = brier_score_sksurv(y_train_array, y_test_array, estimate.numpy(), new_time_array)
+
+        self.assertTrue(np.allclose(bs.numpy(), bs_sksurv, rtol=1e-5, atol=1e-8))
+
+        if len(new_time) > 2:
+            ibs = brier_score.integral()
+            ibs_sksurv = integrated_brier_score_sksurv(
+                y_train_array,
+                y_test_array,
+                estimate.numpy(),
+                new_time_array,
+            )
+            self.assertTrue(np.allclose(ibs.numpy(), ibs_sksurv, rtol=1e-5, atol=1e-8))
 
 
 if __name__ == "__main__":
