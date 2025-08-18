@@ -14,6 +14,16 @@ __all__ = [
 class KaplanMeierEstimator:
     """Kaplan-Meier estimate of survival or censoring distribution for right-censored data :cite:p:`Kaplan1958`."""
 
+    def __init__(self, device: str = None):
+        """
+        Args:
+            device (str, optional): Device to use for tensor computations (e.g., 'cpu', 'cuda'). Defaults to None (uses CPU).
+        """
+        if device is None:
+            self.device = torch.device("cpu")
+        else:
+            self.device = torch.device(device)
+
     def __call__(
         self,
         event: torch.Tensor,
@@ -61,8 +71,8 @@ class KaplanMeierEstimator:
 
         # create attribute state
         # pylint: disable=attribute-defined-outside-init
-        self.event = event
-        self.time = time
+        self.event = event.to(self.device)
+        self.time = time.to(self.device)
 
         # Check input validity if required
         if check:
@@ -118,7 +128,7 @@ class KaplanMeierEstimator:
         if ax is None:
             _, ax = plt.subplots()
 
-        ax.step(self.time, self.km_est, where="post", **kwargs)
+        ax.step(self.time.cpu(), self.km_est.cpu(), where="post", **kwargs)
         ax.set_xlabel("Time")
         ax.set_ylabel("Survival Probability")
         ax.set_title("Kaplan-Meier Estimate")
@@ -145,10 +155,12 @@ class KaplanMeierEstimator:
             tensor([1.0000, 0.9062, 0.8700, 1.0000, 0.9062, 0.9062, 0.4386, 0.0000])
 
         """
+        # Ensure new_time is on the correct device
+        new_time = new_time.to(self.device)
 
         # add probability of 1 of survival before time 0
-        ref_time = torch.cat((-torch.tensor([torch.inf]), self.time), dim=0)
-        km_est_ = torch.cat((torch.ones(1), self.km_est))
+        ref_time = torch.cat((-torch.tensor([torch.inf], device=self.device, dtype=self.time.dtype), self.time), dim=0)
+        km_est_ = torch.cat((torch.ones(1, device=self.device, dtype=self.km_est.dtype), self.km_est))
 
         # Check if newtime is beyond the last observed time point
         extends = new_time > torch.max(ref_time)
@@ -159,7 +171,7 @@ class KaplanMeierEstimator:
             )
 
         # beyond last time point is zero probability
-        km_pred = torch.zeros_like(new_time, dtype=km_est_.dtype)
+        km_pred = torch.zeros_like(new_time, dtype=km_est_.dtype, device=self.device)
         km_pred[extends] = 0.0
 
         # find new time points that match train time points
@@ -210,9 +222,9 @@ class KaplanMeierEstimator:
         order = torch.argsort(self.time, dim=0)
 
         # Initialize arrays to store unique times, event counts, and total counts
-        uniq_times = torch.empty_like(self.time)
-        uniq_events = torch.empty_like(self.time, dtype=torch.long)
-        uniq_counts = torch.empty_like(self.time, dtype=torch.long)
+        uniq_times = torch.empty_like(self.time, device=self.device)
+        uniq_events = torch.empty_like(self.time, dtype=torch.long, device=self.device)
+        uniq_counts = torch.empty_like(self.time, dtype=torch.long, device=self.device)
 
         # Group indices by unique time values
         groups = itertools.groupby(range(len(self.time)), key=lambda i: self.time[order[i]])
@@ -241,7 +253,9 @@ class KaplanMeierEstimator:
         n_censored = total_count - n_events
 
         # Offset cumulative sum by one to get the number at risk
-        n_at_risk = n_samples - torch.cumsum(torch.cat([torch.tensor([0]), total_count]), dim=0)
+        n_at_risk = n_samples - torch.cumsum(
+            torch.cat([torch.tensor([0], device=self.device, dtype=total_count.dtype), total_count], dim=0), dim=0
+        )
 
         return times, n_events, n_at_risk[:-1], n_censored
 
