@@ -11,7 +11,6 @@ __all__ = [
 ]
 
 
-
 class KaplanMeierEstimator:
     """Kaplan-Meier estimate of survival or censoring distribution for right-censored data :cite:p:`Kaplan1958`."""
 
@@ -21,7 +20,7 @@ class KaplanMeierEstimator:
             device (str, optional): Device to use for tensor computations (e.g., 'cpu', 'cuda'). Defaults to None (uses CPU).
         """
         if device is None:
-            self.device = torch.device('cpu')
+            self.device = torch.device("cpu")
         else:
             self.device = torch.device(device)
 
@@ -254,7 +253,9 @@ class KaplanMeierEstimator:
         n_censored = total_count - n_events
 
         # Offset cumulative sum by one to get the number at risk
-        n_at_risk = n_samples - torch.cumsum(torch.cat([torch.tensor([0], device=self.device, dtype=total_count.dtype), total_count], dim=0), dim=0)
+        n_at_risk = n_samples - torch.cumsum(
+            torch.cat([torch.tensor([0], device=self.device, dtype=total_count.dtype), total_count], dim=0), dim=0
+        )
 
         return times, n_events, n_at_risk[:-1], n_censored
 

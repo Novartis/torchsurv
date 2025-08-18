@@ -22,12 +22,11 @@ np.random.seed(42)
 
 
 class TestNonParametric(unittest.TestCase):
-
     def test_kaplan_meier_gpu_device(self):
         """Test KaplanMeierEstimator on GPU if available."""
         if not torch.cuda.is_available():
             self.skipTest("CUDA is not available.")
-        device = 'cuda'
+        device = "cuda"
         event = torch.tensor([1, 0, 1, 1, 0], dtype=torch.bool, device=device)
         time = torch.tensor([1.0, 2.0, 2.0, 3.0, 4.0], dtype=torch.float32, device=device)
         new_time = torch.tensor([1.0, 2.0, 3.0, 4.0], dtype=torch.float32, device=device)
@@ -35,9 +34,10 @@ class TestNonParametric(unittest.TestCase):
         km(event, time, censoring_dist=False)
         st = km.predict(new_time)
         # Check that all outputs are on the correct device
-        self.assertEqual(km.time.device.type, 'cuda')
-        self.assertEqual(km.km_est.device.type, 'cuda')
-        self.assertEqual(st.device.type, 'cuda')
+        self.assertEqual(km.time.device.type, "cuda")
+        self.assertEqual(km.km_est.device.type, "cuda")
+        self.assertEqual(st.device.type, "cuda")
+
     """
     List of packages compared
         - survival (R)
