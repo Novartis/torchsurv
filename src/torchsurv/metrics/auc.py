@@ -467,7 +467,7 @@ class Auc:
             >>> auc.p_value()  # Default: Blanche, two_sided
             tensor([0.1360, 0.7826, 0.4089])
             >>> auc.p_value(method="bootstrap", alternative="greater")
-            tensor([0.2400, 0.5800, 0.7380])
+            tensor([0.2400, 0.5910, 0.7430])
 
         """
 

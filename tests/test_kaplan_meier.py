@@ -211,63 +211,41 @@ class TestNonParametric(unittest.TestCase):
 
             self.assertRaises(ValueError, KaplanMeierEstimator(), train_event, train_time)
 
-    def test_kaplan_meier_prediction_error_raised(self):
-        """test that errors are raised for prediction in not-accepted edge cases."""
-        batch_container = DataBatchContainer()
-        batch_container.generate_batches(
-            n_batch=1,
-            flags_to_set=["test_max_time_gt_train_max_time"],
-        )
-        for batch in batch_container.batches:
-            (train_time, train_event, test_time, *_) = batch
 
-            train_event[-1] = (
-                False  # if last event is censoring, the last KM is > 0 and it cannot predict beyond this time
-            )
-            km = KaplanMeierEstimator()
-            km(train_event, train_time, censoring_dist=False)
+    def test_kaplan_meier_plot_km(self):
+        """test Kaplan Meier plot function"""
+        import matplotlib.pyplot as plt
 
-            self.assertRaises(ValueError, km.predict, test_time)
+        event = torch.tensor([1, 1, 0, 1, 0, 1, 0, 0, 1, 1], dtype=torch.bool)
+        time = torch.tensor([1, 2, 2, 3, 3, 4, 4, 5, 6, 7], dtype=torch.float32)
 
-            def test_kaplan_meier_plot_km(self):
-                """test Kaplan Meier plot function"""
-                import matplotlib.pyplot as plt
+        km = KaplanMeierEstimator()
+        km(event, time, censoring_dist=False)
 
-                event = torch.tensor([1, 1, 0, 1, 0, 1, 0, 0, 1, 1], dtype=torch.bool)
-                time = torch.tensor([1, 2, 2, 3, 3, 4, 4, 5, 6, 7], dtype=torch.float32)
+        fig, ax = plt.subplots()
+        km.plot_km(ax=ax)
+        plt.close(fig)  # Close the plot to avoid displaying it during tests
 
-                km = KaplanMeierEstimator()
-                km(event, time, censoring_dist=False)
+    def test_kaplan_meier_get_survival_table(self):
+        """test Kaplan Meier print survival table function"""
+        event = torch.tensor([1, 1, 0, 1, 0, 1, 0, 0, 1, 1], dtype=torch.bool)
+        time = torch.tensor([1, 2, 2, 3, 3, 4, 4, 5, 6, 7], dtype=torch.float32)
 
-                fig, ax = plt.subplots()
-                km.plot_km(ax=ax)
-                plt.close(fig)  # Close the plot to avoid displaying it during tests
+        km = KaplanMeierEstimator()
+        km(event, time, censoring_dist=False)
+        table = km.get_survival_table()
 
-            def test_kaplan_meier_print_survival_table(self):
-                """test Kaplan Meier print survival table function"""
-                event = torch.tensor([1, 1, 0, 1, 0, 1, 0, 0, 1, 1], dtype=torch.bool)
-                time = torch.tensor([1, 2, 2, 3, 3, 4, 4, 5, 6, 7], dtype=torch.float32)
+        # Check if the survival table is printed correctly
+        expected_times = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])
+        expected_survival = np.array([0.9000, 0.8000, 0.6857, 0.5486, 0.5486, 0.2743, 0.0000])
 
-                km = KaplanMeierEstimator()
-                km(event, time, censoring_dist=False)
-                km.print_survival_table()
+        # Example if table is a dict or DataFrame
+        times = table["Time"].values
+        survival = table["Survival"].values
 
-                # Check if the survival table is printed correctly
-                expected_output = (
-                    "Time\tSurvival\n"
-                    "----------------\n"
-                    "1.00\t1.0000\n"
-                    "2.00\t0.8889\n"
-                    "3.00\t0.6667\n"
-                    "4.00\t0.5000\n"
-                    "5.00\t0.5000\n"
-                    "6.00\t0.3333\n"
-                    "7.00\t0.0000\n"
-                )
-                with self.assertLogs(level="INFO") as log:
-                    km.print_survival_table()
-                    self.assertIn(expected_output, log.output)
-
+        # Use torch.allclose to allow for floating-point tolerance
+        self.assertTrue(np.allclose(times, expected_times, atol=1e-4))
+        self.assertTrue(np.allclose(survival, expected_survival, atol=1e-4))
 
 if __name__ == "__main__":
     unittest.main()

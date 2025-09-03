@@ -3,6 +3,7 @@ import sys
 from typing import Tuple
 
 import torch
+import pandas as pd
 
 from torchsurv.tools.validate_data import validate_survival_data
 
@@ -185,7 +186,7 @@ class KaplanMeierEstimator:
 
         return km_pred
 
-    def print_survival_table(self):
+    def get_survival_table(self):
         """Prints the survival table with the unique times and Kaplan-Meier estimates.
 
         Examples:
@@ -202,6 +203,11 @@ class KaplanMeierEstimator:
         # Print unique times and Kaplan-Meier estimates
         for t, y in zip(self.time, self.km_est):
             print(f"{t:.2f}\t{y:.4f}")
+
+        return pd.DataFrame({
+                "Time": self.time.detach().cpu().numpy(),
+                "Survival": self.km_est.detach().cpu().numpy()
+            })
 
     def _compute_counts(
         self,
