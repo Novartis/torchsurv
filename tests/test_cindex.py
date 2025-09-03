@@ -237,11 +237,11 @@ class TestCIndex(unittest.TestCase):
 
         _ = torch.manual_seed(42)
         n = 128
-        estimate_informative = torch.randn((n,))  # estimate used to define time-to-event
-        estimate_non_informative = torch.randn((n,))  # random estimate
-        event = torch.randint(low=0, high=2, size=(n,)).bool()
+        estimate_informative = torch.randn((n,), dtype=torch.float)  # estimate used to define time-to-event
+        estimate_non_informative = torch.randn((n,), dtype=torch.float)  # random estimate
+        event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
         time = (
-            torch.randn(size=(n,)) * 10 - estimate_informative * 5.0 + 200
+            torch.randn(size=(n,), dtype=torch.float) * 10 - estimate_informative * 5.0 + 200
         )  # + estimate for cindex < 0.5 and - for cindex > 0.5
 
         cindex_informative = ConcordanceIndex()

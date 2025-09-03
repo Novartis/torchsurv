@@ -96,8 +96,8 @@ We simulate a random batch of 64 subjects. Each subject is associated with a bin
 >>> _ = torch.manual_seed(52)
 >>> n = 64
 >>> x = torch.randn((n, 16))
->>> event = torch.randint(low=0, high=2, size=(n,)).bool()
->>> time = torch.randint(low=1, high=100, size=(n,)).float()
+>>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+>>> time = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)
 ```
 
 ### Cox proportional hazards model

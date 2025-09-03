@@ -37,7 +37,7 @@ class KaplanMeierEstimator:
             event (torch.tensor, bool):
                 Event indicator of size n_samples (= True if event occurred).
             time (torch.tensor, float):
-                Time-to-event or censoring of size n_samples.
+                Event or censoring time of size n_samples.
             censoring_dist (bool, optional):
                 If False, returns the Kaplan-Meier estimate of the survival distribution.
                 If True, returns the Kaplan-Meier estimate of the censoring distribution.
@@ -50,8 +50,8 @@ class KaplanMeierEstimator:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 32
-            >>> time = torch.randint(low=0, high=8, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
+            >>> time = torch.randint(low=0, high=8, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
             >>> s = KaplanMeierEstimator()  # estimate survival distribution
             >>> s(event, time)
             >>> s.km_est
@@ -115,8 +115,8 @@ class KaplanMeierEstimator:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 32
-            >>> time = torch.randint(low=0, high=8, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
+            >>> time = torch.randint(low=0, high=8, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
             >>> km = KaplanMeierEstimator()
             >>> km(event, time)
             >>> km.plot_km()
@@ -147,11 +147,12 @@ class KaplanMeierEstimator:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 8
-            >>> time = torch.randint(low=1, high=10, size=(n * 4,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n * 4,)).bool()
+            >>> time = torch.randint(low=1, high=10, size=(n * 4,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n * 4,), dtype=torch.bool)
+            >>> new_times = torch.randint(low=0, high=10, size=(n,), dtype=torch.float)
             >>> km = KaplanMeierEstimator()
             >>> km(event, time)
-            >>> km.predict(torch.randint(low=0, high=10, size=(n,)))  # predict survival distribution
+            >>> km.predict(new_times)  # predict survival distribution
             tensor([1.0000, 0.9062, 0.8700, 1.0000, 0.9062, 0.9062, 0.4386, 0.0000])
 
         """
@@ -192,8 +193,8 @@ class KaplanMeierEstimator:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 32
-            >>> time = torch.randint(low=0, high=8, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
+            >>> time = torch.randint(low=0, high=8, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
             >>> s = KaplanMeierEstimator()
         """
         # Print header
