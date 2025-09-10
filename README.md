@@ -26,7 +26,7 @@ https://anaconda.org/conda-forge/torchsurv)
 
 If you find this repository useful, please consider giving a star! ⭐
 
-This package was developed by **Novartis** and the **US Food and Drug Administration (FDA)** as part of a **research collaboration** agreement on radiogenomics. It is part of FDA’s Regulatory Science Tool Catalog. For more information, please visit [cdrh-rst.fda.gov](cdrh-rst.fda.gov).
+This package was developed by **Novartis** and the **US Food and Drug Administration (FDA)** as part of a **research collaboration** agreement on radiogenomics. It is part of FDA’s Regulatory Science Tool Catalog. For more information, please visit [cdrh-rst.fda.gov](https://cdrh-rst.fda.gov/).
 
 ## TL;DR
 
