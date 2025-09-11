@@ -51,7 +51,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             validate_survival_data(event_wrong_length, self.time)
 
     def test_positive_t(self):
-        time_negative = torch.randint(low=-100, high=100, size=(self.N,), dtype = torch.float)
+        time_negative = torch.randint(low=-100, high=100, size=(self.N,), dtype=torch.float)
         with self.assertRaises(ValueError):
             validate_survival_data(self.event, time_negative)
 

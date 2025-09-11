@@ -882,7 +882,7 @@ class Auc:
             raise ValueError("The 'time' values in `self.time` should be ordered in ascending order.")
 
         # find censoring events
-        censoring = self.event == False
+        censoring = not self.event
 
         # Compute censoring hazard, denoted lambda_C in in Blanche et al's paper
         censoring_hazard = censoring / torch.arange(n_samples, 0, -1)

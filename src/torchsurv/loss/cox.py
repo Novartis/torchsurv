@@ -3,10 +3,11 @@
 
 import sys
 import warnings
+from typing import Any
 
 import torch
 
-from torchsurv.tools.validate_data import validate_model, validate_survival_data
+# from torchsurv.tools.validate_data import validate_model, validate_survival_data
 
 __all__ = [
     "_partial_likelihood_cox",
@@ -51,7 +52,7 @@ def _partial_likelihood_efron(
     """
     J = len(time_unique)
 
-    H = [torch.where((time_sorted == time_unique[j]) & (event_sorted == True))[0] for j in range(J)]
+    H = [torch.where((time_sorted == time_unique[j]) & (event_sorted))[0] for j in range(J)]
     R = [torch.where(time_sorted >= time_unique[j])[0] for j in range(J)]
 
     # Calculate the length of each element in H and store it in a tensor
@@ -79,7 +80,7 @@ def _partial_likelihood_breslow(
     log_hz_sorted: torch.Tensor,
     event_sorted: torch.Tensor,
     time_sorted: torch.Tensor,
-):
+) -> [torch.Tensor | Any]:
     """
     Compute the partial likelihood using Breslow's method for Cox proportional hazards model.
 
@@ -208,9 +209,9 @@ def neg_partial_log_likelihood(
 
     """  # noqa: E501
 
-    if checks:
-        validate_survival_data(event, time)
-        validate_model(log_hz, event, model_type="cox")
+    # if checks:
+    #     validate_survival_data(event, time)
+    #     validate_model(log_hz, event, model_type="cox")
 
     if any([event.sum().item() == 0, len(log_hz.size()) == 0]):
         warnings.warn(

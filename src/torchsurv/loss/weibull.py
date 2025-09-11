@@ -2,7 +2,7 @@ import sys
 
 import torch
 
-from torchsurv.tools.validate_data import _impute_missing_log_shape, validate_survival_data, validate_model
+from torchsurv.tools.validate_data import _impute_missing_log_shape, validate_model, validate_survival_data
 
 __all__ = [
     "cumulative_hazard",
@@ -213,7 +213,9 @@ def neg_log_likelihood(
         tensor(47.5035)
         >>> neg_log_likelihood(log_params, event, time, reduction="sum")  # Sum of log likelihoods across subject
         tensor(190.0141)
-        >>> neg_log_likelihood(torch.randn((n, 1), dtype=torch.float), event, time)  # Missing shape: exponential decrease
+        >>> neg_log_likelihood(
+        ...     torch.randn((n, 1), dtype=torch.float), event, time
+        ... )  # Missing shape: exponential decrease
         tensor(66.7203)
 
     References:
