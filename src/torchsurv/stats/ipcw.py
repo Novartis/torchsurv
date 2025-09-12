@@ -22,10 +22,10 @@ def get_ipcw(
     r"""Calculate the inverse probability censoring weights (IPCW).
 
     Args:
-        event (torch.Tensor, boolean):
+        event (torch.Tensor, bool):
             Event indicator of size n_samples (= True if event occurred).
         time (torch.Tensor, float):
-            Time-to-event or censoring of size n_samples.
+            Event or censoring time of size n_samples.
         new_time (torch.Tensor, float, optional):
             New time at which to evaluate the IPCW.
             Defaults to ``time``.
@@ -39,9 +39,9 @@ def get_ipcw(
     Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 5
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> time = torch.randint(low=1, high=100, size=(n,)).float()
-            >>> new_time = torch.randint(low=1, high=100, size=(n * 2,))
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> time = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)
+            >>> new_time = torch.randint(low=1, high=100, size=(n * 2,), dtype=torch.float)
             >>> get_ipcw(event, time)  # ipcw evaluated at time
             tensor([1.8750, 1.2500, 3.7500, 0.0000, 1.2500])
             >>> get_ipcw(event, time, new_time)  # ipcw evaluated at new_time

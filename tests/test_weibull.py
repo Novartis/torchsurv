@@ -28,9 +28,9 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
 
     # random data and parameters
     N = 32
-    log_params = torch.randn(N, 2)
-    y = torch.randint(low=0, high=2, size=(N, 1)).bool()
-    t = torch.randint(low=1, high=100, size=(N, 1))
+    log_params = torch.randn((N, 2), dtype=torch.float)
+    y = torch.randint(low=0, high=2, size=(N, 1), dtype=torch.bool)
+    t = torch.randint(low=1, high=100, size=(N, 1), dtype=torch.float)
 
     # prepare data
     lung = load_lung()
@@ -54,19 +54,19 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
         self.assertRaises(TypeError, weibull, log_params_np_array, self.y, self.t)
 
     def test_nrow_log_params(self):
-        log_params_wrong_nrow = torch.randn(self.N + 1, 2)
+        log_params_wrong_nrow = torch.randn((self.N + 1, 2), dtype=torch.float)
         self.assertRaises(ValueError, weibull, log_params_wrong_nrow, self.y, self.t)
 
     def test_len_data(self):
-        t_wrong_len = torch.randint(low=1, high=100, size=(self.N + 1, 1))
+        t_wrong_len = torch.randint(low=1, high=100, size=(self.N + 1, 1), dtype=torch.float)
         self.assertRaises(ValueError, weibull, self.log_params, self.y, t_wrong_len)
 
     def test_positive_t(self):
-        t_negative = torch.randint(low=-100, high=100, size=(self.N, 1))
+        t_negative = torch.randint(low=-100, high=100, size=(self.N, 1), dtype=torch.float)
         self.assertRaises(ValueError, weibull, self.log_params, self.y, t_negative)
 
     def test_boolean_y(self):
-        y_non_boolean = torch.randint(low=0, high=3, size=(self.N, 1))
+        y_non_boolean = torch.randint(low=0, high=3, size=(self.N, 1), dtype=torch.float)
         self.assertRaises(ValueError, weibull, self.log_params, y_non_boolean, self.t)
 
     def test_log_likelihood_1_param(self):
