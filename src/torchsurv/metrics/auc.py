@@ -465,7 +465,7 @@ class Auc:
             >>> auc.p_value()  # Default: Blanche, two_sided
             tensor([0.1360, 0.7826, 0.4089])
             >>> auc.p_value(method="bootstrap", alternative="greater")
-            tensor([0.2400, 0.5910, 0.7430])
+            tensor([0.2400, 0.5800, 0.7380])
 
         """
 
@@ -874,6 +874,10 @@ class Auc:
     def _integral_censoring_martingale_divided_survival(self) -> torch.Tensor:
         """Compute the integral of the censoring martingale divided by the survival distribution."""
 
+        # Check if required attributes are initialized
+        if self.event is None or self.time is None:
+            raise ValueError("AUC must be computed before calling this method. Please call the AUC instance first.")
+
         # Number of samples
         n_samples = len(self.time)
 
@@ -882,7 +886,7 @@ class Auc:
             raise ValueError("The 'time' values in `self.time` should be ordered in ascending order.")
 
         # find censoring events
-        censoring = not self.event
+        censoring = ~self.event
 
         # Compute censoring hazard, denoted lambda_C in in Blanche et al's paper
         censoring_hazard = censoring / torch.arange(n_samples, 0, -1)

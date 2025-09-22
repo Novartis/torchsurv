@@ -62,7 +62,7 @@ class Momentum(nn.Module):
         backbone: nn.Module,
         loss: Callable,
         batchsize: int = 16,
-        steps: int = 4,
+        steps: int = 10,
         rate: float = 0.999,
     ):
         """
@@ -74,8 +74,8 @@ class Momentum(nn.Module):
             loss (Callable): Torchsurv loss function (Cox, Weibull)
             batchsize (int, optional):
                 Number of samples per batch. Defaults to 16.
-            n (int, optional):
-                Number of queued batches to be stored for training. Defaults to 4.
+            steps (int, optional):
+                Number of queued batches to be stored for training. Defaults to 10.
             rate (float, optional):
                 Exponential moving average rate. Defaults to 0.999.
 

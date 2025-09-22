@@ -3,7 +3,6 @@
 
 import sys
 import warnings
-from typing import Any
 
 import torch
 
@@ -80,7 +79,7 @@ def _partial_likelihood_breslow(
     log_hz_sorted: torch.Tensor,
     event_sorted: torch.Tensor,
     time_sorted: torch.Tensor,
-) -> [torch.Tensor | Any]:
+):
     """
     Compute the partial likelihood using Breslow's method for Cox proportional hazards model.
 
