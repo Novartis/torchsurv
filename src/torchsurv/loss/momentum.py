@@ -62,7 +62,7 @@ class Momentum(nn.Module):
         backbone: nn.Module,
         loss: Callable,
         batchsize: int = 16,
-        steps: int = 4,
+        steps: int = 10,
         rate: float = 0.999,
     ):
         """
@@ -74,8 +74,8 @@ class Momentum(nn.Module):
             loss (Callable): Torchsurv loss function (Cox, Weibull)
             batchsize (int, optional):
                 Number of samples per batch. Defaults to 16.
-            n (int, optional):
-                Number of queued batches to be stored for training. Defaults to 4.
+            steps (int, optional):
+                Number of queued batches to be stored for training. Defaults to 10.
             rate (float, optional):
                 Exponential moving average rate. Defaults to 0.999.
 
@@ -83,9 +83,9 @@ class Momentum(nn.Module):
             >>> from torchsurv.loss import cox, weibull
             >>> _ = torch.manual_seed(42)
             >>> n = 4
-            >>> params = torch.randn((n, 16))
+            >>> params = torch.randn((n, 16), dtype=torch.float)
             >>> events = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
-            >>> times = torch.randint(low=1, high=100, size=(n,))
+            >>> times = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)
             >>> backbone = torch.nn.Sequential(torch.nn.Linear(16, 1))  # Cox expect one output
             >>> model = Momentum(backbone=backbone, loss=cox.neg_partial_log_likelihood)
             >>> model(params, events, times)
@@ -122,9 +122,9 @@ class Momentum(nn.Module):
         """Compute the loss for the current batch and update the memory bank using momentum class.
 
         Args:
-            inputs (torch.Tensor): Input tensors to the backbone model
-            event (torch.Tensor): A boolean tensor indicating whether a patient experienced an event.
-            time (torch.Tensor): A positive float tensor representing time to event (or censoring time)
+            inputs (torch.Tensor): Input tensors to the backbone model.
+            event (torch.Tensor, bool): Event indicator (= True if event occurred).
+            time (torch.Tensor, float): Event or censoring time.
 
         Returns:
             torch.Tensor: A loss tensor for the current batch.
@@ -134,8 +134,8 @@ class Momentum(nn.Module):
             >>> _ = torch.manual_seed(42)
             >>> n = 128  # samples
             >>> x = torch.randn((n, 16))
-            >>> y = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> t = torch.randint(low=1, high=100, size=(n,))
+            >>> y = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> t = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)
             >>> backbone = torch.nn.Sequential(torch.nn.Linear(16, 1))  # (log hazards)
             >>> model_cox = Momentum(backbone, loss=cox.neg_partial_log_likelihood)  # Cox loss
             >>> with torch.no_grad():

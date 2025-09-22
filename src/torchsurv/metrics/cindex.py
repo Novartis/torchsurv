@@ -8,7 +8,6 @@ from scipy import stats
 from torchmetrics import regression
 
 from torchsurv.tools.validate_data import (
-    validate_log_shape,
     validate_survival_data,
 )
 
@@ -37,9 +36,9 @@ class ConcordanceIndex:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 64
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.randn((n,))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.randn((n,), dtype=torch.float)
             >>> cindex = ConcordanceIndex()
             >>> cindex(estimate, event, time)
             tensor(0.5337)
@@ -88,7 +87,7 @@ class ConcordanceIndex:
             event (torch.Tensor, boolean):
                 Event indicator of size n_samples (= True if event occurred).
             time (torch.Tensor, float):
-                Time-to-event or censoring of size n_samples.
+                Event or censoring time of size n_samples.
             weight (torch.Tensor, optional):
                 Optional sample weight of size n_samples. Defaults to 1.
             tmax (torch.Tensor, optional):
@@ -112,7 +111,7 @@ class ConcordanceIndex:
 
             For each subject :math:`i \in \{1, \cdots, N\}`, denote :math:`X_i` as the survival time and :math:`D_i` as the
             censoring time. Survival data consist of the event indicator, :math:`\delta_i=(X_i\leq D_i)`
-            (argument ``event``) and the time-to-event or censoring, :math:`T_i = \min(\{ X_i,D_i \})`
+            (argument ``event``) and the event or censoring time, :math:`T_i = \min(\{ X_i,D_i \})`
             (argument ``time``).
 
             The risk score measures the risk (or a proxy thereof) that a subject has an event.
@@ -161,9 +160,9 @@ class ConcordanceIndex:
             >>> from torchsurv.stats.ipcw import get_ipcw
             >>> _ = torch.manual_seed(42)
             >>> n = 64
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.randn((n,))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.randn((n,), dtype=torch.float)
             >>> cindex = ConcordanceIndex()
             >>> cindex(estimate, event, time)  # Harrell's c-index
             tensor(0.5337)
@@ -191,7 +190,6 @@ class ConcordanceIndex:
         # Inputs checks
         if self.checks:
             validate_survival_data(event, time)
-            validate_log_shape(estimate)
 
         # find comparable pairs
         comparable = self._get_comparable_and_tied_time(event, time)
@@ -288,9 +286,9 @@ class ConcordanceIndex:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 64
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.randn((n,))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.randn((n,), dtype=torch.float)
             >>> cindex = ConcordanceIndex()
             >>> cindex(estimate, event, time)
             tensor(0.5337)
@@ -362,9 +360,9 @@ class ConcordanceIndex:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 64
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.randn((n,))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.randn((n,), dtype=torch.float)
             >>> cindex = ConcordanceIndex()
             >>> cindex(estimate, event, time)
             tensor(0.5337)
@@ -417,13 +415,13 @@ class ConcordanceIndex:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 64
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
             >>> cindex1 = ConcordanceIndex()
-            >>> cindex1(torch.randn((n,)), event, time)
+            >>> cindex1(torch.randn((n,), dtype=torch.float), event, time)
             tensor(0.5337)
             >>> cindex2 = ConcordanceIndex()
-            >>> cindex2(torch.randn((n,)), event, time)
+            >>> cindex2(torch.randn((n,), dtype=torch.float), event, time)
             tensor(0.5047)
             >>> cindex1.compare(cindex2)  # default: Noether
             tensor(0.4267)

@@ -28,9 +28,9 @@ class TestTorchCompile(unittest.TestCase):
         """
 
         # random data and parameters
-        log_hz = torch.randn(self.N)
-        event = torch.randint(low=0, high=2, size=(self.N,)).bool()
-        time = torch.randint(low=1, high=100, size=(self.N,))
+        log_hz = torch.randn(self.N, dtype=torch.float)
+        event = torch.randint(low=0, high=2, size=(self.N,), dtype=torch.bool)
+        time = torch.randint(low=1, high=100, size=(self.N,), dtype=torch.float)
 
         ccox = torch.compile(cox)  # scripted version of cox
         scox = torch.jit.script(cox)  # compiled version of cox
@@ -54,9 +54,9 @@ class TestTorchCompile(unittest.TestCase):
         """
 
         # random data and parameters
-        log_hz = torch.randn(self.N)
-        event = torch.randint(low=0, high=2, size=(self.N,)).float()
-        time = torch.randint(low=1, high=100, size=(self.N,))
+        log_hz = torch.randn(self.N, dtype=torch.float)
+        event = torch.randint(low=0, high=2, size=(self.N,), dtype=torch.bool)
+        time = torch.randint(low=1, high=100, size=(self.N,), dtype=torch.float)
 
         cweibull = torch.compile(weibull)  # scripted version of cox
         sweibull = torch.jit.script(weibull)  # compiled version of cox

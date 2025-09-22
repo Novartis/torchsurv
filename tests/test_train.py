@@ -38,7 +38,7 @@ class TestLitTraining(unittest.TestCase):
             ),
         )
         with torch.no_grad():
-            params = model(torch.randn(1, 2))
+            params = model(torch.randn((1, 2), dtype=torch.float))
         self.assertEqual(params.size(), (1, 1))
 
     def test_two_params(self):
@@ -53,7 +53,7 @@ class TestLitTraining(unittest.TestCase):
             ),
         )
         with torch.no_grad():
-            params = model(torch.randn(1, 2))
+            params = model(torch.randn((1, 2), dtype=torch.float))
         self.assertEqual(params.size(), (1, 2))
 
     def test_twins(self):
