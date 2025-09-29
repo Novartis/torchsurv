@@ -2,6 +2,7 @@ import itertools
 import sys
 from typing import Tuple
 
+import pandas as pd
 import torch
 
 from torchsurv.tools.validate_data import validate_survival_data
@@ -159,35 +160,34 @@ class KaplanMeierEstimator:
         # Ensure new_time is on the correct device
         new_time = new_time.to(self.device)
 
-        # add probability of 1 of survival before time 0
+        # Prepend baseline survival probability of 1 (at time 0 or before any event)
+        # and extend the reference time vector with -∞ to align indexing
         ref_time = torch.cat((-torch.tensor([torch.inf], device=self.device, dtype=self.time.dtype), self.time), dim=0)
         km_est_ = torch.cat((torch.ones(1, device=self.device, dtype=self.km_est.dtype), self.km_est))
 
-        # Check if newtime is beyond the last observed time point
+        # Identify time points in new_time that extend beyond the last train time in training
         extends = new_time > torch.max(ref_time)
-        if km_est_[torch.argmax(ref_time)] > 0 and extends.any():
-            # pylint: disable=consider-using-f-string
-            raise ValueError(
-                f"Cannot predict survival/censoring distribution after the largest observed training event time point: {ref_time[-1].item()}"
-            )
 
-        # beyond last time point is zero probability
+        # Initialize predicted survival probabilities
         km_pred = torch.zeros_like(new_time, dtype=km_est_.dtype, device=self.device)
-        km_pred[extends] = 0.0
 
-        # find new time points that match train time points
+        # For times beyond the train range, use the survival probability at the last train time
+        # (probability "holds" after the last event)
+        km_pred[extends] = km_est_[torch.argmax(ref_time)]
+
+        # For all other new_time points, locate their position relative to train times
         idx = torch.searchsorted(ref_time, new_time[~extends], side="left")
 
-        # For non-exact matches, take the left limit (shift the index to the left)
+        # If new_time does not exactly match an observed time, adjust index to take left limit
         eps = torch.finfo(ref_time.dtype).eps
         idx[torch.abs(ref_time[idx] - new_time[~extends]) >= eps] -= 1
 
-        # predict
+        # Assign survival estimates for in-range new_time points
         km_pred[~extends] = km_est_[idx]
 
         return km_pred
 
-    def print_survival_table(self):
+    def get_survival_table(self):
         """Prints the survival table with the unique times and Kaplan-Meier estimates.
 
         Examples:
@@ -204,6 +204,8 @@ class KaplanMeierEstimator:
         # Print unique times and Kaplan-Meier estimates
         for t, y in zip(self.time, self.km_est):
             print(f"{t:.2f}\t{y:.4f}")
+
+        return pd.DataFrame({"Time": self.time.detach().cpu().numpy(), "Survival": self.km_est.detach().cpu().numpy()})
 
     def _compute_counts(
         self,
