@@ -2,8 +2,8 @@ import itertools
 import sys
 from typing import Tuple
 
-import torch
 import pandas as pd
+import torch
 
 from torchsurv.tools.validate_data import validate_survival_data
 
@@ -204,10 +204,7 @@ class KaplanMeierEstimator:
         for t, y in zip(self.time, self.km_est):
             print(f"{t:.2f}\t{y:.4f}")
 
-        return pd.DataFrame({
-                "Time": self.time.detach().cpu().numpy(),
-                "Survival": self.km_est.detach().cpu().numpy()
-            })
+        return pd.DataFrame({"Time": self.time.detach().cpu().numpy(), "Survival": self.km_est.detach().cpu().numpy()})
 
     def _compute_counts(
         self,

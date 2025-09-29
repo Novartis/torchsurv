@@ -211,7 +211,6 @@ class TestNonParametric(unittest.TestCase):
 
             self.assertRaises(ValueError, KaplanMeierEstimator(), train_event, train_time)
 
-
     def test_kaplan_meier_plot_km(self):
         """test Kaplan Meier plot function"""
         import matplotlib.pyplot as plt
@@ -246,6 +245,7 @@ class TestNonParametric(unittest.TestCase):
         # Use torch.allclose to allow for floating-point tolerance
         self.assertTrue(np.allclose(times, expected_times, atol=1e-4))
         self.assertTrue(np.allclose(survival, expected_survival, atol=1e-4))
+
 
 if __name__ == "__main__":
     unittest.main()
