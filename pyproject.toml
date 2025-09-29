@@ -90,6 +90,7 @@ ignore_missing_imports = true
 [tool.ruff]
 target-version = "py38"
 line-length = 120
+exclude = ['test_*.py', 'utils.py']
 
 [tool.ruff.format]
 quote-style = "double"

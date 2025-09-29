@@ -2,7 +2,7 @@ import sys
 
 import torch
 
-from torchsurv.tools.validate_data import validate_log_shape, validate_loss
+from torchsurv.tools.validate_data import _impute_missing_log_shape, validate_model, validate_survival_data
 
 __all__ = [
     "cumulative_hazard",
@@ -27,7 +27,7 @@ def cumulative_hazard(
             corresponds to the log shape parameter. If the log shape parameter is missing, it is
             imputed with 0.
         time (torch.Tensor, float):
-            Time-to-event or censoring of length n_samples.
+            Event or censoring time of length n_samples.
         all_times (bool)
             If True, subject-specific cumulative hazard is evaluated at all ``time`` (used for evaluation metrics).
             If False, subject-specific cumulative hazard is evaluated at respective ``time``.
@@ -38,8 +38,8 @@ def cumulative_hazard(
 
     Examples:
         >>> _ = torch.manual_seed(42)
-        >>> time = torch.randint(low=1, high=100, size=(4,))
-        >>> log_params = torch.randn((4, 2))
+        >>> time = torch.randint(low=1, high=100, size=(4,), dtype=torch.float)
+        >>> log_params = torch.randn((4, 2), dtype=torch.float)
         >>> cumulative_hazard(log_params, time, all_times=False)  # Cumulative hazard at respective time
         tensor([  8.6257, 112.2115,   3.5105, 112.6339])
         >>> cumulative_hazard(log_params, time, all_times=True)  # Default. Cumulative hazard at all time
@@ -48,7 +48,7 @@ def cumulative_hazard(
                 [  0.8706,   3.4725,   3.5105,   2.6850],
                 [  6.9530, 212.7592, 218.5687, 112.6339]])
     """
-    log_scale, log_shape = validate_log_shape(log_params).unbind(1)
+    log_scale, log_shape = _impute_missing_log_shape(log_params).unbind(1)
 
     if all_times:
         # Use all times for each sample
@@ -92,8 +92,8 @@ def log_hazard(
 
     Examples:
         >>> _ = torch.manual_seed(42)
-        >>> time = torch.randint(low=1, high=100, size=(4,))
-        >>> log_params = torch.randn((4, 2))
+        >>> time = torch.randint(low=1, high=100, size=(4,), dtype=torch.float)
+        >>> log_params = torch.randn((4, 2), dtype=torch.float)
         >>> log_hazard(log_params, time, all_times=False)  # Log hazard at respective time
         tensor([ 0.4392, -0.0303, -3.9672,  0.9140])
         >>> log_hazard(log_params, time, all_times=True)  # Default. Log hazard at all time
@@ -112,7 +112,7 @@ def log_hazard(
         tensor([-1.0000e+10, -2.3197e+01, -6.8385e+01, -1.0000e+10])
     """
 
-    log_scale, log_shape = validate_log_shape(log_params).unbind(1)
+    log_scale, log_shape = _impute_missing_log_shape(log_params).unbind(1)
 
     if time.dim() == 0:
         # Use fixed time for each sample
@@ -155,7 +155,7 @@ def neg_log_likelihood(
         event (torch.Tensor, bool):
             Event indicator of length n_samples (= True if event occurred).
         time (torch.Tensor, float):
-            Time-to-event or censoring of length n_samples.
+            Event or censoring time of length n_samples.
         reduction (str):
             Method to reduce losses. Defaults to "mean".
             Must be one of the following: "sum", "mean".
@@ -171,7 +171,7 @@ def neg_log_likelihood(
 
         For each subject :math:`i \in \{1, \cdots, N\}`, denote :math:`X_i` as the survival time and :math:`D_i` as the
         censoring time. Survival data consist of the event indicator, :math:`\delta_i=1(X_i\leq D_i)`
-        (argument ``event``) and the time-to-event or censoring, :math:`T_i = \min(\{ X_i,D_i \})`
+        (argument ``event``) and the event or censoring time, :math:`T_i = \min(\{ X_i,D_i \})`
         (argument ``time``).
 
         The log hazard function for the Weibull AFT survival model :cite:p:`Carroll2003` of subject :math:`i` at time :math:`t` has the form:
@@ -206,14 +206,16 @@ def neg_log_likelihood(
     Examples:
         >>> _ = torch.manual_seed(42)
         >>> n = 4
-        >>> log_params = torch.randn((n, 2))
+        >>> log_params = torch.randn((n, 2), dtype=torch.float)
         >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
-        >>> time = torch.randint(low=1, high=100, size=(n,))
+        >>> time = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)
         >>> neg_log_likelihood(log_params, event, time)  # Default: mean of log likelihoods across subject
         tensor(47.5035)
         >>> neg_log_likelihood(log_params, event, time, reduction="sum")  # Sum of log likelihoods across subject
         tensor(190.0141)
-        >>> neg_log_likelihood(torch.randn((n, 1)), event, time)  # Missing shape: exponential decrease
+        >>> neg_log_likelihood(
+        ...     torch.randn((n, 1), dtype=torch.float), event, time
+        ... )  # Missing shape: exponential decrease
         tensor(66.7203)
 
     References:
@@ -226,7 +228,8 @@ def neg_log_likelihood(
     """
 
     if checks:
-        validate_loss(log_params, event, time, model_type="weibull")
+        validate_survival_data(event, time)
+        validate_model(log_params, event, model_type="weibull")
 
     # Negative log likelihood
     nll = torch.neg(
@@ -257,7 +260,7 @@ def survival_function(log_params: torch.Tensor, time: torch.Tensor, all_times: b
             imputed with 0.
         time (torch.Tensor, float):
             Time at which to evaluate the survival function.
-            Should be of length n_samples to evaluate the survival function at observed time-to-event or censoring,
+            Should be of length n_samples to evaluate the survival function at observed event or censoring time,
             or of length one to evaluate the survival function at a new time.
         all_times (bool):
             If True, subject-specific survival function is evaluated at all ``time`` (used for evaluation metrics).
@@ -270,8 +273,8 @@ def survival_function(log_params: torch.Tensor, time: torch.Tensor, all_times: b
 
     Examples:
         >>> _ = torch.manual_seed(42)
-        >>> time = torch.randint(low=1, high=100, size=(4,))
-        >>> log_params = torch.randn((4, 2))
+        >>> time = torch.randint(low=1, high=100, size=(4,), dtype=torch.float)
+        >>> log_params = torch.randn((4, 2), dtype=torch.float)
         >>> survival_function(log_params, time, all_times=False)  # Survival at respective time
         tensor([0.0002, 0.0000, 0.0299, 0.0000])
         >>> survival_function(log_params, time, all_times=True)  # Default. Survival at all observed time
@@ -288,7 +291,7 @@ def survival_function(log_params: torch.Tensor, time: torch.Tensor, all_times: b
 
 
     """
-    log_scale, log_shape = validate_log_shape(log_params).unbind(1)
+    log_scale, log_shape = _impute_missing_log_shape(log_params).unbind(1)
 
     if time.dim() == 0:
         # Use one time for each sample

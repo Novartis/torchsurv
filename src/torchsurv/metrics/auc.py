@@ -8,7 +8,6 @@ from torchmetrics import regression
 
 from torchsurv.stats import kaplan_meier
 from torchsurv.tools.validate_data import (
-    validate_log_shape,
     validate_new_time,
     validate_survival_data,
 )
@@ -34,9 +33,9 @@ class Auc:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 10
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.randn((n,))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.randn((n,), dtype=torch.float)
             >>> auc = Auc()
             >>> auc(estimate, event, time)  # default: auc cumulative/dynamic
             tensor([0.7500, 0.4286, 0.3333])
@@ -90,10 +89,10 @@ class Auc:
                 Can be of shape = (n_samples,) if subject-specific risk score is time-independent,
                 of shape = (n_samples, n_samples) if subject-specific risk score is evaluated at ``time``,
                 or of shape = (n_samples, n_times) if subject-specific risk score is evaluated at ``new_time``.
-            event (torch.Tensor, boolean):
+            event (torch.Tensor, bool):
                 Event indicator of size n_samples (= True if event occurred).
             time (torch.Tensor, float):
-                Time-to-event or censoring of size n_samples.
+                Event or censoring time of size n_samples.
             auc_type (str, optional):
                 AUC type. Defaults to "cumulative".
                 Must be one of the following: "cumulative" for cumulative/dynamic, "incident" for incident/dynamic.
@@ -116,7 +115,7 @@ class Auc:
 
             For each subject :math:`i \in \{1, \cdots, N\}`, denote :math:`X_i` as the survival time and :math:`D_i` as the
             censoring time. Survival data consist of the event indicator, :math:`\delta_i=(X_i\leq D_i)`
-            (argument ``event``) and the time-to-event or censoring, :math:`T_i = \min(\{ X_i,D_i \})`
+            (argument ``event``) and the event or censoring time, :math:`T_i = \min(\{ X_i,D_i \})`
             (argument ``time``).
 
             The risk score measures the risk (or a proxy thereof) that a subject has an event.
@@ -172,9 +171,9 @@ class Auc:
             >>> from torchsurv.stats.ipcw import get_ipcw
             >>> _ = torch.manual_seed(42)
             >>> n = 20
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.randn((n,))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.randn((n,), dtype=torch.float)
             >>> auc = Auc()
             >>> auc(estimate, event, time) # default: naive auc c/d
             tensor([0.9474, 0.5556, 0.5294, 0.6429, 0.5846, 0.6389, 0.5844, 0.5139, 0.4028,
@@ -186,7 +185,7 @@ class Auc:
             >>> auc(estimate, event, time, weight = ipcw) # Uno's auc c/d
             tensor([0.9474, 0.5556, 0.5294, 0.6521, 0.5881, 0.6441, 0.5865, 0.5099, 0.3929,
                     0.5422, 0.4534, 0.7996])
-            >>> new_time = torch.unique(torch.randint(low=100, high=150, size=(n,)).float()) # new time at which to evaluate auc
+            >>> new_time = torch.unique(torch.randint(low=100, high=150, size=(n,), dtype=torch.float)) # new time at which to evaluate auc
             >>> ipcw_new_time = get_ipcw(event, time, new_time) # ipcw at new_time
             >>> auc(estimate, event, time, new_time = new_time, weight = ipcw, weight_new_time = ipcw_new_time) # Uno's auc c/d at new_time
             tensor([0.5333, 0.5333, 0.5333, 0.5333, 0.6521, 0.6521, 0.5881, 0.5881, 0.5865,
@@ -216,7 +215,6 @@ class Auc:
         if self.checks:
             validate_survival_data(event, time)
             validate_new_time(new_time, time)
-            validate_log_shape(estimate)
 
         # sample size and length of time
         n_samples, n_times = estimate.shape[0], new_time.shape[0]
@@ -309,9 +307,9 @@ class Auc:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 10
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.randn((n,))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.randn((n,), dtype=torch.float)
             >>> auc = Auc()
             >>> auc(estimate, event, time, auc_type="incident")
             tensor([0.7500, 0.1429, 0.1667])
@@ -389,9 +387,9 @@ class Auc:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 10
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.randn((n,))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.randn((n,), dtype=torch.float)
             >>> auc = Auc()
             >>> auc(estimate, event, time)
             tensor([0.7500, 0.4286, 0.3333])
@@ -458,9 +456,9 @@ class Auc:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 10
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.randn((n,))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.randn((n,), dtype=torch.float)
             >>> auc = Auc()
             >>> auc(estimate, event, time)
             tensor([0.7500, 0.4286, 0.3333])
@@ -513,13 +511,13 @@ class Auc:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 10
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
             >>> auc1 = Auc()
-            >>> auc1(torch.randn((n,)), event, time)
+            >>> auc1(torch.randn((n,), dtype=torch.float), event, time)
             tensor([0.7500, 0.4286, 0.3333])
             >>> auc2 = Auc()
-            >>> auc2(torch.randn((n,)), event, time)
+            >>> auc2(torch.randn((n,), dtype=torch.float), event, time)
             tensor([0.0000, 0.1429, 0.0556])
             >>> auc1.compare(auc2)  # default: Blanche
             tensor([0.0008, 0.2007, 0.1358])
@@ -876,6 +874,10 @@ class Auc:
     def _integral_censoring_martingale_divided_survival(self) -> torch.Tensor:
         """Compute the integral of the censoring martingale divided by the survival distribution."""
 
+        # Check if required attributes are initialized
+        if self.event is None or self.time is None:
+            raise ValueError("AUC must be computed before calling this method. Please call the AUC instance first.")
+
         # Number of samples
         n_samples = len(self.time)
 
@@ -884,7 +886,7 @@ class Auc:
             raise ValueError("The 'time' values in `self.time` should be ordered in ascending order.")
 
         # find censoring events
-        censoring = self.event == 0.0
+        censoring = ~self.event
 
         # Compute censoring hazard, denoted lambda_C in in Blanche et al's paper
         censoring_hazard = censoring / torch.arange(n_samples, 0, -1)

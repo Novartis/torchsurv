@@ -28,7 +28,7 @@ class LitSurvival(L.LightningModule):
         # Can be anything
         x, y, t = batch
         params = self(x)
-        loss = self.loss(params, y, t)
+        loss = self.loss(params, y.bool(), t.float())
         self.log(
             "loss",
             loss,
@@ -310,12 +310,12 @@ class SurvivalDataGenerator:
 
     def _generate_data(self, tmax: int, n_train: int, n_test: int):
         # time-to-event or censoring in train
-        train_time = torch.randint(1, tmax + 1, (n_train,)).float()
+        train_time = torch.randint(1, tmax + 1, (n_train,), dtype=torch.float)
 
-        # event status (1: event, 0: censored) in train
-        train_event = torch.randint(0, 1 + 1, (n_train,)).float()
+        # event status (True: event, False: censored) in train
+        train_event = torch.randint(0, 1 + 1, (n_train,), dtype=torch.bool)
         while train_event.sum() == 0:
-            train_event = torch.randint(0, 1 + 1, (n_train,))
+            train_event = torch.randint(0, 1 + 1, (n_train,), dtype=torch.bool)
 
         # enforce conditions
         train_time, train_event = self._enforce_conditions_data(train_time, train_event, "train")
@@ -326,10 +326,10 @@ class SurvivalDataGenerator:
         self.train_event = train_event[index].bool()
 
         # time-to-event or censoring in test
-        test_time = torch.randint(1, tmax + 1, (n_test,)).float()
+        test_time = torch.randint(1, tmax + 1, (n_test,), dtype=torch.float)
 
         # event status (1: event, 0: censored) in test
-        test_event = torch.randint(0, 1 + 1, (len(test_time),)).float()
+        test_event = torch.randint(0, 1 + 1, (len(test_time),), dtype=torch.float)
 
         # order by time
         index_test = torch.sort(test_time)[1]
@@ -350,7 +350,7 @@ class SurvivalDataGenerator:
         # if test max time should be greater than train max time
         if dataset_type == "test":
             if self.test_max_time_gt_train_max_time:
-                time[torch.where(event == 1.0)[0][0]] = self.train_time.max() + 1
+                time[torch.where(event)[0][0]] = self.train_time.max() + 1
             else:
                 index_time = (time > self.train_time.min()) & (time < self.train_time.max())
                 time = time[index_time]
@@ -360,19 +360,19 @@ class SurvivalDataGenerator:
         if (dataset_type == "train" and self.train_ties_time_event) or (
             dataset_type == "test" and self.test_ties_time_event
         ):
-            time[torch.where(event == 1.0)[0][0]] = time[torch.where(event == 1.0)[0][1]]
+            time[torch.where(event)[0][0]] = time[torch.where(event)[0][1]]
 
         # if there should be ties in two censoring times
         if (dataset_type == "train" and self.train_ties_time_censoring) or (
             dataset_type == "test" and self.test_ties_time_censoring
         ):
-            time[torch.where(event == 0.0)[0][0]] = time[torch.where(event == 0.0)[0][1]]
+            time[torch.where(event == False)[0][0]] = time[torch.where(event == False)[0][1]]
 
         # if there should be a tie in an event time and a censoring time
         if (dataset_type == "train" and self.train_ties_time_event_censoring) or (
             dataset_type == "test" and self.test_ties_time_event_censoring
         ):
-            time[torch.where(event == 1.0)[0][0]] = time[torch.where(event == 0.0)[0][0]]
+            time[torch.where(event == True)[0][0]] = time[torch.where(event == False)[0][0]]
 
         # if there should be an event at the last time
         if dataset_type == "test" and self.test_event_at_last_time:
@@ -390,7 +390,7 @@ class SurvivalDataGenerator:
 
     def _generate_estimate(self):
         # random risk score for observations in test
-        estimate = torch.randn(len(self.test_event))
+        estimate = torch.randn(len(self.test_event), dtype=torch.float)
 
         # enforce conditions risk score
         self.estimate = self._enforce_conditions_estimate(estimate)
@@ -398,15 +398,15 @@ class SurvivalDataGenerator:
     def _enforce_conditions_estimate(self, estimate: torch.tensor) -> torch.tensor:
         # if there should be ties in risk score associated to patients with event
         if self.ties_score_events:
-            estimate[torch.where(self.test_event == 1.0)[0][0]] = estimate[torch.where(self.test_event == 1.0)[0][1]]
+            estimate[torch.where(self.test_event)[0][0]] = estimate[torch.where(self.test_event)[0][1]]
 
         # if there should be ties in risk score associated to patients with censoring
         if self.ties_score_censoring:
-            estimate[torch.where(self.test_event == 0.0)[0][0]] = estimate[torch.where(self.test_event == 0.0)[0][1]]
+            estimate[torch.where(~self.test_event)[0][0]] = estimate[torch.where(~self.test_event)[0][1]]
 
         # if there should be ties in risk score associated to patients with event and with censoring
         if self.ties_score_event_censoring:
-            estimate[torch.where(self.test_event == 1.0)[0][0]] = estimate[torch.where(self.test_event == 0.0)[0][0]]
+            estimate[torch.where(self.test_event)[0][0]] = estimate[torch.where(~self.test_event)[0][0]]
 
         return estimate
 
@@ -421,14 +421,7 @@ class SurvivalDataGenerator:
             # Generate unique random evaluation times within the range of test event times
             min_time = self.test_time[self.test_event].min().long()
             max_time = self.test_time[self.test_event].max().long()
-            new_time = torch.unique(
-                torch.randint(
-                    low=min_time,
-                    high=max_time + 1,
-                    size=(n,),
-                    dtype=torch.int32,
-                ).float()
-            )
+            new_time = torch.unique(torch.randint(low=min_time, high=max_time + 1, size=(n,), dtype=torch.float))
 
         # enforce conditions
         self.new_time = self._enforce_conditions_time(new_time)
@@ -442,25 +435,25 @@ class SurvivalDataGenerator:
 
     def _evaluate_conditions(self) -> None:
         # are there ties in event times
-        self.has_train_ties_time_event = self._has_ties(self.train_time[self.train_event == 1])
-        self.has_test_ties_time_event = self._has_ties(self.test_time[self.test_event == 1])
+        self.has_train_ties_time_event = self._has_ties(self.train_time[self.train_event])
+        self.has_test_ties_time_event = self._has_ties(self.test_time[self.test_event])
 
         # are there ties in censoring times
-        self.has_train_ties_time_censoring = self._has_ties(self.train_time[self.train_event == 0])
-        self.has_test_ties_time_censoring = self._has_ties(self.test_time[self.test_event == 0])
+        self.has_train_ties_time_censoring = self._has_ties(self.train_time[~self.train_event])
+        self.has_test_ties_time_censoring = self._has_ties(self.test_time[~self.test_event])
 
         # are there ties in event and censoring times
         self.has_test_ties_time_event_censoring = self._has_ties(
-            self.test_time[self.test_event == 1],
-            self.test_time[self.test_event == 0],
+            self.test_time[self.test_event],
+            self.test_time[~self.test_event],
         )
         self.has_train_ties_time_event_censoring = self._has_ties(
-            self.train_time[self.train_event == 1],
-            self.train_time[self.train_event == 0],
+            self.train_time[self.train_event],
+            self.train_time[~self.train_event],
         )
 
         # is last time is event
-        self.has_test_event_at_last_time = (self.test_event[-1] == 1.0).item()
+        self.has_test_event_at_last_time = (self.test_event[-1]).item()
 
         # is there no censoring
         self.has_train_no_censoring = torch.all(self.train_event).item()
@@ -477,16 +470,16 @@ class SurvivalDataGenerator:
         self.has_test_max_time_in_new_time = torch.any(self.new_time == self.test_time.max()).item()
 
         # is there ties in risk score associated to patients with event
-        self.has_ties_score_events = self._has_ties(self.estimate[self.test_event == 1.0])
+        self.has_ties_score_events = self._has_ties(self.estimate[self.test_event])
 
         # is there ties in risk score associated to patients with censoring
         self.has_ties_score_event_censoring = self._has_ties(
-            self.estimate[self.test_event == 1.0],
-            self.estimate[self.test_event == 0.0],
+            self.estimate[self.test_event],
+            self.estimate[~self.test_event],
         )
 
         # is there ties in risk score associated to patients with event and censoring
-        self.has_ties_score_censoring = self._has_ties(self.estimate[self.test_event == 0.0])
+        self.has_ties_score_censoring = self._has_ties(self.estimate[self.test_event])
 
     def _check_conditions(self) -> None:
         """Compare condition evaluated on simulated to condition required."""

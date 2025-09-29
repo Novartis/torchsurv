@@ -60,7 +60,7 @@ class LitMNIST(LightningModule):
         x, y = batch
         y[y == 0] = 10.0  # Offset 0 to prevent log(0)
         params = self(x)
-        loss = self.loss(params, torch.ones_like(y, device=y.device).bool(), y)
+        loss = self.loss(params, torch.ones_like(y, device=y.device).bool(), y.float())
         self.log("loss", loss, prog_bar=True, on_step=True, on_epoch=True)
         return loss
 
@@ -68,7 +68,7 @@ class LitMNIST(LightningModule):
         x, y = batch
         y[y == 0] = 10  # Offset 0 to prevent log(0)
         params = self(x)
-        loss = self.loss(params, torch.ones_like(y, device=y.device).bool(), y)
+        loss = self.loss(params, torch.ones_like(y, device=y.device).bool(), y.float())
         cindex = self.cindex(params, torch.ones_like(y, device=y.device).bool(), y.float())
         self.log("val_loss", loss, prog_bar=True, on_step=True, on_epoch=True)
         self.log(

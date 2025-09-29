@@ -6,7 +6,6 @@ import torch
 from scipy import stats
 
 from torchsurv.tools.validate_data import (
-    validate_log_shape,
     validate_new_time,
     validate_survival_data,
 )
@@ -29,9 +28,9 @@ class BrierScore:
         Examples:
             >>> _ = torch.manual_seed(52)
             >>> n = 10
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.rand((n, len(time)))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.rand((n, len(time)), dtype=torch.float)
             >>> brier_score = BrierScore()
             >>> brier_score(estimate, event, time)
             tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,
@@ -77,10 +76,10 @@ class BrierScore:
                 Estimated probability of remaining event-free (i.e., survival function).
                 Can be of shape = (n_samples, n_samples) if subject-specific survival is evaluated at ``time``,
                 or of shape = (n_samples, n_times) if subject-specific survival is evaluated at ``new_time``.
-            event (torch.Tensor, boolean):
+            event (torch.Tensor, bool):
                 Event indicator of size n_samples (= True if event occurred)
             time (torch.Tensor, float):
-                Time-to-event or censoring of size n_samples.
+                Event or censoring time of size n_samples.
             new_time (torch.Tensor, float, optional):
                 Time points at which to evaluate the Brier score of size n_times.
                 Defaults to unique ``time``.
@@ -99,7 +98,7 @@ class BrierScore:
 
             For each subject :math:`i \in \{1, \cdots, N\}`, denote :math:`X_i` as the survival time and :math:`D_i` as the
             censoring time. Survival data consist of the event indicator, :math:`\delta_i=(X_i\leq D_i)`
-            (argument ``event``) and the time-to-event or censoring, :math:`T_i = \min(\{ X_i,D_i \})`
+            (argument ``event``) and the event or censoring time, :math:`T_i = \min(\{ X_i,D_i \})`
             (argument ``time``).
 
             The survival function, of subject :math:`i`
@@ -143,9 +142,9 @@ class BrierScore:
             >>> from torchsurv.stats.ipcw import get_ipcw
             >>> _ = torch.manual_seed(52)
             >>> n = 10
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.rand((n, len(time)))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.rand((n, len(time)), dtype=torch.float)
             >>> brier_score = BrierScore()
             >>> brier_score(estimate, event, time)
             tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,
@@ -154,9 +153,9 @@ class BrierScore:
             >>> brier_score(estimate, event, time, weight=ipcw)  # censoring-adjusted brier-score
             tensor([0.2463, 0.2740, 0.4282, 0.2163, 0.4465, 0.3826, 0.2630, 0.3888, 0.2219,
                     0.1882])
-            >>> new_time = torch.unique(torch.randint(low=5, high=time.max().int(), size=(n * 2,)).float())
+            >>> new_time = torch.unique(torch.randint(low=5, high=time.max().int(), size=(n * 2,), dtype=torch.float))
             >>> ipcw_new_time = get_ipcw(event, time, new_time)  # ipcw at new_time
-            >>> estimate = torch.rand((n, len(new_time)))
+            >>> estimate = torch.rand((n, len(new_time)), dtype=torch.float)
             >>> brier_score(
             ...     estimate, event, time, new_time, ipcw, ipcw_new_time
             ... )  # censoring-adjusted brier-score at new time
@@ -189,7 +188,6 @@ class BrierScore:
         if self.checks:
             validate_survival_data(event, time)
             validate_new_time(new_time, time, within_follow_up=False)
-            validate_log_shape(estimate)
 
         # Calculating the residuals for each subject and time point
         residuals = torch.zeros_like(estimate)
@@ -229,9 +227,9 @@ class BrierScore:
         Examples:
             >>> _ = torch.manual_seed(52)
             >>> n = 10
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.rand((n, len(time)))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.rand((n, len(time)), dtype=torch.float)
             >>> brier_score = BrierScore()
             >>> brier_score(estimate, event, time)
             tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,
@@ -295,9 +293,9 @@ class BrierScore:
         Examples:
             >>> _ = torch.manual_seed(52)
             >>> n = 10
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> estimate = torch.rand((n, len(time)))
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> estimate = torch.rand((n, len(time)), dtype=torch.float)
             >>> brier_score = BrierScore()
             >>> brier_score(estimate, event, time)
             tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,
@@ -374,10 +372,10 @@ class BrierScore:
         Examples:
             >>> _ = torch.manual_seed(52)
             >>> n = 10
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
             >>> new_time = torch.unique(time)
-            >>> estimate = torch.rand((n, len(new_time)))
+            >>> estimate = torch.rand((n, len(new_time)), dtype=torch.float)
             >>> brier_score = BrierScore()
             >>> brier_score(estimate, event, time, new_time)
             tensor([0.3465, 0.5310, 0.4222, 0.4582, 0.3601, 0.3395, 0.2285, 0.1975, 0.3120,
@@ -438,14 +436,14 @@ class BrierScore:
         Examples:
             >>> _ = torch.manual_seed(52)
             >>> n = 10
-            >>> time = torch.randint(low=5, high=250, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
+            >>> time = torch.randint(low=5, high=250, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
             >>> brier_score = BrierScore()
-            >>> brier_score(torch.rand((n, len(time))), event, time)
+            >>> brier_score(torch.rand((n, len(time)), dtype=torch.float), event, time)
             tensor([0.2463, 0.2740, 0.3899, 0.1964, 0.3608, 0.2821, 0.1932, 0.2978, 0.1950,
                     0.1668])
             >>> brier_score2 = BrierScore()
-            >>> brier_score2(torch.rand((n, len(time))), event, time)
+            >>> brier_score2(torch.rand((n, len(time)), dtype=torch.float), event, time)
             tensor([0.4136, 0.2750, 0.3002, 0.2826, 0.2030, 0.2643, 0.2525, 0.2964, 0.1804,
                     0.3109])
             >>> brier_score.compare(brier_score2)  # default: parametric

@@ -96,7 +96,7 @@ class TestBrierScore(unittest.TestCase):
         for batch in batch_container.batches:
             (_, _, time, event, _, new_time, *_) = batch
 
-            estimate = torch.rand((len(time), len(new_time)))
+            estimate = torch.rand((len(time), len(new_time)), dtype=torch.float)
 
             # Run c-index
             brier_score(estimate, event, time, new_time)
@@ -138,10 +138,10 @@ class TestBrierScore(unittest.TestCase):
 
         _ = torch.manual_seed(42)
         n = 128
-        estimate_informative = torch.rand((n,))  # estimate used to define time-to-event
-        estimate_non_informative = torch.rand((n,)).unsqueeze(1).expand(n, n)  # random estimate
-        event = torch.randint(low=0, high=2, size=(n,)).bool()
-        time = torch.randn(size=(n,)) + estimate_informative * 20.0 + 200
+        estimate_informative = torch.rand((n,), dtype=torch.float)  # estimate used to define time-to-event
+        estimate_non_informative = torch.rand((n,), dtype=torch.float).unsqueeze(1).expand(n, n)  # random estimate
+        event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+        time = torch.randn(size=(n,), dtype=torch.float) + estimate_informative * 20.0 + 200
 
         estimate_informative = estimate_informative.unsqueeze(1).expand(n, n)
 
@@ -209,7 +209,7 @@ def test_brier_score_simulated_data(self):
             new_time_array,
         ) = batch
 
-        estimate = torch.rand((len(test_time), len(new_time)))
+        estimate = torch.rand((len(test_time), len(new_time)), dtype=torch.float)
 
         ipcw = get_ipcw(train_event, train_time, test_time)
         ipcw_new_time = get_ipcw(train_event, train_time, new_time)
