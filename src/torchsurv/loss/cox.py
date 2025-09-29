@@ -223,10 +223,13 @@ def neg_partial_log_likelihood(
     time_sorted, idx = torch.sort(time)
     log_hz_sorted = log_hz[idx]
     event_sorted = event[idx]
-    time_unique = torch.unique(time_sorted)  # event or censoring time without ties
 
-    if len(time_unique) == len(time_sorted):
-        # if not ties, use traditional cox partial likelihood
+    # check event ties
+    event_times = time_sorted[event_sorted]
+    unique_event_times = torch.unique(event_times)  # event or censoring time without ties
+
+    if len(unique_event_times) == len(event_times):
+        # if not event ties, use traditional cox partial likelihood
         pll = _partial_likelihood_cox(log_hz_sorted, event_sorted)
     else:
         # add warning about ties
@@ -240,7 +243,7 @@ def neg_partial_log_likelihood(
                 log_hz_sorted,
                 event_sorted,
                 time_sorted,
-                time_unique,
+                unique_event_times,
             )
         elif ties_method == "breslow":
             pll = _partial_likelihood_breslow(log_hz_sorted, event_sorted, time_sorted)
