@@ -26,7 +26,10 @@ https://anaconda.org/conda-forge/torchsurv)
 
 If you find this repository useful, please consider giving a star! ⭐
 
-This package was developed by **Novartis** and the **US Food and Drug Administration (FDA)** as part of a **research collaboration** agreement on radiogenomics. It is also part of FDA’s [Regulatory Science Tool Catalog](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)! For more information, please consult [this section](#disclaimer-regarding-the-catalog-of-regulatory-science-tools).
+This package was developed by **Novartis** and the **US Food and Drug Administration (FDA)** as part of a **research collaboration** agreement on radiogenomics. 
+
+`TorchSurv` is now part of the **FDA’s [Regulatory Science Tool Catalog](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)!** 🎉 
+<br> For more information, please consult [this section](#disclaimer-regarding-the-catalog-of-regulatory-science-tools).
 
 ## TL;DR
 
