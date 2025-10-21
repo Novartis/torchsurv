@@ -90,7 +90,7 @@ Additionally, to build the documentation (`notebooks`, `sphinx`) and for package
 
 We recommend starting with the [introductory guide](https://opensource.nibr.com/torchsurv/notebooks/introduction.html), where you'll find an overview of the package's functionalities.
 
-### Survival data
+### Create survival data
 
 We simulate a random batch of 64 subjects. Each subject is associated with a binary event status (= `True` if event occurred), a time-to-event or censoring and 16 covariates.
 
@@ -246,11 +246,11 @@ Tool Reference
 
 We value contributions from the community to enhance and improve this project. If you'd like to contribute, please consider the following:
 
-1. Create Issues: If you encounter bugs, have feature requests, or want to suggest improvements, please create an [issue](https://github.com/Novartis/torchsurv/issues) in the GitHub repository. Make sure to provide detailed information about the problem, including code for reproducibility, or enhancement you're proposing.
+1. __Create Issues__: If you encounter bugs, have feature requests, or want to suggest improvements, please create an [issue](https://github.com/Novartis/torchsurv/issues) in the GitHub repository. Make sure to provide detailed information about the problem, including code for reproducibility, or enhancement you're proposing.
 
-2. Fork and Pull Requests: If you're willing to address an existing issue or contribute a new feature, fork the repository, create a new branch, make your changes, and then submit a pull request. Please ensure your code follows our coding conventions and include tests for any new functionality.
+2. __Fork and Pull Requests__: If you're willing to address an existing issue or contribute a new feature, fork the repository, create a new branch, make your changes, and then submit a pull request. Please ensure your code follows our coding conventions and include tests for any new functionality.
 
-By contributing to this project, you agree to license your contributions under the same license as this project.
+By contributing to this project, you agree to license your contributions under the same license as this project. ⚠️
 
 ## Contacts
 
@@ -261,7 +261,7 @@ By contributing to this project, you agree to license your contributions under t
 
 If you have any questions, suggestions, or feedback, feel free to reach out the development team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
 
-## Cite
+## Citation
 
 If you use this project in academic work or publications, we appreciate citing it using the following BibTeX entry:
 
