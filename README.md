@@ -24,12 +24,14 @@ https://anaconda.org/conda-forge/torchsurv)
 
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
 
-If you find this repository useful, please consider giving a star! ⭐
+__If you find this repository useful, please give us a star!__  🌟 ⭐ 🌟
 
-This package was developed by **Novartis** and the **US Food and Drug Administration (FDA)** as part of a **research collaboration** agreement on radiogenomics. 
+## A collaborative project
 
-`TorchSurv` is now part of the **FDA’s [Regulatory Science Tool Catalog](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)!** 🎉 
-<br> For more information, please consult [this section](#disclaimer-regarding-the-catalog-of-regulatory-science-tools).
+This package was developed by **Novartis** and the **US Food and Drug Administration (FDA)** as part of a **research collaboration** agreement on [radiogenomics](https://www.medrxiv.org/content/10.1101/2023.08.30.23294367v1.full.pdf).  
+
+`TorchSurv` is now part of the **FDA’s [Regulatory Science Tool Catalog](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)!**  🎉
+<br>For more information, please consult [this section](#disclaimer-regarding-the-catalog-of-regulatory-science-tools).
 
 ## TL;DR
 
