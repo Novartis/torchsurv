@@ -53,10 +53,7 @@ def _partial_likelihood_efron(
     """
     J = len(time_unique)
 
-    H = [
-        torch.where((time_sorted == time_unique[j]) & (event_sorted))[0]
-        for j in range(J)
-    ]
+    H = [torch.where((time_sorted == time_unique[j]) & (event_sorted))[0] for j in range(J)]
     R = [torch.where(time_sorted >= time_unique[j])[0] for j in range(J)]
 
     # Calculate the length of each element in H and store it in a tensor
@@ -98,9 +95,7 @@ def _partial_likelihood_breslow(
     """  # noqa: E501
     N = len(time_sorted)
     R = [torch.where(time_sorted >= time_sorted[i])[0] for i in range(N)]
-    log_denominator = torch.stack(
-        [torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(N)]
-    )
+    log_denominator = torch.stack([torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(N)])
 
     return (log_hz_sorted - log_denominator)[event_sorted]
 
@@ -127,9 +122,7 @@ def _cumulative_baseline_hazard(
     R = [torch.where(time_sorted >= time_sorted_unique[i])[0] for i in range(M)]
     D = [torch.where(time_sorted == time_sorted_unique[i])[0] for i in range(M)]
 
-    log_denominator = torch.stack(
-        [torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(M)]
-    )
+    log_denominator = torch.stack([torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(M)])
     nominator = torch.stack([torch.sum(event_sorted[D[i]], dim=0) for i in range(M)])
     return torch.cumsum(nominator / torch.exp(log_denominator), dim=0)
 
@@ -288,9 +281,7 @@ def neg_partial_log_likelihood(
         elif ties_method == "breslow":
             pll = _partial_likelihood_breslow(log_hz_sorted, event_sorted, time_sorted)
         else:
-            raise ValueError(
-                f'Ties method {ties_method} should be one of ["efron", "breslow"]'
-            )
+            raise ValueError(f'Ties method {ties_method} should be one of ["efron", "breslow"]')
 
     # Negative partial log likelihood
     pll = torch.neg(pll)
@@ -299,11 +290,7 @@ def neg_partial_log_likelihood(
     elif reduction.lower() == "sum":
         loss = pll.sum()
     else:
-        raise (
-            ValueError(
-                f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."
-            )
-        )
+        raise (ValueError(f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."))
     return loss
 
 
@@ -384,9 +371,7 @@ def baseline_survival_function(
     time_sorted_unique = torch.unique(time_sorted)
 
     # Compute baseline cumulative hazard
-    cumulative_baseline_hazard = _cumulative_baseline_hazard(
-        log_hz_sorted, event_sorted, time_sorted
-    )
+    cumulative_baseline_hazard = _cumulative_baseline_hazard(log_hz_sorted, event_sorted, time_sorted)
 
     # return baseline survival function
     return {
@@ -425,11 +410,11 @@ def survival_function(
         :math:`\log \theta_i^{\star}` is the log relative hazard of new subjects (argument ``new_log_hz``).
 
     Examples:
-        >>> event = torch.tensor([1, 0, 0, 1, 1], dtype=torch.bool) # original subjects
+        >>> event = torch.tensor([1, 0, 0, 1, 1], dtype=torch.bool)  # original subjects
         >>> time = torch.tensor([1.0, 2.0, 3.0, 4.0, 4.0])
         >>> log_hz = torch.tensor([0.1, 0.2, 0.3, 0.4, 0.5])
         >>> baseline_survival = baseline_survival_function(log_hz, event, time)
-        >>> new_log_hz = torch.tensor([0.15, 0.25]) # 2 new subjects
+        >>> new_log_hz = torch.tensor([0.15, 0.25])  # 2 new subjects
         >>> new_time = torch.tensor([2.5, 3.5])
         >>> survival_function(baseline_survival, new_log_hz, new_time)
         tensor([[0.8433, 0.4024],
@@ -444,9 +429,7 @@ def survival_function(
     new_time = new_time.squeeze()
 
     # Compute individual survival functions
-    individual_survival = baseline_survival.unsqueeze(0) ** torch.exp(
-        new_log_hz
-    ).unsqueeze(1)
+    individual_survival = baseline_survival.unsqueeze(0) ** torch.exp(new_log_hz).unsqueeze(1)
 
     # Index of the largest element in time that is ≤ new_time
     time_index = torch.searchsorted(time, new_time, right=True)
@@ -456,7 +439,6 @@ def survival_function(
 
 
 if __name__ == "__main__":
-
     import doctest
 
     # Run doctest
