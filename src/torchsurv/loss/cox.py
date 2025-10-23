@@ -6,13 +6,15 @@ import warnings
 
 import torch
 
-# from torchsurv.tools.validate_data import validate_model, validate_survival_data
+from torchsurv.tools.validate_data import validate_model, validate_survival_data
 
 __all__ = [
     "_partial_likelihood_cox",
     "_partial_likelihood_efron",
     "_partial_likelihood_breslow",
     "neg_partial_log_likelihood",
+    "baseline_survival_function",
+    "survival_function",
 ]
 
 
@@ -51,7 +53,10 @@ def _partial_likelihood_efron(
     """
     J = len(time_unique)
 
-    H = [torch.where((time_sorted == time_unique[j]) & (event_sorted))[0] for j in range(J)]
+    H = [
+        torch.where((time_sorted == time_unique[j]) & (event_sorted))[0]
+        for j in range(J)
+    ]
     R = [torch.where(time_sorted >= time_unique[j])[0] for j in range(J)]
 
     # Calculate the length of each element in H and store it in a tensor
@@ -93,9 +98,40 @@ def _partial_likelihood_breslow(
     """  # noqa: E501
     N = len(time_sorted)
     R = [torch.where(time_sorted >= time_sorted[i])[0] for i in range(N)]
-    log_denominator = torch.stack([torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(N)])
+    log_denominator = torch.stack(
+        [torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(N)]
+    )
 
     return (log_hz_sorted - log_denominator)[event_sorted]
+
+
+def _cumulative_baseline_hazard(
+    log_hz_sorted: torch.Tensor,
+    event_sorted: torch.Tensor,
+    time_sorted: torch.Tensor,
+) -> torch.Tensor:
+    """
+    Compute the log cumulative baseline hazard for the Cox proportional hazards model using the Breslow's method.
+
+    Args:
+        log_hz_sorted (torch.Tensor, float): Log hazard rates sorted by time.
+        event_sorted (torch.Tensor, bool): Binary tensor indicating if the event occurred (True) or was censored (False), sorted by time.
+        time_sorted (torch.Tensor, float): Event or censoring times sorted in ascending order.
+
+    Returns:
+        torch.Tensor: Log cumulative baseline hazard evaluated at each unique time point.
+    """  # noqa: E501
+    time_sorted_unique = torch.unique(time_sorted)
+    M = len(time_sorted_unique)
+
+    R = [torch.where(time_sorted >= time_sorted_unique[i])[0] for i in range(M)]
+    D = [torch.where(time_sorted == time_sorted_unique[i])[0] for i in range(M)]
+
+    log_denominator = torch.stack(
+        [torch.logsumexp(log_hz_sorted[R[i]], dim=0) for i in range(M)]
+    )
+    nominator = torch.stack([torch.sum(event_sorted[D[i]], dim=0) for i in range(M)])
+    return torch.cumsum(nominator / torch.exp(log_denominator), dim=0)
 
 
 def neg_partial_log_likelihood(
@@ -113,7 +149,7 @@ def neg_partial_log_likelihood(
             Log relative hazard of length n_samples.
         event (torch.Tensor, bool):
             Event indicator of length n_samples (= True if event occurred).
-        time (torch.Tensor):
+        time (torch.Tensor, float):
             Event or censoring time of length n_samples.
         ties_method (str):
             Method to handle ties in event time. Defaults to "efron".
@@ -164,7 +200,7 @@ def neg_partial_log_likelihood(
 
         .. math::
 
-            pll = \sum_{k} \left( {\sum_{i\in H_{k}}\log \theta_i} - m_k \: \log\left(\sum_{j \in R(\tau_k)} \theta_j \right) \right)
+            pll = \sum_{k} \left( {\sum_{i\in H_{k}}\log \theta_i} - m_k \: \log\left(\sum_{j \in R(\xi_k)} \theta_j \right) \right)
 
 
         **Ties in event time handled with Efron's method.**
@@ -184,18 +220,20 @@ def neg_partial_log_likelihood(
 
 
     Examples:
-        >>> log_hz = torch.tensor([0.1, 0.2, 0.3, 0.4, 0.5])
-        >>> event = torch.tensor([1, 0, 1, 0, 1], dtype=torch.bool)
-        >>> time = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
+        >>> _ = torch.manual_seed(43)
+        >>> n = 4
+        >>> log_hz = torch.randn((n, 1), dtype=torch.float)
+        >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+        >>> time = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)
         >>> neg_partial_log_likelihood(log_hz, event, time)  # default, mean of log likelihoods across patients
-        tensor(1.0071)
+        tensor(1.9908)
         >>> neg_partial_log_likelihood(log_hz, event, time, reduction="sum")  # sum of log likelihoods across patients
-        tensor(3.0214)
-        >>> time = torch.tensor([1.0, 2.0, 2.0, 4.0, 5.0])  # Dealing with ties (default: Efron)
+        tensor(5.9724)
+        >>> time[0] = time[1]  # Dealing with ties (default: Efron)
         >>> neg_partial_log_likelihood(log_hz, event, time, ties_method="efron")
-        tensor(1.0873)
+        tensor(2.9877)
         >>> neg_partial_log_likelihood(log_hz, event, time, ties_method="breslow")  # Dealing with ties (Breslow)
-        tensor(1.0873)
+        tensor(2.0247)
 
     References:
 
@@ -208,9 +246,14 @@ def neg_partial_log_likelihood(
 
     """  # noqa: E501
 
-    # if checks:
-    #     validate_survival_data(event, time)
-    #     validate_model(log_hz, event, model_type="cox")
+    # ensure log_hz, event and time are 1-dimensional
+    log_hz = log_hz.squeeze()
+    event = event.squeeze()
+    time = time.squeeze()
+
+    if checks:
+        validate_survival_data(event, time)
+        validate_model(log_hz, event, model_type="cox")
 
     if any([event.sum().item() == 0, len(log_hz.size()) == 0]):
         warnings.warn(
@@ -245,7 +288,9 @@ def neg_partial_log_likelihood(
         elif ties_method == "breslow":
             pll = _partial_likelihood_breslow(log_hz_sorted, event_sorted, time_sorted)
         else:
-            raise ValueError(f'Ties method {ties_method} should be one of ["efron", "breslow"]')
+            raise ValueError(
+                f'Ties method {ties_method} should be one of ["efron", "breslow"]'
+            )
 
     # Negative partial log likelihood
     pll = torch.neg(pll)
@@ -254,11 +299,164 @@ def neg_partial_log_likelihood(
     elif reduction.lower() == "sum":
         loss = pll.sum()
     else:
-        raise (ValueError(f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."))
+        raise (
+            ValueError(
+                f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."
+            )
+        )
     return loss
 
 
+def baseline_survival_function(
+    log_hz: torch.Tensor,
+    event: torch.Tensor,
+    time: torch.Tensor,
+    checks: bool = True,
+) -> torch.Tensor:
+    r"""Compute the baseline survival function for the Cox proportional hazards model with Breslow's method.
+
+    Args:
+        log_hz (torch.Tensor, float):
+            Log relative hazard of length n_samples.
+        event (torch.Tensor, bool):
+            Event indicator of length n_samples (= True if event occurred) used to fit the model.
+        time (torch.Tensor, float):
+            Event or censoring time of length n_samples used to fit the model.
+        checks (bool):
+            Whether to perform input format checks.
+            Enabling checks can help catch potential issues in the input data.
+            Defaults to True.
+
+    Returns:
+        (dict):
+            Dictionary with two entries:
+                - `"time"` (`torch.Tensor`): Sorted unique ``time``.
+                - `"baseline_survival"` (`torch.Tensor`): Estimated baseline survival function evaluated at these times.
+
+    Note:
+        The baseline survival function, :math:`S_0(t)`, and the baseline cumulative hazard, :math:`H_0(t)`, under the Cox proportional hazards model are defined as:
+
+        .. math::
+
+            S_0(t) = \exp\Big(-H_0(u)\, du \Big), \quad H_0(t) = \int_{0}^{t} \lambda_0(u)\, du.
+
+
+        Using the Breslow's estimator :cite:p:`Breslow1972`, we estimate the baseline cumulative hazard as:
+
+        .. math::
+
+            \hat{H}_0(t) = \sum_{\xi_k \le t} \frac{m_k}{\sum_{j \in R(\xi_k)} \theta_j}.
+
+        The estimated baseline survival function is then given by:
+
+        .. math::
+
+            \hat{S}_0(t) = \exp\left(-\hat{H}_0(t)\right).
+
+
+    Examples:
+        >>> log_hz = torch.tensor([0.1, 0.2, 0.3, 0.4, 0.5])
+        >>> event = torch.tensor([1, 0, 0, 1, 1], dtype=torch.bool)
+        >>> time = torch.tensor([1.0, 2.0, 3.0, 4.0, 4.0])
+        >>> baseline_survival_function(log_hz, event, time)
+        {'time': tensor([1., 2., 3., 4.]), 'baseline_survival': tensor([0.8636, 0.8636, 0.8636, 0.4568])}
+
+    References:
+
+        .. bibliography::
+            :filter: False
+
+            Breslow1972
+    """  # noqa: E501
+
+    # ensure log_hz, event and time are 1-dimensional
+    log_hz = log_hz.squeeze()
+    event = event.squeeze()
+    time = time.squeeze()
+
+    if checks:
+        validate_survival_data(event, time)
+
+    # sort data by event or censoring time
+    time_sorted, idx = torch.sort(time)
+    log_hz_sorted = log_hz[idx]
+    event_sorted = event[idx]
+    time_sorted_unique = torch.unique(time_sorted)
+
+    # Compute baseline cumulative hazard
+    cumulative_baseline_hazard = _cumulative_baseline_hazard(
+        log_hz_sorted, event_sorted, time_sorted
+    )
+
+    # return baseline survival function
+    return {
+        "time": time_sorted_unique,
+        "baseline_survival": torch.exp(-cumulative_baseline_hazard),
+    }
+
+
+def survival_function(
+    baseline_survival: torch.Tensor,
+    new_log_hz: torch.Tensor,
+    new_time: torch.Tensor,
+) -> torch.Tensor:
+    r"""Compute the individual survival function for new subjects for the Cox proportional hazards model.
+
+    Args:
+        baseline_survival (dict):
+            Output of ``baseline_survival_function``.
+        new_log_hz (torch.Tensor, float):
+            Log relative hazard for new subjects of length n_samples_new.
+        new_time (torch.Tensor, float):
+            Time at which to evaluate the survival probability of length n_times.
+
+    Returns:
+        torch.Tensor:
+            Individual survival probabilities for each new subject at ``new_time`` of shape = (n_samples_new, n_times).
+
+    Note:
+        The estimated survival function for new subject $i$ under the Cox proportional hazards models is given by:
+
+        .. math::
+
+            \hat{S}_i(t) = \hat{S}_0(t)^{\theta_i^{\star}},
+
+        where :math:`\hat{S}_0(t)` is the estimated baseline survival function and
+        :math:`\log \theta_i^{\star}` is the log relative hazard of new subjects (argument ``new_log_hz``).
+
+    Examples:
+        >>> event = torch.tensor([1, 0, 0, 1, 1], dtype=torch.bool) # original subjects
+        >>> time = torch.tensor([1.0, 2.0, 3.0, 4.0, 4.0])
+        >>> log_hz = torch.tensor([0.1, 0.2, 0.3, 0.4, 0.5])
+        >>> baseline_survival = baseline_survival_function(log_hz, event, time)
+        >>> new_log_hz = torch.tensor([0.15, 0.25]) # 2 new subjects
+        >>> new_time = torch.tensor([2.5, 3.5])
+        >>> survival_function(baseline_survival, new_log_hz, new_time)
+        tensor([[0.8433, 0.4024],
+                [0.8283, 0.3657]])
+    """
+
+    time = baseline_survival["time"]
+    baseline_survival = baseline_survival["baseline_survival"]
+
+    # ensure log_hz, new_time is 1-dimensional
+    new_log_hz = new_log_hz.squeeze()
+    new_time = new_time.squeeze()
+
+    # Compute individual survival functions
+    individual_survival = baseline_survival.unsqueeze(0) ** torch.exp(
+        new_log_hz
+    ).unsqueeze(1)
+
+    # Index of the largest element in time that is ≤ new_time
+    time_index = torch.searchsorted(time, new_time, right=True)
+
+    # return survival at new_time
+    return individual_survival[:, time_index]
+
+
 if __name__ == "__main__":
+
     import doctest
 
     # Run doctest

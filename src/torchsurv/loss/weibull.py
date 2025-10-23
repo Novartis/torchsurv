@@ -2,138 +2,194 @@ import sys
 
 import torch
 
-from torchsurv.tools.validate_data import _impute_missing_log_shape, validate_model, validate_survival_data
+from torchsurv.tools.validate_data import (
+    _impute_missing_log_shape,
+    validate_model,
+    validate_survival_data,
+)
 
 __all__ = [
-    "cumulative_hazard",
-    "survival_function",
-    "log_hazard",
     "neg_log_likelihood",
+    "log_hazard",
+    "survival_function",
 ]
 
 
-def cumulative_hazard(
-    log_params: torch.Tensor,
-    time: torch.Tensor,
-    all_times: bool = True,
+def _cumulative_hazard(
+    new_log_params: torch.Tensor,
+    new_time: torch.Tensor,
+    respective_times: bool = False,
     clamp_value: float = 1e10,
 ) -> torch.Tensor:
     """Cumulative hazard for the Weibull Accelerated Time Failure (AFT) survival model.
 
     Args:
-        log_params (torch.Tensor, float):
-            Parameters of the Weibull distribution of shape = (n_samples, 1) or (n_samples, 2).
+        new_log_params (torch.Tensor, float):
+            Parameters of the Weibull distribution for new subjects,
+            of shape = (n_samples_new, 1) or (n_samples_new, 2).
             The first column corresponds to the log scale parameter. The second column
             corresponds to the log shape parameter. If the log shape parameter is missing, it is
             imputed with 0.
-        time (torch.Tensor, float):
-            Event or censoring time of length n_samples.
-        all_times (bool)
-            If True, subject-specific cumulative hazard is evaluated at all ``time`` (used for evaluation metrics).
-            If False, subject-specific cumulative hazard is evaluated at respective ``time``.
-            Defaults is True.
+        new_time (torch.Tensor, float):
+            Time at which to evaluate the cumulative hazard of length n_times.
+        respective_times (bool, optional):
+            If True, ``new_time`` must have the same length as ``new_log_params``.
+            The subject-specific cumulative hazard is then evaluated at each corresponding value in ``new_time``.
+            Defaults to False.
+        clamp_value (float, optional):
+            Maximum value to which the cumulative hazard is clipped.
+            This prevents numerical overflow or instability by capping extremely large values of the cumulative hazard.
+            Defaults to 1e10.
 
     Returns:
-        (torch.Tensor, float): Subject-specific cumulative hazard evaluated at ``time``.
+        (torch.Tensor, float): Subject-specific cumulative hazard evaluated at ``new_time``.
+        Shape = (n_samples_new, n_times) if respective_times is False.
+        Shape = (n_samples_new,) if respective_times is True.
 
     Examples:
-        >>> _ = torch.manual_seed(42)
-        >>> time = torch.randint(low=1, high=100, size=(4,), dtype=torch.float)
-        >>> log_params = torch.randn((4, 2), dtype=torch.float)
-        >>> cumulative_hazard(log_params, time, all_times=False)  # Cumulative hazard at respective time
-        tensor([  8.6257, 112.2115,   3.5105, 112.6339])
-        >>> cumulative_hazard(log_params, time, all_times=True)  # Default. Cumulative hazard at all time
-        tensor([[  8.6257, 233.0865, 239.2167, 126.2805],
-                [ 12.7698, 112.2115, 114.1484,  74.9134],
-                [  0.8706,   3.4725,   3.5105,   2.6850],
-                [  6.9530, 212.7592, 218.5687, 112.6339]])
+        >>> new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]]) # 2 new subjects
+        >>> new_time = torch.tensor([1.0, 2.0])
+        >>> _cumulative_hazard(new_log_params, new_time)
+        tensor([[0.8248, 2.0086],
+                [0.8850, 2.0636]])
+        >>> _cumulative_hazard(new_log_params, new_time, respective_times=True)
+        tensor([0.8248, 2.0636])
     """
-    log_scale, log_shape = _impute_missing_log_shape(log_params).unbind(1)
+    log_scale, log_shape = _impute_missing_log_shape(new_log_params).unbind(1)
 
-    if all_times:
-        # Use all times for each sample
-        time = time.unsqueeze(0).expand(len(time), len(time))  # expand across rows
-        log_scale = log_scale.unsqueeze(1).expand(len(time), len(time))  # expand across columns
-        log_shape = log_shape.unsqueeze(1).expand(len(time), len(time))  # expand across columns
+    if new_time.dim() == 0:
+        # Use one time for each sample
+        time = new_time.repeat(len(new_log_params))
+    elif respective_times and new_time.size(0) == new_log_params.size(0):
+        time = new_time
+    else:
+        # Use new time for each sample
+        time = new_time.unsqueeze(0).expand(
+            len(log_scale), len(new_time)
+        )  # expand across rows
+        log_scale = log_scale.unsqueeze(1).expand(time.shape)  # expand across columns
+        log_shape = log_shape.unsqueeze(1).expand(time.shape)  # expand across columns
 
     return torch.clamp(
-        torch.exp(torch.exp(log_shape) * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale)),
+        torch.exp(
+            torch.exp(log_shape)
+            * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale)
+        ),
         min=0,
         max=clamp_value,
     )
 
 
 def log_hazard(
-    log_params: torch.Tensor,
-    time: torch.Tensor,
-    all_times: bool = True,
+    new_log_params: torch.Tensor,
+    new_time: torch.Tensor,
+    respective_times: bool = False,
     clamp_value: float = 1e10,
 ) -> torch.Tensor:
     """Log hazard of the Weibull Accelerated Time Failure (AFT) survival model.
 
     Args:
-        log_params (torch.Tensor, float):
-            Parameters of the Weibull distribution of shape = (n_samples, 1) or (n_samples, 2).
+        new_log_params (torch.Tensor, float):
+            Parameters of the Weibull distribution for new subjects,
+            of shape = (n_samples_new, 1) or (n_samples_new, 2).
             The first column corresponds to the log scale parameter. The second column
             corresponds to the log shape parameter. If the log shape parameter is missing, it is
             imputed with 0.
-        time (torch.Tensor, float):
-            Time at which to evaluate the log hazard.
-            Should be of length n_samples to evaluate the log hazard at observed time-to-event or censoring,
-            or of length one to evaluate the log hazard at a new time.
-        all_times (bool):
-            If True, subject-specific log hazard is evaluated at all ``time`` (used for evaluation metrics).
-            If False, subject-specific log hazard is evaluated at respective ``time``.
-            Defaults is True.
-            Ignored if ``time`` is of length one.
+        new_time (torch.Tensor, float):
+            Time at which to evaluate the log hazard of length n_times.
+        respective_times (bool, optional):
+            If True, ``new_time`` must have the same length as ``new_log_params``.
+            The subject-specific log hazard is then evaluated at each respective index in ``new_time``.
+            Defaults to False.
+        clamp_value (float, optional):
+            Maximum value to which the log hazard is clipped.
+            This prevents numerical overflow or instability by capping extremely large values of the log hazard.
+            Defaults to 1e10.
 
     Returns:
-        (torch.Tensor, float): Subject-specific log hazard evaluated at ``time``.
+        (torch.Tensor, float): Subject-specific log hazard evaluated at ``new_time``.
+        Shape = (n_samples_new, n_times) if ``respective_times`` is False.
+        Shape = (n_samples_new,) if ``respective_times`` is True.
 
     Examples:
-        >>> _ = torch.manual_seed(42)
-        >>> time = torch.randint(low=1, high=100, size=(4,), dtype=torch.float)
-        >>> log_params = torch.randn((4, 2), dtype=torch.float)
-        >>> log_hazard(log_params, time, all_times=False)  # Log hazard at respective time
-        tensor([ 0.4392, -0.0303, -3.9672,  0.9140])
-        >>> log_hazard(log_params, time, all_times=True)  # Default. Log hazard at all time
-        tensor([[ 0.4392,  1.1174,  1.1227,  0.9913],
-                [ 0.4148, -0.0303, -0.0338,  0.0525],
-                [-2.7225, -3.9575, -3.9672, -3.7279],
-                [ 0.2606,  1.0632,  1.0695,  0.9140]])
-        >>> log_hazard(log_params, time=torch.tensor(10.0))  # Log hazard at one new time (e.g., 10 years)
-        tensor([ 0.5316,  0.3542, -2.8907,  0.3699])
-        >>> for t in torch.tensor([100.0, 150.0]):
-        ...     log_hazard(log_params, time=t)  # Subject-specific log hazard at multiple new times
-        tensor([ 1.1280, -0.0372, -3.9767,  1.0757])
-        tensor([ 1.2330, -0.1062, -4.1680,  1.1999])
-        >>> log_params *= 1e2  # Increase scale
-        >>> log_hazard(log_params, time, all_times=False)  # Check for Torch.Inf values
-        tensor([-1.0000e+10, -2.3197e+01, -6.8385e+01, -1.0000e+10])
+        >>> new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]]) # 2 new subjects
+        >>> new_time = torch.tensor([1.0, 2.0])
+        >>> log_hazard(new_log_params, new_time)
+        tensor([[0.0574, 0.2543],
+                [0.0779, 0.2313]])
+        >>> log_hazard(new_log_params, new_time, respective_times=True)
+        tensor([0.0574, 0.2313])
     """
 
-    log_scale, log_shape = _impute_missing_log_shape(log_params).unbind(1)
+    log_scale, log_shape = _impute_missing_log_shape(new_log_params).unbind(1)
 
-    if time.dim() == 0:
-        # Use fixed time for each sample
-        time = time.repeat(len(log_params))
-    elif time.size(0) == log_params.size(0) and all_times:
-        # Use all times for each sample
-        time = time.unsqueeze(0).expand(len(time), len(time))  # expand across rows
-        log_scale = log_scale.unsqueeze(1).expand(len(time), len(time))  # expand across columns
-        log_shape = log_shape.unsqueeze(1).expand(len(time), len(time))  # expand across columns
-    if time.size(0) != log_params.size(0):
-        raise ValueError(
-            f"Dimension mismatch: 'time' ({len(time)}) does not match the length of 'log_params' ({len(log_params)})."
-        )
+    if new_time.dim() == 0:
+        # Use one time for each sample
+        time = new_time.repeat(len(new_log_params))
+    elif respective_times and new_time.size(0) == new_log_params.size(0):
+        time = new_time
+    else:
+        # Use new time for each sample
+        time = new_time.unsqueeze(0).expand(
+            len(log_scale), len(new_time)
+        )  # expand across rows
+        log_scale = log_scale.unsqueeze(1).expand(time.shape)  # expand across columns
+        log_shape = log_shape.unsqueeze(1).expand(time.shape)  # expand across columns
 
     return torch.clamp(
         log_shape
         - log_scale
-        + torch.expm1(log_shape) * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale),
+        + torch.expm1(log_shape)
+        * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale),
         min=-clamp_value,
         max=clamp_value,
     )
+
+
+def survival_function(
+    new_log_params: torch.Tensor,
+    new_time: torch.Tensor,
+) -> torch.Tensor:
+    """Survival function for the Weibull Accelerated Time Failure (AFT) survival model.
+
+    Args:
+        new_log_params (torch.Tensor, float):
+            Parameters of the Weibull distribution for new subjects,
+            of shape = (n_samples_new, 1) or (n_samples_new, 2).
+            The first column corresponds to the log scale parameter. The second column
+            corresponds to the log shape parameter. If the log shape parameter is missing, it is
+            imputed with 0.
+        new_time (torch.Tensor, float):
+            Time at which to evaluate the survival probability of length n_times.
+
+    Returns:
+        torch.Tensor:
+            Individual survival probabilities for each new subject at ``new_time``. Shape = (n_samples_new, n_times).
+
+    Examples:
+        >>> new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]]) # 2 new subjects
+        >>> new_time = torch.tensor([1.0, 2.0, 3.0, 4.0])
+        >>> survival_function(new_log_params, new_time)  #  Survival at new times
+        tensor([[0.4383, 0.1342, 0.0340, 0.0075],
+                [0.4127, 0.1270, 0.0338, 0.0081]])
+
+    """
+    log_scale, log_shape = _impute_missing_log_shape(new_log_params).unbind(1)
+
+    if new_time.dim() == 0:
+        # Use one time for each sample
+        time = new_time.repeat(len(new_log_params))
+    else:
+        # Use new time for each sample
+        time = new_time.unsqueeze(0).expand(
+            len(log_scale), len(new_time)
+        )  # expand across rows
+        log_scale = log_scale.unsqueeze(1).expand(time.shape)  # expand across columns
+        log_shape = log_shape.unsqueeze(1).expand(time.shape)  # expand across columns
+
+    return 1 - torch.distributions.weibull.Weibull(
+        torch.exp(log_scale), torch.exp(log_shape)
+    ).cdf(time)
 
 
 def neg_log_likelihood(
@@ -204,19 +260,19 @@ def neg_log_likelihood(
             ll = \sum_{i: \delta_i = 1} \log h_i(T_i) - \sum_{i = 1}^N H_i(T_i)
 
     Examples:
-        >>> _ = torch.manual_seed(42)
+        >>> _ = torch.manual_seed(43)
         >>> n = 4
         >>> log_params = torch.randn((n, 2), dtype=torch.float)
         >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
         >>> time = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)
         >>> neg_log_likelihood(log_params, event, time)  # Default: mean of log likelihoods across subject
-        tensor(47.5035)
+        tensor(143039.2656)
         >>> neg_log_likelihood(log_params, event, time, reduction="sum")  # Sum of log likelihoods across subject
-        tensor(190.0141)
+        tensor(572157.0625)
         >>> neg_log_likelihood(
         ...     torch.randn((n, 1), dtype=torch.float), event, time
-        ... )  # Missing shape: exponential decrease
-        tensor(66.7203)
+        ... )  # Missing shape: exponential distribution
+        tensor(67.4289)
 
     References:
 
@@ -231,9 +287,14 @@ def neg_log_likelihood(
         validate_survival_data(event, time)
         validate_model(log_params, event, model_type="weibull")
 
+    # ensure event and time are 1-dimensional
+    event = event.squeeze()
+    time = time.squeeze()
+
     # Negative log likelihood
     nll = torch.neg(
-        event * log_hazard(log_params, time, False) - cumulative_hazard(log_params, time, False)  # Huge values here
+        event * log_hazard(log_params, time, True)
+        - _cumulative_hazard(log_params, time, True)  # Huge values here
     )
 
     if any(torch.isinf(nll)):
@@ -245,67 +306,12 @@ def neg_log_likelihood(
     elif reduction.lower() == "sum":
         loss = nll.sum()
     else:
-        raise (ValueError(f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."))
-    return loss
-
-
-def survival_function(log_params: torch.Tensor, time: torch.Tensor, all_times: bool = True) -> torch.Tensor:
-    """Survival function for the Weibull Accelerated Time Failure (AFT) survival model.
-
-    Args:
-        log_params (torch.Tensor, float):
-            Parameters of the Weibull distribution of shape = (n_samples, 1) or (n_samples, 2).
-            The first column corresponds to the log scale parameter. The second column
-            corresponds to the log shape parameter. If the log shape parameter is missing, it is
-            imputed with 0.
-        time (torch.Tensor, float):
-            Time at which to evaluate the survival function.
-            Should be of length n_samples to evaluate the survival function at observed event or censoring time,
-            or of length one to evaluate the survival function at a new time.
-        all_times (bool):
-            If True, subject-specific survival function is evaluated at all ``time`` (used for evaluation metrics).
-            If False, subject-specific survival function is evaluated at respective ``time``.
-            Defaults is True.
-            Ignored if ``time`` is of length one.
-
-    Returns:
-        (torch.Tensor, float): Subject-specific survival function evaluated at ``time``.
-
-    Examples:
-        >>> _ = torch.manual_seed(42)
-        >>> time = torch.randint(low=1, high=100, size=(4,), dtype=torch.float)
-        >>> log_params = torch.randn((4, 2), dtype=torch.float)
-        >>> survival_function(log_params, time, all_times=False)  # Survival at respective time
-        tensor([0.0002, 0.0000, 0.0299, 0.0000])
-        >>> survival_function(log_params, time, all_times=True)  # Default. Survival at all observed time
-        tensor([[1.7941e-04, 0.0000e+00, 0.0000e+00, 0.0000e+00],
-                [2.8610e-06, 0.0000e+00, 0.0000e+00, 0.0000e+00],
-                [4.1870e-01, 3.1040e-02, 2.9881e-02, 6.8224e-02],
-                [9.5576e-04, 0.0000e+00, 0.0000e+00, 0.0000e+00]])
-        >>> survival_function(log_params, time=torch.tensor(10.0))  # Survival at one new time (e.g., 10 years)
-        tensor([1.3709e-06, 5.9605e-08, 3.4954e-01, 1.5438e-05])
-        >>> for t in torch.tensor([100.0, 150.0]):
-        ...     survival_function(log_params, time=t)  # Subject-specific survival at multiple new times
-        tensor([0.0000, 0.0000, 0.0288, 0.0000])
-        tensor([0.0000, 0.0000, 0.0123, 0.0000])
-
-
-    """
-    log_scale, log_shape = _impute_missing_log_shape(log_params).unbind(1)
-
-    if time.dim() == 0:
-        # Use one time for each sample
-        time = time.repeat(len(log_params))
-    elif all([time.size(0) == log_params.size(0), all_times]):
-        # Use all times for each sample
-        time = time.unsqueeze(0).expand(len(time), len(time))  # expand across rows
-        log_scale = log_scale.unsqueeze(1).expand(len(time), len(time))  # expand across columns
-        log_shape = log_shape.unsqueeze(1).expand(len(time), len(time))  # expand across columns
-    if time.size(0) != log_params.size(0):
-        raise ValueError(
-            f"Dimension mismatch: 'time' ({len(time)}) does not match the length of 'log_params' ({len(log_params)})."
+        raise (
+            ValueError(
+                f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."
+            )
         )
-    return 1 - torch.distributions.weibull.Weibull(torch.exp(log_scale), torch.exp(log_shape)).cdf(time)
+    return loss
 
 
 if __name__ == "__main__":

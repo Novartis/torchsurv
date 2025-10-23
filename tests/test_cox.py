@@ -2,9 +2,14 @@ import json
 import unittest
 
 import numpy as np
+import pandas as pd
 import torch
 
+from lifelines import CoxPHFitter
+from lifelines.datasets import load_gbsg2, load_lung
+
 from torchsurv.loss.cox import neg_partial_log_likelihood as cox
+from torchsurv.loss.cox import baseline_survival_function, _cumulative_baseline_hazard
 from torchsurv.tools.validate_data import validate_survival_data
 
 # Load the benchmark cox log likelihoods from R
@@ -20,6 +25,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
     """
     List of packages compared
         - survival (R)
+        - lifelines (python)
     """
 
     # random data and parameters
@@ -28,10 +34,15 @@ class TestCoxSurvivalLoss(unittest.TestCase):
     event = torch.randint(low=0, high=2, size=(N,), dtype=torch.bool)
     time = torch.randint(low=1, high=100, size=(N,), dtype=torch.float)
 
-    # def test_y_tensor(self):
-    #     event_np_array = np.random.randint(0, 1 + 1, size=(self.N,), dtype="bool")
-    #     with self.assertRaises(TypeError)):
-    #         cox(self.log_hz, event_np_array, self.time)
+    # prepare data
+    lung = load_lung().dropna()
+    lung["sex"] = (lung["sex"] == 1).astype(float)
+    lung["age"] = (lung["age"] - lung["age"].mean()) / lung["age"].std()
+
+    gbsg = load_gbsg2().dropna()
+    gbsg["age"] = (gbsg["age"] - gbsg["age"].mean()) / gbsg["age"].std()
+    gbsg["tsize"] = (gbsg["tsize"] - gbsg["tsize"].mean()) / gbsg["tsize"].std()
+    gbsg.drop(columns=["horTh", "menostat", "tgrade"], inplace=True)
 
     def test_t_tensor(self):
         time_np_array = np.random.randint(0, 100, size=(self.N,))
@@ -46,12 +57,16 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             cox(log_hz_np_array, self.event, self.time)
 
     def test_len_data(self):
-        event_wrong_length = torch.randint(low=0, high=2, size=(self.N + 1,), dtype=torch.bool)
+        event_wrong_length = torch.randint(
+            low=0, high=2, size=(self.N + 1,), dtype=torch.bool
+        )
         with self.assertRaises(ValueError):
             validate_survival_data(event_wrong_length, self.time)
 
     def test_positive_t(self):
-        time_negative = torch.randint(low=-100, high=100, size=(self.N,), dtype=torch.float)
+        time_negative = torch.randint(
+            low=-100, high=100, size=(self.N,), dtype=torch.float
+        )
         with self.assertRaises(ValueError):
             validate_survival_data(self.event, time_negative)
 
@@ -65,7 +80,9 @@ class TestCoxSurvivalLoss(unittest.TestCase):
         for benchmark_cox_loglik in benchmark_cox_logliks:
             if benchmark_cox_loglik["no_ties"][0]:
                 log_lik = -cox(
-                    torch.tensor(benchmark_cox_loglik["log_hazard"], dtype=torch.float32).squeeze(0),
+                    torch.tensor(
+                        benchmark_cox_loglik["log_hazard"], dtype=torch.float32
+                    ).squeeze(0),
                     torch.tensor(benchmark_cox_loglik["status"]).bool(),
                     torch.tensor(benchmark_cox_loglik["time"], dtype=torch.float32),
                     reduction="sum",
@@ -109,7 +126,9 @@ class TestCoxSurvivalLoss(unittest.TestCase):
                     ties_method="breslow",
                     reduction="sum",
                 )
-                log_lik_breslow_survival = benchmark_cox_loglik["log_likelihood_breslow"]
+                log_lik_breslow_survival = benchmark_cox_loglik[
+                    "log_likelihood_breslow"
+                ]
 
                 self.assertTrue(
                     np.allclose(
@@ -128,6 +147,72 @@ class TestCoxSurvivalLoss(unittest.TestCase):
                         atol=1e-8,
                     )
                 )
+
+    def test_survival_function_lung(self):
+        """test value of estimated survival function with Breslow's method on lung data"""
+
+        time = torch.tensor(self.lung["time"].values, dtype=torch.float32)
+        event = torch.tensor(self.lung["status"].values, dtype=torch.float32).bool()
+
+        # fit
+        coxphf = CoxPHFitter()
+        coxphf.fit(
+            self.lung,
+            duration_col="time",
+            event_col="status",
+        )
+
+        # get relative log hazard
+        hz = coxphf.predict_partial_hazard(self.lung).values
+        log_hz = torch.tensor(np.log(hz), dtype=torch.float32)
+
+        # compute baseline survival with lifelines
+        bsf_coxphfitter = coxphf.baseline_survival_.values[:, 0]
+
+        # compute baseline cumulative hazard and survival with torchsurv
+        bsf = baseline_survival_function(log_hz, event, time)["baseline_survival"]
+
+        self.assertTrue(
+            np.allclose(
+                bsf_coxphfitter,
+                np.array(bsf),
+                rtol=1e-5,
+                atol=1e-8,
+            )
+        )
+
+    def test_survival_function_gbsg(self):
+        """test value of estimated survival function with Breslow's method on gbsg data"""
+
+        event = torch.tensor(self.gbsg["cens"]).bool()
+        time = torch.tensor(self.gbsg["time"], dtype=torch.float32)
+
+        # fit
+        coxphf = CoxPHFitter()
+        coxphf.fit(
+            self.gbsg,
+            duration_col="time",
+            event_col="cens",
+        )
+
+        # get relative log hazard
+        hz = coxphf.predict_partial_hazard(self.gbsg).values
+        log_hz = torch.tensor(np.log(hz), dtype=torch.float32)
+
+        # compute baseline survival with lifelines
+        bsf_coxphfitter = coxphf.baseline_survival_.values[:, 0]
+
+        # compute baseline cumulative hazard and survival with torchsurv
+        bsf = baseline_survival_function(log_hz, event, time)["baseline_survival"]
+
+        self.assertTrue(
+            np.allclose(
+                bsf_coxphfitter,
+                np.array(bsf),
+                rtol=1e-5,
+                atol=1e-8,
+            )
+        )
 
 
 if __name__ == "__main__":
