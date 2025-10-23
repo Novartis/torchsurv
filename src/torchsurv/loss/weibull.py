@@ -47,7 +47,7 @@ def _cumulative_hazard(
         Shape = (n_samples_new,) if respective_times is True.
 
     Examples:
-        >>> new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]]) # 2 new subjects
+        >>> new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]])  # 2 new subjects
         >>> new_time = torch.tensor([1.0, 2.0])
         >>> _cumulative_hazard(new_log_params, new_time)
         tensor([[0.8248, 2.0086],
@@ -64,17 +64,12 @@ def _cumulative_hazard(
         time = new_time
     else:
         # Use new time for each sample
-        time = new_time.unsqueeze(0).expand(
-            len(log_scale), len(new_time)
-        )  # expand across rows
+        time = new_time.unsqueeze(0).expand(len(log_scale), len(new_time))  # expand across rows
         log_scale = log_scale.unsqueeze(1).expand(time.shape)  # expand across columns
         log_shape = log_shape.unsqueeze(1).expand(time.shape)  # expand across columns
 
     return torch.clamp(
-        torch.exp(
-            torch.exp(log_shape)
-            * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale)
-        ),
+        torch.exp(torch.exp(log_shape) * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale)),
         min=0,
         max=clamp_value,
     )
@@ -112,7 +107,7 @@ def log_hazard(
         Shape = (n_samples_new,) if ``respective_times`` is True.
 
     Examples:
-        >>> new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]]) # 2 new subjects
+        >>> new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]])  # 2 new subjects
         >>> new_time = torch.tensor([1.0, 2.0])
         >>> log_hazard(new_log_params, new_time)
         tensor([[0.0574, 0.2543],
@@ -130,17 +125,14 @@ def log_hazard(
         time = new_time
     else:
         # Use new time for each sample
-        time = new_time.unsqueeze(0).expand(
-            len(log_scale), len(new_time)
-        )  # expand across rows
+        time = new_time.unsqueeze(0).expand(len(log_scale), len(new_time))  # expand across rows
         log_scale = log_scale.unsqueeze(1).expand(time.shape)  # expand across columns
         log_shape = log_shape.unsqueeze(1).expand(time.shape)  # expand across columns
 
     return torch.clamp(
         log_shape
         - log_scale
-        + torch.expm1(log_shape)
-        * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale),
+        + torch.expm1(log_shape) * (torch.log(torch.clamp(time, min=1e-100, max=torch.inf)) - log_scale),
         min=-clamp_value,
         max=clamp_value,
     )
@@ -167,7 +159,7 @@ def survival_function(
             Individual survival probabilities for each new subject at ``new_time``. Shape = (n_samples_new, n_times).
 
     Examples:
-        >>> new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]]) # 2 new subjects
+        >>> new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]])  # 2 new subjects
         >>> new_time = torch.tensor([1.0, 2.0, 3.0, 4.0])
         >>> survival_function(new_log_params, new_time)  #  Survival at new times
         tensor([[0.4383, 0.1342, 0.0340, 0.0075],
@@ -181,15 +173,11 @@ def survival_function(
         time = new_time.repeat(len(new_log_params))
     else:
         # Use new time for each sample
-        time = new_time.unsqueeze(0).expand(
-            len(log_scale), len(new_time)
-        )  # expand across rows
+        time = new_time.unsqueeze(0).expand(len(log_scale), len(new_time))  # expand across rows
         log_scale = log_scale.unsqueeze(1).expand(time.shape)  # expand across columns
         log_shape = log_shape.unsqueeze(1).expand(time.shape)  # expand across columns
 
-    return 1 - torch.distributions.weibull.Weibull(
-        torch.exp(log_scale), torch.exp(log_shape)
-    ).cdf(time)
+    return 1 - torch.distributions.weibull.Weibull(torch.exp(log_scale), torch.exp(log_shape)).cdf(time)
 
 
 def neg_log_likelihood(
@@ -293,8 +281,7 @@ def neg_log_likelihood(
 
     # Negative log likelihood
     nll = torch.neg(
-        event * log_hazard(log_params, time, True)
-        - _cumulative_hazard(log_params, time, True)  # Huge values here
+        event * log_hazard(log_params, time, True) - _cumulative_hazard(log_params, time, True)  # Huge values here
     )
 
     if any(torch.isinf(nll)):
@@ -306,11 +293,7 @@ def neg_log_likelihood(
     elif reduction.lower() == "sum":
         loss = nll.sum()
     else:
-        raise (
-            ValueError(
-                f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."
-            )
-        )
+        raise (ValueError(f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."))
     return loss
 
 

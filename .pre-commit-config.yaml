@@ -25,7 +25,8 @@ repos:
     hooks:
       - id: codespell
         additional_dependencies: [tomli]
-        args: ["--write-changes"]  # Automatically fix spelling errors if only one suggestion
+        args: ["--write-changes"]
+        exclude: '\.(ipynb|bib|toml)$'  # Exclude notebooks and other files with false positives
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.12.4
