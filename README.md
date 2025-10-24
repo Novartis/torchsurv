@@ -28,7 +28,7 @@ __If you find this repository useful, please give us a star!__  🌟 ⭐ 🌟
 
 ## A collaborative project
 
-This package was developed by **Novartis** and the **US Food and Drug Administration (FDA)** as part of a **research collaboration** agreement on [radiogenomics](https://www.medrxiv.org/content/10.1101/2023.08.30.23294367v1.full.pdf).  
+This package was developed by **Novartis** and the **US Food and Drug Administration (FDA)** as part of a **research collaboration** agreement on [radiogenomics](https://www.medrxiv.org/content/10.1101/2023.08.30.23294367v1.full.pdf).
 
 `TorchSurv` is now part of the **FDA’s [Regulatory Science Tool Catalog](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)!**  🎉
 <br>For more information, please consult [this section](#disclaimer-regarding-the-catalog-of-regulatory-science-tools).
@@ -239,7 +239,7 @@ weights (e.g., inverse probability of censoring weighting (IPCW)). Packages `sur
 The enclosed tool is part of the [Catalog of Regulatory Science Tools](https://cdrh-rst.fda.gov/), which provides a peer-reviewed resource for stakeholders to use where standards and qualified Medical Device Development Tools (MDDTs) do not yet exist. These tools do not replace FDA-recognized standards or MDDTs. This catalog collates a variety of regulatory science tools that the FDA's Center for Devices and Radiological Health's (CDRH) Office of Science and Engineering Labs (OSEL) developed. These tools use the most innovative science to support medical device development and patient access to safe and effective medical devices. If you are considering using a tool from this catalog in your marketing submissions, note that these tools have not been qualified as [Medical Device Development Tools](https://www.fda.gov/medical-devices/medical-device-development-tools-mddt) and the FDA has not evaluated the suitability of these tools within any specific context of use. You may [request feedback or meetings for medical device submissions](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/requests-feedback-and-meetings-medical-device-submissions-q-submission-program) as part of the Q-Submission Program.
 For more information about the Catalog of Regulatory Science Tools, email [RST_CDRH@fda.hhs.gov](mailto:RST_CDRH@fda.hhs.gov).
 
-Tool Reference 
+Tool Reference
 * RST Reference Number: RST24AI17.01
 * Date of Publication: 10/16/2025
 * Recommended Citation: U.S. Food and Drug Administration. (2025). TorchSurv: Deep Learning Tools for Survival Analysis (RST24AI17.01). [https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)
