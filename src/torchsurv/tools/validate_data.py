@@ -1,4 +1,5 @@
 import sys
+from typing import Optional
 
 import torch
 
@@ -75,6 +76,23 @@ def validate_event(event: torch.Tensor) -> None:
         raise ValueError("All samples are censored.")
 
 
+def validate_strata(strata: torch.Tensor) -> None:
+    """
+    Raises:
+        ValueError: If ``strata`` is not integer.
+        ValueError: If all ``event`` are False.
+        ValueError: If any ``event`` is not True or False.
+    """
+    if strata.dtype not in (
+        torch.int8,
+        torch.int16,
+        torch.int32,
+        torch.int64,
+        torch.long,
+    ):
+        raise ValueError("Input 'strata' should be of integer type.")
+
+
 def validate_time(time: torch.Tensor) -> None:
     """
     Raises:
@@ -89,13 +107,16 @@ def validate_time(time: torch.Tensor) -> None:
         raise ValueError("Input 'time' should be non-negative.")
 
 
-def validate_dimension_survival_data(event: torch.Tensor, time: torch.Tensor) -> None:
+def validate_dimension_survival_data(event: torch.Tensor, time: torch.Tensor, strata: torch.Tensor) -> None:
     """
     Raises:
         ValueError: If ``event`` and ``time`` are not of the same length.
     """
     if len(event) != len(time):
         raise ValueError("Dimension mismatch: Incompatible length between inputs 'time' and 'event'.")
+
+    if len(event) != len(strata):
+        raise ValueError("Dimension mismatch: Incompatible length between inputs 'strata' and 'event'.")
 
 
 def validate_dimension_model_parameters(event: torch.Tensor, log_params: torch.Tensor) -> None:
@@ -169,7 +190,7 @@ def validate_new_time(new_time: torch.Tensor, time: torch.Tensor, within_follow_
     check_within_follow_up(new_time, time, within_follow_up)
 
 
-def validate_survival_data(event: torch.Tensor, time: torch.Tensor) -> None:
+def validate_survival_data(event: torch.Tensor, time: torch.Tensor, strata: Optional[torch.Tensor] = None) -> None:
     """Perform format and validity checks for survival data.
 
     Args:
@@ -185,11 +206,19 @@ def validate_survival_data(event: torch.Tensor, time: torch.Tensor) -> None:
         >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
         >>> validate_survival_data(event, time)
     """
+
+    if strata is None:
+        strata = torch.ones_like(event, dtype=torch.long)
+
     validate_tensor(event, "event")
     validate_tensor(time, "time")
+    validate_tensor(strata, "strata")
+
     validate_event(event)
     validate_time(time)
-    validate_dimension_survival_data(event, time)
+    validate_strata(strata)
+
+    validate_dimension_survival_data(event, time, strata)
 
 
 def validate_model(
@@ -211,7 +240,7 @@ def validate_model(
         >>> _ = torch.manual_seed(52)
         >>> n = 10
         >>> log_params_weibull = torch.randn((n, 2), dtype=torch.float)
-        >>> log_params_cox = torch.randn((n, 1), dtype=torch.float)
+        >>> log_params_cox = torch.randn((n,), dtype=torch.float)
         >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
         >>> validate_model(log_params_weibull, event, model_type="weibull")
         >>> validate_model(log_params_cox, event, model_type="cox")
