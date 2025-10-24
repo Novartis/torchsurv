@@ -2,18 +2,33 @@ import itertools
 import sys
 from typing import Tuple
 
+import pandas as pd
 import torch
 
-from ..tools import validate_inputs
+from torchsurv.tools.validate_data import validate_survival_data
+
+__all__ = [
+    "KaplanMeierEstimator",
+]
 
 
 class KaplanMeierEstimator:
     """Kaplan-Meier estimate of survival or censoring distribution for right-censored data :cite:p:`Kaplan1958`."""
 
+    def __init__(self, device: str = None):
+        """
+        Args:
+            device (str, optional): Device to use for tensor computations (e.g., 'cpu', 'cuda'). Defaults to None (uses CPU).
+        """
+        if device is None:
+            self.device = torch.device("cpu")
+        else:
+            self.device = torch.device(device)
+
     def __call__(
         self,
-        event: torch.tensor,
-        time: torch.tensor,
+        event: torch.Tensor,
+        time: torch.Tensor,
         censoring_dist: bool = False,
         check: bool = True,
     ):
@@ -21,9 +36,9 @@ class KaplanMeierEstimator:
 
         Args:
             event (torch.tensor, bool):
-                Event indicator of size n_samples (= True if event occured).
+                Event indicator of size n_samples (= True if event occurred).
             time (torch.tensor, float):
-                Time-to-event or censoring of size n_samples.
+                Event or censoring time of size n_samples.
             censoring_dist (bool, optional):
                 If False, returns the Kaplan-Meier estimate of the survival distribution.
                 If True, returns the Kaplan-Meier estimate of the censoring distribution.
@@ -36,14 +51,14 @@ class KaplanMeierEstimator:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 32
-            >>> time = torch.randint(low=0, high=8, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
-            >>> s = KaplanMeierEstimator() # estimate survival distribution
+            >>> time = torch.randint(low=0, high=8, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+            >>> s = KaplanMeierEstimator()  # estimate survival distribution
             >>> s(event, time)
             >>> s.km_est
             tensor([1.0000, 1.0000, 0.8214, 0.7143, 0.6391, 0.6391, 0.5113, 0.2556])
-            >>> c = KaplanMeierEstimator() # estimate censoring distribution
-            >>> c(event, time, censoring_dist = True)
+            >>> c = KaplanMeierEstimator()  # estimate censoring distribution
+            >>> c(event, time, censoring_dist=True)
             >>> c.km_est
             tensor([0.9688, 0.8750, 0.8750, 0.8312, 0.6357, 0.4890, 0.3667, 0.0000])
 
@@ -57,12 +72,12 @@ class KaplanMeierEstimator:
 
         # create attribute state
         # pylint: disable=attribute-defined-outside-init
-        self.event = event
-        self.time = time
+        self.event = event.to(self.device)
+        self.time = time.to(self.device)
 
         # Check input validity if required
         if check:
-            validate_inputs.validate_survival_data(event, time)
+            validate_survival_data(event, time)
 
         # Compute the counts of events, censorings, and the number at risk at each unique time
         uniq_times, n_events, n_at_risk, n_censored = self._compute_counts()
@@ -75,18 +90,13 @@ class KaplanMeierEstimator:
         # Compute the Kaplan-Meier estimator
         ratio = torch.where(
             n_events != 0,  # Check if the number of events is not equal to zero
-            n_events
-            / n_at_risk,  # Element-wise division when the number of events is not zero
+            n_events / n_at_risk,  # Element-wise division when the number of events is not zero
             torch.zeros_like(
                 n_events, dtype=torch.float
             ),  # Set to zero when the number of events is zero to avoid division by zero
         )
-        values = (
-            1.0 - ratio
-        )  # Compute the survival (or censoring) probabilities at each unique time
-        y = torch.cumprod(
-            values, dim=0
-        )  # Cumulative product to get the Kaplan-Meier estimator
+        values = 1.0 - ratio  # Compute the survival (or censoring) probabilities at each unique time
+        y = torch.cumprod(values, dim=0)  # Cumulative product to get the Kaplan-Meier estimator
 
         # Keep track of the unique times and Kaplan-Meier estimator values
         self.time = uniq_times
@@ -106,8 +116,8 @@ class KaplanMeierEstimator:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 32
-            >>> time = torch.randint(low=0, high=8, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
+            >>> time = torch.randint(low=0, high=8, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
             >>> km = KaplanMeierEstimator()
             >>> km(event, time)
             >>> km.plot_km()
@@ -119,7 +129,7 @@ class KaplanMeierEstimator:
         if ax is None:
             _, ax = plt.subplots()
 
-        ax.step(self.time, self.km_est, where="post", **kwargs)
+        ax.step(self.time.cpu(), self.km_est.cpu(), where="post", **kwargs)
         ax.set_xlabel("Time")
         ax.set_ylabel("Survival Probability")
         ax.set_title("Kaplan-Meier Estimate")
@@ -138,53 +148,53 @@ class KaplanMeierEstimator:
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 8
-            >>> time = torch.randint(low=1, high=10, size=(n * 4,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n * 4,)).bool()
+            >>> time = torch.randint(low=1, high=10, size=(n * 4,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n * 4,), dtype=torch.bool)
+            >>> new_times = torch.randint(low=0, high=10, size=(n,), dtype=torch.float)
             >>> km = KaplanMeierEstimator()
             >>> km(event, time)
-            >>> km.predict(torch.randint(low=0, high=10, size=(n,))) # predict survival distribution
+            >>> km.predict(new_times)  # predict survival distribution
             tensor([1.0000, 0.9062, 0.8700, 1.0000, 0.9062, 0.9062, 0.4386, 0.0000])
 
         """
+        # Ensure new_time is on the correct device
+        new_time = new_time.to(self.device)
 
-        # add probability of 1 of survival before time 0
-        ref_time = torch.cat((-torch.tensor([torch.inf]), self.time), dim=0)
-        km_est_ = torch.cat((torch.ones(1), self.km_est))
+        # Prepend baseline survival probability of 1 (at time 0 or before any event)
+        # and extend the reference time vector with -∞ to align indexing
+        ref_time = torch.cat((-torch.tensor([torch.inf], device=self.device, dtype=self.time.dtype), self.time), dim=0)
+        km_est_ = torch.cat((torch.ones(1, device=self.device, dtype=self.km_est.dtype), self.km_est))
 
-        # Check if newtime is beyond the last observed time point
+        # Identify time points in new_time that extend beyond the last train time in training
         extends = new_time > torch.max(ref_time)
-        if km_est_[torch.argmax(ref_time)] > 0 and extends.any():
-            # pylint: disable=consider-using-f-string
-            raise ValueError(
-                "Cannot predict survival/censoring distribution after the largest observed training event time point: {}".format(
-                    ref_time[-1].item()
-                )
-            )
 
-        # beyond last time point is zero probability
-        km_pred = torch.zeros_like(new_time, dtype=km_est_.dtype)
-        km_pred[extends] = 0.0
+        # Initialize predicted survival probabilities
+        km_pred = torch.zeros_like(new_time, dtype=km_est_.dtype, device=self.device)
 
-        # find new time points that match train time points
+        # For times beyond the train range, use the survival probability at the last train time
+        # (probability "holds" after the last event)
+        km_pred[extends] = km_est_[torch.argmax(ref_time)]
+
+        # For all other new_time points, locate their position relative to train times
         idx = torch.searchsorted(ref_time, new_time[~extends], side="left")
 
-        # For non-exact matches, take the left limit (shift the index to the left)
+        # If new_time does not exactly match an observed time, adjust index to take left limit
         eps = torch.finfo(ref_time.dtype).eps
         idx[torch.abs(ref_time[idx] - new_time[~extends]) >= eps] -= 1
 
-        # predict
+        # Assign survival estimates for in-range new_time points
         km_pred[~extends] = km_est_[idx]
 
         return km_pred
 
-    def print_survival_table(self):
+    def get_survival_table(self):
         """Prints the survival table with the unique times and Kaplan-Meier estimates.
 
         Examples:
             >>> _ = torch.manual_seed(42)
             >>> n = 32
-            >>> time = torch.randint(low=0, high=8, size=(n,)).float()
-            >>> event = torch.randint(low=0, high=2, size=(n,)).bool()
+            >>> time = torch.randint(low=0, high=8, size=(n,), dtype=torch.float)
+            >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
             >>> s = KaplanMeierEstimator()
         """
         # Print header
@@ -195,9 +205,11 @@ class KaplanMeierEstimator:
         for t, y in zip(self.time, self.km_est):
             print(f"{t:.2f}\t{y:.4f}")
 
+        return pd.DataFrame({"Time": self.time.detach().cpu().numpy(), "Survival": self.km_est.detach().cpu().numpy()})
+
     def _compute_counts(
         self,
-    ) -> Tuple[torch.tensor, torch.tensor, torch.tensor, torch.tensor]:
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """Compute the counts of events, censorings and risk set at ``time``.
 
         Returns: Tuple[torch.tensor, torch.tensor, torch.tensor, torch.tensor]
@@ -213,14 +225,12 @@ class KaplanMeierEstimator:
         order = torch.argsort(self.time, dim=0)
 
         # Initialize arrays to store unique times, event counts, and total counts
-        uniq_times = torch.empty_like(self.time)
-        uniq_events = torch.empty_like(self.time, dtype=torch.long)
-        uniq_counts = torch.empty_like(self.time, dtype=torch.long)
+        uniq_times = torch.empty_like(self.time, device=self.device)
+        uniq_events = torch.empty_like(self.time, dtype=torch.long, device=self.device)
+        uniq_counts = torch.empty_like(self.time, dtype=torch.long, device=self.device)
 
         # Group indices by unique time values
-        groups = itertools.groupby(
-            range(len(self.time)), key=lambda i: self.time[order[i]]
-        )
+        groups = itertools.groupby(range(len(self.time)), key=lambda i: self.time[order[i]])
 
         # Initialize index for storing unique values
         j = 0
@@ -247,7 +257,7 @@ class KaplanMeierEstimator:
 
         # Offset cumulative sum by one to get the number at risk
         n_at_risk = n_samples - torch.cumsum(
-            torch.cat([torch.tensor([0]), total_count]), dim=0
+            torch.cat([torch.tensor([0], device=self.device, dtype=total_count.dtype), total_count], dim=0), dim=0
         )
 
         return times, n_events, n_at_risk[:-1], n_censored

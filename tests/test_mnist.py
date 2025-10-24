@@ -10,6 +10,9 @@ from torchvision.transforms import v2
 from torchsurv.loss.cox import neg_partial_log_likelihood
 from torchsurv.metrics.cindex import ConcordanceIndex
 
+# set seed for reproducibility
+torch.manual_seed(42)
+
 
 class LitMNIST(LightningModule):
     def __init__(self, hidden_size=128, learning_rate=5e-4):
@@ -57,7 +60,7 @@ class LitMNIST(LightningModule):
         x, y = batch
         y[y == 0] = 10.0  # Offset 0 to prevent log(0)
         params = self(x)
-        loss = self.loss(params, torch.ones_like(y, device=y.device).bool(), y)
+        loss = self.loss(params, torch.ones_like(y, device=y.device).bool(), y.float())
         self.log("loss", loss, prog_bar=True, on_step=True, on_epoch=True)
         return loss
 
@@ -65,10 +68,8 @@ class LitMNIST(LightningModule):
         x, y = batch
         y[y == 0] = 10  # Offset 0 to prevent log(0)
         params = self(x)
-        loss = self.loss(params, torch.ones_like(y, device=y.device).bool(), y)
-        cindex = self.cindex(
-            params, torch.ones_like(y, device=y.device).bool(), y.float()
-        )
+        loss = self.loss(params, torch.ones_like(y, device=y.device).bool(), y.float())
+        cindex = self.cindex(params, torch.ones_like(y, device=y.device).bool(), y.float())
         self.log("val_loss", loss, prog_bar=True, on_step=True, on_epoch=True)
         self.log(
             "cindex",
@@ -104,9 +105,7 @@ class LitMNIST(LightningModule):
 
         # Assign test dataset for use in dataloader(s)
         if stage == "test" or stage is None:
-            self.mnist_test = MNIST(
-                self.data_dir, train=False, transform=self.transform
-            )
+            self.mnist_test = MNIST(self.data_dir, train=False, transform=self.transform)
 
     def train_dataloader(self):
         return DataLoader(

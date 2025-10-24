@@ -11,11 +11,12 @@ from utils import DataBatchContainer
 from torchsurv.stats.ipcw import get_ipcw
 
 # Load the benchmark cox log likelihoods from R
-with open("tests/benchmark_data/benchmark_ipcw.json", "r") as file:
+with open("tests/benchmark_data/benchmark_ipcw.json") as file:
     benchmark_ipcws = json.load(file)
 
 # set seed for reproducibility
 torch.manual_seed(42)
+np.random.seed(42)
 
 
 class TestIPCW(unittest.TestCase):
@@ -52,7 +53,10 @@ class TestIPCW(unittest.TestCase):
 
             self.assertTrue(
                 np.allclose(
-                    ipcw_new_time.numpy(), ipcw_new_time_pec, rtol=1e-4, atol=1e-8
+                    ipcw_new_time.numpy(),
+                    ipcw_new_time_pec,
+                    rtol=1e-4,
+                    atol=1e-8,
                 )
             )
 
@@ -76,7 +80,7 @@ class TestIPCW(unittest.TestCase):
                 "ties_score_censoring",
             ],
         )
-        for i, batch in enumerate(batch_container.batches):
+        for _, batch in enumerate(batch_container.batches):
             (
                 train_time,
                 train_event,
@@ -95,16 +99,14 @@ class TestIPCW(unittest.TestCase):
 
             # sksurv imposes survival data (event and time) for ipcw prediction
             # instead of just time. And then force icpw to be 0 if event == False
-            ipcw[test_event == False] = 0.0
+            ipcw[~test_event] = 0.0
 
             # ipcw with sksurv
             cens = CensoringDistributionEstimator()
             cens.fit(y_train_array)
             ipcw_sksurv = cens.predict_ipcw(y_test_array)
 
-            self.assertTrue(
-                np.all(np.isclose(ipcw.numpy(), ipcw_sksurv, rtol=1e-4, atol=1e-8))
-            )
+            self.assertTrue(np.all(np.isclose(ipcw.numpy(), ipcw_sksurv, rtol=1e-4, atol=1e-8)))
 
 
 if __name__ == "__main__":

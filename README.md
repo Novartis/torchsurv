@@ -1,11 +1,10 @@
 <p align="center">
-    <!-- <img src="https://github.com/Novartis/torchsurv/blob/main/docs/source/logo_firecamp.png" width="300"> -->
-    <img src="./docs/source/logo_firecamp.png" width="300">
-
+<img src="https://github.com/Novartis/torchsurv/blob/main/docs/source/logo_firecamp.png" width="300">
 </p>
 
 # Deep survival analysis made easy
 
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Python](https://img.shields.io/pypi/pyversions/torchsurv?label=Python)](https://pypi.org/project/torchsurv/)
 [![PyPI - Version](https://img.shields.io/pypi/v/torchsurv?color=green&label=PyPI)](https://pypi.org/project/torchsurv/)
 [![Conda](https://img.shields.io/conda/v/conda-forge/torchsurv?label=Conda&color=green)](https://anaconda.org/conda-forge/torchsurv)
@@ -16,16 +15,23 @@ https://anaconda.org/conda-forge/torchsurv)
 
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
+[![CodeFactor](https://www.codefactor.io/repository/github/novartis/torchsurv/badge/main)](https://www.codefactor.io/repository/github/novartis/torchsurv/overview/main)
 [![JOSS](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d/status.svg)](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d)
 [![License](https://img.shields.io/badge/License-MIT-black)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
 
 
+
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
 
-If you find this repository useful, please consider giving a star! ⭐
+__If you find this repository useful, please give us a star!__  🌟 ⭐ 🌟
 
-This package was developed by **Novartis** and the **US Food and Drug Administration** as part of a **research collaboration** agreement on radiogenomics.
+## A collaborative project
+
+This package was developed by **Novartis** and the **US Food and Drug Administration (FDA)** as part of a **research collaboration** agreement on [radiogenomics](https://www.medrxiv.org/content/10.1101/2023.08.30.23294367v1.full.pdf).
+
+`TorchSurv` is now part of the **FDA’s [Regulatory Science Tool Catalog](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)!**  🎉
+<br>For more information, please consult [this section](#disclaimer-regarding-the-catalog-of-regulatory-science-tools).
 
 ## TL;DR
 
@@ -86,17 +92,17 @@ Additionally, to build the documentation (`notebooks`, `sphinx`) and for package
 
 We recommend starting with the [introductory guide](https://opensource.nibr.com/torchsurv/notebooks/introduction.html), where you'll find an overview of the package's functionalities.
 
-### Survival data
+### Create survival data
 
-We simulate a random batch of 64 subjects. Each subject is associated with a binary event status (= `True` if event occured), a time-to-event or censoring and 16 covariates.
+We simulate a random batch of 64 subjects. Each subject is associated with a binary event status (= `True` if event occurred), a time-to-event or censoring and 16 covariates.
 
 ```python
 >>> import torch
 >>> _ = torch.manual_seed(52)
 >>> n = 64
 >>> x = torch.randn((n, 16))
->>> event = torch.randint(low=0, high=2, size=(n,)).bool()
->>> time = torch.randint(low=1, high=100, size=(n,)).float()
+>>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
+>>> time = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)
 ```
 
 ### Cox proportional hazards model
@@ -220,23 +226,33 @@ While several libraries offer survival modelling functionalities, no existing li
 
 The outputs of both the log-likelihood functions and the evaluation metrics functions have **undergone thorough comparison with benchmarks generated** using `Python` and `R` packages. The comparisons (at time of publication) are summarised in the [Related packages summary](https://opensource.nibr.com/torchsurv/benchmarks.html).
 
-![Survival analysis libraries in Python](docs/source/table_python_benchmark.png)
-![Survival analysis libraries in Python](docs/source/table_python_benchmark_legend.png)
+![Survival analysis libraries in Python](https://github.com/Novartis/torchsurv/blob/main/docs/source/table_python_benchmark.png)
+![Survival analysis libraries in Python](https://github.com/Novartis/torchsurv/blob/main/docs/source/table_python_benchmark_legend.png)
 
 Survival analysis libraries in R. For obtaining the evaluation metrics, packages `survival`, `riskRegression`, `SurvMetrics` and `pec` require the fitted model object as input (a specific object format) and `RisksetROC` imposes a smoothing method. Packages `timeROC`, `riskRegression` and pec force the user to choose a form for subject-specific
 weights (e.g., inverse probability of censoring weighting (IPCW)). Packages `survcomp` and `SurvivalROC` do not implement the general AUC but the censoring-adjusted AUC estimator proposed by Heagerty et al. (2000).
 
-![Survival analysis libraries in R](docs/source/table_r_benchmark.png)
+![Survival analysis libraries in R](https://github.com/Novartis/torchsurv/blob/main/docs/source/table_r_benchmark.png)
+
+## Disclaimer Regarding the Catalog of Regulatory Science Tools
+
+The enclosed tool is part of the [Catalog of Regulatory Science Tools](https://cdrh-rst.fda.gov/), which provides a peer-reviewed resource for stakeholders to use where standards and qualified Medical Device Development Tools (MDDTs) do not yet exist. These tools do not replace FDA-recognized standards or MDDTs. This catalog collates a variety of regulatory science tools that the FDA's Center for Devices and Radiological Health's (CDRH) Office of Science and Engineering Labs (OSEL) developed. These tools use the most innovative science to support medical device development and patient access to safe and effective medical devices. If you are considering using a tool from this catalog in your marketing submissions, note that these tools have not been qualified as [Medical Device Development Tools](https://www.fda.gov/medical-devices/medical-device-development-tools-mddt) and the FDA has not evaluated the suitability of these tools within any specific context of use. You may [request feedback or meetings for medical device submissions](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/requests-feedback-and-meetings-medical-device-submissions-q-submission-program) as part of the Q-Submission Program.
+For more information about the Catalog of Regulatory Science Tools, email [RST_CDRH@fda.hhs.gov](mailto:RST_CDRH@fda.hhs.gov).
+
+Tool Reference
+* RST Reference Number: RST24AI17.01
+* Date of Publication: 10/16/2025
+* Recommended Citation: U.S. Food and Drug Administration. (2025). TorchSurv: Deep Learning Tools for Survival Analysis (RST24AI17.01). [https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)
 
 ## Contributing
 
 We value contributions from the community to enhance and improve this project. If you'd like to contribute, please consider the following:
 
-1. Create Issues: If you encounter bugs, have feature requests, or want to suggest improvements, please create an [issue](https://github.com/Novartis/torchsurv/issues) in the GitHub repository. Make sure to provide detailed information about the problem, including code for reproducibility, or enhancement you're proposing.
+1. __Create Issues__: If you encounter bugs, have feature requests, or want to suggest improvements, please create an [issue](https://github.com/Novartis/torchsurv/issues) in the GitHub repository. Make sure to provide detailed information about the problem, including code for reproducibility, or enhancement you're proposing.
 
-2. Fork and Pull Requests: If you're willing to address an existing issue or contribute a new feature, fork the repository, create a new branch, make your changes, and then submit a pull request. Please ensure your code follows our coding conventions and include tests for any new functionality.
+2. __Fork and Pull Requests__: If you're willing to address an existing issue or contribute a new feature, fork the repository, create a new branch, make your changes, and then submit a pull request. Please ensure your code follows our coding conventions and include tests for any new functionality.
 
-By contributing to this project, you agree to license your contributions under the same license as this project.
+By contributing to this project, you agree to license your contributions under the same license as this project. ⚠️
 
 ## Contacts
 
@@ -245,9 +261,9 @@ By contributing to this project, you agree to license your contributions under t
 * [Peter Krusche](mailto:peter.krusche@novartis.com?subject=TorchSurv) (**Novartis**): `(author, maintainer)`
 * [Qian Cao](mailto:qian.cao@fda.hhs.gov?subject=TorchSurv) (**FDA**): `(author, maintainer)`
 
-If you have any questions, suggestions, or feedback, feel free to reach out the developement team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
+If you have any questions, suggestions, or feedback, feel free to reach out the development team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
 
-## Cite
+## Citation
 
 If you use this project in academic work or publications, we appreciate citing it using the following BibTeX entry:
 

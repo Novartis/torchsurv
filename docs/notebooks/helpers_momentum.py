@@ -8,7 +8,6 @@ from torchsurv.metrics.cindex import ConcordanceIndex
 
 
 class LitMNIST(L.LightningModule):
-
     def __init__(
         self,
         backbone,
@@ -42,9 +41,7 @@ class LitMNIST(L.LightningModule):
         x, y = batch
         y[y == 0] = 10  # Offset 0 to prevent log(0)
         log_hz = self(x)
-        loss = neg_partial_log_likelihood(
-            log_hz, torch.ones_like(y, device=y.device).bool(), y.float()
-        )
+        loss = neg_partial_log_likelihood(log_hz, torch.ones_like(y, device=y.device).bool(), y.float())
         self.log("loss", loss, prog_bar=True, on_step=True, on_epoch=True)
         return loss
 
@@ -52,12 +49,8 @@ class LitMNIST(L.LightningModule):
         x, y = batch
         y[y == 0] = 10  # Offset 0 to prevent log(0)
         log_hz = self(x)
-        loss = neg_partial_log_likelihood(
-            log_hz, torch.ones_like(y, device=y.device).bool(), y.float()
-        )
-        cindex = self.cindex(
-            log_hz, torch.ones_like(y, device=y.device).bool(), y.float()
-        )
+        loss = neg_partial_log_likelihood(log_hz, torch.ones_like(y, device=y.device).bool(), y.float())
+        cindex = self.cindex(log_hz, torch.ones_like(y, device=y.device).bool(), y.float())
         self.log("val_loss", loss, prog_bar=True, on_step=True, on_epoch=True)
         self.log(
             "cindex",
@@ -74,7 +67,6 @@ class LitMNIST(L.LightningModule):
 
 
 class LitMomentum(L.LightningModule):
-
     def __init__(self, backbone):
         super().__init__()
         # Set our init args as class attributes
@@ -109,9 +101,7 @@ class LitMomentum(L.LightningModule):
         y[y == 0] = 10  # Offset 0 to prevent log(0)
         loss = self(x, torch.ones_like(y, device=y.device).bool(), y.float())
         log_hz_k = self.model.target(x)
-        cindex = self.cindex(
-            log_hz_k, torch.ones_like(y, device=y.device).bool(), y.float()
-        )
+        cindex = self.cindex(log_hz_k, torch.ones_like(y, device=y.device).bool(), y.float())
         self.log("val_loss", loss, prog_bar=True, on_step=True, on_epoch=True)
         self.log(
             "cindex",
@@ -152,9 +142,7 @@ class MNISTDataModule(L.LightningDataModule):
 
         # Assign test dataset for use in dataloader(s)
         if stage == "test" or stage is None:
-            self.mnist_test = MNIST(
-                self.data_dir, train=False, transform=self.transforms
-            )
+            self.mnist_test = MNIST(self.data_dir, train=False, transform=self.transforms)
 
     def train_dataloader(self):
         return DataLoader(

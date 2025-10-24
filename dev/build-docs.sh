@@ -4,7 +4,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 set -e
-cd "${DIR}/../docs" 
+cd "${DIR}/../docs"
 make html
 make html
 cd _build/html

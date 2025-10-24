@@ -1,0 +1,56 @@
+# see https://pre-commit.com/ for more information
+
+default_language_version:
+  python: python3
+
+repos:
+  # >>>>> Base precommits <<<<<<
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-toml
+      - id: check-docstring-first
+      - id: check-case-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=1000", "--enforce-all"]
+      - id: detect-private-key
+      - id: debug-statements
+
+  # >>>>> Custom precommits <<<<<<
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        additional_dependencies: [tomli]
+        args: ["--write-changes"]  # Automatically fix spelling errors if only one suggestion
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.4
+    hooks:
+      # Run the linter.
+      - id: ruff-check
+        args: [ --fix ]
+      # Run the formatter.
+      - id: ruff-format
+
+  - repo: https://github.com/lorenzwalthert/precommit
+    rev: v0.4.3.9009
+    hooks:
+    -   id: style-files
+        args: [--style_pkg=styler, --style_fun=tidyverse_style]
+        files: ^(tests)/.*\.R$  # Style R files
+
+  - repo: https://github.com/sphinx-contrib/sphinx-lint
+    rev: v1.0.0
+    hooks:
+      - id: sphinx-lint
+
+
+
+ci:
+  autofix_prs: true
+  autoupdate_commit_msg: "[pre-commit.ci] pre-commit suggestions"
+  autoupdate_schedule: monthly

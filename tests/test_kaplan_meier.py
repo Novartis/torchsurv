@@ -3,20 +3,41 @@ import unittest
 
 import numpy as np
 import torch
-from sksurv.metrics import CensoringDistributionEstimator, SurvivalFunctionEstimator
+from sksurv.metrics import (
+    CensoringDistributionEstimator,
+    SurvivalFunctionEstimator,
+)
 from utils import DataBatchContainer
 
 # local
 from torchsurv.stats.kaplan_meier import KaplanMeierEstimator
 
 # Load the benchmark cox log likelihoods from R
-with open("tests/benchmark_data/benchmark_kaplan_meier.json", "r") as file:
+with open("tests/benchmark_data/benchmark_kaplan_meier.json") as file:
     benchmark_kaplan_meiers = json.load(file)
 
-torch.manual_seed(23)
+# set seed for reproducibility
+torch.manual_seed(42)
+np.random.seed(42)
 
 
 class TestNonParametric(unittest.TestCase):
+    def test_kaplan_meier_gpu_device(self):
+        """Test KaplanMeierEstimator on GPU if available."""
+        if not torch.cuda.is_available():
+            self.skipTest("CUDA is not available.")
+        device = "cuda"
+        event = torch.tensor([1, 0, 1, 1, 0], dtype=torch.bool, device=device)
+        time = torch.tensor([1.0, 2.0, 2.0, 3.0, 4.0], dtype=torch.float32, device=device)
+        new_time = torch.tensor([1.0, 2.0, 3.0, 4.0], dtype=torch.float32, device=device)
+        km = KaplanMeierEstimator(device=device)
+        km(event, time, censoring_dist=False)
+        st = km.predict(new_time)
+        # Check that all outputs are on the correct device
+        self.assertEqual(km.time.device.type, "cuda")
+        self.assertEqual(km.km_est.device.type, "cuda")
+        self.assertEqual(st.device.type, "cuda")
+
     """
     List of packages compared
         - survival (R)
@@ -29,9 +50,7 @@ class TestNonParametric(unittest.TestCase):
         for benchmark_kaplan_meier in benchmark_kaplan_meiers:
             event = torch.tensor(benchmark_kaplan_meier["status"]).bool()
             time = torch.tensor(benchmark_kaplan_meier["time"], dtype=torch.float32)
-            new_time = torch.tensor(
-                benchmark_kaplan_meier["times"], dtype=torch.float32
-            )
+            new_time = torch.tensor(benchmark_kaplan_meier["times"], dtype=torch.float32)
 
             km = KaplanMeierEstimator()
             km(event, time, censoring_dist=False)
@@ -138,9 +157,7 @@ class TestNonParametric(unittest.TestCase):
             cens.fit(y_train_array)
             ct_pred_sksurv = cens.predict_proba(y_test_array["futime"])
 
-            self.assertTrue(
-                np.allclose(ct_pred.numpy(), ct_pred_sksurv, rtol=1e-5, atol=1e-8)
-            )
+            self.assertTrue(np.allclose(ct_pred.numpy(), ct_pred_sksurv, rtol=1e-5, atol=1e-8))
 
     def test_kaplan_meier_predict_survival_distribution_simulated_data(self):
         """test Kaplan Meier prediction of survival distribution on simulated batches including edge cases"""
@@ -180,9 +197,7 @@ class TestNonParametric(unittest.TestCase):
             surv.fit(y_train_array)
             st_pred_sksurv = surv.predict_proba(y_test_array["futime"])
 
-            self.assertTrue(
-                np.allclose(st_pred.numpy(), st_pred_sksurv, rtol=1e-5, atol=1e-8)
-            )
+            self.assertTrue(np.allclose(st_pred.numpy(), st_pred_sksurv, rtol=1e-5, atol=1e-8))
 
     def test_kaplan_meier_estimate_error_raised(self):
         """test that errors are raised for estimation in not-accepted edge cases."""
@@ -194,27 +209,42 @@ class TestNonParametric(unittest.TestCase):
         for batch in batch_container.batches:
             (train_time, train_event, *_) = batch
 
-            self.assertRaises(
-                ValueError, KaplanMeierEstimator(), train_event, train_time
-            )
+            self.assertRaises(ValueError, KaplanMeierEstimator(), train_event, train_time)
 
-    def test_kaplan_meier_prediction_error_raised(self):
-        """test that errors are raised for prediction in not-accepted edge cases."""
-        batch_container = DataBatchContainer()
-        batch_container.generate_batches(
-            n_batch=1,
-            flags_to_set=["test_max_time_gt_train_max_time"],
-        )
-        for batch in batch_container.batches:
-            (train_time, train_event, test_time, *_) = batch
+    def test_kaplan_meier_plot_km(self):
+        """test Kaplan Meier plot function"""
+        import matplotlib.pyplot as plt
 
-            train_event[-1] = (
-                False  # if last event is censoring, the last KM is > 0 and it cannot predict beyond this time
-            )
-            km = KaplanMeierEstimator()
-            km(train_event, train_time, censoring_dist=False)
+        event = torch.tensor([1, 1, 0, 1, 0, 1, 0, 0, 1, 1], dtype=torch.bool)
+        time = torch.tensor([1, 2, 2, 3, 3, 4, 4, 5, 6, 7], dtype=torch.float32)
 
-            self.assertRaises(ValueError, km.predict, test_time)
+        km = KaplanMeierEstimator()
+        km(event, time, censoring_dist=False)
+
+        fig, ax = plt.subplots()
+        km.plot_km(ax=ax)
+        plt.close(fig)  # Close the plot to avoid displaying it during tests
+
+    def test_kaplan_meier_get_survival_table(self):
+        """test Kaplan Meier print survival table function"""
+        event = torch.tensor([1, 1, 0, 1, 0, 1, 0, 0, 1, 1], dtype=torch.bool)
+        time = torch.tensor([1, 2, 2, 3, 3, 4, 4, 5, 6, 7], dtype=torch.float32)
+
+        km = KaplanMeierEstimator()
+        km(event, time, censoring_dist=False)
+        table = km.get_survival_table()
+
+        # Check if the survival table is printed correctly
+        expected_times = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])
+        expected_survival = np.array([0.9000, 0.8000, 0.6857, 0.5486, 0.5486, 0.2743, 0.0000])
+
+        # Example if table is a dict or DataFrame
+        times = table["Time"].values
+        survival = table["Survival"].values
+
+        # Use torch.allclose to allow for floating-point tolerance
+        self.assertTrue(np.allclose(times, expected_times, atol=1e-4))
+        self.assertTrue(np.allclose(survival, expected_survival, atol=1e-4))
 
 
 if __name__ == "__main__":

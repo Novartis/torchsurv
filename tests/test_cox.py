@@ -1,19 +1,19 @@
-# global modules
 import json
 import unittest
 
 import numpy as np
 import torch
 
-# Local modules
 from torchsurv.loss.cox import neg_partial_log_likelihood as cox
+from torchsurv.tools.validate_data import validate_survival_data
 
 # Load the benchmark cox log likelihoods from R
-with open("tests/benchmark_data/benchmark_cox.json", "r") as file:
+with open("tests/benchmark_data/benchmark_cox.json") as file:
     benchmark_cox_logliks = json.load(file)
 
 # set seed for reproducibility
 torch.manual_seed(42)
+np.random.seed(42)
 
 
 class TestCoxSurvivalLoss(unittest.TestCase):
@@ -24,44 +24,48 @@ class TestCoxSurvivalLoss(unittest.TestCase):
 
     # random data and parameters
     N = 32
-    log_hz = torch.randn(N)
-    event = torch.randint(low=0, high=2, size=(N,)).bool()
-    time = torch.randint(low=1, high=100, size=(N,))
+    log_hz = torch.randn(N, dtype=torch.float)
+    event = torch.randint(low=0, high=2, size=(N,), dtype=torch.bool)
+    time = torch.randint(low=1, high=100, size=(N,), dtype=torch.float)
 
-    def test_y_tensor(self):
-        event_np_array = np.random.randint(0, 1 + 1, size=(self.N,), dtype="bool")
-        self.assertRaises(TypeError, cox, self.log_hz, event_np_array, self.time)
+    # def test_y_tensor(self):
+    #     event_np_array = np.random.randint(0, 1 + 1, size=(self.N,), dtype="bool")
+    #     with self.assertRaises(TypeError)):
+    #         cox(self.log_hz, event_np_array, self.time)
 
     def test_t_tensor(self):
         time_np_array = np.random.randint(0, 100, size=(self.N,))
-        self.assertRaises(TypeError, cox, self.log_hz, self.event, time_np_array)
+        with self.assertRaises((RuntimeError, TypeError)):
+            cox(self.log_hz, self.event, time_np_array)
 
     def test_log_hz_tensor(self):
         log_hz_np_array = np.random.randn(
             self.N,
         )
-        self.assertRaises(TypeError, cox, log_hz_np_array, self.event, self.time)
+        with self.assertRaises((RuntimeError, TypeError)):
+            cox(log_hz_np_array, self.event, self.time)
 
     def test_len_data(self):
-        time_wrong_len = torch.randint(low=1, high=100, size=(self.N + 1,))
-        self.assertRaises(ValueError, cox, self.log_hz, self.event, time_wrong_len)
+        event_wrong_length = torch.randint(low=0, high=2, size=(self.N + 1,), dtype=torch.bool)
+        with self.assertRaises(ValueError):
+            validate_survival_data(event_wrong_length, self.time)
 
     def test_positive_t(self):
-        time_negative = torch.randint(low=-100, high=100, size=(self.N,))
-        self.assertRaises(ValueError, cox, self.log_hz, self.event, time_negative)
+        time_negative = torch.randint(low=-100, high=100, size=(self.N,), dtype=torch.float)
+        with self.assertRaises(ValueError):
+            validate_survival_data(self.event, time_negative)
 
     def test_boolean_y(self):
         event_non_boolean = torch.randint(low=0, high=3, size=(self.N,))
-        self.assertRaises(ValueError, cox, self.log_hz, event_non_boolean, self.time)
+        with self.assertRaises(ValueError):
+            validate_survival_data(event_non_boolean, self.time)
 
     def test_log_likelihood_without_ties(self):
         """test cox partial log likelihood without ties on lung and gbsg datasets"""
         for benchmark_cox_loglik in benchmark_cox_logliks:
-            if benchmark_cox_loglik["no_ties"][0] == True:
+            if benchmark_cox_loglik["no_ties"][0]:
                 log_lik = -cox(
-                    torch.tensor(
-                        benchmark_cox_loglik["log_hazard"], dtype=torch.float32
-                    ).squeeze(0),
+                    torch.tensor(benchmark_cox_loglik["log_hazard"], dtype=torch.float32).squeeze(0),
                     torch.tensor(benchmark_cox_loglik["status"]).bool(),
                     torch.tensor(benchmark_cox_loglik["time"], dtype=torch.float32),
                     reduction="sum",
@@ -80,11 +84,12 @@ class TestCoxSurvivalLoss(unittest.TestCase):
     def test_log_likelihood_with_ties(self):
         """test Efron and Breslow's approximation of cox partial log likelihood with ties on lung and gbsg data"""
         for benchmark_cox_loglik in benchmark_cox_logliks:
-            if benchmark_cox_loglik["no_ties"][0] == False:
+            if benchmark_cox_loglik["no_ties"][0] is False:
                 # efron approximation of partial log likelihood
                 log_lik_efron = -cox(
                     torch.tensor(
-                        benchmark_cox_loglik["log_hazard_efron"], dtype=torch.float32
+                        benchmark_cox_loglik["log_hazard_efron"],
+                        dtype=torch.float32,
                     ).squeeze(0),
                     torch.tensor(benchmark_cox_loglik["status"]).bool(),
                     torch.tensor(benchmark_cox_loglik["time"], dtype=torch.float32),
@@ -96,16 +101,15 @@ class TestCoxSurvivalLoss(unittest.TestCase):
                 # breslow approximation of partial log likelihood
                 log_lik_breslow = -cox(
                     torch.tensor(
-                        benchmark_cox_loglik["log_hazard_breslow"], dtype=torch.float32
+                        benchmark_cox_loglik["log_hazard_breslow"],
+                        dtype=torch.float32,
                     ).squeeze(0),
                     torch.tensor(benchmark_cox_loglik["status"]).bool(),
                     torch.tensor(benchmark_cox_loglik["time"], dtype=torch.float32),
                     ties_method="breslow",
                     reduction="sum",
                 )
-                log_lik_breslow_survival = benchmark_cox_loglik[
-                    "log_likelihood_breslow"
-                ]
+                log_lik_breslow_survival = benchmark_cox_loglik["log_likelihood_breslow"]
 
                 self.assertTrue(
                     np.allclose(

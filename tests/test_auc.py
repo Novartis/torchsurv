@@ -11,10 +11,12 @@ from utils import DataBatchContainer, conditions_ci, conditions_p_value
 from torchsurv.metrics.auc import Auc
 from torchsurv.stats.ipcw import get_ipcw
 
-torch.manual_seed(23)
+# set seed for reproducibility
+torch.manual_seed(42)
+np.random.seed(42)
 
 # Load the benchmark metrics from R
-with open("tests/benchmark_data/benchmark_auc.json", "r") as file:
+with open("tests/benchmark_data/benchmark_auc.json") as file:
     benchmark_aucs = json.load(file)
 
 auc = Auc()
@@ -57,13 +59,14 @@ class TestAUC(unittest.TestCase):
             )
 
             auc_cd_survAUC = benchmark_auc["auc_cd_survAUC"]  # survAUC
-            auc_cd_Uno_riskRegression = benchmark_auc[
-                "auc_cd_Uno_riskRegression"
-            ]  # riskRegression
+            auc_cd_Uno_riskRegression = benchmark_auc["auc_cd_Uno_riskRegression"]  # riskRegression
 
             self.assertTrue(
                 np.allclose(
-                    auc_cd.numpy(), np.array(auc_cd_survAUC), rtol=1e-1, atol=1e-8
+                    auc_cd.numpy(),
+                    np.array(auc_cd_survAUC),
+                    rtol=1e-1,
+                    atol=1e-8,
                 )
             )
             self.assertTrue(
@@ -115,9 +118,7 @@ class TestAUC(unittest.TestCase):
 
             # timeROC
             auc_cd_Uno_timeROC = benchmark_auc["auc_cd_Uno_timeROC"]  # point estimate
-            auc_cd_Uno_se_timeROC = benchmark_auc[
-                "auc_cd_Uno_se_timeROC"
-            ]  # standard error
+            auc_cd_Uno_se_timeROC = benchmark_auc["auc_cd_Uno_se_timeROC"]  # standard error
 
             self.assertTrue(
                 np.allclose(
@@ -144,9 +145,7 @@ class TestAUC(unittest.TestCase):
             S = torch.tensor(benchmark_auc["surv.prob"], dtype=torch.float64)
 
             # integral of auc cumulative/dynamic
-            auc_cd_survAUC = torch.tensor(
-                benchmark_auc["auc_cd_survAUC"], dtype=torch.float64
-            )
+            auc_cd_survAUC = torch.tensor(benchmark_auc["auc_cd_survAUC"], dtype=torch.float64)
             auc_ne = Auc()
             auc_ne.auc = auc_cd_survAUC
             auc_ne.new_time = times
@@ -156,14 +155,15 @@ class TestAUC(unittest.TestCase):
 
             self.assertTrue(
                 np.isclose(
-                    i_auc_cd.numpy(), np.array(i_auc_cd_survAUC), rtol=1e-3, atol=1e-8
+                    i_auc_cd.numpy(),
+                    np.array(i_auc_cd_survAUC),
+                    rtol=1e-3,
+                    atol=1e-8,
                 )
             )
 
             # integral of auc incident/dynamic
-            auc_id_sz_survAUC = torch.tensor(
-                benchmark_auc["auc_id_sz_survAUC"], dtype=torch.float64
-            )
+            auc_id_sz_survAUC = torch.tensor(benchmark_auc["auc_id_sz_survAUC"], dtype=torch.float64)
             auc_ne = Auc()
             auc_ne.auc = auc_id_sz_survAUC
             auc_ne.new_time = times
@@ -234,9 +234,7 @@ class TestAUC(unittest.TestCase):
                 y_train_array, y_test_array, estimate.numpy(), new_time_array
             )  # sksurv
 
-            self.assertTrue(
-                np.allclose(auc_cd.numpy(), auc_cd_sksurv, rtol=1e-5, atol=1e-8)
-            )
+            self.assertTrue(np.allclose(auc_cd.numpy(), auc_cd_sksurv, rtol=1e-5, atol=1e-8))
 
     def test_auc_confidence_interval_pvalue(self):
         """test auc confidence interval and p-value are as expected"""
@@ -273,9 +271,7 @@ class TestAUC(unittest.TestCase):
                         alternative=alternative,
                         n_bootstraps=n_bootstraps,
                     )
-                    self.assertTrue(
-                        all([conditions_ci(auc_ci[:, i]) for i in range(len(auc.auc))])
-                    )
+                    self.assertTrue(all(conditions_ci(auc_ci[:, i]) for i in range(len(auc.auc))))
 
             for method in ["blanche", "bootstrap"]:
                 for alternative in ["two_sided", "less", "greater"]:
@@ -285,26 +281,17 @@ class TestAUC(unittest.TestCase):
                         n_bootstraps=n_bootstraps,
                     )
 
-                    self.assertTrue(
-                        all(
-                            [
-                                conditions_p_value(auc_p_value[i])
-                                for i in range(len(auc.auc))
-                            ]
-                        )
-                    )
+                    self.assertTrue(all(conditions_p_value(auc_p_value[i]) for i in range(len(auc.auc))))
 
     def test_auc_compare(self):
         "test compare function of auc behavesas expected."
         _ = torch.manual_seed(42)
         n = 128
-        estimate_informative = torch.randn(
-            (n,)
-        )  # estimate used to define time-to-event
-        estimate_non_informative = torch.randn((n,))  # random estimate
-        event = torch.randint(low=0, high=2, size=(n,)).bool()
+        estimate_informative = torch.randn((n,), dtype=torch.float)  # estimate used to define time-to-event
+        estimate_non_informative = torch.randn((n,), dtype=torch.float)  # random estimate
+        event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
         time = (
-            torch.randn(size=(n,)) * 10 - estimate_informative * 5.0 + 200
+            torch.randn(size=(n,), dtype=torch.float) * 10 - estimate_informative * 5.0 + 200
         )  # + estimate for auc < 0.5 and - for auc > 0.5
 
         Auc_informative = Auc()
