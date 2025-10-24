@@ -3,6 +3,7 @@
 
 import sys
 import warnings
+from typing import Optional
 
 import torch
 
@@ -136,7 +137,7 @@ def neg_partial_log_likelihood(
     time: torch.Tensor,
     ties_method: str = "efron",
     reduction: str = "mean",
-    strata: torch.Tensor = None,
+    strata: Optional[torch.Tensor] = None,
     checks: bool = True,
 ) -> torch.Tensor:
     r"""Compute the negative of the partial log likelihood for the Cox proportional hazards model.

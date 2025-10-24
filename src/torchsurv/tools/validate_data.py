@@ -1,4 +1,5 @@
 import sys
+from typing import Optional
 
 import torch
 
@@ -188,7 +189,7 @@ def validate_new_time(new_time: torch.Tensor, time: torch.Tensor, within_follow_
     check_within_follow_up(new_time, time, within_follow_up)
 
 
-def validate_survival_data(event: torch.Tensor, time: torch.Tensor, strata: torch.Tensor = None) -> None:
+def validate_survival_data(event: torch.Tensor, time: torch.Tensor, strata: Optional[torch.Tensor] = None) -> None:
     """Perform format and validity checks for survival data.
 
     Args:
