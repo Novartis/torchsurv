@@ -114,8 +114,10 @@ def validate_dimension_survival_data(event: torch.Tensor, time: torch.Tensor, st
     """
     if len(event) != len(time):
         raise ValueError("Dimension mismatch: Incompatible length between inputs 'time' and 'event'.")
+
     if len(event) != len(strata):
         raise ValueError("Dimension mismatch: Incompatible length between inputs 'strata' and 'event'.")
+
 
 
 def validate_dimension_model_parameters(event: torch.Tensor, log_params: torch.Tensor) -> None:
