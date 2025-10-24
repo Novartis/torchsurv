@@ -239,7 +239,7 @@ def validate_model(
         >>> _ = torch.manual_seed(52)
         >>> n = 10
         >>> log_params_weibull = torch.randn((n, 2), dtype=torch.float)
-        >>> log_params_cox = torch.randn((n, 1), dtype=torch.float)
+        >>> log_params_cox = torch.randn((n,), dtype=torch.float)
         >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
         >>> validate_model(log_params_weibull, event, model_type="weibull")
         >>> validate_model(log_params_cox, event, model_type="cox")
