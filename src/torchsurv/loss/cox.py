@@ -562,4 +562,3 @@ if __name__ == "__main__":
     else:
         print("Some doctests failed.")
         sys.exit(1)
-
