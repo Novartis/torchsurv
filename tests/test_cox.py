@@ -82,9 +82,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
         for benchmark_cox_loglik in benchmark_cox_logliks:
             if benchmark_cox_loglik["no_ties"][0]:
                 log_lik = -cox(
-                    torch.tensor(
-                        benchmark_cox_loglik["log_hazard"], dtype=torch.float32
-                    ).squeeze(0),
+                    torch.tensor(benchmark_cox_loglik["log_hazard"], dtype=torch.float32).squeeze(0),
                     torch.tensor(benchmark_cox_loglik["status"]).bool(),
                     torch.tensor(benchmark_cox_loglik["time"], dtype=torch.float32),
                     reduction="sum",
@@ -128,9 +126,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
                     ties_method="breslow",
                     reduction="sum",
                 )
-                log_lik_breslow_survival = benchmark_cox_loglik[
-                    "log_likelihood_breslow"
-                ]
+                log_lik_breslow_survival = benchmark_cox_loglik["log_likelihood_breslow"]
 
                 self.assertTrue(
                     np.allclose(

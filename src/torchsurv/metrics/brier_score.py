@@ -1,5 +1,4 @@
 import copy
-import sys
 from typing import Optional
 
 import torch
@@ -829,6 +828,7 @@ class BrierScore:
 
 if __name__ == "__main__":
     import doctest
+    import sys
 
     # Run doctest
     results = doctest.testmod()
