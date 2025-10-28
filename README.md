@@ -1,5 +1,5 @@
 <p align="center">
-<img src=docs/source/logo_firecamp.png width="200">
+<img src=docs/source/logo_banner.png width="800">
 </p>
 
 # Deep survival analysis made easy
