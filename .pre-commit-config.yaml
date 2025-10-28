@@ -15,7 +15,7 @@ repos:
       - id: check-docstring-first
       - id: check-case-conflict
       - id: check-added-large-files
-        args: ["--maxkb=1000", "--enforce-all"]
+        args: ["--maxkb=2000", "--enforce-all"]
       - id: detect-private-key
       - id: debug-statements
 

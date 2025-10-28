@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://github.com/Novartis/torchsurv/blob/main/docs/source/logo_firecamp.png" width="300">
+<img src=docs/source/logo_firecamp.png width="200">
 </p>
 
 # Deep survival analysis made easy
@@ -12,6 +12,7 @@
 https://pypi.org/project/torchsurv/)
 [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/torchsurv.svg?label=Conda%20downloads)](
 https://anaconda.org/conda-forge/torchsurv)
+
 
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
@@ -226,13 +227,13 @@ While several libraries offer survival modelling functionalities, no existing li
 
 The outputs of both the log-likelihood functions and the evaluation metrics functions have **undergone thorough comparison with benchmarks generated** using `Python` and `R` packages. The comparisons (at time of publication) are summarised in the [Related packages summary](https://opensource.nibr.com/torchsurv/benchmarks.html).
 
-![Survival analysis libraries in Python](https://github.com/Novartis/torchsurv/blob/main/docs/source/table_python_benchmark.png)
-![Survival analysis libraries in Python](https://github.com/Novartis/torchsurv/blob/main/docs/source/table_python_benchmark_legend.png)
+![Survival analysis libraries in Python](/docs/source/table_python_benchmark.png)
+![Survival analysis libraries in Python](/docs/source/table_python_benchmark_legend.png)
 
 Survival analysis libraries in R. For obtaining the evaluation metrics, packages `survival`, `riskRegression`, `SurvMetrics` and `pec` require the fitted model object as input (a specific object format) and `RisksetROC` imposes a smoothing method. Packages `timeROC`, `riskRegression` and pec force the user to choose a form for subject-specific
 weights (e.g., inverse probability of censoring weighting (IPCW)). Packages `survcomp` and `SurvivalROC` do not implement the general AUC but the censoring-adjusted AUC estimator proposed by Heagerty et al. (2000).
 
-![Survival analysis libraries in R](https://github.com/Novartis/torchsurv/blob/main/docs/source/table_r_benchmark.png)
+![Survival analysis libraries in R](/docs/source/table_r_benchmark.png)
 
 ## Disclaimer Regarding the Catalog of Regulatory Science Tools
 
@@ -257,7 +258,7 @@ By contributing to this project, you agree to license your contributions under t
 ## Contacts
 
 * [Thibaud Coroller](mailto:thibaud.coroller@novartis.com?subject=TorchSurv) (**Novartis**): `(creator, maintainer)`
-* [Mélodie Monod](mailto:monod.melodie@gmail.com?subject=TorchSurv) (**Imperial College London**): `(creator, maintainer)`
+* [Mélodie Monod](mailto:monod.melodie@gmail.com?subject=TorchSurv) (**University Paris Dauphine - PSL**): `(creator, maintainer)`
 * [Peter Krusche](mailto:peter.krusche@novartis.com?subject=TorchSurv) (**Novartis**): `(author, maintainer)`
 * [Qian Cao](mailto:qian.cao@fda.hhs.gov?subject=TorchSurv) (**FDA**): `(author, maintainer)`
 
