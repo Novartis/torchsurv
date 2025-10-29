@@ -1,8 +1,11 @@
 <p align="center">
+      </picture>
 <img src=docs/source/logo_firecamp.png width="200">
+  </picture>
 </p>
-
-# Deep survival analysis made easy
+<h1 align="center">
+Deep survival analysis made easy
+</h1>
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Python](https://img.shields.io/pypi/pyversions/torchsurv?label=Python)](https://pypi.org/project/torchsurv/)
@@ -13,7 +16,6 @@ https://pypi.org/project/torchsurv/)
 [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/torchsurv.svg?label=Conda%20downloads)](
 https://anaconda.org/conda-forge/torchsurv)
 
-
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
 [![CodeFactor](https://www.codefactor.io/repository/github/novartis/torchsurv/badge/main)](https://www.codefactor.io/repository/github/novartis/torchsurv/overview/main)
@@ -21,18 +23,11 @@ https://anaconda.org/conda-forge/torchsurv)
 [![License](https://img.shields.io/badge/License-MIT-black)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
 
-
-
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
 
-__If you find this repository useful, please give us a star!__  🌟 ⭐ 🌟
+If you find this repository useful, please give us a star!   🌟 ⭐ 🌟
 
-## A collaborative project
-
-This package was developed by **Novartis** and the **US Food and Drug Administration (FDA)** as part of a **research collaboration** agreement on [radiogenomics](https://www.medrxiv.org/content/10.1101/2023.08.30.23294367v1.full.pdf).
-
-`TorchSurv` is now part of the **FDA’s [Regulatory Science Tool Catalog](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)!**  🎉
-<br>For more information, please consult [this section](#disclaimer-regarding-the-catalog-of-regulatory-science-tools).
+---
 
 ## TL;DR
 
@@ -65,11 +60,35 @@ cindex.p_value(method="noether", alternative="two_sided")
 cindex.compare(cindexB)
 ```
 
+---
+
+## A collaborative project
+
+This package was developed by **Novartis** and the **US Food and Drug Administration (FDA)** as part of a **research collaboration** agreement on [radiogenomics](https://www.medrxiv.org/content/10.1101/2023.08.30.23294367v1.full.pdf).
+
+`TorchSurv` is now part of the **FDA’s [Regulatory Science Tool Catalog](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)**  🎉.
+
+<details>
+<summary>Disclaimer Regarding the Catalog of Regulatory Science Tools</summary>
+
+The enclosed tool is part of the [Catalog of Regulatory Science Tools](https://cdrh-rst.fda.gov/), which provides a peer-reviewed resource for stakeholders to use where standards and qualified Medical Device Development Tools (MDDTs) do not yet exist. These tools do not replace FDA-recognized standards or MDDTs. This catalog collates a variety of regulatory science tools that the FDA's Center for Devices and Radiological Health's (CDRH) Office of Science and Engineering Labs (OSEL) developed. These tools use the most innovative science to support medical device development and patient access to safe and effective medical devices. If you are considering using a tool from this catalog in your marketing submissions, note that these tools have not been qualified as [Medical Device Development Tools](https://www.fda.gov/medical-devices/medical-device-development-tools-mddt) and the FDA has not evaluated the suitability of these tools within any specific context of use. You may [request feedback or meetings for medical device submissions](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/requests-feedback-and-meetings-medical-device-submissions-q-submission-program) as part of the Q-Submission Program.
+For more information about the Catalog of Regulatory Science Tools, email [RST_CDRH@fda.hhs.gov](mailto:RST_CDRH@fda.hhs.gov).
+
+Tool Reference
+
+* RST Reference Number: RST24AI17.01
+* Date of Publication: 10/16/2025
+* Recommended Citation: U.S. Food and Drug Administration. (2025). TorchSurv: Deep Learning Tools for Survival Analysis (RST24AI17.01). [https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)
+
+</details>
+
+---
+
 ## Installation and dependencies
 
 First, install the package using either [PyPI]([https://pypi.org/](https://pypi.org/project/torchsurv/)) or [Conda]([https://anaconda.org/anaconda/conda](https://anaconda.org/conda-forge/torchsurv))
 
-- Using conda (**recommended**)
+- Using conda
 ```bash
 conda install conda-forge::torchsurv
 ```
@@ -214,7 +233,8 @@ We obtain the integrated brier-score with:
 tensor(0.4447)
 ```
 
-## Related Packages
+<details>
+<summary>Related packages</summary>
 
 The table below compares the functionalities of `TorchSurv` with those of
 [auton-survival](https://proceedings.mlr.press/v182/nagpal22a.html),
@@ -235,15 +255,7 @@ weights (e.g., inverse probability of censoring weighting (IPCW)). Packages `sur
 
 ![Survival analysis libraries in R](/docs/source/table_r_benchmark.png)
 
-## Disclaimer Regarding the Catalog of Regulatory Science Tools
-
-The enclosed tool is part of the [Catalog of Regulatory Science Tools](https://cdrh-rst.fda.gov/), which provides a peer-reviewed resource for stakeholders to use where standards and qualified Medical Device Development Tools (MDDTs) do not yet exist. These tools do not replace FDA-recognized standards or MDDTs. This catalog collates a variety of regulatory science tools that the FDA's Center for Devices and Radiological Health's (CDRH) Office of Science and Engineering Labs (OSEL) developed. These tools use the most innovative science to support medical device development and patient access to safe and effective medical devices. If you are considering using a tool from this catalog in your marketing submissions, note that these tools have not been qualified as [Medical Device Development Tools](https://www.fda.gov/medical-devices/medical-device-development-tools-mddt) and the FDA has not evaluated the suitability of these tools within any specific context of use. You may [request feedback or meetings for medical device submissions](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/requests-feedback-and-meetings-medical-device-submissions-q-submission-program) as part of the Q-Submission Program.
-For more information about the Catalog of Regulatory Science Tools, email [RST_CDRH@fda.hhs.gov](mailto:RST_CDRH@fda.hhs.gov).
-
-Tool Reference
-* RST Reference Number: RST24AI17.01
-* Date of Publication: 10/16/2025
-* Recommended Citation: U.S. Food and Drug Administration. (2025). TorchSurv: Deep Learning Tools for Survival Analysis (RST24AI17.01). [https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)
+</details>
 
 ## Contributing
 
