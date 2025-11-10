@@ -7,9 +7,9 @@ import warnings
 import torch
 
 from torchsurv.tools.validate_data import (
+    validate_eval_time,
     validate_model,
     validate_survival_data,
-    validate_eval_time,
 )
 
 __all__ = ["neg_log_likelihood_survival", "survival_function"]
@@ -154,9 +154,13 @@ def neg_log_likelihood_survival(
         >>> log_hz = torch.randn((n, M), dtype=torch.float)
         >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
         >>> time = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)
-        >>> neg_log_likelihood_survival(log_hz, event, time, eval_time)  # default, mean of log likelihoods across patients
+        >>> neg_log_likelihood_survival(
+        ...     log_hz, event, time, eval_time
+        ... )  # default, mean of log likelihoods across patients
         tensor(65.0505)
-        >>> neg_log_likelihood_survival(log_hz, event, time, eval_time, reduction="sum")  # sum of log likelihoods across patients
+        >>> neg_log_likelihood_survival(
+        ...     log_hz, event, time, eval_time, reduction="sum"
+        ... )  # sum of log likelihoods across patients
         tensor(260.2020)
     """
 
@@ -180,9 +184,7 @@ def neg_log_likelihood_survival(
         validate_eval_time(log_hz, eval_time)
 
     # Cumulative hazard
-    cum_hazard = _cumulative_hazard_trapezoid(
-        log_hz, time, eval_time, respective_times=True
-    )
+    cum_hazard = _cumulative_hazard_trapezoid(log_hz, time, eval_time, respective_times=True)
 
     # Log hazard at exact observed time (interpolate last point)
     log_hz_at_time = torch.zeros_like(time)
