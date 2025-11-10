@@ -58,22 +58,30 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
         self.assertRaises(ValueError, weibull, log_params_wrong_nrow, self.y, self.t)
 
     def test_len_data(self):
-        t_wrong_len = torch.randint(low=1, high=100, size=(self.N + 1, 1), dtype=torch.float)
+        t_wrong_len = torch.randint(
+            low=1, high=100, size=(self.N + 1, 1), dtype=torch.float
+        )
         self.assertRaises(ValueError, weibull, self.log_params, self.y, t_wrong_len)
 
     def test_positive_t(self):
-        t_negative = torch.randint(low=-100, high=100, size=(self.N, 1), dtype=torch.float)
+        t_negative = torch.randint(
+            low=-100, high=100, size=(self.N, 1), dtype=torch.float
+        )
         self.assertRaises(ValueError, weibull, self.log_params, self.y, t_negative)
 
     def test_boolean_y(self):
-        y_non_boolean = torch.randint(low=0, high=3, size=(self.N, 1), dtype=torch.float)
+        y_non_boolean = torch.randint(
+            low=0, high=3, size=(self.N, 1), dtype=torch.float
+        )
         self.assertRaises(ValueError, weibull, self.log_params, y_non_boolean, self.t)
 
     def test_log_likelihood_1_param(self):
         """test weibull log likelihood with only 1 param (log scale) on lung and gbsg data"""
         for benchmark_weibull_loglik in benchmark_weibull_logliks:
             log_lik = -weibull(
-                torch.tensor(benchmark_weibull_loglik["log_shape"], dtype=torch.float32).squeeze(0),
+                torch.tensor(
+                    benchmark_weibull_loglik["log_scale"], dtype=torch.float32
+                ).squeeze(0),
                 torch.tensor(benchmark_weibull_loglik["status"]).bool(),
                 torch.tensor(benchmark_weibull_loglik["time"], dtype=torch.float32),
                 reduction="sum",
@@ -131,7 +139,9 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             wbf.summary.loc[:, "coef"].lambda_.Intercept
             + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
         )
-        log_shape = np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
+        log_shape = (
+            np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
+        )
         log_params = np.column_stack((log_scale, log_shape))
         log_likelihood_lifelines = wbf.log_likelihood_
         log_likelihood = -weibull(
@@ -161,7 +171,9 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
             + np.array(self.lung["sex"]) * wbf.summary.loc[:, "coef"].lambda_.sex
         )
-        log_shape = np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
+        log_shape = (
+            np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
+        )
         log_params = np.column_stack((log_scale, log_shape))
         log_likelihood_lifelines = wbf.log_likelihood_
         log_likelihood = -weibull(
@@ -216,7 +228,9 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             wbf.summary.loc[:, "coef"].lambda_.Intercept
             + np.array(self.gbsg["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
         )
-        log_shape = np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
+        log_shape = (
+            np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
+        )
         log_params = np.column_stack((log_scale, log_shape))
         log_likelihood_lifelines = wbf.log_likelihood_
         log_likelihood = -weibull(
@@ -246,7 +260,9 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             + np.array(self.gbsg["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
             + np.array(self.gbsg["tsize"]) * wbf.summary.loc[:, "coef"].lambda_.tsize
         )
-        log_shape = np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
+        log_shape = (
+            np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
+        )
         log_params = np.column_stack((log_scale, log_shape))
         log_likelihood_lifelines = wbf.log_likelihood_
         log_likelihood = -weibull(

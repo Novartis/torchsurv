@@ -245,7 +245,7 @@ def neg_partial_log_likelihood(
         ties_method (str):
             Method to handle ties in event time. Defaults to "efron".
             Must be one of the following: "efron", "breslow".
-        reduction (str):
+        reduction (str, optional):
             Method to reduce losses. Defaults to "mean".
             Must be one of the following: "sum", "mean".
         strata (torch.Tensor, int, optional):
@@ -631,7 +631,7 @@ def survival_function(
             Individual survival probabilities for each new subject at ``new_time`` of shape = (n_samples_new, n_times).
 
     Note:
-        The estimated survival function for new subject $i$ under the Cox proportional hazards models is given by:
+        The estimated survival function for new subject $i$ under the Cox proportional hazards model is given by:
 
         .. math::
 

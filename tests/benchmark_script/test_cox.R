@@ -297,46 +297,73 @@ log_likelihoods <- list(
 write_json(log_likelihoods, file.path("../benchmark_data/benchmark_extended_cox_without_ties.json"))
 
 
+#
+#
+# 2.2 With ties #########
 
+# prepare covariates
+heart <- data.table(heart)
+heart[, max_time := max(stop), by = "id"]
+heart_max_time <- heart[stop == max_time]
+stopifnot(nrow(heart_max_time) == length(unique(heart$id)))
+cov <- array(dim = c(length(heart_max_time$id), 3, length(heart_max_time$max_time)))
+for (j in 1:length(heart_max_time$max_time)) {
+  for (i in 1:length(heart_max_time$id)) {
+    t <- heart_max_time$max_time[j]
+    indiv <- heart_max_time$id[i]
+    if (heart_max_time[id == indiv, max_time] < t) {
+      cov[i, , j] <- c(0, 0, 0)
+    } else {
+      sub <- heart[id == indiv & start < t & stop >= t]
+      stopifnot(nrow(sub) == 1)
+      cov[i, , j] <- c(sub$age, sub$surgery, sub$transplant)
+    }
+  }
+}
 
+# fit  breslow method
+fit <- coxph(Surv(start, stop, event) ~ age + surgery + transplant, data = heart, method = "breslow")
+log_likelihood <- as.numeric(logLik(fit))
 
-write_json(log_likelihoods, file.path("/Users/Monod/git/torchsurv/tests/benchmark_data/benchmark_extended_cox_without_ties.json"),
-  digits = 16, # full double precision
-  pretty = FALSE
+# find log hazards
+log_hazard <- array(dim = c(length(heart_max_time$id), length(heart_max_time$max_time)))
+for (j in 1:length(heart_max_time$max_time)) {
+  for (i in 1:length(heart_max_time$id)) {
+    x <- cov[i, , j]
+    log_hazard[i, j] <- sum(fit$coefficients * x)
+  }
+}
+
+# save
+log_likelihoods <- list()
+log_likelihoods[["breslow"]] <- list(
+  time = heart_max_time$max_time,
+  status = heart_max_time$event,
+  log_hazard = log_hazard,
+  log_likelihood = log_likelihood,
+  no_ties = TRUE
 )
 
-#
-# write_json(log_likelihoods, file.path("/Users/Monod/git/torchsurv/tests/benchmark_data/benchmark_cox.json"))
+# fit efron method
+fit <- coxph(Surv(start, stop, event) ~ age + surgery + transplant, data = heart, method = "efron")
+log_likelihood <- as.numeric(logLik(fit))
 
-#
-# # Ensure variables are numeric
-# heart_subset[, surgery := as.numeric(surgery)]
-# heart_subset[, transplant := as.numeric(transplant)]
-#
-# # Extract model matrix (automatically handles factors etc.)
-# X <- model.matrix(~ age + surgery + transplant, data = heart_subset)[, -1]  # drop intercept
-#
-# # Coefficients from coxph
-# beta <- coef(fit)
-#
-# # Linear predictor
-# eta <- as.numeric(X %*% beta)
-#
-# # Event times
-# event_times <- heart_subset$stop[heart_subset$event == 1]
-#
-# # Initialize log-likelihood
-# loglik_manual <- 0
-#
-# # Loop over event times (Breslow version)
-# for (t in event_times) {
-#   at_risk <- (heart_subset$start < t) & (heart_subset$stop >= t)
-#   event_idx <- (heart_subset$stop == t) & (heart_subset$event == 1)
-#
-#   loglik_manual <- loglik_manual +
-#     sum(eta[event_idx]) -
-#     log(sum(exp(eta[at_risk])))
-# }
-#
-# loglik_manual
-#
+# find log hazards
+log_hazard <- array(dim = c(length(heart_max_time$id), length(heart_max_time$max_time)))
+for (j in 1:length(heart_max_time$max_time)) {
+  for (i in 1:length(heart_max_time$id)) {
+    x <- cov[i, , j]
+    log_hazard[i, j] <- sum(fit$coefficients * x)
+  }
+}
+
+# save
+log_likelihoods[["efron"]] <- list(
+  time = heart_max_time$max_time,
+  status = heart_max_time$event,
+  log_hazard = log_hazard,
+  log_likelihood = log_likelihood,
+  no_ties = TRUE
+)
+
+write_json(log_likelihoods, file.path("../benchmark_data/benchmark_extended_cox_with_ties.json"))
