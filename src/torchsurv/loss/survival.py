@@ -157,11 +157,11 @@ def neg_log_likelihood_survival(
         >>> neg_log_likelihood_survival(
         ...     log_hz, event, time, eval_time
         ... )  # default, mean of log likelihoods across patients
-        tensor(65.0505)
+        tensor(54.0886)
         >>> neg_log_likelihood_survival(
         ...     log_hz, event, time, eval_time, reduction="sum"
         ... )  # sum of log likelihoods across patients
-        tensor(260.2020)
+        tensor(216.3546)
     """
 
     # If not event, or only one sample, return zero loss
