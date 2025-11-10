@@ -149,7 +149,7 @@ def neg_log_likelihood_survival(
 
     Examples:
         >>> _ = torch.manual_seed(43)
-        >>> n, M = 4, 10
+        >>> n, M = 4, 5
         >>> eval_time = torch.linspace(0, 100, steps=M, dtype=torch.float)
         >>> log_hz = torch.randn((n, M), dtype=torch.float)
         >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
