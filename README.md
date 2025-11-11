@@ -1,6 +1,6 @@
 <p align="center">
       </picture>
-<img src=docs/source/logo_firecamp.png width="200">
+<img src=docs/_static/logo_firecamp.png width="200">
   </picture>
 </p>
 <h1 align="center">
@@ -69,16 +69,17 @@ This package was developed by **Novartis** and the **US Food and Drug Administra
 `TorchSurv` is now part of the **FDA’s [Regulatory Science Tool Catalog](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)**  🎉.
 
 <details>
-<summary>Disclaimer Regarding the Catalog of Regulatory Science Tools</summary>
+<summary><em>Disclaimer Regarding the Catalog of Regulatory Science Tools</em></summary>
+<br>
+The enclosed tool is part of the [Catalog of Regulatory Science Tools](https://cdrh-rst.fda.gov/), which provides a peer-reviewed resource for stakeholders to use where standards and qualified Medical Device Development Tools (MDDTs) do not yet exist. These tools do not replace FDA-recognized standards or MDDTs. This catalog collates a variety of regulatory science tools that the FDA's Center for Devices and Radiological Health's (CDRH) Office of Science and Engineering Labs (OSEL) developed. These tools use the most innovative science to support medical device development and patient access to safe and effective medical devices. If you are considering using a tool from this catalog in your marketing submissions, note that these tools have not been qualified as <a href="https://www.fda.gov/medical-devices/medical-device-development-tools-mddt">Medical Device Development Tools</a> and the FDA has not evaluated the suitability of these tools within any specific context of use. You may <a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/requests-feedback-and-meetings-medical-device-submissions-q-submission-program">request feedback or meetings for medical device submissions</a> as part of the Q-Submission Program.
+For more information about the Catalog of Regulatory Science Tools, email <a href="mailto:RST_CDRH@fda.hhs.gov">RST_CDRH@fda.hhs.gov</a>.
 
-The enclosed tool is part of the [Catalog of Regulatory Science Tools](https://cdrh-rst.fda.gov/), which provides a peer-reviewed resource for stakeholders to use where standards and qualified Medical Device Development Tools (MDDTs) do not yet exist. These tools do not replace FDA-recognized standards or MDDTs. This catalog collates a variety of regulatory science tools that the FDA's Center for Devices and Radiological Health's (CDRH) Office of Science and Engineering Labs (OSEL) developed. These tools use the most innovative science to support medical device development and patient access to safe and effective medical devices. If you are considering using a tool from this catalog in your marketing submissions, note that these tools have not been qualified as [Medical Device Development Tools](https://www.fda.gov/medical-devices/medical-device-development-tools-mddt) and the FDA has not evaluated the suitability of these tools within any specific context of use. You may [request feedback or meetings for medical device submissions](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/requests-feedback-and-meetings-medical-device-submissions-q-submission-program) as part of the Q-Submission Program.
-For more information about the Catalog of Regulatory Science Tools, email [RST_CDRH@fda.hhs.gov](mailto:RST_CDRH@fda.hhs.gov).
-
+<br>
 Tool Reference
 
 * RST Reference Number: RST24AI17.01
 * Date of Publication: 10/16/2025
-* Recommended Citation: U.S. Food and Drug Administration. (2025). TorchSurv: Deep Learning Tools for Survival Analysis (RST24AI17.01). [https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)
+* Recommended Citation: <a href="https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis">TorchSurv: Deep Learning Tools for Survival Analysis (RST24AI17.01).</a> U.S. Food and Drug Administration (2025).
 
 </details>
 
@@ -96,8 +97,10 @@ conda install conda-forge::torchsurv
 ```bash
 pip install torchsurv
 ```
-
-- Using for local installation (`latest version`)
+<details>
+<summary><em>Other installation details </em></summary>
+<br>
+-  Using for local installation (latest version for example)
 
 ```bash
 git clone <repo>
@@ -105,8 +108,11 @@ cd <repo>
 pip install -e .
 ```
 
+
 Additionally, to build the documentation (`notebooks`, `sphinx`) and for package development (`tests`), please see [the development notes](https://opensource.nibr.com/torchsurv/devnotes.html) and
 [dev/environment.yml](dev/environment.yml). This step is **not required** to use `TorchSurv` in your projects but only for optional features.
+
+</details>
 
 ## Getting started
 
@@ -247,34 +253,25 @@ While several libraries offer survival modelling functionalities, no existing li
 
 The outputs of both the log-likelihood functions and the evaluation metrics functions have **undergone thorough comparison with benchmarks generated** using `Python` and `R` packages. The comparisons (at time of publication) are summarised in the [Related packages summary](https://opensource.nibr.com/torchsurv/benchmarks.html).
 
-![Survival analysis libraries in Python](/docs/source/table_python_benchmark.png)
-![Survival analysis libraries in Python](/docs/source/table_python_benchmark_legend.png)
+![Survival analysis libraries in Python](/docs/_static/table_python_benchmark.png)
+![Survival analysis libraries in Python](/docs/_static/table_python_benchmark_legend.png)
 
 Survival analysis libraries in R. For obtaining the evaluation metrics, packages `survival`, `riskRegression`, `SurvMetrics` and `pec` require the fitted model object as input (a specific object format) and `RisksetROC` imposes a smoothing method. Packages `timeROC`, `riskRegression` and pec force the user to choose a form for subject-specific
 weights (e.g., inverse probability of censoring weighting (IPCW)). Packages `survcomp` and `SurvivalROC` do not implement the general AUC but the censoring-adjusted AUC estimator proposed by Heagerty et al. (2000).
 
-![Survival analysis libraries in R](/docs/source/table_r_benchmark.png)
+![Survival analysis libraries in R](/docs/_static/table_r_benchmark.png)
 
 </details>
 
 ## Contributing
 
-We value contributions from the community to enhance and improve this project. If you'd like to contribute, please consider the following:
+`TorchSurv` is deeply rooted in open source, spawning from our multi-institutions collaboration. We always welcome help new contributors for new features (or fix bugs!).
 
-1. __Create Issues__: If you encounter bugs, have feature requests, or want to suggest improvements, please create an [issue](https://github.com/Novartis/torchsurv/issues) in the GitHub repository. Make sure to provide detailed information about the problem, including code for reproducibility, or enhancement you're proposing.
+Interested? Check out our [guidelines](/CONTRIBUTING.md).
 
-2. __Fork and Pull Requests__: If you're willing to address an existing issue or contribute a new feature, fork the repository, create a new branch, make your changes, and then submit a pull request. Please ensure your code follows our coding conventions and include tests for any new functionality.
+## Development team
 
-By contributing to this project, you agree to license your contributions under the same license as this project. ⚠️
-
-## Contacts
-
-* [Thibaud Coroller](mailto:thibaud.coroller@novartis.com?subject=TorchSurv) (**Novartis**): `(creator, maintainer)`
-* [Mélodie Monod](mailto:monod.melodie@gmail.com?subject=TorchSurv) (**University Paris Dauphine - PSL**): `(creator, maintainer)`
-* [Peter Krusche](mailto:peter.krusche@novartis.com?subject=TorchSurv) (**Novartis**): `(author, maintainer)`
-* [Qian Cao](mailto:qian.cao@fda.hhs.gov?subject=TorchSurv) (**FDA**): `(author, maintainer)`
-
-If you have any questions, suggestions, or feedback, feel free to reach out the development team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
+Get in touch with our [maintainers](/CODEOWNERS.md).
 
 ## Citation
 

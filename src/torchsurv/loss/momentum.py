@@ -6,6 +6,8 @@ from typing import Callable
 import torch
 from torch import nn
 
+__all__ = ["Momentum"]
+
 
 class Momentum(nn.Module):
     r"""
@@ -19,7 +21,7 @@ class Momentum(nn.Module):
     .. math::
             \theta_k \leftarrow m \theta_k + (1 - m) \theta_q
 
-    with m=0.999.
+    with `m=0.999`.
 
 
     Here is a pseudo python code to illustrate what is going on under the hood.

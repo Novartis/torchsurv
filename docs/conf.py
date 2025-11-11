@@ -10,11 +10,16 @@
 import os
 import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+sys.path.insert(0, os.path.abspath("."))
+sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("../src"))
+
+# -- Project information -----------------------------------------------------
 
 project = "TorchSurv"
 copyright = "2024, Novartis Pharma AG"
 author = "Thibaud Coroller, Mélodie Monod, Peter Krusche, Qian Cao"
+release = "0.1.5"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -44,7 +49,19 @@ suppress_warnings = ["bibtex"]
 
 html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
-html_logo = "source/logo_firecamp.png"
+html_logo = "_static/logo_firecamp.png"
+templates_path = ["_templates"]
+
+# html_theme_options = {
+#     "icon_links": [
+#         {
+#             "name": "GitHub",
+#             "url": "https://github.com/Novartis/torchsurv",
+#             "icon": "fab fa-github-square",
+#             "type": "fontawesome",
+#         }
+#     ],
+# }
 
 
 # latex_engine = 'xeltex'
@@ -71,3 +88,12 @@ autodoc_default_options = {
 }
 
 autosummary_generate = True
+autosummary_imported_members = False
+
+# Additional autodoc configuration
+autodoc_member_order = "bysource"
+autodoc_typehints = "description"
+
+# Force autosummary to respect source order
+autosummary_context = {}
+add_module_names = False
