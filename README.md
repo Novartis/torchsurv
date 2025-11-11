@@ -265,22 +265,14 @@ weights (e.g., inverse probability of censoring weighting (IPCW)). Packages `sur
 
 ## Contributing
 
-We value contributions from the community to enhance and improve this project. If you'd like to contribute, please consider the following:
+`TorchSurv` is deeply rooted in open source, spawning from our multi-institutions collaboration. We always welcome help new contributors for new features (or fix bugs!).
 
-1. __Create Issues__: If you encounter bugs, have feature requests, or want to suggest improvements, please create an [issue](https://github.com/Novartis/torchsurv/issues) in the GitHub repository. Make sure to provide detailed information about the problem, including code for reproducibility, or enhancement you're proposing.
+Interested? Check out our [guidelines](/CONTRIBUTING.md).
 
-2. __Fork and Pull Requests__: If you're willing to address an existing issue or contribute a new feature, fork the repository, create a new branch, make your changes, and then submit a pull request. Please ensure your code follows our coding conventions and include tests for any new functionality.
+## Maintainers
 
-By contributing to this project, you agree to license your contributions under the same license as this project. ⚠️
+Get in touch with our [maintainers](/CODEOWNERS.md).
 
-## Contacts
-
-* [Thibaud Coroller](mailto:thibaud.coroller@novartis.com?subject=TorchSurv) (**Novartis**): `(creator, maintainer)`
-* [Mélodie Monod](mailto:monod.melodie@gmail.com?subject=TorchSurv) (**University Paris Dauphine - PSL**): `(creator, maintainer)`
-* [Peter Krusche](mailto:peter.krusche@novartis.com?subject=TorchSurv) (**Novartis**): `(author, maintainer)`
-* [Qian Cao](mailto:qian.cao@fda.hhs.gov?subject=TorchSurv) (**FDA**): `(author, maintainer)`
-
-If you have any questions, suggestions, or feedback, feel free to reach out the development team [us](https://opensource.nibr.com/torchsurv/AUTHORS.html).
 
 ## Citation
 
