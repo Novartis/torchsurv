@@ -269,10 +269,9 @@ weights (e.g., inverse probability of censoring weighting (IPCW)). Packages `sur
 
 Interested? Check out our [guidelines](/CONTRIBUTING.md).
 
-## Maintainers
+## Development team
 
 Get in touch with our [maintainers](/CODEOWNERS.md).
-
 
 ## Citation
 

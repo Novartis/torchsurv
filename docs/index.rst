@@ -1,7 +1,7 @@
 Welcome to TorchSurv's documentation!
 =====================================
 
-.. include:: README.md
+.. include:: README-copy.md
     :parser: myst_parser.sphinx_
 
 .. toctree::
@@ -28,7 +28,9 @@ Welcome to TorchSurv's documentation!
     :hidden:
 
     CHANGELOG
-    AUTHORS
+    CODEOWNERS-copy
+    CONTRIBUTING-copy
+    CODE_OF_CONDUCT-copy
     devnotes
     benchmarks
 
