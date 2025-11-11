@@ -25,6 +25,6 @@ help:
 	cp ../CODEOWNERS.md CODEOWNERS-copy.md
 	cp ../CONTRIBUTING.md CONTRIBUTING-copy.md
 	cp ../CODE_OF_CONDUCT.md CODE_OF_CONDUCT-copy.md
-	sed -i.bak -e 's|docs/_static/|_static/|g' -e 's|/docs/_static/|_static/|g' README.md
-	rm -f README.md.bak
+	sed -i.bak -e 's|docs/_static/|_static/|g' -e 's|/docs/_static/|_static/|g' README-copy.md
+	rm -f README-copy.md.bak
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
