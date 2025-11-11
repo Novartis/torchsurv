@@ -19,6 +19,6 @@ help:
 # cat command on top fixes relative locations in the README file
 %: Makefile
 	cp ../README.md README.md
-	sed -i '' 's|docs/_static/|_static/|g' README.md
-	sed -i '' 's|/docs/_static/|_static/|g' README.md
+	sed -i.bak -e 's|docs/_static/|_static/|g' -e 's|/docs/_static/|_static/|g' README.md
+	rm -f README.md.bak
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
