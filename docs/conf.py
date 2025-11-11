@@ -12,9 +12,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.abspath(".."))
-
-
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+sys.path.insert(0, os.path.abspath("../src"))
 
 # -- Project information -----------------------------------------------------
 
@@ -90,3 +88,12 @@ autodoc_default_options = {
 }
 
 autosummary_generate = True
+autosummary_imported_members = False
+
+# Additional autodoc configuration
+autodoc_member_order = "bysource"
+autodoc_typehints = "description"
+
+# Force autosummary to respect source order
+autosummary_context = {}
+add_module_names = False
