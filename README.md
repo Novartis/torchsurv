@@ -263,15 +263,6 @@ weights (e.g., inverse probability of censoring weighting (IPCW)). Packages `sur
 
 </details>
 
-## Contributing
-
-`TorchSurv` is deeply rooted in open source, spawning from our multi-institutions collaboration. We always welcome help new contributors for new features (or fix bugs!).
-
-Interested? Check out our [guidelines](/CONTRIBUTING.md).
-
-## Development team
-
-Get in touch with our [maintainers](/CODEOWNERS.md).
 
 ## Citation
 

@@ -1,5 +1,7 @@
 # Contributing
 
+`TorchSurv` is deeply rooted in open source, spawning from our multi-institutions collaboration. We always welcome help new contributors for new features (or fix bugs!).
+
 We value contributions from the community to enhance and improve this project. If you'd like to contribute, please consider the following:
 
 1. __Create Issues__: If you encounter bugs, have feature requests, or want to suggest improvements, please create an [issue](https://github.com/Novartis/torchsurv/issues) in the GitHub repository. Make sure to provide detailed information about the problem, including code for reproducibility, or enhancement you're proposing.
