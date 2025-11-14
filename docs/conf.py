@@ -53,21 +53,12 @@ html_css_files = ["custom.css"]
 html_theme_options = {
     "announcement": (
         "🎉 We are part of the "
-        "<a href='https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis'> Regulatory Science Tools!</a> 🎉"
-    )
+        "<a href='https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis'> FDA's Regulatory Science Tools Catalog!</a> 🎉"
+    ),
+    "repository_url": "https://github.com/Novartis/torchsurv",
+    "repository_branch": "main",
+    "use_repository_button": True,
 }
-
-# html_theme_options = {
-#     "icon_links": [
-#         {
-#             "name": "GitHub",
-#             "url": "https://github.com/Novartis/torchsurv",
-#             "icon": "fab fa-github-square",
-#             "type": "fontawesome",
-#         }
-#     ],
-# }
-
 
 # latex_engine = 'xeltex'
 latex_elements = {

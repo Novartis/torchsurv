@@ -1,11 +1,33 @@
 # Contributing
 
-`TorchSurv` is deeply rooted in open source, spawning from our multi-institutions collaboration. We always welcome help new contributors for new features (or fix bugs!).
+We welcome contributions from the community! Whether you're fixing bugs, adding features, or improving documentation, your help is appreciated.
 
-We value contributions from the community to enhance and improve this project. If you'd like to contribute, please consider the following:
+## Getting Started
 
-1. __Create Issues__: If you encounter bugs, have feature requests, or want to suggest improvements, please create an [issue](https://github.com/Novartis/torchsurv/issues) in the GitHub repository. Make sure to provide detailed information about the problem, including code for reproducibility, or enhancement you're proposing.
+Before contributing, please ensure you can set up the development environment by following the instructions in our [developer notes](/docs/devnotes.md).
 
-2. __Fork and Pull Requests__: If you're willing to address an existing issue or contribute a new feature, fork the repository, create a new branch, make your changes, and then submit a pull request. Please ensure your code follows our coding conventions and include tests for any new functionality.
+## How to Contribute
 
-By contributing to this project, you agree to license your contributions under the same license as this project. ⚠️
+### Reporting Issues
+
+If you encounter bugs, have feature requests, or want to suggest improvements:
+
+- Create an [issue](https://github.com/Novartis/torchsurv/issues) in the GitHub repository
+- Provide detailed information about the problem
+- Include reproducible code examples when applicable
+
+### Contributing Code
+
+1. **Fork** the repository
+2. **Create** a new branch for your changes
+3. **Make** your changes following our coding conventions
+4. **Add** tests for any new functionality
+5. **Submit** a pull request with a clear description of your changes
+
+## License
+
+By contributing to this project, you agree to license your contributions under the same license as this project.
+
+## Questions?
+
+If you have questions about contributing, feel free to open an issue for discussion.
