@@ -7,13 +7,13 @@ get_log_likelihood <- function(formula, data, x) {
   status <- data$status
 
   fit <- survreg(formula, data = data, dist = "weibull", scale = 1) # this is the survreg output model
-  log_shape <- fit$coefficients %*% t(as.matrix(x, ncol = ncol(x)))
+  log_scale <- fit$coefficients %*% t(as.matrix(x, ncol = ncol(x)))
   log_likelihood <- fit$loglik[length(fit$loglik)]
 
   return(list(
     time = time,
     status = status,
-    log_shape = log_shape,
+    log_scale = log_scale,
     log_likelihood = log_likelihood
   ))
 }
@@ -104,5 +104,5 @@ i <- i + 1
 # Save
 write_json(
   log_likelihoods,
-  file.path("../benchmark_data/benchmark_weibull.json")
+  file.path("/Users/Monod/git/torchsurv/tests/benchmark_data/benchmark_weibull.json")
 )

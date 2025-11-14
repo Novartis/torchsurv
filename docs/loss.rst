@@ -6,5 +6,6 @@ Loss
     :template: autosummary/module.rst
 
     torchsurv.loss.cox
-    torchsurv.loss.momentum
     torchsurv.loss.weibull
+    torchsurv.loss.survival
+    torchsurv.loss.momentum

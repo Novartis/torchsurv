@@ -140,10 +140,13 @@ def validate_model_type(log_params: torch.Tensor, model_type: str) -> None:
                 f"For Weibull model, 'log_params' must have shape (n_samples, 2) or (n_samples, 1). Found {log_params.dim()} dimensions."
             )
     elif model_type.lower() == "cox":
-        if log_params.dim() > 1:
-            raise ValueError("For Cox model, 'log_hz' must have shape (n_samples).")
+        if log_params.dim() > 2 or (log_params.dim() == 2 and log_params.shape[0] != log_params.shape[1]):
+            raise ValueError("For Cox model, 'log_hz' must have shape (n_samples) or (n_samples, n_samples).")
+    elif model_type.lower() == "survival":
+        if log_params.dim() != 2:
+            raise ValueError("For Survival model, 'log_hz' must have shape (n_samples, n_eval_times).")
     else:
-        raise ValueError("Invalid model type. Must be 'weibull' or 'cox'.")
+        raise ValueError("Invalid model type. Must be 'weibull', 'cox', or 'survival'.")
 
 
 def validate_new_time(new_time: torch.Tensor, time: torch.Tensor, within_follow_up: bool = True) -> None:
@@ -219,6 +222,26 @@ def validate_survival_data(event: torch.Tensor, time: torch.Tensor, strata: Opti
     validate_strata(strata)
 
     validate_dimension_survival_data(event, time, strata)
+
+
+def validate_eval_time(log_hz: torch.Tensor, eval_times: torch.Tensor) -> None:
+    if log_hz.shape[1] != len(eval_times):
+        raise ValueError("For Survival model, 'log_hz' must have shape (n_samples, n_eval_times).")
+
+    # Check for duplicate evaluation times
+    if torch.any(eval_times[:-1] >= eval_times[1:]):
+        raise ValueError("`eval_times` must be strictly increasing with no duplicate values.")
+
+
+def validate_time_varying_log_hz(time_sorted: torch.Tensor, log_hz_sorted: torch.Tensor) -> None:
+    for i in range(len(time_sorted) - 1):
+        if time_sorted[i] == time_sorted[i + 1]:
+            # check if values are equal across individuals
+            if not torch.all(log_hz_sorted[:, i] == log_hz_sorted[:, i + 1]):
+                raise ValueError(
+                    f"Inconsistency found for repeated time {time_sorted[i]} at columns {i} and {i + 1}. "
+                    "The columns must have identical values at the same time."
+                )
 
 
 def validate_model(

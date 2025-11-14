@@ -1,7 +1,12 @@
 library(survival)
 library(jsonlite)
+library(data.table)
 
+#
+#
 # create function to extract log hazard and log likelihood
+#
+
 get_log_likelihood <- function(formula, data, x, no_ties) {
   time <- data$time
   status <- data$status
@@ -45,21 +50,34 @@ get_log_likelihood <- function(formula, data, x, no_ties) {
   }
 }
 
-#
-# empty list to save log likelihoods
-log_likelihoods <- list()
-i <- 1
-
-
-#
-# lung dataset
-#
-
 # load lung dataset
 lung <- survival::lung
 lung$sex <- lung$sex == 1
 lung$status <- lung$status == 2
 lung$age <- (lung$age - mean(lung$age)) / sd(lung$age)
+
+# load gbsg dataset
+gbsg <- survival::gbsg
+gbsg$age <- (gbsg$age - mean(gbsg$age)) / sd(gbsg$age)
+gbsg$size <- (gbsg$size - mean(gbsg$size)) / sd(gbsg$size)
+gbsg$time <- gbsg$rfstime
+
+
+#
+#
+# 1. Covariates not-time varying
+###########
+
+#
+#
+# 1.1 No ties #########
+
+# empty list to save log likelihoods
+log_likelihoods <- list()
+i <- 1
+
+#
+# lung dataset
 
 # lung dataset without ties
 index_duplicated <- which(duplicated(lung$time))
@@ -69,7 +87,7 @@ lung_unique <- lung[-index_duplicated, ]
 lung_complete <- lung[complete.cases(lung), ]
 lung_unique_complete <- lung_unique[complete.cases(lung_unique), ]
 
-# Cox: no ties
+# log likelihoods
 log_likelihoods[[i]] <- get_log_likelihood(
   formula = Surv(time, status) ~ age,
   data = lung_unique,
@@ -101,7 +119,56 @@ log_likelihoods[[i]] <- get_log_likelihood(
 )
 i <- i + 1
 
-# Cox with ties
+
+#
+# gbsg dataset
+
+# gbsg dataset without ties
+index_duplicated <- which(duplicated(gbsg$time))
+gbsg_unique <- gbsg[-index_duplicated, ]
+
+# log likelihood
+log_likelihoods[[i]] <- get_log_likelihood(
+  formula = Surv(time, status) ~ age,
+  data = gbsg_unique,
+  x = gbsg_unique[, c("age")],
+  no_ties = TRUE
+)
+i <- i + 1
+log_likelihoods[[i]] <- get_log_likelihood(
+  formula = Surv(rfstime, status) ~ age + size,
+  data = gbsg_unique,
+  x = gbsg_unique[, c("age", "size")],
+  no_ties = TRUE
+)
+i <- i + 1
+log_likelihoods[[i]] <- get_log_likelihood(
+  formula = Surv(rfstime, status) ~
+    age + size + grade + nodes + pgr + er + hormon,
+  data = gbsg_unique,
+  x = gbsg_unique[, c("age", "size", "grade", "nodes", "pgr", "er", "hormon")],
+  no_ties = TRUE
+)
+i <- i + 1
+
+#
+# Save
+write_json(log_likelihoods, file.path("../benchmark_data/benchmark_cox_without_ties.json"))
+
+
+
+#
+#
+# 1.2 With ties #########
+
+# empty list to save log likelihoods
+log_likelihoods <- list()
+i <- 1
+
+#
+# lung dataset
+
+# log likelihoods
 log_likelihoods[[i]] <- get_log_likelihood(
   formula = Surv(time, status) ~ age,
   data = lung,
@@ -135,43 +202,9 @@ i <- i + 1
 
 
 #
-# gbsg dataset
-#
+# gbsg
 
-gbsg <- survival::gbsg
-gbsg$age <- (gbsg$age - mean(gbsg$age)) / sd(gbsg$age)
-gbsg$size <- (gbsg$size - mean(gbsg$size)) / sd(gbsg$size)
-gbsg$time <- gbsg$rfstime
-
-# lung dataset without ties
-index_duplicated <- which(duplicated(gbsg$time))
-gbsg_unique <- gbsg[-index_duplicated, ]
-
-# Cox: no ties
-log_likelihoods[[i]] <- get_log_likelihood(
-  formula = Surv(time, status) ~ age,
-  data = gbsg_unique,
-  x = gbsg_unique[, c("age")],
-  no_ties = TRUE
-)
-i <- i + 1
-log_likelihoods[[i]] <- get_log_likelihood(
-  formula = Surv(rfstime, status) ~ age + size,
-  data = gbsg_unique,
-  x = gbsg_unique[, c("age", "size")],
-  no_ties = TRUE
-)
-i <- i + 1
-log_likelihoods[[i]] <- get_log_likelihood(
-  formula = Surv(rfstime, status) ~
-    age + size + grade + nodes + pgr + er + hormon,
-  data = gbsg_unique,
-  x = gbsg_unique[, c("age", "size", "grade", "nodes", "pgr", "er", "hormon")],
-  no_ties = TRUE
-)
-i <- i + 1
-
-# Cox with ties
+# log likehoods
 log_likelihoods[[i]] <- get_log_likelihood(
   formula = Surv(time, status) ~ age,
   data = gbsg,
@@ -195,7 +228,142 @@ log_likelihoods[[i]] <- get_log_likelihood(
 )
 i <- i + 1
 
-
 #
 # Save
-write_json(log_likelihoods, file.path("../benchmark_data/benchmark_cox.json"))
+write_json(log_likelihoods, file.path("../benchmark_data/benchmark_cox_with_ties.json"))
+
+#
+#
+# 2. Time-varying covariates
+###########
+
+#
+#
+# 2.1 Without ties #########
+
+
+# create heart without ties
+heart_subset <- as.data.table(heart[!heart$id %in% c(
+  81, 103, 88, 101, 100, 58, 77, 97,
+  99, 79, 30, 31, 95, 94, 20, 93, 92,
+  21, 86, 70, 74, 85, 84, 19, 66, 83,
+  80, 76, 43, 46, 61, 75, 73, 69, 68, 67,
+  65, 23, 42, 54, 60, 53, 50, 17, 49, 47,
+  15, 45, 44, 41, 22, 35, 33, 32
+), ])
+
+# prepare covariates
+heart_subset[, max_time := max(stop), by = "id"]
+heart_max_time <- heart_subset[stop == max_time]
+stopifnot(nrow(heart_max_time) == length(unique(heart_subset$id)))
+cov <- array(dim = c(length(heart_max_time$id), 3, length(heart_max_time$max_time)))
+for (j in 1:length(heart_max_time$max_time)) {
+  for (i in 1:length(heart_max_time$id)) {
+    t <- heart_max_time$max_time[j]
+    indiv <- heart_max_time$id[i]
+    if (heart_max_time[id == indiv, max_time] < t) {
+      cov[i, , j] <- c(0, 0, 0)
+    } else {
+      sub <- heart_subset[id == indiv & start < t & stop >= t]
+      stopifnot(nrow(sub) == 1)
+      cov[i, , j] <- c(sub$age, sub$surgery, sub$transplant)
+    }
+  }
+}
+
+# fit
+fit <- coxph(Surv(start, stop, event) ~ age + surgery + transplant, data = heart_subset)
+summary(fit)
+log_likelihood <- as.numeric(logLik(fit))
+
+# find log hazards
+log_hazard <- array(dim = c(length(heart_max_time$id), length(heart_max_time$max_time)))
+for (j in 1:length(heart_max_time$max_time)) {
+  for (i in 1:length(heart_max_time$id)) {
+    x <- cov[i, , j]
+    log_hazard[i, j] <- sum(fit$coefficients * x)
+  }
+}
+
+# save
+log_likelihoods <- list(
+  time = heart_max_time$max_time,
+  status = heart_max_time$event,
+  log_hazard = log_hazard,
+  log_likelihood = log_likelihood,
+  no_ties = TRUE
+)
+
+write_json(log_likelihoods, file.path("../benchmark_data/benchmark_extended_cox_without_ties.json"))
+
+
+#
+#
+# 2.2 With ties #########
+
+# prepare covariates
+heart <- data.table(heart)
+heart[, max_time := max(stop), by = "id"]
+heart_max_time <- heart[stop == max_time]
+stopifnot(nrow(heart_max_time) == length(unique(heart$id)))
+cov <- array(dim = c(length(heart_max_time$id), 3, length(heart_max_time$max_time)))
+for (j in 1:length(heart_max_time$max_time)) {
+  for (i in 1:length(heart_max_time$id)) {
+    t <- heart_max_time$max_time[j]
+    indiv <- heart_max_time$id[i]
+    if (heart_max_time[id == indiv, max_time] < t) {
+      cov[i, , j] <- c(0, 0, 0)
+    } else {
+      sub <- heart[id == indiv & start < t & stop >= t]
+      stopifnot(nrow(sub) == 1)
+      cov[i, , j] <- c(sub$age, sub$surgery, sub$transplant)
+    }
+  }
+}
+
+# fit  breslow method
+fit <- coxph(Surv(start, stop, event) ~ age + surgery + transplant, data = heart, method = "breslow")
+log_likelihood <- as.numeric(logLik(fit))
+
+# find log hazards
+log_hazard <- array(dim = c(length(heart_max_time$id), length(heart_max_time$max_time)))
+for (j in 1:length(heart_max_time$max_time)) {
+  for (i in 1:length(heart_max_time$id)) {
+    x <- cov[i, , j]
+    log_hazard[i, j] <- sum(fit$coefficients * x)
+  }
+}
+
+# save
+log_likelihoods <- list()
+log_likelihoods[["breslow"]] <- list(
+  time = heart_max_time$max_time,
+  status = heart_max_time$event,
+  log_hazard = log_hazard,
+  log_likelihood = log_likelihood,
+  no_ties = TRUE
+)
+
+# fit efron method
+fit <- coxph(Surv(start, stop, event) ~ age + surgery + transplant, data = heart, method = "efron")
+log_likelihood <- as.numeric(logLik(fit))
+
+# find log hazards
+log_hazard <- array(dim = c(length(heart_max_time$id), length(heart_max_time$max_time)))
+for (j in 1:length(heart_max_time$max_time)) {
+  for (i in 1:length(heart_max_time$id)) {
+    x <- cov[i, , j]
+    log_hazard[i, j] <- sum(fit$coefficients * x)
+  }
+}
+
+# save
+log_likelihoods[["efron"]] <- list(
+  time = heart_max_time$max_time,
+  status = heart_max_time$event,
+  log_hazard = log_hazard,
+  log_likelihood = log_likelihood,
+  no_ties = TRUE
+)
+
+write_json(log_likelihoods, file.path("../benchmark_data/benchmark_extended_cox_with_ties.json"))
