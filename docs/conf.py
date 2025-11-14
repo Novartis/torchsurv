@@ -1,5 +1,3 @@
-# Configuration file for the Sphinx documentation builder.
-#
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
@@ -51,6 +49,13 @@ html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
 html_logo = "_static/logo_firecamp.png"
 templates_path = ["_templates"]
+html_css_files = ["custom.css"]
+html_theme_options = {
+    "announcement": (
+        "🎉 We are part of the "
+        "<a href='https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis'> Regulatory Science Tools!</a> 🎉"
+    )
+}
 
 # html_theme_options = {
 #     "icon_links": [

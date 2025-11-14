@@ -26,5 +26,6 @@ help:
 	cp ../CONTRIBUTING.md CONTRIBUTING-copy.md
 	cp ../CODE_OF_CONDUCT.md CODE_OF_CONDUCT-copy.md
 	sed -i.bak -e 's|docs/_static/|_static/|g' -e 's|/docs/_static/|_static/|g' README-copy.md
+	sed -i.bak 's|<img src=_static/logo_firecamp.png width="200">|<img src="_static/logo_firecamp.png" width="200" class="readme-logo">|g' README-copy.md
 	rm -f README-copy.md.bak
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
