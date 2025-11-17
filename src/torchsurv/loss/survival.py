@@ -150,17 +150,19 @@ def neg_log_likelihood(
 
     Examples:
         >>> _ = torch.manual_seed(43)
-        >>> n, M = 4, 10
+        >>> n, M = 4, 5
         >>> eval_time = torch.linspace(0, 100, steps=M, dtype=torch.float)
         >>> log_hz = torch.randn((n, M), dtype=torch.float)
         >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
         >>> time = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)
-        >>> neg_log_likelihood(log_hz, event, time, eval_time)  # default, mean of log likelihoods across patients
-        tensor(65.0505)
-        >>> neg_log_likelihood(
+        >>> neg_log_likelihood_survival(
+        ...     log_hz, event, time, eval_time
+        ... )  # default, mean of log likelihoods across patients
+        tensor(54.0886)
+        >>> neg_log_likelihood_survival(
         ...     log_hz, event, time, eval_time, reduction="sum"
         ... )  # sum of log likelihoods across patients
-        tensor(260.2020)
+        tensor(216.3546)
     """
 
     # If not event, or only one sample, return zero loss

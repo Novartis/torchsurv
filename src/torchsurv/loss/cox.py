@@ -416,8 +416,8 @@ def neg_partial_log_likelihood(
         time_stratum = time_sorted[mask]
         log_hz_stratum = log_hz_sorted[:, mask][mask, :] if is_time_varying_log_hz else log_hz_sorted[mask]
 
-        # Determine whether there are ties in time
-        has_ties = len(torch.unique(time_stratum)) != len(time_stratum)
+        # Determine whether there are ties in event time
+        has_ties = len(torch.unique(time_stratum[event_stratum])) != len(time_stratum[event_stratum])
 
         if not has_ties:
             # No ties → use standard Cox
