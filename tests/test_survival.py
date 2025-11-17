@@ -8,7 +8,7 @@ from lifelines import WeibullAFTFitter
 from lifelines.datasets import load_gbsg2, load_lung
 
 # Local modules
-from torchsurv.loss.survival import neg_log_likelihood_survival as survival
+from torchsurv.loss.survival import neg_log_likelihood as survival
 from torchsurv.loss.survival import survival_function
 from torchsurv.loss.weibull import survival_function as weibull_sf
 

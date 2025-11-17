@@ -7,12 +7,12 @@ import warnings
 import torch
 
 from torchsurv.tools.validate_data import (
+    validate_eval_time,
     validate_model,
     validate_survival_data,
-    validate_eval_time,
 )
 
-__all__ = ["neg_log_likelihood_survival", "survival_function"]
+__all__ = ["neg_log_likelihood", "survival_function"]
 
 
 def _cumulative_hazard_trapezoid(
@@ -73,7 +73,7 @@ def _cumulative_hazard_trapezoid(
     )
 
 
-def neg_log_likelihood_survival(
+def neg_log_likelihood(
     log_hz: torch.Tensor,
     event: torch.Tensor,
     time: torch.Tensor,
@@ -87,6 +87,7 @@ def neg_log_likelihood_survival(
     Args:
         log_hz (torch.Tensor, float):
             Log hazard rates of shape = (n_samples, n_eval_time).
+            The entry at row i and column j corresponds to the log relative hazard for subject i at the jth ``n_eval_time``.
         event (torch.Tensor, bool):
             Event indicator (= True if event occurred) of shape = (n_samples,).
         time (torch.Tensor, float):
@@ -154,9 +155,11 @@ def neg_log_likelihood_survival(
         >>> log_hz = torch.randn((n, M), dtype=torch.float)
         >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
         >>> time = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)
-        >>> neg_log_likelihood_survival(log_hz, event, time, eval_time)  # default, mean of log likelihoods across patients
+        >>> neg_log_likelihood(log_hz, event, time, eval_time)  # default, mean of log likelihoods across patients
         tensor(65.0505)
-        >>> neg_log_likelihood_survival(log_hz, event, time, eval_time, reduction="sum")  # sum of log likelihoods across patients
+        >>> neg_log_likelihood(
+        ...     log_hz, event, time, eval_time, reduction="sum"
+        ... )  # sum of log likelihoods across patients
         tensor(260.2020)
     """
 
@@ -180,9 +183,7 @@ def neg_log_likelihood_survival(
         validate_eval_time(log_hz, eval_time)
 
     # Cumulative hazard
-    cum_hazard = _cumulative_hazard_trapezoid(
-        log_hz, time, eval_time, respective_times=True
-    )
+    cum_hazard = _cumulative_hazard_trapezoid(log_hz, time, eval_time, respective_times=True)
 
     # Log hazard at exact observed time (interpolate last point)
     log_hz_at_time = torch.zeros_like(time)
