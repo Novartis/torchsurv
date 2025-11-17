@@ -1,5 +1,5 @@
-import torch
 import matplotlib.pyplot as plt
+import torch
 
 
 class GroupedDataset(torch.utils.data.Dataset):
@@ -12,24 +12,17 @@ class GroupedDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         sample = self.groups[idx]
         # Targets
-        event = torch.unique_consecutive(
-            torch.tensor(sample["event_at_time"].values).bool()
-        )
+        event = torch.unique_consecutive(torch.tensor(sample["event_at_time"].values).bool())
         time = torch.unique_consecutive(torch.tensor(sample["time"].values).float())
         id = torch.tensor(sample["id"].values).long()
         start = torch.tensor(sample["start"].values).float()
 
         # Predictors
-        x = torch.tensor(
-            sample.drop(
-                ["event", "event_at_time", "time", "start", "stop", "id"], axis=1
-            ).values
-        ).float()
+        x = torch.tensor(sample.drop(["event", "event_at_time", "time", "start", "stop", "id"], axis=1).values).float()
         return x, (event, time), id, start
 
 
 def collate_fn(batch):
-
     xs, ets, ids, starts = zip(*batch)  # unzip
 
     # xs, stops get cats (because the dim differ by id)
@@ -46,7 +39,6 @@ def collate_fn(batch):
 
 
 def expand_log_hz(id, start, time, log_hz_short):
-
     ids = torch.unique_consecutive(id)
     n = len(ids)
 
@@ -68,7 +60,6 @@ def expand_log_hz(id, start, time, log_hz_short):
 
 
 def expand_log_hz_survival(id, start, time, log_hz_long):
-
     ids = torch.unique_consecutive(id)
     n = len(ids)
 

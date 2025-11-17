@@ -39,7 +39,7 @@ $$
 \text{AUC} = \int_0^1 \text{TPR}(\text{FPR}(c)) \: d\text{FPR}(c).
 $$
 
-It can be shown that the AUC also has a probabilitic intepretation, indeed
+It can be shown that the AUC also has a probabilitic interpretation, indeed
 
 $$
 \text{AUC} = p(\pi_i > \pi_j|Y_i = 1, Y_j = 0),
@@ -82,7 +82,7 @@ $$
 
 ## 3. Evaluation metrics under time-to-event response
 
-Let us now assume that individual $i$ has a time-to-event $X_i$ and a time-to-censoring $D_i$. We observe the minimum of the two, $T_i = \min(X_i, D_i)$, along with the event indicator $\delta_i = 1(X_i \leq D_i)$. 
+Let us now assume that individual $i$ has a time-to-event $X_i$ and a time-to-censoring $D_i$. We observe the minimum of the two, $T_i = \min(X_i, D_i)$, along with the event indicator $\delta_i = 1(X_i \leq D_i)$.
 
 A time-to-event outcome can be represented as a time-varying binary process using the counting process formulation:
 
@@ -106,7 +106,7 @@ $$
 \end{cases}
 $$
 
-In this case, the sensitivity is referred to as cumulative sensitivity and is defined by 
+In this case, the sensitivity is referred to as cumulative sensitivity and is defined by
 
 $$
 \text{sensitivity}^{\mathbb{C}}(c,t) = p(\hat{N}_i(t) = 1 | {N}_i(t) =1 ) = p(q_i(t) > c| X_i \leq t ).
@@ -124,7 +124,7 @@ d\hat{N}_i(t)  =
 \end{cases}
 $$
 
-In this case, the sensitivity is referred to as incident sensitivity and is defined by 
+In this case, the sensitivity is referred to as incident sensitivity and is defined by
 
 $$
 \text{sensitivity}^{\mathbb{I}}(c,t) = p(d\hat{N}_i(t) = 1 | d{N}_i(t) =1 ) = p(q_i(t) > c| X_i = t ).
@@ -138,7 +138,7 @@ $$
 \text{specificity}^{\mathbb{D}}(c,t) = p(\hat{N}_i(t) = 0 | {N}_i(t) =0 ) = p(q_i(t) \leq c| X_i > t ).
 $$
 
-It is the probability that a model correctly predicts that individual $i$ does not experience an event before or at time $t$. 
+It is the probability that a model correctly predicts that individual $i$ does not experience an event before or at time $t$.
 
 Note that there is no distinction between prevalence and incidence in the context of specificity. This is because if we condition on $dN_i(t) = 0$, it implies either the individual had an event before $t$ and is thus excluded, or the individual has an event after $t$ which is equivalent to conditioning on $N_i(t) = 0$.
 
@@ -153,11 +153,11 @@ AUC^{\mathbb{C}/\mathbb{D}}(t) &= p(q_i(t)>q_j(t)|N_i(t) = 1, N_j(t) = 0) \\
 \end{align*}
 $$
 
-It represents the probability that the model correctly identifies which of two comparable samples experiences an event before or at time $t$ based on their predicted risk scores. 
+It represents the probability that the model correctly identifies which of two comparable samples experiences an event before or at time $t$ based on their predicted risk scores.
 
 The proof of the probabilitic interpretation of $AUC^{\mathbb{C}/\mathbb{D}}$ is similar to that in the binary response context.
 
-**Incident/dynamic AUC.** If the risk score $q_i(t)$ measures incidence, a incident/dynamic ROC curve can be defined on the incident sensitivity against 1 - dynamic specificity. The area under the incident/dynamic ROC curve is called the incident/dynamic AUC and is defined by: 
+**Incident/dynamic AUC.** If the risk score $q_i(t)$ measures incidence, a incident/dynamic ROC curve can be defined on the incident sensitivity against 1 - dynamic specificity. The area under the incident/dynamic ROC curve is called the incident/dynamic AUC and is defined by:
 
 $$
 \begin{align*}
@@ -178,7 +178,7 @@ $$
 C = p(q_i(X_i) > q_j(X_i) | X_i < X_j)
 $$
 
-It can be shown that the C-index is related to the incidence/dynamic AUC, specifically 
+It can be shown that the C-index is related to the incidence/dynamic AUC, specifically
 
 $$C = \int_t \text{AUC}^{\mathbb{I}/\mathbb{D}}(t) g(t) dt$$
 
@@ -204,7 +204,7 @@ where in the third line we used the fact that $p(X_i < X_j) = 1/2$ by independen
 </details>
 
 
-## 4. The Brier-Score 
+## 4. The Brier-Score
 
 Suppose that the probabilistic survival model can output for any individual $i$ an estimate of the survival function $P(X_i > t)$, denoted by $\xi_i(t) \in [0,1]$. The Time-dependent Brier Score (BS) and Integrated Brier Score (IBS) (Graf et al., 1999) are defined as
 
@@ -224,22 +224,22 @@ where $W(t) = t / t_{\text{max}}$ and $t_{\text{max}}$ is the time-point until w
 
 #### What evaluation metrics are implemented in `TorchSurv`?
 
-TorchSurv includes all the evaluation metrics described in this document. Specifically, it implements the **AUC** (both *AUC incidence/dynamic* and *AUC cumulative/dynamic*), the **C-index**, and the **Brier Score**.  
+TorchSurv includes all the evaluation metrics described in this document. Specifically, it implements the **AUC** (both *AUC incidence/dynamic* and *AUC cumulative/dynamic*), the **C-index**, and the **Brier Score**.
 Detailed instructions and examples for using each of these metrics can be found in their respective function descriptions under the `Metrics` module.
 
 
 #### What risk score should my PyTorch neural network output?
 
-The choice of risk score depends on the scientific question and what aspect of prediction performance you aim to evaluate.  
+The choice of risk score depends on the scientific question and what aspect of prediction performance you aim to evaluate.
 A risk score can reflect either incidence or prevalence:
 
 - **Incidence-based risk scores** quantify the *instantaneous* risk of an event at time $ t $, conditional on survival up to that time. The instantaneous hazard is a natural example of such a score.
 - **Prevalence-based risk scores** capture the *cumulative* probability of experiencing the event by time $ t $. The cumulative hazard is an example of such scores.
 
-In practice, your choice should align with the primary question of interest.  
+In practice, your choice should align with the primary question of interest.
 For example:
 
-- If you are interested in how many events have occurred by time $ t $, use a **prevalence-based risk score** and evaluate performance using the **AUC cumulative/dynamic**.  
+- If you are interested in how many events have occurred by time $ t $, use a **prevalence-based risk score** and evaluate performance using the **AUC cumulative/dynamic**.
 - If you are interested in the short-term risk of an event occurring at time $ t $, use an **incidence-based risk score** and the **AUC incidence/dynamic** as the corresponding performance measure.
 
 #### Should I use the AUC incidence/dynamic or AUC cumulative/dynamic?
@@ -250,9 +250,9 @@ The choice between **AUC incidence/dynamic** and **AUC cumulative/dynamic** depe
 - Use **AUC cumulative/dynamic** when your risk score measures prevalence (e.g., a cumulative hazard).
 
 As a rule of thumb:
-- **Incidence-based questions** → **AUC incidence/dynamic**  
+- **Incidence-based questions** → **AUC incidence/dynamic**
 - **Prevalence-based questions** → **AUC cumulative/dynamic**
-  
+
 #### Should I use the AUC or the C-index?
 
 The AUC is time-dependent and provide a measure of predictive performance at a specific time point. In contrast, the C-index offers a global assessment of a fitted survival model over the entire observational period. It is recommended to use the AUC instead of the C-index for time-dependent predictions (e.g., 10-year mortality), as AUC is proper in this context, while the C-index is not (Blanche et al., 2018).

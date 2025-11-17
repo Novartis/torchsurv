@@ -4,23 +4,23 @@
 
 In this document, we describe the mathematical formulation and assumptions behind the survival models' loss implemented in the `loss` module of `TorchSurv`, which can accommodate time-varying covariates.
 
-Let individual $i$ have a time-to-event $X_i$ and a censoring time $D_i$. We observe  
+Let individual $i$ have a time-to-event $X_i$ and a censoring time $D_i$. We observe
 
 $$
 T_i = \min(X_i, D_i)
-$$ 
+$$
 
 along with the event indicator
 
 $$
 \delta_i = \mathbb{1}(X_i \le D_i),
-$$ 
+$$
 
-where $\delta_i = 1$ if the event is observed and $\delta_i = 0$ if the data is censored.  
+where $\delta_i = 1$ if the event is observed and $\delta_i = 0$ if the data is censored.
 Each individual also has covariates $\mathbf{x}_i(t)$ at multiple time points $t$, which may be high-dimensional.
 
 
-### 1. Extended Cox Model 
+### 1. Extended Cox Model
 
 The Extended Cox model loss is available through the function:
 
@@ -36,9 +36,9 @@ The standard Cox proportional hazards model assumes a hazard function of the for
 
 $$
 \lambda_i(t) = \lambda_0(t) \, \theta_i(t), \quad \text{with} \quad \theta_i(t) = \exp(\mathbf{x}_i(t)^\top \beta),
-$$ 
+$$
 
-where $\lambda_0(t)$ is the baseline hazard and $\theta_i(t)$ is the relative hazard at time $t$. 
+where $\lambda_0(t)$ is the baseline hazard and $\theta_i(t)$ is the relative hazard at time $t$.
 
 **PyTorch NN output.**
 In `TorchSurv`, the user may specify the relative hazard with a PyTorch neural network:
@@ -52,20 +52,20 @@ $$
 
 $$
 \text{npll} = - \sum_{i: \delta_i = 1} \left( \log \theta_i(T_i) - \log \sum_{j \in R(T_i)} \theta_j(T_i) \right),
-$$ 
+$$
 where $R(T_i)$ is the risk set at time $T_i$.
 
 **Assumptions.**
 
 - The function $f_\theta$ does not depend on time (i.e., recurrent neural networks or other time-dependent architectures cannot be used). In other words, time-varying covariates are allowed but not time-varying parameters.
-- Proportional hazards: the relative hazard does not vary with time conditional on the covariates.  
-- Independence between censoring and event times.  
+- Proportional hazards: the relative hazard does not vary with time conditional on the covariates.
+- Independence between censoring and event times.
 - Correct specification of the covariate effect (linear in standard Cox, flexible in `TorchSurv` neural network).
 
 
-### 2. Flexible Survival Model 
+### 2. Flexible Survival Model
 
-The Flexible Survival model loss is available through the function 
+The Flexible Survival model loss is available through the function
 ```python
 from torchsurv.loss.survival import neg_log_likelihood
 ```
@@ -74,14 +74,14 @@ The argument `log_hz` argument must be two-dimensional, with rows corresponding 
 
 
 **Hazard function.**
-When no specific parametric form for the hazard function is assumed, `TorchSurv` allows the model to learn the hazard function $\lambda_i(t)$ directly from a neural network.  
+When no specific parametric form for the hazard function is assumed, `TorchSurv` allows the model to learn the hazard function $\lambda_i(t)$ directly from a neural network.
 In this framework, the network takes the covariates $\mathbf{x}_i$ (and optionally time $t$) as input and outputs an estimate of the instantaneous hazard rate $\lambda_i(t)$.
 
 $$
 \lambda_i(t) = f_{\lambda}(\mathbf{x}_i(t), t)
 $$
 
-**Loss function.** 
+**Loss function.**
 The loss function is defined as the negative log-likelihood given by:
 
 $$
@@ -90,15 +90,15 @@ $$
 
 where the first term corresponds to the observed events and the second term integrates the predicted hazard over time to account for the survival component.
 
-Since the integral $\int_0^{T_i} \lambda_i(u)\,du$ has no closed-form solution when $\lambda_i(t)$ is modeled by a neural network, it is numerically approximated in `TorchSurv` using the trapezoidal rule over a discretized time grid.  
+Since the integral $\int_0^{T_i} \lambda_i(u)\,du$ has no closed-form solution when $\lambda_i(t)$ is modeled by a neural network, it is numerically approximated in `TorchSurv` using the trapezoidal rule over a discretized time grid.
 This makes the flexible survival model the only loss function in `TorchSurv` that requires an approximation of the likelihood.
 
 This model is particularly powerful when the true hazard does not follow a standard parametric form, such as Weibull or exponential. Indeed, if the neural network outputs hazards corresponding to these forms, this model will recover their respective log-likelihoods exactly.
 
-**Assumptions.** 
-- The hazard function $\lambda_i(t)$ is well-approximated by the neural network.  
-- Censoring is independent of event times.  
-- Observations are conditionally independent given the covariates.  
+**Assumptions.**
+- The hazard function $\lambda_i(t)$ is well-approximated by the neural network.
+- Censoring is independent of event times.
+- Observations are conditionally independent given the covariates.
 - Numerical integration (trapezoidal rule) is sufficiently accurate given the time discretization.
 
 
