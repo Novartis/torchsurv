@@ -1,4 +1,5 @@
 import copy
+import warnings
 from typing import Optional
 
 import torch
@@ -73,8 +74,10 @@ class BrierScore:
         Args:
             estimate (torch.Tensor):
                 Estimated probability of remaining event-free (i.e., survival function).
-                Can be of shape = (n_samples, n_samples) if subject-specific survival is evaluated at ``time``,
-                or of shape = (n_samples, n_times) if subject-specific survival is evaluated at ``new_time``.
+                Can be of shape = (n_samples, n_samples) if subject-specific survival is evaluated at ``time``
+                (the entry at row i and column j corresponds to the survival for subject i at the `time` of subject j),
+                or of shape = (n_samples, n_times) if subject-specific survival is evaluated at ``new_time``
+                (the entry at row i and column j corresponds to the survival for subject i at the jth ``new_time``).
             event (torch.Tensor, bool):
                 Event indicator of size n_samples (= True if event occurred)
             time (torch.Tensor, float):
@@ -170,6 +173,10 @@ class BrierScore:
                 Graf1999
 
         """
+
+        # ensure event, time are squeezed
+        event = event.squeeze()
+        time = time.squeeze()
 
         # mandatory input format checks
         BrierScore._validate_brier_score_inputs(estimate, time, new_time, weight, weight_new_time)
@@ -490,17 +497,21 @@ class BrierScore:
 
         brier_score_se = self._brier_score_se()
 
-        if torch.all(brier_score_se) > 0:
-            ci = -torch.distributions.normal.Normal(0, 1).icdf(torch.tensor(alpha)) * brier_score_se
-            lower = torch.max(torch.tensor(0.0), self.brier_score - ci)
-            upper = torch.min(torch.tensor(1.0), self.brier_score + ci)
+        if torch.any(brier_score_se) == 0:
+            time_index = torch.where(brier_score_se == 0)
+            warnings.warn(
+                f"The standard error of the brier score at time index: {time_index}are zero. This indicates that the brier score is constant across all samples. Confidence interval will equal to the point estimate",
+                stacklevel=2,
+            )
 
-            if alternative == "less":
-                lower = torch.zeros_like(lower)
-            elif alternative == "greater":
-                upper = torch.ones_like(upper)
-        else:
-            raise ValueError("The standard error of the brier score must be a positive value.")
+        ci = -torch.distributions.normal.Normal(0, 1).icdf(torch.tensor(alpha)) * brier_score_se
+        lower = torch.max(torch.tensor(0.0), self.brier_score - ci)
+        upper = torch.min(torch.tensor(1.0), self.brier_score + ci)
+
+        if alternative == "less":
+            lower = torch.zeros_like(lower)
+        elif alternative == "greater":
+            upper = torch.ones_like(upper)
 
         return torch.stack([lower, upper], dim=0)
 
@@ -552,20 +563,22 @@ class BrierScore:
 
         brier_score_se = self._brier_score_se()
 
+        if torch.any(brier_score_se) == 0:
+            time_index = torch.where(brier_score_se == 0)
+            warnings.warn(
+                f"The standard error of the brier score at time index: {time_index} are zero. This indicates that the brier score is constant across all samples. Confidence interval will equal to the point estimate",
+                stacklevel=2,
+            )
+
         # get p-value
-        if torch.all(brier_score_se) > 0:
-            p = torch.distributions.normal.Normal(0, 1).cdf((self.brier_score - null_value) / brier_score_se)
-            if alternative == "two_sided":
-                mask = self.brier_score >= 0.5
-                p[mask] = 1 - p[mask]
-                p *= 2
-                p = torch.min(
-                    torch.tensor(1.0, device=self.brier_score.device), p
-                )  # in case critical value is below 0.5
-            elif alternative == "greater":
-                p = 1 - p
-        else:
-            raise ValueError("The standard error of the brier score must be a positive value.")
+        p = torch.distributions.normal.Normal(0, 1).cdf((self.brier_score - null_value) / brier_score_se)
+        if alternative == "two_sided":
+            mask = self.brier_score >= 0.5
+            p[mask] = 1 - p[mask]
+            p *= 2
+            p = torch.min(torch.tensor(1.0, device=self.brier_score.device), p)  # in case critical value is below 0.5
+        elif alternative == "greater":
+            p = 1 - p
 
         return p
 

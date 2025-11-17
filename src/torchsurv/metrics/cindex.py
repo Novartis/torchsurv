@@ -83,7 +83,8 @@ class ConcordanceIndex:
             estimate (torch.Tensor):
                 Estimated risk of event occurrence (i.e., risk score).
                 Can be of shape = (n_samples,) if subject-specific risk score is time-independent,
-                or of shape = (n_samples, n_samples) if subject-specific risk score is evaluated at ``time``.
+                or of shape = (n_samples, n_samples) if subject-specific risk score is evaluated at ``time``
+                (the entry at row i and column j corresponds to the risk score for subject i at the ``time`` of subject j).
             event (torch.Tensor, boolean):
                 Event indicator of size n_samples (= True if event occurred).
             time (torch.Tensor, float):
@@ -180,6 +181,11 @@ class ConcordanceIndex:
                 Uno2011
 
         """
+
+        # ensure event, time are squeezed
+        event = event.squeeze()
+        time = time.squeeze()
+
         # update inputs if necessary
         estimate = ConcordanceIndex._update_cindex_estimate(estimate)
         weight = ConcordanceIndex._update_weight(time, weight, tmax)

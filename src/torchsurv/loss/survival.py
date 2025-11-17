@@ -12,7 +12,7 @@ from torchsurv.tools.validate_data import (
     validate_survival_data,
 )
 
-__all__ = ["neg_log_likelihood_survival", "survival_function"]
+__all__ = ["neg_log_likelihood", "survival_function"]
 
 
 def _cumulative_hazard_trapezoid(
@@ -73,7 +73,7 @@ def _cumulative_hazard_trapezoid(
     )
 
 
-def neg_log_likelihood_survival(
+def neg_log_likelihood(
     log_hz: torch.Tensor,
     event: torch.Tensor,
     time: torch.Tensor,
@@ -87,6 +87,7 @@ def neg_log_likelihood_survival(
     Args:
         log_hz (torch.Tensor, float):
             Log hazard rates of shape = (n_samples, n_eval_time).
+            The entry at row i and column j corresponds to the log relative hazard for subject i at the jth ``n_eval_time``.
         event (torch.Tensor, bool):
             Event indicator (= True if event occurred) of shape = (n_samples,).
         time (torch.Tensor, float):
