@@ -80,7 +80,7 @@ pip install -e <repo-clone-directory>  # install for development ("editable")
 To install a specific package build e.g. into a local conda environment / virtualenv:
 
 ```bash
-python -mbuild
+python -m build
 # ... activate virtualenv
 # install the first tarball in dist
 pip install "$(set -- dist/*.tar.gz; echo "$1")"
