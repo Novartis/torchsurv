@@ -87,8 +87,10 @@ class Auc:
             estimate (torch.Tensor):
                 Estimated risk of event occurrence (i.e., risk score).
                 Can be of shape = (n_samples,) if subject-specific risk score is time-independent,
-                of shape = (n_samples, n_samples) if subject-specific risk score is evaluated at ``time``,
-                or of shape = (n_samples, n_times) if subject-specific risk score is evaluated at ``new_time``.
+                of shape = (n_samples, n_samples) if subject-specific risk score is evaluated at ``time``
+                (the entry at row i and column j corresponds to the risk score for subject i at the ``time`` of subject j),
+                or of shape = (n_samples, n_times) if subject-specific risk score is evaluated at ``new_time``
+                (the entry at row i and column j corresponds to the risk score for subject i at the jth ``new_time``).
             event (torch.Tensor, bool):
                 Event indicator of size n_samples (= True if event occurred).
             time (torch.Tensor, float):
@@ -200,6 +202,10 @@ class Auc:
                 Blanche2013
                 Uno2007
         """
+
+        # ensure event, time are squeezed
+        event = event.squeeze()
+        time = time.squeeze()
 
         # mandatory input format checks
         self._validate_auc_inputs(estimate, time, auc_type, new_time, weight, weight_new_time)
