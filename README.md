@@ -183,8 +183,8 @@ torch.Size([64, 2])
 Given the estimated log scale and log shape and the survival data, we calculate the current loss for the batch with:
 
 ```python
->>> from torchsurv.loss.weibull import neg_log_likelihood
->>> loss = neg_log_likelihood(log_params, event, time)
+>>> from torchsurv.loss.weibull import neg_log_likelihood_weibull
+>>> loss = neg_log_likelihood_weibull(log_params, event, time)
 >>> print(loss)
 tensor(82931.5078, grad_fn=<DivBackward0>)
 ```
@@ -193,12 +193,12 @@ To evaluate the predictive performance of the model, we calculate subject-specif
 
 ```python
 >>> from torchsurv.loss.weibull import log_hazard
->>> from torchsurv.loss.weibull import survival_function
+>>> from torchsurv.loss.weibull import survival_function_weibull
 >>> with torch.no_grad(): log_params = model_weibull(x)
 >>> log_hz = log_hazard(log_params, time)
 >>> print(log_hz.shape)
 torch.Size([64, 64])
->>> surv = survival_function(log_params, time)
+>>> surv = survival_function_weibull(log_params, time)
 >>> print(surv.shape)
 torch.Size([64, 64])
 ```

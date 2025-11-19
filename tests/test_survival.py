@@ -10,7 +10,7 @@ from lifelines.datasets import load_gbsg2, load_lung
 # Local modules
 from torchsurv.loss.survival import neg_log_likelihood as survival
 from torchsurv.loss.survival import survival_function
-from torchsurv.loss.weibull import survival_function as weibull_sf
+from torchsurv.loss.weibull import survival_function_weibull as weibull_sf
 
 # Load the benchmark cox log likelihoods from R
 with open("tests/benchmark_data/benchmark_weibull.json") as file:

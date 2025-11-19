@@ -142,7 +142,7 @@ class Momentum(nn.Module):
             ...     model_cox.forward(x, y, t)
             tensor(2.1366)
             >>> backbone = torch.nn.Sequential(torch.nn.Linear(16, 2))  # (lambda, rho)
-            >>> model_weibull = Momentum(backbone, loss=weibull.neg_log_likelihood)  # Weibull loss
+            >>> model_weibull = Momentum(backbone, loss=weibull.neg_log_likelihood_weibull)  # Weibull loss
             >>> with torch.no_grad():
             ...     torch.round(model_weibull.forward(x, y, t), decimals=2)
             tensor(68.0400)
@@ -174,7 +174,7 @@ class Momentum(nn.Module):
             >>> from torchsurv.loss import weibull
             >>> _ = torch.manual_seed(42)
             >>> backbone = torch.nn.Sequential(torch.nn.Linear(8, 2))  # Weibull expect two outputs
-            >>> model = Momentum(backbone=backbone, loss=weibull.neg_log_likelihood)
+            >>> model = Momentum(backbone=backbone, loss=weibull.neg_log_likelihood_weibull)
             >>> model.infer(torch.randn((3, 8)))
             tensor([[ 0.5342,  0.0062],
                     [ 0.6439,  0.7863],

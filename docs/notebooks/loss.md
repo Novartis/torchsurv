@@ -63,7 +63,7 @@ where $R(T_i)$ is the risk set at time $T_i$.
 
 The Weibull model loss is available through the function
 ```python
-from torchsurv.loss.weibull import neg_log_likelihood
+from torchsurv.loss.weibull import neg_log_likelihood_weibull
 ```
 
 **Hazard function.**

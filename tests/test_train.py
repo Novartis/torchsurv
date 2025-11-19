@@ -10,7 +10,7 @@ from utils import (
     SimpleLinearNNTwoParameters,
 )
 
-from torchsurv.loss.weibull import neg_log_likelihood as weibull
+from torchsurv.loss.weibull import neg_log_likelihood_weibull as weibull
 
 # set seed for reproducibility
 torch.manual_seed(42)

@@ -9,7 +9,7 @@ from lifelines import CoxPHFitter
 from lifelines.datasets import load_gbsg2, load_lung
 
 from torchsurv.loss.cox import neg_partial_log_likelihood as cox
-from torchsurv.loss.cox import baseline_survival_function, survival_function
+from torchsurv.loss.cox import baseline_survival_function, survival_function_cox
 from torchsurv.tools.validate_data import validate_survival_data
 
 # Load the benchmark cox log likelihoods from R
@@ -379,7 +379,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
         bsf = baseline_survival["baseline_survival"]
 
         # compute survival function with torchsurv
-        sf = survival_function(baseline_survival, log_hz, new_time)
+        sf = survival_function_cox(baseline_survival, log_hz, new_time)
 
         self.assertTrue(
             np.allclose(
@@ -430,7 +430,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
         bsf = baseline_survival["baseline_survival"]
 
         # compute survival function with torchsurv
-        sf = survival_function(baseline_survival, log_hz, new_time)
+        sf = survival_function_cox(baseline_survival, log_hz, new_time)
 
         self.assertTrue(
             np.allclose(
@@ -494,7 +494,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
         )
 
         # predict survival function torchsurv
-        surv = survival_function(baseline_survival, log_hz, new_time, strata)
+        surv = survival_function_cox(baseline_survival, log_hz, new_time, strata)
 
         # the baseline survival function correspond but not the individual survival function
         # the formula S0 ** h is respected on torchsurv (`surv`) but not on lifelines does (`surv_lifelines_numpy`).

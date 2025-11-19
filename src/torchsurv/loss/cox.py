@@ -19,7 +19,7 @@ __all__ = [
     "_partial_likelihood_breslow",
     "neg_partial_log_likelihood",
     "baseline_survival_function",
-    "survival_function",
+    "survival_function_cox",
 ]
 
 
@@ -606,7 +606,7 @@ def baseline_survival_function(
     return strata_results_list
 
 
-def survival_function(
+def survival_function_cox(
     baseline_survival: torch.Tensor,
     new_log_hz: torch.Tensor,
     new_time: torch.Tensor,
@@ -658,7 +658,7 @@ def survival_function(
         >>> baseline_survival = baseline_survival_function(log_hz, event, time)
         >>> new_log_hz = torch.tensor([0.15, 0.25])  # 2 new subjects
         >>> new_time = torch.tensor([2.5, 4.5])
-        >>> survival_function(baseline_survival, new_log_hz, new_time)
+        >>> survival_function_cox(baseline_survival, new_log_hz, new_time)
         tensor([[0.8433, 0.4024],
                 [0.8283, 0.3657]])
     """

@@ -8,7 +8,7 @@ from lifelines import WeibullAFTFitter
 from lifelines.datasets import load_gbsg2, load_lung
 
 # Local modules
-from torchsurv.loss.weibull import neg_log_likelihood as weibull
+from torchsurv.loss.weibull import neg_log_likelihood_weibull as weibull
 
 # Load the benchmark cox log likelihoods from R
 with open("tests/benchmark_data/benchmark_weibull.json") as file:

@@ -9,9 +9,9 @@ from torchsurv.tools.validate_data import (
 )
 
 __all__ = [
-    "neg_log_likelihood",
+    "neg_log_likelihood_weibull",
     "log_hazard",
-    "survival_function",
+    "survival_function_weibull",
 ]
 
 
@@ -138,7 +138,7 @@ def log_hazard(
     )
 
 
-def survival_function(
+def survival_function_weibull(
     new_log_params: torch.Tensor,
     new_time: torch.Tensor,
 ) -> torch.Tensor:
@@ -161,7 +161,7 @@ def survival_function(
     Examples:
         >>> new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]])  # 2 new subjects
         >>> new_time = torch.tensor([1.0, 2.0, 3.0, 4.0])
-        >>> survival_function(new_log_params, new_time)  #  Survival at new times
+        >>> survival_function_weibull(new_log_params, new_time)  #  Survival at new times
         tensor([[0.4383, 0.1342, 0.0340, 0.0075],
                 [0.4127, 0.1270, 0.0338, 0.0081]])
 
@@ -180,7 +180,7 @@ def survival_function(
     return 1 - torch.distributions.weibull.Weibull(torch.exp(log_scale), torch.exp(log_shape)).cdf(time)
 
 
-def neg_log_likelihood(
+def neg_log_likelihood_weibull(
     log_params: torch.Tensor,
     event: torch.Tensor,
     time: torch.Tensor,
@@ -253,11 +253,13 @@ def neg_log_likelihood(
         >>> log_params = torch.randn((n, 2), dtype=torch.float)
         >>> event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)
         >>> time = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)
-        >>> neg_log_likelihood(log_params, event, time)  # Default: mean of log likelihoods across subject
+        >>> neg_log_likelihood_weibull(log_params, event, time)  # Default: mean of log likelihoods across subject
         tensor(143039.2656)
-        >>> neg_log_likelihood(log_params, event, time, reduction="sum")  # Sum of log likelihoods across subject
+        >>> neg_log_likelihood_weibull(
+        ...     log_params, event, time, reduction="sum"
+        ... )  # Sum of log likelihoods across subject
         tensor(572157.0625)
-        >>> neg_log_likelihood(
+        >>> neg_log_likelihood_weibull(
         ...     torch.randn((n, 1), dtype=torch.float), event, time
         ... )  # Missing shape: exponential distribution
         tensor(67.4289)
