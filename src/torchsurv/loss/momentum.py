@@ -151,13 +151,13 @@ class Momentum(nn.Module):
 
         online_estimate = self.online(inputs)
         for estimate in zip(online_estimate, event, time):
-            self.memory_q.append(self.survtuple(*estimate))
+            self.memory_q.append(self.survtuple(*estimate))  # type: ignore
         loss = self._bank_loss()
         with torch.no_grad():
             self._update_momentum_encoder()
             target_estimate = self.target(inputs)
             for estimate in zip(target_estimate, event, time):
-                self.memory_k.append(self.survtuple(*estimate))
+                self.memory_k.append(self.survtuple(*estimate))  # type: ignore
         return loss
 
     @torch.no_grad()  # deactivates autograd
@@ -182,7 +182,8 @@ class Momentum(nn.Module):
 
         """
         self.target.eval()  # notify all your layers that you are in eval mode
-        return self.target(inputs)
+        outputs: torch.Tensor = self.target(inputs)
+        return outputs
 
     def _bank_loss(self) -> torch.Tensor:
         """compute the negative log-likelihood from memory bank"""
@@ -193,16 +194,17 @@ class Momentum(nn.Module):
         log_estimates = torch.stack([mem.estimate.cpu() for mem in bank]).squeeze()
         events = torch.stack([mem.event.cpu() for mem in bank]).squeeze()
         times = torch.stack([mem.time.cpu() for mem in bank]).squeeze()
-        return self.loss(log_estimates, events, times)
+        loss: torch.Tensor = self.loss(log_estimates, events, times)
+        return loss
 
     @torch.no_grad()
-    def _update_momentum_encoder(self):
+    def _update_momentum_encoder(self) -> None:
         """Exponential moving average"""
         for param_b, param_m in zip(self.online.parameters(), self.target.parameters()):
             param_m.data = param_m.data * self.rate + param_b.data * (1.0 - self.rate)
 
     @torch.no_grad()
-    def _init_encoder_k(self):
+    def _init_encoder_k(self) -> None:
         """
         Initialize the target network (encoder_k) with the parameters of the online network (encoder_q).
         The requires_grad attribute of the target network parameters is set to False to prevent gradient updates during training,

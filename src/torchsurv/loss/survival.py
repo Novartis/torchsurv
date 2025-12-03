@@ -21,7 +21,7 @@ def _cumulative_hazard_trapezoid(
     eval_time: torch.Tensor,
     respective_times: bool = False,
     clamp_value: float = 1e10,
-):
+) -> torch.Tensor:
     r"""
     Cumulative hazard for a survival model approximated with the trapezoid method.
 
@@ -66,11 +66,7 @@ def _cumulative_hazard_trapezoid(
             hz_eval = torch.exp(new_log_hz[:, mask_time])
             cum_hazard[:, t] = torch.trapezoid(hz_eval, t_eval, dim=1)
 
-    return torch.clamp(
-        cum_hazard,
-        min=0,
-        max=clamp_value,
-    )
+    return torch.clamp(cum_hazard, min=0, max=clamp_value)
 
 
 def neg_log_likelihood(
@@ -189,16 +185,18 @@ def neg_log_likelihood(
     log_hz_at_time = torch.zeros_like(time)
     for i in range(len(event)):
         # Find nearest index
-        idx_last = torch.searchsorted(eval_time, time[i], right=True) - 1
+        idx_last = torch.searchsorted(eval_time, time[i], right=True) - torch.tensor(1)
         log_hz_at_time[i] = log_hz[i, idx_last.clamp(min=0)]
 
     # Negative log likelihood contribution
     nll_all = -(event * log_hz_at_time) + cum_hazard
 
     if reduction.lower() == "mean":
-        return nll_all.mean()
+        mean_nll: torch.Tensor = nll_all.mean()
+        return mean_nll
     elif reduction.lower() == "sum":
-        return nll_all.sum()
+        sum_nll: torch.Tensor = nll_all.sum()
+        return sum_nll
     else:
         raise ValueError(f"Reduction {reduction} not supported, use 'mean' or 'sum'.")
 

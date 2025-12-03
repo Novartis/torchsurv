@@ -47,7 +47,8 @@ def _partial_likelihood_cox(
         log_nominator = log_nominator.diagonal()
         log_denominator = log_denominator.diagonal()
 
-    return (log_nominator - log_denominator)[event_sorted]
+    result: torch.Tensor = (log_nominator - log_denominator)[event_sorted]
+    return result
 
 
 def _partial_likelihood_efron(
@@ -112,7 +113,10 @@ def _partial_likelihood_efron(
         mk = int(m[k].item())
         for r in range(1, mk + 1):
             log_denominator_efron[k] += torch.log(denominator_naive[k] - (r - 1) / float(m[k]) * denominator_ties[k])
-    return (log_nominator - log_denominator_efron)[include]
+
+    # Define results
+    results: torch.Tensor = (log_nominator - log_denominator_efron)[include]
+    return results
 
 
 def _partial_likelihood_breslow(
@@ -120,7 +124,7 @@ def _partial_likelihood_breslow(
     event_sorted: torch.Tensor,
     time_sorted: torch.Tensor,
     is_time_varying_log_hz: bool,
-):
+) -> torch.Tensor:
     """
     Compute the partial likelihood using Breslow's method for Cox proportional hazards model.
 
@@ -170,7 +174,9 @@ def _partial_likelihood_breslow(
         # log denominator
         log_denominator = torch.stack([torch.logsumexp(log_hz_sorted[r], dim=0) for r in R])
 
-    return (log_nominator - m * log_denominator)[include]
+    # Define results
+    results: torch.Tensor = (log_nominator - m * log_denominator)[include]
+    return results
 
 
 def _cumulative_baseline_hazard(
@@ -405,6 +411,7 @@ def neg_partial_log_likelihood(
     if checks and is_time_varying_log_hz:
         validate_time_varying_log_hz(time_sorted, log_hz_sorted)
 
+    assert strata is not None  # for mypy
     strata_sorted = strata[idx]
     strata_unique = torch.unique(strata_sorted)
 
@@ -454,21 +461,22 @@ def neg_partial_log_likelihood(
     # Negative partial log likelihood
     pll = torch.neg(torch.cat(pll))
     if reduction.lower() == "mean":
-        loss = pll.nanmean()
+        mean_loss: torch.Tensor = pll.nanmean()
+        return mean_loss
     elif reduction.lower() == "sum":
-        loss = pll.sum()
+        sum_loss: torch.Tensor = pll.sum()
+        return sum_loss
     else:
         raise (ValueError(f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."))
-    return loss
 
 
 def baseline_survival_function(
     log_hz: torch.Tensor,
     event: torch.Tensor,
     time: torch.Tensor,
-    strata: torch.Tensor = None,
+    strata: Optional[torch.Tensor] = None,
     checks: bool = True,
-) -> torch.Tensor:
+) -> dict[int, dict[str, torch.Tensor]]:
     r"""Compute the baseline survival function for the Cox proportional hazards model with Breslow's method.
 
     Args:
@@ -557,6 +565,8 @@ def baseline_survival_function(
     # sort data by event or censoring time
     time_sorted, idx = torch.sort(time)
     event_sorted = event[idx]
+
+    assert strata is not None  # for mypy
     strata_sorted = strata[idx]
 
     if is_time_varying_log_hz:
@@ -570,7 +580,7 @@ def baseline_survival_function(
 
     strata_unique = torch.unique(strata_sorted)
 
-    strata_results_list = {}
+    strata_results = {}
     for str in strata_unique:
         mask = strata_sorted == str
         event_sorted_stratum = event_sorted[mask]
@@ -591,26 +601,26 @@ def baseline_survival_function(
         # return baseline survival function
         if len(strata_unique) == 1:
             # unique strata
-            strata_results_list = {
+            strata_results = {
                 "time": torch.unique(time_unique_strata),
                 "baseline_survival": torch.exp(-cumulative_baseline_hazard_strata),
             }
         else:
             # multiple strata
             key = int(str.item())
-            strata_results_list[key] = {
+            strata_results[key] = {  # type: ignore
                 "time": torch.unique(time_unique_strata),
                 "baseline_survival": torch.exp(-cumulative_baseline_hazard_strata),
             }
 
-    return strata_results_list
+    return strata_results
 
 
 def survival_function_cox(
     baseline_survival: torch.Tensor,
     new_log_hz: torch.Tensor,
     new_time: torch.Tensor,
-    new_strata: torch.Tensor = None,
+    new_strata: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     r"""Compute the individual survival function for new subjects for the Cox proportional hazards model.
 
@@ -703,7 +713,7 @@ def survival_function_cox(
         bs_stratum = baseline_survival_strata["baseline_survival"]
 
         # Index of the largest element in time that is ≤ new_time
-        time_index = torch.searchsorted(time_stratum, new_time, right=True) - 1
+        time_index = torch.searchsorted(time_stratum, new_time, right=True) - torch.tensor(1)
         time_index[time_index == -1] = 0
 
         # baseline survival at new_time
