@@ -46,7 +46,6 @@ def _partial_likelihood_efron(
         log_hz_sorted (torch.Tensor, float): Log hazard rates sorted by time.
         event_sorted (torch.Tensor, bool): Binary tensor indicating if the event occurred (True) or was censored (False), sorted by time.
         time_sorted (torch.Tensor, float): Event or censoring times sorted in ascending order.
-        time_unique (torch.Tensor, float): Event or censoring times sorted without ties.
 
     Returns:
         torch.Tensor: partial log likelihood for the Cox proportional hazards model using Efron's method to handle ties in event time.
