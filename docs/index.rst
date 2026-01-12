@@ -7,6 +7,7 @@ Welcome to TorchSurv's documentation!
 .. toctree::
     :maxdepth: 2
     :caption: API:
+    :hidden:
 
     loss
     metrics
@@ -15,6 +16,7 @@ Welcome to TorchSurv's documentation!
 .. toctree::
     :maxdepth: 2
     :caption: Tutorials:
+    :hidden:
 
     notebooks/introduction
     notebooks/momentum
@@ -31,16 +33,19 @@ Welcome to TorchSurv's documentation!
 .. toctree::
     :maxdepth: 2
     :caption: Other:
+    :hidden:
 
     CHANGELOG
-    AUTHORS
+    CODEOWNERS-copy
+    CONTRIBUTING-copy
+    CODE_OF_CONDUCT-copy
     devnotes
     benchmarks
 
 
-Indices and tables
-==================
+.. Indices and tables
+.. ==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. * :ref:`genindex`
+.. * :ref:`modindex`
+.. * :ref:`search`
