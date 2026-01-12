@@ -39,22 +39,19 @@ def collate_fn(batch):
 
 
 def expand_log_hz(id, start, time, log_hz_short):
-    ids = torch.unique_consecutive(id)
-    n = len(ids)
+    id_unique = torch.unique_consecutive(id)
+    n = len(id_unique)
 
     log_hz = torch.zeros((n, len(time)), device=log_hz_short.device)
 
-    for idx, _id in enumerate(ids):
+    for idx, _id in enumerate(id_unique):
         id_idx = id == _id
 
         # Which row within this id to use
         time_idx = torch.searchsorted(start[id_idx], time, right=True) - 1
 
         # Slice out the correct hazard value
-        value = log_hz_short[id_idx][time_idx].squeeze()
-
-        # Repeat the value across the entire row (your original behavior)
-        log_hz[idx, :] = value
+        log_hz[idx, :] = log_hz_short[id_idx][time_idx].squeeze()
 
     return log_hz
 

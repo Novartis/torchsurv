@@ -60,7 +60,7 @@ where $R(T_i)$ is the risk set at time $T_i$.
 
 **Assumptions.**
 
-- The function $f_\theta$ does not depend on time (i.e., recurrent neural networks or other time-dependent architectures cannot be used). In other words, time-varying covariates are allowed but not time-varying parameters.
+- The function $f_\theta$ does not depend on time.
 - Proportional hazards: the relative hazard does not vary with time conditional on the covariates.
 - Independence between censoring and event times.
 - Correct specification of the covariate effect (linear in standard Cox, flexible in `TorchSurv` neural network).
@@ -118,7 +118,7 @@ Yes, the extended Cox model can handle time-varying covariates. However, it assu
 
 #### What type of neural networks (NNs) can be used with the Cox model for time-varying covariates?
 
-In the extended Cox model implemented in `TorchSurv`, only neural networks that produce a fixed mapping from covariates to relative hazard can be used. This means that the network function $f_\theta$ must be independent of time; recurrent or other time-dependent architectures (e.g., RNNs, LSTMs, or temporal convolutional networks) violate this assumption. Essentially, each time-varying covariate vector $\mathbf{x}_i(t)$ is treated independently at its observed time points, and the same network parameters are applied across all times.
+In the extended Cox model implemented in `TorchSurv`, only neural networks that produce a fixed mapping from covariates to relative hazard can be used. This means that the network function $f_\theta$ must be independent of time. Essentially, each time-varying covariate vector $\mathbf{x}_i(t)$ is treated independently at its observed time points, and the same network parameters are applied across all times.
 
 
 #### What is the difference between the Cox model and the flexible survival model?
