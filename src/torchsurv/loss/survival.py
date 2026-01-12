@@ -108,23 +108,23 @@ def neg_log_likelihood(
         (argument ``time``).
 
         Further, let :math:`\tau_1 < \tau_2 < \cdots < \tau_M` be the evaluation times (argument ``eval_time``), and
-        :math:`\lambda_i(\tau)` be the hazard function for subject :math:`i` at time :math:`\tau` (argument ``log_hz``).
+        :math:`\log h_i(\tau)` be the log hazard function for subject :math:`i` at time :math:`\tau` (argument ``log_hz``).
 
         The (continuous) log-likelihood for the survival model is given by:
 
         .. math::
 
-            \text{ll} = - \sum_{i=1}^N \left( \delta_i \log \lambda_i(T_i) - \int_0^{T_i} \lambda_i(u) du \right).
+            \text{ll} = - \sum_{i=1}^N \left( \delta_i \log h_i(T_i) - \int_0^{T_i} h_i(u) du \right).
 
         We approximate the cumulative hazard term using the trapezoidal rule evaluated at discrete
         times :math:`\{\tau_1, \tau_2, \ldots, \tau_M\}`:
 
         .. math::
 
-            \int_0^{T_i} \lambda_i(u)\,du
+            \int_0^{T_i} h_i(u)\,du
             \;\approx\;
             \sum_{k=2}^{K_i}
-                \frac{\lambda_i(\tau_{k-1}) + \lambda_i(\tau_k)}{2}
+                \frac{h_i(\tau_{k-1}) + h_i(\tau_k)}{2}
                 \, (\tau_k - \tau_{k-1}),
 
         where :math:`K_i = \max\{\,k : \tau_k \le T_i\,\}` is the index of the largest evaluation time not
@@ -137,9 +137,9 @@ def neg_log_likelihood(
 
         .. math::
 
-            \log \lambda_i(T_i)
+            \log h_i(T_i)
             \;\approx\;
-            \log \lambda_i(\tau_{K_i}),
+            \log h_i(\tau_{K_i}),
             \quad
             \text{where }
             K_i = \max\{\,k : \tau_k \le T_i\,\}.
@@ -179,7 +179,9 @@ def neg_log_likelihood(
         validate_eval_time(log_hz, eval_time)
 
     # Cumulative hazard
-    cum_hazard = _cumulative_hazard_trapezoid(log_hz, time, eval_time, respective_times=True)
+    cum_hazard = _cumulative_hazard_trapezoid(
+        log_hz, time, eval_time, respective_times=True
+    )
 
     # Log hazard at exact observed time (interpolate last point)
     log_hz_at_time = torch.zeros_like(time)
@@ -228,17 +230,17 @@ def survival_function(
 
     Note:
         Let let :math:`\tau_1 < \tau_2 < \cdots < \tau_M` be the evaluation times (argument ``eval_time``), and
-        :math:`\lambda^{\star}_i(\tau)` be the hazard function for new subject :math:`i` at
+        :math:`\log h^{\star}_i(\tau)` be the log hazard function for new subject :math:`i` at
         time :math:`\tau` (argument ``new_log_hz``).
 
         The estimated survival function for new subject $i$ under the survival model is given by:
 
         .. math::
 
-            \hat{S}_i(t) = \exp\left(- \int_0^t \lambda_i^{\star}(u) du\right).
+            \hat{S}_i(t) = \exp\left(- \int_0^t thh_i^{\star}(u) du\right).
 
 
-        The cumulative hazard term, i.e. :math:`\int_0^t \lambda_i^{\star}(u) du`, is approximated using the trapezoidal rule evaluated at discrete
+        The cumulative hazard term, i.e. :math:`\int_0^t h_i^{\star}(u) du`, is approximated using the trapezoidal rule evaluated at discrete
         times :math:`\{\tau_1, \tau_2, \ldots, \tau_M\}`. The integration begins at :math:`\tau_1`,
         which should represent the start of observation (often :math:`\tau_1 = 0`).
 
