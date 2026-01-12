@@ -712,9 +712,13 @@ def survival_function_cox(
         time_stratum = baseline_survival_strata["time"]
         bs_stratum = baseline_survival_strata["baseline_survival"]
 
-        # Index of the largest element in time that is ≤ new_time
+        # new_time values may not exactly match any entry in time_stratum
+        # Index of last time_stratum value <= new_time (floor index)
         time_index = torch.searchsorted(time_stratum, new_time, right=True) - torch.tensor(1)
-        time_index[time_index == -1] = 0
+
+        # If new_time is smaller than the first element of time_stratum,
+        # Clamp these cases to 0 so we use the earliest available time point.
+        time_index = time_index.clamp(min=0)
 
         # baseline survival at new_time
         bs_stratum_new_time = bs_stratum[time_index]
