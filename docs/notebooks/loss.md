@@ -3,7 +3,7 @@
 
 * **Author**: Mélodie Monod
 
-### Introduction 
+### Introduction
 
 In this document, we describe the mathematical formulation and assumptions behind the survival models' loss implemented in the `loss` module of `TorchSurv`.
 
@@ -132,7 +132,7 @@ from torchsurv.loss.survival import neg_log_likelihood
 
 **Hazard function.**
 When no specific parametric form for the hazard function is assumed, `TorchSurv` allows the model to learn the hazard function $h_i(t)$ directly from a neural network.
-In this framework, the network takes the covariates $\mathbf{x}_i$ (and optionally time $t$) as input and outputs an estimate of the instantaneous log hazard rate, 
+In this framework, the network takes the covariates $\mathbf{x}_i$ (and optionally time $t$) as input and outputs an estimate of the instantaneous log hazard rate,
 
 $$
 \log h_i(t) = f_{\theta}(\mathbf{x}_i, t)

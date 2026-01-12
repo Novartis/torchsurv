@@ -79,10 +79,7 @@ def _partial_likelihood_efron(
     K = len(time_unique)
 
     # H[k] = indices of subjects who experienced an event at time_unique[k]
-    H = [
-        torch.where((time_sorted == time_unique[k]) & (event_sorted))[0]
-        for k in range(K)
-    ]
+    H = [torch.where((time_sorted == time_unique[k]) & (event_sorted))[0] for k in range(K)]
 
     # R[k] = indices of subjects who are still at risk at time_unique[k]
     R = [torch.where(time_sorted >= time_unique[k])[0] for k in range(K)]
@@ -99,34 +96,23 @@ def _partial_likelihood_efron(
 
         # denominator
         denominator_naive = torch.stack(
-            [
-                torch.sum(torch.exp(log_hz_sorted[R[k]][:, H[k]][:, :1]))
-                for k in range(K)
-            ]
+            [torch.sum(torch.exp(log_hz_sorted[R[k]][:, H[k]][:, :1])) for k in range(K)]
         )  # the columns are identifical for tied time points
-        denominator_ties = torch.stack(
-            [torch.sum(torch.exp(log_hz_sorted[h, h])) for h in H]
-        )
+        denominator_ties = torch.stack([torch.sum(torch.exp(log_hz_sorted[h, h])) for h in H])
     else:
         # log nominator
         log_nominator = torch.stack([torch.sum(log_hz_sorted[h]) for h in H])
 
         # denominator
-        denominator_naive = torch.stack(
-            [torch.sum(torch.exp(log_hz_sorted[r])) for r in R]
-        )
-        denominator_ties = torch.stack(
-            [torch.sum(torch.exp(log_hz_sorted[h])) for h in H]
-        )
+        denominator_naive = torch.stack([torch.sum(torch.exp(log_hz_sorted[r])) for r in R])
+        denominator_ties = torch.stack([torch.sum(torch.exp(log_hz_sorted[h])) for h in H])
 
     # log denominator
     log_denominator_efron = torch.zeros(K, device=log_hz_sorted.device)
     for k in range(K):
         mk = int(m[k].item())
         for r in range(1, mk + 1):
-            log_denominator_efron[k] += torch.log(
-                denominator_naive[k] - (r - 1) / float(m[k]) * denominator_ties[k]
-            )
+            log_denominator_efron[k] += torch.log(denominator_naive[k] - (r - 1) / float(m[k]) * denominator_ties[k])
 
     # Define results
     results: torch.Tensor = (log_nominator - log_denominator_efron)[include]
@@ -163,10 +149,7 @@ def _partial_likelihood_breslow(
     K = len(time_unique)
 
     # H[k] = indices of subjects who experienced an event at time_unique[k]
-    H = [
-        torch.where((time_sorted == time_unique[k]) & (event_sorted))[0]
-        for k in range(K)
-    ]
+    H = [torch.where((time_sorted == time_unique[k]) & (event_sorted))[0] for k in range(K)]
 
     # R[k] = indices of subjects who are still at risk"at time_unique[k]
     R = [torch.where(time_sorted >= time_unique[k])[0] for k in range(K)]
@@ -183,18 +166,13 @@ def _partial_likelihood_breslow(
 
         # log denominator
         log_denominator = torch.stack(
-            [
-                torch.sum(torch.logsumexp(log_hz_sorted[R[k]][:, H[k]][:, :1], dim=0))
-                for k in range(K)
-            ]
+            [torch.sum(torch.logsumexp(log_hz_sorted[R[k]][:, H[k]][:, :1], dim=0)) for k in range(K)]
         )  # the columns are identifical for tied time points; sum to handle empty tensor with 0.0
     else:
         log_nominator = torch.stack([torch.sum(log_hz_sorted[h]) for h in H])
 
         # log denominator
-        log_denominator = torch.stack(
-            [torch.logsumexp(log_hz_sorted[r], dim=0) for r in R]
-        )
+        log_denominator = torch.stack([torch.logsumexp(log_hz_sorted[r], dim=0) for r in R])
 
     # Define results
     results: torch.Tensor = (log_nominator - m * log_denominator)[include]
@@ -231,10 +209,7 @@ def _cumulative_baseline_hazard(
     K = len(time_unique)
 
     # H[k] = indices of subjects who experienced an event at time_unique[k]
-    H = [
-        torch.where((time_sorted == time_unique[k]) & (event_sorted))[0]
-        for k in range(K)
-    ]
+    H = [torch.where((time_sorted == time_unique[k]) & (event_sorted))[0] for k in range(K)]
 
     # R[k] = indices of subjects who are still at risk"at time_unique[k]
     R = [torch.where(time_sorted >= time_unique[k])[0] for k in range(K)]
@@ -245,15 +220,10 @@ def _cumulative_baseline_hazard(
     # log denominator
     if is_time_varying_log_hz:
         log_denominator = torch.stack(
-            [
-                torch.sum(torch.logsumexp(log_hz_sorted[R[k]][:, H[k]][:, :1], dim=0))
-                for k in range(K)
-            ]
+            [torch.sum(torch.logsumexp(log_hz_sorted[R[k]][:, H[k]][:, :1], dim=0)) for k in range(K)]
         )  # the columns are identifical for tied time points; sum to handle empty tensor with 0.0
     else:
-        log_denominator = torch.stack(
-            [torch.logsumexp(log_hz_sorted[r], dim=0) for r in R]
-        )
+        log_denominator = torch.stack([torch.logsumexp(log_hz_sorted[r], dim=0) for r in R])
 
     return torch.cumsum(m / torch.exp(log_denominator), dim=0)
 
@@ -451,24 +421,14 @@ def neg_partial_log_likelihood(
         mask = strata_sorted == stratum
         event_stratum = event_sorted[mask]
         time_stratum = time_sorted[mask]
-        log_hz_stratum = (
-            log_hz_sorted[:, mask][mask, :]
-            if is_time_varying_log_hz
-            else log_hz_sorted[mask]
-        )
+        log_hz_stratum = log_hz_sorted[:, mask][mask, :] if is_time_varying_log_hz else log_hz_sorted[mask]
 
         # Determine whether there are ties in event time
-        has_ties = len(torch.unique(time_stratum[event_stratum])) != len(
-            time_stratum[event_stratum]
-        )
+        has_ties = len(torch.unique(time_stratum[event_stratum])) != len(time_stratum[event_stratum])
 
         if not has_ties:
             # No ties → use standard Cox
-            pll.append(
-                _partial_likelihood_cox(
-                    log_hz_stratum, event_stratum, is_time_varying_log_hz
-                )
-            )
+            pll.append(_partial_likelihood_cox(log_hz_stratum, event_stratum, is_time_varying_log_hz))
         else:
             # Warn about ties and select appropriate method
             warnings.warn(
@@ -496,9 +456,7 @@ def neg_partial_log_likelihood(
                     )
                 )
             else:
-                raise ValueError(
-                    f'Ties method {ties_method} should be one of ["efron", "breslow"]'
-                )
+                raise ValueError(f'Ties method {ties_method} should be one of ["efron", "breslow"]')
 
     # Negative partial log likelihood
     pll = torch.neg(torch.cat(pll))
@@ -509,11 +467,7 @@ def neg_partial_log_likelihood(
         sum_loss: torch.Tensor = pll.sum()
         return sum_loss
     else:
-        raise (
-            ValueError(
-                f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."
-            )
-        )
+        raise (ValueError(f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."))
 
 
 def baseline_survival_function(
@@ -630,11 +584,7 @@ def baseline_survival_function(
         mask = strata_sorted == str
         event_sorted_stratum = event_sorted[mask]
         time_sorted_stratum = time_sorted[mask]
-        log_hz_stratum = (
-            log_hz_sorted[:, mask][mask, :]
-            if is_time_varying_log_hz
-            else log_hz_sorted[mask]
-        )
+        log_hz_stratum = log_hz_sorted[:, mask][mask, :] if is_time_varying_log_hz else log_hz_sorted[mask]
 
         # event or censoring time without ties
         time_unique_strata = torch.unique(time_sorted_stratum)
@@ -723,9 +673,7 @@ def survival_function_cox(
 
     # if no strata specified, every new subject if in the same strata
     if new_strata is None:
-        new_strata = torch.ones(
-            len(new_log_hz), device=new_log_hz.device, dtype=torch.long
-        )
+        new_strata = torch.ones(len(new_log_hz), device=new_log_hz.device, dtype=torch.long)
 
     # ensure log_hz, new_time, new_strata are squeezed
     new_log_hz = new_log_hz.squeeze()
@@ -751,9 +699,7 @@ def survival_function_cox(
         new_log_hz_stratum = new_log_hz[mask]
 
         # get baseline survival for the stratum
-        if isinstance(baseline_survival, dict) and all(
-            isinstance(v, dict) for v in baseline_survival.values()
-        ):
+        if isinstance(baseline_survival, dict) and all(isinstance(v, dict) for v in baseline_survival.values()):
             # multiple strata
             key = int(str.item())
             baseline_survival_strata = baseline_survival[key]
@@ -766,9 +712,7 @@ def survival_function_cox(
 
         # new_time values may not exactly match any entry in time_stratum
         # Index of last time_stratum value <= new_time (floor index)
-        time_index = torch.searchsorted(
-            time_stratum, new_time, right=True
-        ) - torch.tensor(1)
+        time_index = torch.searchsorted(time_stratum, new_time, right=True) - torch.tensor(1)
 
         # If new_time is smaller than the first element of time_stratum,
         # Clamp these cases to 0 so we use the earliest available time point.
@@ -779,13 +723,9 @@ def survival_function_cox(
 
         # survival at new_time
         if is_time_varying_log_hz:
-            individual_survival[mask] = bs_stratum_new_time ** torch.exp(
-                new_log_hz_stratum
-            )
+            individual_survival[mask] = bs_stratum_new_time ** torch.exp(new_log_hz_stratum)
         else:
-            individual_survival[mask] = bs_stratum_new_time.unsqueeze(0) ** torch.exp(
-                new_log_hz_stratum
-            ).unsqueeze(1)
+            individual_survival[mask] = bs_stratum_new_time.unsqueeze(0) ** torch.exp(new_log_hz_stratum).unsqueeze(1)
 
     return individual_survival
 

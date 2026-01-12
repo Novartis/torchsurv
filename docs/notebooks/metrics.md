@@ -4,7 +4,7 @@
 <!-- ## Predictive accuracy evaluation metrics for survival model -->
 
 * **Author**: Mélodie Monod
-  
+
 ### Introduction
 
 The evaluation metrics for assessing the predictive performance of a model depend greatly on the type of response variable. For instance, mean squared error (MSE) or mean absolute error (MAE) are commonly used for continuous response data. In contrast, for binary data, metrics such as true positive rate (TPR) and true negative rate (TNR) are utilized. This document presents evaluation metrics specifically designed for survival data, where the response variable is the time to an event.
@@ -179,8 +179,8 @@ $$
 C = p(q_i(X_i) > q_j(X_i) | X_i < X_j)
 $$
 
-which represents the probability that, at the time when $i$ experiences the event, 
-the risk score of subject $i$ exceeds the risk score of subject $j$, 
+which represents the probability that, at the time when $i$ experiences the event,
+the risk score of subject $i$ exceeds the risk score of subject $j$,
 given that subject $i$ experiences the event before subject $j$.
 
 It can be shown that the C-index is related to the incidence/dynamic AUC, specifically

@@ -179,9 +179,7 @@ def neg_log_likelihood(
         validate_eval_time(log_hz, eval_time)
 
     # Cumulative hazard
-    cum_hazard = _cumulative_hazard_trapezoid(
-        log_hz, time, eval_time, respective_times=True
-    )
+    cum_hazard = _cumulative_hazard_trapezoid(log_hz, time, eval_time, respective_times=True)
 
     # Log hazard at exact observed time (interpolate last point)
     log_hz_at_time = torch.zeros_like(time)
