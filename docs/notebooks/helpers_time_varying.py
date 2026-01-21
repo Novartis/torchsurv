@@ -3,13 +3,15 @@ import torch
 
 
 class GroupedDataset(torch.utils.data.Dataset):
-    def __init__(self, df):
+    def __init__(self, df) -> None:
         self.groups = [g for _, g in df.groupby("id")]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.groups)
 
-    def __getitem__(self, idx):
+    def __getitem__(
+        self, idx
+    ):  # -> tuple[Tensor, tuple, Tensor, Tensor]:# -> tuple[Tensor, tuple, Tensor, Tensor]:# -> tuple[Tensor, tuple, Tensor, Tensor]:# -> tuple[Tensor, tuple, Tensor, Tensor]:# -> tuple[Tensor, tuple, Tensor, Tensor]:# -> tuple[Tensor, tuple, Tensor, Tensor]:
         sample = self.groups[idx]
         # Targets
         event = torch.unique_consecutive(torch.tensor(sample["event_at_time"].values).bool())
@@ -56,7 +58,7 @@ def expand_log_hz(id, start, time, log_hz_short):
     return log_hz
 
 
-def expand_log_hz_survival(id, start, time, log_hz_long):
+def expand_log_hz_survival(id, start, time, log_hz_long) -> torch.Tensor:
     ids = torch.unique_consecutive(id)
     n = len(ids)
 
