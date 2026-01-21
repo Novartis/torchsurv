@@ -144,7 +144,7 @@ class Momentum(nn.Module):
             ...     model_cox.forward(x, y, t)
             tensor(2.1366)
             >>> backbone = torch.nn.Sequential(torch.nn.Linear(16, 2))  # (lambda, rho)
-            >>> model_weibull = Momentum(backbone, loss=weibull.neg_log_likelihood)  # Weibull loss
+            >>> model_weibull = Momentum(backbone, loss=weibull.neg_log_likelihood_weibull)  # Weibull loss
             >>> with torch.no_grad():
             ...     torch.round(model_weibull.forward(x, y, t), decimals=2)
             tensor(68.0400)
@@ -153,13 +153,13 @@ class Momentum(nn.Module):
 
         online_estimate = self.online(inputs)
         for estimate in zip(online_estimate, event, time):
-            self.memory_q.append(self.survtuple(*estimate))
+            self.memory_q.append(self.survtuple(*estimate))  # type: ignore
         loss = self._bank_loss()
         with torch.no_grad():
             self._update_momentum_encoder()
             target_estimate = self.target(inputs)
             for estimate in zip(target_estimate, event, time):
-                self.memory_k.append(self.survtuple(*estimate))
+                self.memory_k.append(self.survtuple(*estimate))  # type: ignore
         return loss
 
     @torch.no_grad()  # deactivates autograd
@@ -176,7 +176,7 @@ class Momentum(nn.Module):
             >>> from torchsurv.loss import weibull
             >>> _ = torch.manual_seed(42)
             >>> backbone = torch.nn.Sequential(torch.nn.Linear(8, 2))  # Weibull expect two outputs
-            >>> model = Momentum(backbone=backbone, loss=weibull.neg_log_likelihood)
+            >>> model = Momentum(backbone=backbone, loss=weibull.neg_log_likelihood_weibull)
             >>> model.infer(torch.randn((3, 8)))
             tensor([[ 0.5342,  0.0062],
                     [ 0.6439,  0.7863],
@@ -184,7 +184,8 @@ class Momentum(nn.Module):
 
         """
         self.target.eval()  # notify all your layers that you are in eval mode
-        return self.target(inputs)
+        outputs: torch.Tensor = self.target(inputs)
+        return outputs
 
     def _bank_loss(self) -> torch.Tensor:
         """compute the negative log-likelihood from memory bank"""
@@ -195,16 +196,17 @@ class Momentum(nn.Module):
         log_estimates = torch.stack([mem.estimate.cpu() for mem in bank]).squeeze()
         events = torch.stack([mem.event.cpu() for mem in bank]).squeeze()
         times = torch.stack([mem.time.cpu() for mem in bank]).squeeze()
-        return self.loss(log_estimates, events, times)
+        loss: torch.Tensor = self.loss(log_estimates, events, times)
+        return loss
 
     @torch.no_grad()
-    def _update_momentum_encoder(self):
+    def _update_momentum_encoder(self) -> None:
         """Exponential moving average"""
         for param_b, param_m in zip(self.online.parameters(), self.target.parameters()):
             param_m.data = param_m.data * self.rate + param_b.data * (1.0 - self.rate)
 
     @torch.no_grad()
-    def _init_encoder_k(self):
+    def _init_encoder_k(self) -> None:
         """
         Initialize the target network (encoder_k) with the parameters of the online network (encoder_q).
         The requires_grad attribute of the target network parameters is set to False to prevent gradient updates during training,

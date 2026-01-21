@@ -32,6 +32,12 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinxcontrib.bibtex",
     "sphinx_math_dollar",
+    "sphinx.ext.mathjax",
+]
+
+myst_enable_extensions = [
+    "amsmath",
+    "dollarmath",
 ]
 
 

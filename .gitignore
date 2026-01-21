@@ -65,5 +65,9 @@ MANIFEST
 *-ubyte
 MNIST/**
 
+
+docs/README-copy.md
+melodie/
+
 # anything with -copy
 *-copy.*

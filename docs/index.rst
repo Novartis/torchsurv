@@ -18,9 +18,17 @@ Welcome to TorchSurv's documentation!
     :caption: Tutorials:
     :hidden:
 
-    notebooks/survival
     notebooks/introduction
     notebooks/momentum
+    notebooks/regression_time_varying
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Under the hood:
+
+    notebooks/loss
+    notebooks/metrics
+    notebooks/time_varying_covariates
 
 .. toctree::
     :maxdepth: 2

@@ -83,7 +83,8 @@ class ConcordanceIndex:
             estimate (torch.Tensor):
                 Estimated risk of event occurrence (i.e., risk score).
                 Can be of shape = (n_samples,) if subject-specific risk score is time-independent,
-                or of shape = (n_samples, n_samples) if subject-specific risk score is evaluated at ``time``.
+                or of shape = (n_samples, n_samples) if subject-specific risk score is evaluated at ``time``
+                (the entry at row i and column j corresponds to the risk score for subject i at the ``time`` of subject j).
             event (torch.Tensor, boolean):
                 Event indicator of size n_samples (= True if event occurred).
             time (torch.Tensor, float):
@@ -134,6 +135,10 @@ class ConcordanceIndex:
 
                 C = p(q_i(X_i) > q_j(X_i) \: | \: X_i < X_j)
 
+            which represents the probability that, at the time when $i$ experiences the event,
+            the risk score of subject $i$ exceeds the risk score of subject $j$,
+            given that subject $i$ experiences the event before subject $j$ :cite:p:`Heagerty2005`.
+
             The default concordance index estimate is the popular nonparametric estimation proposed by :cite:t:`Harrell1996`
 
             .. math::
@@ -178,8 +183,14 @@ class ConcordanceIndex:
                 Blanche2018
                 Harrell1996
                 Uno2011
+                Heagerty2005
 
         """
+
+        # ensure event, time are squeezed
+        event = event.squeeze()
+        time = time.squeeze()
+
         # update inputs if necessary
         estimate = ConcordanceIndex._update_cindex_estimate(estimate)
         weight = ConcordanceIndex._update_weight(time, weight, tmax)
