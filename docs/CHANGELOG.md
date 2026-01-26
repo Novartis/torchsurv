@@ -1,6 +1,17 @@
 Changelog
 =========
 
+Version 0.1.6
+-------------
+
+* Fixed bugs (#118, #119, #137),
+* Added Full Disclaimer and Link to RST page for TorchSurv (#125)
+* Cox Proportional Hazards model:
+  * Added Breslow’s estimator for the survival function (#127)
+  * Added support for stratified models (#128)
+* Added survival model parameterized by log-hazard, with loss computed using the trapezoidal rule (#138)
+* Added support for time-dependent covariates (#138, #140)
+
 Version 0.1.5
 -------------
 
