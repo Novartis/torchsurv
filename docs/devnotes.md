@@ -136,10 +136,11 @@ Follow the steps below, ensure each one is successful.
 1. Update the version number in `pyproject.toml`.
 2. Ensure [CHANGELOG.md](CHANGELOG.md) is up-to-date with the new version number and changes.
 3. Ensure all PRs to be included are merged with `main`, pushed to Github and that all tests & checks have run successfully.
-4. Build the release from the latest main branch: `git checkout main && git pull && rm -rf dist && python -m build`
-5. Check the built package: `python -m twine check dist/*`
-6. Upload the package to testPyPI: `python -m twine upload -r testpypi dist/*`
-7. Check if the package can be installed (also check this installs the correct version):
+4. Clean up any development artifacts: `rm -rf testenv testenv.bak dist build *.egg-info .pytest_cache __pycache__`
+5. Build the release from the latest main branch: `git checkout main && git pull && python -m build`
+6. Check the built package: `python -m twine check dist/*`
+7. Upload the package to testPyPI: `python -m twine upload -r testpypi dist/*`
+8. Check if the package can be installed (also check this installs the correct version):
 
     ```bash
     rm -rf testenv # ensure a new test env is created
@@ -153,8 +154,8 @@ Follow the steps below, ensure each one is successful.
     >>> from torchsurv.metrics.cindex import ConcordanceIndex
     ```
 
-8. Upload to pypi: `python -m twine upload -r pypi dist/*`
-9. Check that the package can be installed:
+9. Upload to pypi: `python -m twine upload -r pypi dist/*`
+10. Check that the package can be installed:
 
     ```bash
     rm -rf testenv # ensure a new test env is created
@@ -166,7 +167,7 @@ Follow the steps below, ensure each one is successful.
     >>> from torchsurv.metrics.cindex import ConcordanceIndex
     ```
 
-10. Create a new tag for the release, e.g. `git tag -a v0.1.3 -m "Version 0.1.3"`. Push the tag to Github: `git push origin v0.1.3`. Create a release on Github from the tag via <https://github.com/Novartis/torchsurv/releases>.
+11. Create a new tag for the release, e.g. `git tag -a v0.1.3 -m "Version 0.1.3"`. Push the tag to Github: `git push origin v0.1.3`. Create a release on Github from the tag via <https://github.com/Novartis/torchsurv/releases>.
 
 ### 2. Update on conda-forge
 

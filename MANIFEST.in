@@ -1,0 +1,20 @@
+include README.md
+include LICENSE
+include CHANGELOG.md
+recursive-include src *.py
+recursive-exclude testenv *
+recursive-exclude testenv.bak *
+recursive-exclude .git *
+recursive-exclude .pytest_cache *
+recursive-exclude __pycache__ *
+recursive-exclude .coverage *
+recursive-exclude htmlcov *
+recursive-exclude .mypy_cache *
+recursive-exclude .ruff_cache *
+recursive-exclude lightning_logs *
+recursive-exclude MNIST *
+recursive-exclude dist *
+recursive-exclude build *
+recursive-exclude *.egg-info *
+global-exclude *.pyc
+global-exclude .DS_Store

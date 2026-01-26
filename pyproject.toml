@@ -58,6 +58,42 @@ docs = [
 [tool.hatch.version]
 path = "src/torchsurv/__init__.py"
 
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "testenv",
+    "testenv.bak",
+    ".git",
+    ".pytest_cache",
+    "__pycache__",
+    ".coverage",
+    "htmlcov",
+    ".mypy_cache",
+    ".ruff_cache",
+    "lightning_logs",
+    "MNIST",
+    "dist",
+    "build",
+    "*.egg-info",
+]
+
+[tool.hatch.build.targets.wheel]
+exclude = [
+    "testenv",
+    "testenv.bak",
+    ".git",
+    ".pytest_cache",
+    "__pycache__",
+    ".coverage",
+    "htmlcov",
+    ".mypy_cache",
+    ".ruff_cache",
+    "lightning_logs",
+    "MNIST",
+    "dist",
+    "build",
+    "*.egg-info",
+]
+
 [project.urls]
 Homepage = "https://github.com/Novartis/torchsurv"
 Repository = "https://github.com/Novartis/torchsurv"
