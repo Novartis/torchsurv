@@ -1,0 +1,694 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>torchsurv.loss.weibull &#8212; TorchSurv 0.1.5 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0cc05dfd" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=98feffa1"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/torchsurv/loss/weibull';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">🎉 We are part of the <a href='https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis'> FDA's Regulatory Science Tools Catalog!</a> 🎉</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo_firecamp.png" class="logo__image only-light" alt="TorchSurv 0.1.5 documentation - Home"/>
+    <img src="../../../_static/logo_firecamp.png" class="logo__image only-dark pst-js-only" alt="TorchSurv 0.1.5 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../loss.html">Loss</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.loss.cox.html">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.loss.weibull.html">torchsurv.loss.weibull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.loss.survival.html">torchsurv.loss.survival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../metrics.html">Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.metrics.cindex.html">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/introduction.html">Survival Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/momentum.html">Survival Regression with MNIST</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/regression_time_varying.html">Survival Regression with Time-Varying Covariates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Under the hood:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/loss.html">Loss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/time_varying_covariates.html">Time-Varying Covariates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CODEOWNERS-copy.html">Maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CONTRIBUTING-copy.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CODE_OF_CONDUCT-copy.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../devnotes.html">Development notes</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/Novartis/torchsurv" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for torchsurv.loss.weibull</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.tools.validate_data</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_impute_missing_log_shape</span><span class="p">,</span>
+    <span class="n">validate_model</span><span class="p">,</span>
+    <span class="n">validate_survival_data</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;neg_log_likelihood_weibull&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;log_hazard&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;survival_function_weibull&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cumulative_hazard</span><span class="p">(</span>
+    <span class="n">new_log_params</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">new_time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">respective_times</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">clamp_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e10</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cumulative hazard for the Weibull Accelerated Time Failure (AFT) survival model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        new_log_params (torch.Tensor, float):</span>
+<span class="sd">            Parameters of the Weibull distribution for new subjects,</span>
+<span class="sd">            of shape = (n_samples_new, 1) or (n_samples_new, 2).</span>
+<span class="sd">            The first column corresponds to the log scale parameter. The second column</span>
+<span class="sd">            corresponds to the log shape parameter. If the log shape parameter is missing, it is</span>
+<span class="sd">            imputed with 0.</span>
+<span class="sd">        new_time (torch.Tensor, float):</span>
+<span class="sd">            Time at which to evaluate the cumulative hazard of length n_times.</span>
+<span class="sd">        respective_times (bool, optional):</span>
+<span class="sd">            If True, ``new_time`` must have the same length as ``new_log_params``.</span>
+<span class="sd">            The subject-specific cumulative hazard is then evaluated at each corresponding value in ``new_time``.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        clamp_value (float, optional):</span>
+<span class="sd">            Maximum value to which the cumulative hazard is clipped.</span>
+<span class="sd">            This prevents numerical overflow or instability by capping extremely large values of the cumulative hazard.</span>
+<span class="sd">            Defaults to 1e10.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (torch.Tensor, float): Subject-specific cumulative hazard evaluated at ``new_time``.</span>
+<span class="sd">        Shape = (n_samples_new, n_times) if respective_times is False.</span>
+<span class="sd">        Shape = (n_samples_new,) if respective_times is True.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]])  # 2 new subjects</span>
+<span class="sd">        &gt;&gt;&gt; new_time = torch.tensor([1.0, 2.0])</span>
+<span class="sd">        &gt;&gt;&gt; _cumulative_hazard(new_log_params, new_time)</span>
+<span class="sd">        tensor([[0.8248, 2.0086],</span>
+<span class="sd">                [0.8850, 2.0636]])</span>
+<span class="sd">        &gt;&gt;&gt; _cumulative_hazard(new_log_params, new_time, respective_times=True)</span>
+<span class="sd">        tensor([0.8248, 2.0636])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_scale</span><span class="p">,</span> <span class="n">log_shape</span> <span class="o">=</span> <span class="n">_impute_missing_log_shape</span><span class="p">(</span><span class="n">new_log_params</span><span class="p">)</span><span class="o">.</span><span class="n">unbind</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">new_time</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Use one time for each sample</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">new_time</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_log_params</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">respective_times</span> <span class="ow">and</span> <span class="n">new_time</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">new_log_params</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">new_time</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Use new time for each sample</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">new_time</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">log_scale</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_time</span><span class="p">))</span>  <span class="c1"># expand across rows</span>
+        <span class="n">log_scale</span> <span class="o">=</span> <span class="n">log_scale</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># expand across columns</span>
+        <span class="n">log_shape</span> <span class="o">=</span> <span class="n">log_shape</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># expand across columns</span>
+
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_shape</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-100</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span> <span class="o">-</span> <span class="n">log_scale</span><span class="p">)),</span>
+        <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="nb">max</span><span class="o">=</span><span class="n">clamp_value</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="log_hazard">
+<a class="viewcode-back" href="../../../_autosummary/torchsurv.loss.weibull.html#torchsurv.loss.weibull.log_hazard">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_hazard</span><span class="p">(</span>
+    <span class="n">new_log_params</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">new_time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">respective_times</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">clamp_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e10</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Log hazard of the Weibull Accelerated Time Failure (AFT) survival model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        new_log_params (torch.Tensor, float):</span>
+<span class="sd">            Parameters of the Weibull distribution for new subjects,</span>
+<span class="sd">            of shape = (n_samples_new, 1) or (n_samples_new, 2).</span>
+<span class="sd">            The first column corresponds to the log scale parameter. The second column</span>
+<span class="sd">            corresponds to the log shape parameter. If the log shape parameter is missing, it is</span>
+<span class="sd">            imputed with 0.</span>
+<span class="sd">        new_time (torch.Tensor, float):</span>
+<span class="sd">            Time at which to evaluate the log hazard of length n_times.</span>
+<span class="sd">        respective_times (bool, optional):</span>
+<span class="sd">            If True, ``new_time`` must have the same length as ``new_log_params``.</span>
+<span class="sd">            The subject-specific log hazard is then evaluated at each respective index in ``new_time``.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        clamp_value (float, optional):</span>
+<span class="sd">            Maximum value to which the log hazard is clipped.</span>
+<span class="sd">            This prevents numerical overflow or instability by capping extremely large values of the log hazard.</span>
+<span class="sd">            Defaults to 1e10.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (torch.Tensor, float): Subject-specific log hazard evaluated at ``new_time``.</span>
+<span class="sd">        Shape = (n_samples_new, n_times) if ``respective_times`` is False.</span>
+<span class="sd">        Shape = (n_samples_new,) if ``respective_times`` is True.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]])  # 2 new subjects</span>
+<span class="sd">        &gt;&gt;&gt; new_time = torch.tensor([1.0, 2.0])</span>
+<span class="sd">        &gt;&gt;&gt; log_hazard(new_log_params, new_time)</span>
+<span class="sd">        tensor([[0.0574, 0.2543],</span>
+<span class="sd">                [0.0779, 0.2313]])</span>
+<span class="sd">        &gt;&gt;&gt; log_hazard(new_log_params, new_time, respective_times=True)</span>
+<span class="sd">        tensor([0.0574, 0.2313])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">log_scale</span><span class="p">,</span> <span class="n">log_shape</span> <span class="o">=</span> <span class="n">_impute_missing_log_shape</span><span class="p">(</span><span class="n">new_log_params</span><span class="p">)</span><span class="o">.</span><span class="n">unbind</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">new_time</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Use one time for each sample</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">new_time</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_log_params</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">respective_times</span> <span class="ow">and</span> <span class="n">new_time</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">new_log_params</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">new_time</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Use new time for each sample</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">new_time</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">log_scale</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_time</span><span class="p">))</span>  <span class="c1"># expand across rows</span>
+        <span class="n">log_scale</span> <span class="o">=</span> <span class="n">log_scale</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># expand across columns</span>
+        <span class="n">log_shape</span> <span class="o">=</span> <span class="n">log_shape</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># expand across columns</span>
+
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span>
+        <span class="n">log_shape</span>
+        <span class="o">-</span> <span class="n">log_scale</span>
+        <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">log_shape</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-100</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span> <span class="o">-</span> <span class="n">log_scale</span><span class="p">),</span>
+        <span class="nb">min</span><span class="o">=-</span><span class="n">clamp_value</span><span class="p">,</span>
+        <span class="nb">max</span><span class="o">=</span><span class="n">clamp_value</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="survival_function_weibull">
+<a class="viewcode-back" href="../../../_autosummary/torchsurv.loss.weibull.html#torchsurv.loss.weibull.survival_function_weibull">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">survival_function_weibull</span><span class="p">(</span>
+    <span class="n">new_log_params</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">new_time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Survival function for the Weibull Accelerated Time Failure (AFT) survival model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        new_log_params (torch.Tensor, float):</span>
+<span class="sd">            Parameters of the Weibull distribution for new subjects,</span>
+<span class="sd">            of shape = (n_samples_new, 1) or (n_samples_new, 2).</span>
+<span class="sd">            The first column corresponds to the log scale parameter. The second column</span>
+<span class="sd">            corresponds to the log shape parameter. If the log shape parameter is missing, it is</span>
+<span class="sd">            imputed with 0.</span>
+<span class="sd">        new_time (torch.Tensor, float):</span>
+<span class="sd">            Time at which to evaluate the survival probability of length n_times.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor:</span>
+<span class="sd">            Individual survival probabilities for each new subject at ``new_time``. Shape = (n_samples_new, n_times).</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; new_log_params = torch.tensor([[0.15, 0.25], [0.1, 0.2]])  # 2 new subjects</span>
+<span class="sd">        &gt;&gt;&gt; new_time = torch.tensor([1.0, 2.0, 3.0, 4.0])</span>
+<span class="sd">        &gt;&gt;&gt; survival_function_weibull(new_log_params, new_time)  #  Survival at new times</span>
+<span class="sd">        tensor([[0.4383, 0.1342, 0.0340, 0.0075],</span>
+<span class="sd">                [0.4127, 0.1270, 0.0338, 0.0081]])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_scale</span><span class="p">,</span> <span class="n">log_shape</span> <span class="o">=</span> <span class="n">_impute_missing_log_shape</span><span class="p">(</span><span class="n">new_log_params</span><span class="p">)</span><span class="o">.</span><span class="n">unbind</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">new_time</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Use one time for each sample</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">new_time</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_log_params</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Use new time for each sample</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">new_time</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">log_scale</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_time</span><span class="p">))</span>  <span class="c1"># expand across rows</span>
+        <span class="n">log_scale</span> <span class="o">=</span> <span class="n">log_scale</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># expand across columns</span>
+        <span class="n">log_shape</span> <span class="o">=</span> <span class="n">log_shape</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># expand across columns</span>
+
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">weibull</span><span class="o">.</span><span class="n">Weibull</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_scale</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_shape</span><span class="p">))</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">time</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="neg_log_likelihood_weibull">
+<a class="viewcode-back" href="../../../_autosummary/torchsurv.loss.weibull.html#torchsurv.loss.weibull.neg_log_likelihood_weibull">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">neg_log_likelihood_weibull</span><span class="p">(</span>
+    <span class="n">log_params</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">event</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">time</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+    <span class="n">checks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Negative of the log likelihood for the Weibull Accelerated Time Failure (AFT) survival model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        log_params (torch.Tensor, float):</span>
+<span class="sd">            Parameters of the Weibull distribution of shape = (n_samples, 1) or (n_samples, 2).</span>
+<span class="sd">            The first column corresponds to the log scale parameter. The second column</span>
+<span class="sd">            corresponds to the log shape parameter.  If the log shape parameter is missing, it is</span>
+<span class="sd">            imputed with 0.</span>
+<span class="sd">        event (torch.Tensor, bool):</span>
+<span class="sd">            Event indicator of length n_samples (= True if event occurred).</span>
+<span class="sd">        time (torch.Tensor, float):</span>
+<span class="sd">            Event or censoring time of length n_samples.</span>
+<span class="sd">        reduction (str):</span>
+<span class="sd">            Method to reduce losses. Defaults to &quot;mean&quot;.</span>
+<span class="sd">            Must be one of the following: &quot;sum&quot;, &quot;mean&quot;.</span>
+<span class="sd">        checks (bool):</span>
+<span class="sd">            Whether to perform input format checks.</span>
+<span class="sd">            Enabling checks can help catch potential issues in the input data.</span>
+<span class="sd">            Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (torch.Tensor, float): Negative of the log likelihood.</span>
+
+<span class="sd">    Note:</span>
+
+<span class="sd">        For each subject :math:`i \in \{1, \cdots, N\}`, denote :math:`X_i` as the survival time and :math:`D_i` as the</span>
+<span class="sd">        censoring time. Survival data consist of the event indicator, :math:`\delta_i=1(X_i\leq D_i)`</span>
+<span class="sd">        (argument ``event``) and the event or censoring time, :math:`T_i = \min(\{ X_i,D_i \})`</span>
+<span class="sd">        (argument ``time``).</span>
+
+<span class="sd">        The log hazard function for the Weibull AFT survival model :cite:p:`Carroll2003` of subject :math:`i` at time :math:`t` has the form:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \log h_i(t) = \log{\rho_i} - \log{\lambda_i} + (\rho_i -1) \left( \log{t} - \log{\lambda_i}\right)</span>
+
+<span class="sd">        where :math:`\log{\lambda_i}` is the log scale parameter (first column of argument ``log_params``)</span>
+<span class="sd">        and :math:`\log{\rho_i}` is the log shape parameter (second column of argument ``log_params``).</span>
+<span class="sd">        The cumulative hazard for the Weibull survival model of subject :math:`i` at time :math:`t` has the form:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            H_i(t) = \left(\frac{t}{\lambda_i}\right)^{\rho_i}</span>
+
+<span class="sd">        The survival function for the Weibull survival model of subject :math:`i` at time :math:`t` has the form:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            S_i(t) = 1 - F(t | \lambda_i, \rho_i)</span>
+
+<span class="sd">        where :math:`F(t | \lambda, \rho)` is the cumulative distribution function (CDF) of the Weibull distribution given</span>
+<span class="sd">        scale parameter :math:`\lambda` and shape parameter :math:`\rho`.</span>
+
+<span class="sd">        The log likelihood of the Weibull survival model is</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            ll = \sum_{i: \delta_i = 1} \log h_i(T_i) - \sum_{i = 1}^N H_i(T_i)</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; _ = torch.manual_seed(43)</span>
+<span class="sd">        &gt;&gt;&gt; n = 4</span>
+<span class="sd">        &gt;&gt;&gt; log_params = torch.randn((n, 2), dtype=torch.float)</span>
+<span class="sd">        &gt;&gt;&gt; event = torch.randint(low=0, high=2, size=(n,), dtype=torch.bool)</span>
+<span class="sd">        &gt;&gt;&gt; time = torch.randint(low=1, high=100, size=(n,), dtype=torch.float)</span>
+<span class="sd">        &gt;&gt;&gt; neg_log_likelihood_weibull(log_params, event, time)  # Default: mean of log likelihoods across subject</span>
+<span class="sd">        tensor(143039.2656)</span>
+<span class="sd">        &gt;&gt;&gt; neg_log_likelihood_weibull(</span>
+<span class="sd">        ...     log_params, event, time, reduction=&quot;sum&quot;</span>
+<span class="sd">        ... )  # Sum of log likelihoods across subject</span>
+<span class="sd">        tensor(572157.0625)</span>
+<span class="sd">        &gt;&gt;&gt; neg_log_likelihood_weibull(</span>
+<span class="sd">        ...     torch.randn((n, 1), dtype=torch.float), event, time</span>
+<span class="sd">        ... )  # Missing shape: exponential distribution</span>
+<span class="sd">        tensor(67.4289)</span>
+
+<span class="sd">    References:</span>
+
+<span class="sd">        .. bibliography::</span>
+<span class="sd">            :filter: False</span>
+
+<span class="sd">            Carroll2003</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">checks</span><span class="p">:</span>
+        <span class="n">validate_survival_data</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+        <span class="n">validate_model</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s2">&quot;weibull&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ensure event and time are 1-dimensional</span>
+    <span class="n">event</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+    <span class="c1"># Negative log likelihood</span>
+    <span class="n">nll</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">neg</span><span class="p">(</span>
+        <span class="n">event</span> <span class="o">*</span> <span class="n">log_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-</span> <span class="n">_cumulative_hazard</span><span class="p">(</span><span class="n">log_params</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>  <span class="c1"># Huge values here</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">nll</span><span class="p">)):</span>
+        <span class="c1"># Remove any torch.inf values</span>
+        <span class="n">nll</span> <span class="o">=</span> <span class="n">nll</span><span class="p">[</span><span class="o">~</span><span class="n">torch</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">nll</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="n">reduction</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">nll</span><span class="o">.</span><span class="n">nanmean</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">reduction</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">nll</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reduction </span><span class="si">{</span><span class="n">reduction</span><span class="si">}</span><span class="s2"> is not implemented yet, should be one of [&#39;mean&#39;, &#39;sum&#39;].&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">loss</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">doctest</span>
+
+    <span class="c1"># Run doctest</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">failed</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All tests passed.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Some doctests failed.&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Thibaud Coroller, Mélodie Monod, Peter Krusche, Qian Cao
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Novartis Pharma AG.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

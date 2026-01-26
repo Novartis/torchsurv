@@ -1,0 +1,29 @@
+/* Custom CSS to preserve image transparency */
+.readme-logo, img.readme-logo {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* General fix for PNG transparency in content */
+img[src*="logo_firecamp.png"] {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Ensure all PNG images maintain transparency */
+img[src$=".png"] {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Fix for MyST parser processed images */
+.content img {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Override theme background for images */
+.bd-main img {
+    background: transparent !important;
+    background-color: transparent !important;
+}

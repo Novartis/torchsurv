@@ -1,0 +1,1470 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Survival Regression with Time-Varying Covariates &#8212; TorchSurv 0.1.5 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0cc05dfd" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=98feffa1"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/regression_time_varying';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Loss" href="loss.html" />
+    <link rel="prev" title="Survival Regression with MNIST" href="momentum.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">🎉 We are part of the <a href='https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis'> FDA's Regulatory Science Tools Catalog!</a> 🎉</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo_firecamp.png" class="logo__image only-light" alt="TorchSurv 0.1.5 documentation - Home"/>
+    <img src="../_static/logo_firecamp.png" class="logo__image only-dark pst-js-only" alt="TorchSurv 0.1.5 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../loss.html">Loss</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.cox.html">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.weibull.html">torchsurv.loss.weibull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.survival.html">torchsurv.loss.survival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../metrics.html">Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.metrics.cindex.html">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Survival Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="momentum.html">Survival Regression with MNIST</a></li>
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Survival Regression with Time-Varying Covariates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Under the hood:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="loss.html">Loss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="time_varying_covariates.html">Time-Varying Covariates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CODEOWNERS-copy.html">Maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CONTRIBUTING-copy.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT-copy.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devnotes.html">Development notes</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/Novartis/torchsurv" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/regression_time_varying.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Survival Regression with Time-Varying Covariates</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#1.-Dependencies">1. Dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#2.-Dataset">2. Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#3.-Cox-Model">3. Cox Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#3.1.-MLP-model-for-log-relative-hazards">3.1. MLP model for log relative hazards</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#3.2.-Model-training">3.2. Model training</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#3.3.-Evaluation-metrics">3.3. Evaluation metrics</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#4.-Flexible-Survival-Model">4. Flexible Survival Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#4.1.-MLP-model-for-log-hazard">4.1. MLP model for log hazard</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#4.2.-Model-training">4.2. Model training</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#4.3.-Evaluation-Metrics">4.3. Evaluation Metrics</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#5.-Models-comparison">5. Models comparison</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Comparing-the-Concordance-index">Comparing the Concordance index</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Comparing-the-AUC-at-3-year">Comparing the AUC at 3-year</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Comparing-the-Brier-Score-at-3-year">Comparing the Brier-Score at 3-year</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="Survival-Regression-with-Time-Varying-Covariates">
+<h1>Survival Regression with Time-Varying Covariates<a class="headerlink" href="#Survival-Regression-with-Time-Varying-Covariates" title="Link to this heading">#</a></h1>
+<p>In this notebook, we use <code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code> to train a model that predicts relative risk given time-varying covariates. We use the <code class="docutils literal notranslate"><span class="pre">heart</span></code> data set from the <code class="docutils literal notranslate"><span class="pre">survival</span></code> package in <code class="docutils literal notranslate"><span class="pre">R</span></code>. After training the model, we evaluate the predictive performance using evaluation metrics implemented in <code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code>.</p>
+<p>The dataset contains survival of patients on the waiting list for the Stanford heart transplant program for 103 patients.</p>
+<section id="1.-Dependencies">
+<h2>1. Dependencies<a class="headerlink" href="#1.-Dependencies" title="Link to this heading">#</a></h2>
+<p>To run this notebook, dependencies must be installed. the recommended method is to use our development conda environment (<strong>preferred</strong>). Instruction can be found <a class="reference external" href="https://opensource.nibr.com/torchsurv/devnotes.html#set-up-a-development-environment-via-conda">here</a> to install all optional dependencies. The other method is to install only required packages using the command line below:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install only required packages (optional)</span>
+<span class="c1"># %pip install matplotlib</span>
+<span class="c1"># %pip install sklearn</span>
+<span class="c1"># %pip install pandas</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="c1"># PyTorch boilerplate - see https://github.com/Novartis/torchsurv/blob/main/docs/notebooks/helpers_introduction.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">helpers_time_varying</span><span class="w"> </span><span class="kn">import</span> <span class="n">GroupedDataset</span><span class="p">,</span> <span class="n">collate_fn</span><span class="p">,</span> <span class="n">expand_log_hz</span><span class="p">,</span> <span class="n">expand_log_hz_survival</span><span class="p">,</span> <span class="n">plot_losses</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="c1"># Our package</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.loss</span><span class="w"> </span><span class="kn">import</span> <span class="n">cox</span><span class="p">,</span> <span class="n">survival</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.auc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Auc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.brier_score</span><span class="w"> </span><span class="kn">import</span> <span class="n">BrierScore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.cindex</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConcordanceIndex</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set seed</span>
+<span class="n">seed</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed_all</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Issue with eager mode</span>
+<span class="c1"># torch._dynamo.config.suppress_errors = True  # Suppress inductor errors</span>
+<span class="c1"># torch._dynamo.reset()  # Reset the backend</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Constant parameters across models</span>
+<span class="n">BATCH_SIZE</span> <span class="o">=</span> <span class="mi">32</span>  <span class="c1"># batch size = number of patients</span>
+<span class="n">EPOCHS</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># maximum number of epochs</span>
+<span class="n">LEARNING_RATE</span> <span class="o">=</span> <span class="mf">1e-2</span>  <span class="c1"># learning rate</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="2.-Dataset">
+<h2>2. Dataset<a class="headerlink" href="#2.-Dataset" title="Link to this heading">#</a></h2>
+<p>In datasets with time-varying covariates, each individual may contribute multiple rows of observations. This occurs because a patient can be measured repeatedly over time, with covariates updated at each measurement interval. The variables <code class="docutils literal notranslate"><span class="pre">start</span></code> and <code class="docutils literal notranslate"><span class="pre">stop</span></code> denote the time interval during which the covariates in a given row are valid, and within which the event indicator corresponds to the occurrence (or non-occurrence) of an event.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load heart dataset from R survival</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;heart.csv&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># number of samples</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of samples: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Number of samples: 172
+</pre></div></div>
+</div>
+<p>The dataset contains the features:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">age</span></code>: age - 48 years</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">year</span></code>: year of acceptance (in years after 1 Nov 1967)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">surgery</span></code>: prior bypass surgery 1=yes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">transplant</span></code>: received transplant 1=yes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">id</span></code>: patient id</p></li>
+</ul>
+<p>Additionally, it contains our survival targets:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">start</span></code>, <code class="docutils literal notranslate"><span class="pre">stop</span></code>, <code class="docutils literal notranslate"><span class="pre">event</span></code>: Entry time, exit time and status for this interval of time.</p></li>
+</ul>
+<p>Further, we add two columns: <code class="docutils literal notranslate"><span class="pre">time</span></code> for the latest observation time and <code class="docutils literal notranslate"><span class="pre">event_at_time</span></code> for the event status at that time. These variables remain constant across all rows corresponding to the same patient.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add time column (max stop per id)</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)[</span><span class="s2">&quot;stop&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">&quot;max&quot;</span><span class="p">)</span>
+
+<span class="c1"># Add column for event at that time</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;event_at_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;stop&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">])][</span><span class="s2">&quot;event&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>start</th>
+      <th>stop</th>
+      <th>event</th>
+      <th>age</th>
+      <th>year</th>
+      <th>surgery</th>
+      <th>transplant</th>
+      <th>id</th>
+      <th>time</th>
+      <th>event_at_time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.0</td>
+      <td>50.0</td>
+      <td>1</td>
+      <td>-17.155373</td>
+      <td>0.123203</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>50.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0</td>
+      <td>6.0</td>
+      <td>1</td>
+      <td>3.835729</td>
+      <td>0.254620</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2</td>
+      <td>6.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0</td>
+      <td>6.297057</td>
+      <td>0.265572</td>
+      <td>0</td>
+      <td>0</td>
+      <td>3</td>
+      <td>16.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1.0</td>
+      <td>16.0</td>
+      <td>1</td>
+      <td>6.297057</td>
+      <td>0.265572</td>
+      <td>0</td>
+      <td>1</td>
+      <td>3</td>
+      <td>16.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0</td>
+      <td>36.0</td>
+      <td>0</td>
+      <td>-7.737166</td>
+      <td>0.490075</td>
+      <td>0</td>
+      <td>0</td>
+      <td>4</td>
+      <td>39.0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Next, we set up the data loaders for training, validation, and testing. Here, the <code class="docutils literal notranslate"><span class="pre">BATCH_SIZE</span></code> corresponds to the number of patient IDs per batch. We cannot sample a fixed number of rows at random as in the non time-varying covariates setting, because for each selected patient ID we must include all rows associated with that individual.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Split by IDs</span>
+<span class="n">ids</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+<span class="n">train_ids</span><span class="p">,</span> <span class="n">test_ids</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">train_ids</span><span class="p">,</span> <span class="n">val_ids</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">train_ids</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">df_train</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">train_ids</span><span class="p">)]</span>
+<span class="n">df_val</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">val_ids</span><span class="p">)]</span>
+<span class="n">df_test</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">test_ids</span><span class="p">)]</span>
+
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">GroupedDataset</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span>
+<span class="n">val_dataset</span> <span class="o">=</span> <span class="n">GroupedDataset</span><span class="p">(</span><span class="n">df_val</span><span class="p">)</span>
+<span class="n">test_dataset</span> <span class="o">=</span> <span class="n">GroupedDataset</span><span class="p">(</span><span class="n">df_test</span><span class="p">)</span>
+
+<span class="n">dataloader_train</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">)</span>
+
+<span class="n">dataloader_val</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">val_dataset</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">val_dataset</span><span class="p">),</span>  <span class="c1"># full batch</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dataloader_test</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">test_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">test_dataset</span><span class="p">),</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Let <span class="math notranslate nohighlight">\(m\)</span> be the total number of rows in the batch (the total number of observations across all individuals), and let <span class="math notranslate nohighlight">\(n\)</span> be the number of unique IDs (where <span class="math notranslate nohighlight">\(n\)</span> = <code class="docutils literal notranslate"><span class="pre">BATCH_SIZE</span></code>), with <span class="math notranslate nohighlight">\(m \geq n\)</span>. Further let <span class="math notranslate nohighlight">\(p\)</span> denote the number of covariates.</p>
+<p>The dataloader returns five outputs: - <code class="docutils literal notranslate"><span class="pre">x</span></code>: a feature matrix of shape = (m, p) - <code class="docutils literal notranslate"><span class="pre">event</span></code>, <code class="docutils literal notranslate"><span class="pre">time</span></code>: event indicator and event time, each of shape (n,) - <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">start</span></code>: index vector of shape = (m,)</p>
+<p>For each observation index <span class="math notranslate nohighlight">\(k\)</span> (where <span class="math notranslate nohighlight">\(0\leq k\leq m\)</span>), the feature vector for individual <code class="docutils literal notranslate"><span class="pre">id[k]</span></code> at the observation time indicated by <code class="docutils literal notranslate"><span class="pre">start[k]</span></code> is <code class="docutils literal notranslate"><span class="pre">x[k,:]</span></code>. In plain language: <code class="docutils literal notranslate"><span class="pre">id</span></code> tells you which individual, <code class="docutils literal notranslate"><span class="pre">start</span></code> tells you which time index for that individual.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Sanity check</span>
+<span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">),</span> <span class="nb">id</span><span class="p">,</span> <span class="n">start</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader_train</span><span class="p">))</span>
+<span class="n">num_features</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x (shape)    = </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_features = </span><span class="si">{</span><span class="n">num_features</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;event        = </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;time         = </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id           = </span><span class="si">{</span><span class="nb">id</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;start        = </span><span class="si">{</span><span class="n">start</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+x (shape)    = torch.Size([54, 4])
+num_features = 4
+event        = torch.Size([32, 1])
+time         = torch.Size([32, 1])
+id           = torch.Size([54])
+start        = torch.Size([54])
+</pre></div></div>
+</div>
+</section>
+<section id="3.-Cox-Model">
+<h2>3. Cox Model<a class="headerlink" href="#3.-Cox-Model" title="Link to this heading">#</a></h2>
+<p>In this section, we use the <a class="reference external" href="../_autosummary/torchsurv.loss.cox.html">Extended Cox proportional hazards model</a>. Given covariates <span class="math notranslate nohighlight">\(x_{i}(t)\)</span>, a vector of size <span class="math notranslate nohighlight">\(p\)</span>, the hazard of patient <span class="math notranslate nohighlight">\(i\)</span> has the form</p>
+<div class="math notranslate nohighlight">
+\[h_i(t) =\lambda_{0}(t)\: \lambda_i(t)\]</div>
+<p>The baseline hazard <span class="math notranslate nohighlight">\(\lambda_{0}(t)\)</span> is identical across subjects (i.e., has no dependency on <span class="math notranslate nohighlight">\(i\)</span>). The subject-specific risk of event occurrence is captured through the relative hazards <span class="math notranslate nohighlight">\(\{\lambda_i(t)\}_{i = 1, \dots, N}\)</span>.</p>
+<p>In the traditional Cox proportional hazards model, the log-relative hazard is modeled as a linear combination of covariates:</p>
+<div class="math notranslate nohighlight">
+\[\log \lambda_i(t) = x_i(t)^\top \beta.\]</div>
+<p>In contrast, we allow the log-relative hazard <span class="math notranslate nohighlight">\(\log \lambda_i(t)\)</span> to be modeled using a neural network. A key assumption in the Extended Cox model is that the model parameters are not time-varying. Consequently, we define a neural network such that</p>
+<div class="math notranslate nohighlight">
+\[\log \lambda_i(t) = f_\theta(x_i(t)),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\theta\)</span> represents the parameters of the neural network – which are constant over time.</p>
+<p>For instance, we can train a multi-layer perceptron (MLP) to model the log-relative hazard <span class="math notranslate nohighlight">\(\log \lambda_i(t)\)</span>.</p>
+<section id="3.1.-MLP-model-for-log-relative-hazards">
+<h3>3.1. MLP model for log relative hazards<a class="headerlink" href="#3.1.-MLP-model-for-log-relative-hazards" title="Link to this heading">#</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initiate Extended Cox model</span>
+<span class="n">cox_model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="n">num_features</span><span class="p">),</span>  <span class="c1"># Batch normalization</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># Estimating log hazards for Cox models</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="3.2.-Model-training">
+<h3>3.2. Model training<a class="headerlink" href="#3.2.-Model-training" title="Link to this heading">#</a></h3>
+<p>The function <code class="docutils literal notranslate"><span class="pre">cox.neg_partial_log_likelihood</span></code> in the time-varying covariate setting expects the matrix <span class="math notranslate nohighlight">\(\log \lambda_i(t)\)</span> evaluated for <code class="docutils literal notranslate"><span class="pre">id</span></code> (by rows) and for <code class="docutils literal notranslate"><span class="pre">time</span></code> <span class="math notranslate nohighlight">\(t\)</span> (by columns), resulting in an <span class="math notranslate nohighlight">\((n, n)\)</span> matrix.</p>
+<p>When we pass <code class="docutils literal notranslate"><span class="pre">x</span></code> through our neural network, we obtain <code class="docutils literal notranslate"><span class="pre">log_hz_short</span></code> which produces a vector of shape <span class="math notranslate nohighlight">\((m,)\)</span>. Each entry <code class="docutils literal notranslate"><span class="pre">log_hz_short[k]</span></code> corresponds to the value <span class="math notranslate nohighlight">\(\log \lambda_i(t) = f_\theta(x_i(t))\)</span> for the individual <span class="math notranslate nohighlight">\(i =\)</span><code class="docutils literal notranslate"><span class="pre">id[k]</span></code> at the time interval beginning at <span class="math notranslate nohighlight">\(t =\)</span> <code class="docutils literal notranslate"><span class="pre">start[k]</span></code>.</p>
+<p>To convert this vector into the required <span class="math notranslate nohighlight">\((n, n)\)</span> matrix format, we use the helper function <code class="docutils literal notranslate"><span class="pre">expand_log_hz</span></code>, which reformats the model output into the <code class="docutils literal notranslate"><span class="pre">log_hz</span></code> matrix expected by the loss function.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Init optimizer for Cox</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">RMSprop</span><span class="p">(</span><span class="n">cox_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">LEARNING_RATE</span><span class="p">)</span>
+
+<span class="c1"># Initiate empty list to store the loss on the train and validation sets</span>
+<span class="n">train_losses</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">val_losses</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># training loop</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">EPOCHS</span><span class="p">):</span>
+    <span class="n">epoch_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader_train</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">),</span> <span class="nb">id</span><span class="p">,</span> <span class="n">start</span> <span class="o">=</span> <span class="n">batch</span>
+
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">log_hz_short</span> <span class="o">=</span> <span class="n">cox_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># shape = (m,)</span>
+
+        <span class="c1"># expand log_hz to row = id, column = time</span>
+        <span class="n">log_hz</span> <span class="o">=</span> <span class="n">expand_log_hz</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">log_hz_short</span><span class="p">)</span>  <span class="c1"># shape  = (n,n)</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">cox</span><span class="o">.</span><span class="n">neg_partial_log_likelihood</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="n">epoch_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="p">(</span><span class="n">EPOCHS</span> <span class="o">//</span> <span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">:</span><span class="s2">03</span><span class="si">}</span><span class="s2">, Training loss: </span><span class="si">{</span><span class="n">epoch_loss</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Record loss on train and test sets</span>
+    <span class="n">train_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epoch_loss</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">),</span> <span class="nb">id</span><span class="p">,</span> <span class="n">start</span> <span class="o">=</span> <span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader_val</span><span class="p">))</span>
+        <span class="n">val_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">cox</span><span class="o">.</span><span class="n">neg_partial_log_likelihood</span><span class="p">(</span>
+                <span class="n">expand_log_hz</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">cox_model</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span>
+                <span class="n">event</span><span class="p">,</span>
+                <span class="n">time</span><span class="p">,</span>
+                <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Epoch: 000, Training loss: 5.39
+Epoch: 010, Training loss: 5.56
+Epoch: 020, Training loss: 5.42
+Epoch: 030, Training loss: 4.92
+Epoch: 040, Training loss: 4.86
+Epoch: 050, Training loss: 5.22
+Epoch: 060, Training loss: 4.68
+Epoch: 070, Training loss: 4.86
+Epoch: 080, Training loss: 5.15
+Epoch: 090, Training loss: 4.92
+</pre></div></div>
+</div>
+<p>We can visualize the training and validation losses.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_losses</span><span class="p">(</span><span class="n">train_losses</span><span class="p">,</span> <span class="n">val_losses</span><span class="p">,</span> <span class="s2">&quot;Cox&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_regression_time_varying_21_0.png" src="../_images/notebooks_regression_time_varying_21_0.png" />
+</div>
+</div>
+</section>
+<section id="3.3.-Evaluation-metrics">
+<h3>3.3. Evaluation metrics<a class="headerlink" href="#3.3.-Evaluation-metrics" title="Link to this heading">#</a></h3>
+<p>We evaluate the predictive performance of the model using</p>
+<ul class="simple">
+<li><p>the <a class="reference external" href="../_autosummary/torchsurv.metrics.cindex.html">concordance index</a> (C-index), which measures the probability that a model correctly predicts which of two comparable samples will experience an event first based on their estimated risk scores,</p></li>
+<li><p>the <a class="reference external" href="../_autosummary/torchsurv.metrics.auc.html">Area Under the Receiver Operating Characteristic Curve</a> (AUC), which measures the probability that a model correctly predicts which of two comparable samples will experience an event by time t based on their estimated risk scores.</p></li>
+<li><p>the <a class="reference external" href="../_autosummary/torchsurv.metrics.brier_score.html">Brier score</a>, which measures the model’s calibration by calculating the mean square error between the estimated survival function and the empirical (i.e., in-sample) event status.</p></li>
+</ul>
+<p>For the Cox model, to estimate the survival function on the test set, we first need to estimate the baseline survival function on the training set:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cox_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">),</span> <span class="nb">id</span><span class="p">,</span> <span class="n">start</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader_train</span><span class="p">))</span>
+    <span class="n">log_hz</span> <span class="o">=</span> <span class="n">expand_log_hz</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">cox_model</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>  <span class="c1"># log hazard on train set</span>
+    <span class="n">baseline_surv</span> <span class="o">=</span> <span class="n">cox</span><span class="o">.</span><span class="n">baseline_survival_function</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>  <span class="c1"># baseline survival function</span>
+</pre></div>
+</div>
+</div>
+<p>We then evaluate the subject-specific relative hazards and on the survival function on the test set.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="c1"># test event and test time of length n</span>
+    <span class="n">test_x</span><span class="p">,</span> <span class="p">(</span><span class="n">test_event</span><span class="p">,</span> <span class="n">test_time</span><span class="p">),</span> <span class="n">test_id</span><span class="p">,</span> <span class="n">test_start</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader_test</span><span class="p">))</span>
+    <span class="n">test_log_hz</span> <span class="o">=</span> <span class="n">expand_log_hz</span><span class="p">(</span><span class="n">test_id</span><span class="p">,</span> <span class="n">test_start</span><span class="p">,</span> <span class="n">test_time</span><span class="p">,</span> <span class="n">cox_model</span><span class="p">(</span><span class="n">test_x</span><span class="p">))</span>  <span class="c1"># log hazard of test set</span>
+
+<span class="c1"># Compute the survival probability</span>
+<span class="n">test_surv</span> <span class="o">=</span> <span class="n">cox</span><span class="o">.</span><span class="n">survival_function_cox</span><span class="p">(</span><span class="n">baseline_surv</span><span class="p">,</span> <span class="n">test_log_hz</span><span class="p">,</span> <span class="n">test_time</span><span class="p">)</span>  <span class="c1"># shape = (n,n)</span>
+</pre></div>
+</div>
+</div>
+<p>We obtain the concordance index, and its confidence interval</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Concordance index</span>
+<span class="n">cox_cindex</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cox model performance:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Concordance-index   = </span><span class="si">{</span><span class="n">cox_cindex</span><span class="p">(</span><span class="n">test_log_hz</span><span class="p">,</span><span class="w"> </span><span class="n">test_event</span><span class="p">,</span><span class="w"> </span><span class="n">test_time</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Confidence interval = </span><span class="si">{</span><span class="n">cox_cindex</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Cox model performance:
+Concordance-index   = 0.5808457732200623
+Confidence interval = tensor([0.3468, 0.8149])
+</pre></div></div>
+</div>
+<p>We can also test whether the observed concordance index is greater than 0.5. The statistical test is specified with H0: c-index = 0.5 and Ha: c-index &gt; 0.5. The p-value of the statistical test is</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># H0: cindex = 0.5, Ha: cindex &gt; 0.5</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p-value = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cox_cindex</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;greater&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+p-value = 0.24920672178268433
+</pre></div></div>
+</div>
+<p>For time-dependent prediction (e.g., 5-year mortality), the C-index is not a proper measure. Instead, it is recommended to use the AUC. The probability to correctly predicts which of two comparable patients will experience an event by 5-year based on their estimated risk scores is the AUC evaluated at 5-year (1825 days) obtained with</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cox_auc</span> <span class="o">=</span> <span class="n">Auc</span><span class="p">()</span>
+
+<span class="n">new_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1095.0</span><span class="p">)</span>
+<span class="n">log_hz_t</span> <span class="o">=</span> <span class="n">expand_log_hz</span><span class="p">(</span><span class="n">test_id</span><span class="p">,</span> <span class="n">test_start</span><span class="p">,</span> <span class="n">new_time</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">cox_model</span><span class="p">(</span><span class="n">test_x</span><span class="p">))</span>
+
+<span class="c1"># auc evaluated at new time = 1095, 3 year</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC 3-yr             = </span><span class="si">{</span><span class="n">cox_auc</span><span class="p">(</span><span class="n">log_hz_t</span><span class="p">,</span><span class="w"> </span><span class="n">test_event</span><span class="p">,</span><span class="w"> </span><span class="n">test_time</span><span class="p">,</span><span class="w"> </span><span class="n">new_time</span><span class="o">=</span><span class="n">new_time</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC 3-yr (conf int.) = </span><span class="si">{</span><span class="n">cox_auc</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AUC 3-yr             = tensor([0.6061])
+AUC 3-yr (conf int.) = tensor([0.4005, 0.8117])
+</pre></div></div>
+</div>
+<p>As before, we can test whether the observed Auc at 3-year is greater than 0.5. The statistical test is specified with H0: auc = 0.5 and Ha: auc &gt; 0.5. The p-value of the statistical test is</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC (p_value) = </span><span class="si">{</span><span class="n">cox_auc</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AUC (p_value) = tensor([0.1560])
+</pre></div></div>
+</div>
+<p>Lastly, we can evaluate the time-dependent Brier score and the integrated Brier score</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cox_brier_score</span> <span class="o">=</span> <span class="n">BrierScore</span><span class="p">()</span>
+
+<span class="c1"># brier score at last 5 times</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Brier score             = </span><span class="si">{</span><span class="n">cox_brier_score</span><span class="p">(</span><span class="n">test_surv</span><span class="p">,</span><span class="w"> </span><span class="n">test_event</span><span class="p">,</span><span class="w"> </span><span class="n">test_time</span><span class="p">)[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Brier score (conf int.) = </span><span class="si">{</span><span class="n">cox_brier_score</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()[:,</span><span class="w"> </span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># integrated brier score</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Integrated Brier score  = </span><span class="si">{</span><span class="n">cox_brier_score</span><span class="o">.</span><span class="n">integral</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Brier score             = tensor([0.1632, 0.1306, 0.0947, 0.0484, 0.0199])
+Brier score (conf int.) = tensor([[0.1053, 0.0692, 0.0320, 0.0000, 0.0033],
+        [0.2211, 0.1920, 0.1573, 0.1055, 0.0364]])
+Integrated Brier score  = 0.16062888503074646
+</pre></div></div>
+</div>
+<p>We can test whether the time-dependent Brier score is smaller than what would be expected if the survival model was not providing accurate predictions beyond random chance. We use a bootstrap permutation test and obtain the p-value with:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># H0: bs = bs0, Ha: bs &lt; bs0;</span>
+<span class="c1"># where bs0 is the expected brier score if the survival model was not providing accurate predictions beyond random chance.</span>
+
+<span class="c1"># p-value for brier score at last 5 times</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Brier score (p-val) = </span><span class="si">{</span><span class="n">cox_brier_score</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;less&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Brier score (p-val) = tensor([0.5650, 0.5510, 0.5550, 0.5270, 0.3940])
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="4.-Flexible-Survival-Model">
+<h2>4. Flexible Survival Model<a class="headerlink" href="#4.-Flexible-Survival-Model" title="Link to this heading">#</a></h2>
+<p>In this section, we use the <a class="reference external" href="../_autosummary/torchsurv.loss.survival.html">Flexible Survival model</a>. Given covariates <span class="math notranslate nohighlight">\(x_{i}(t)\)</span>, a vector of size <span class="math notranslate nohighlight">\(p\)</span>, the log hazard of patient <span class="math notranslate nohighlight">\(i\)</span> at time <span class="math notranslate nohighlight">\(t\)</span> is the output a neural network:</p>
+<div class="math notranslate nohighlight">
+\[\log h_i (t) = f_{\theta}(x_{i}(t), t)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\theta\)</span> denotes the parameters of the neural network (which may depend on time). For instance, we can train a multi-layer perceptron (MLP) to model the log hazard <span class="math notranslate nohighlight">\(\log h_i(t)\)</span>.</p>
+<section id="4.1.-MLP-model-for-log-hazard">
+<h3>4.1. MLP model for log hazard<a class="headerlink" href="#4.1.-MLP-model-for-log-hazard" title="Link to this heading">#</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Same architecture than Cox model, beside inputs dimension</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SurvivalModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_features</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># output log-hazard for this x,t</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="c1"># x: [N, F], t: [T, 1]</span>
+        <span class="n">N</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Expand x to [N, T, F]</span>
+        <span class="n">x_exp</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
+        <span class="c1"># Expand t to [N, T, 1]</span>
+        <span class="n">t_exp</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Concatenate along feature dim</span>
+        <span class="n">xt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x_exp</span><span class="p">,</span> <span class="n">t_exp</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># [N, T, F+1]</span>
+
+        <span class="c1"># Flatten first two dims for processing</span>
+        <span class="n">xt_flat</span> <span class="o">=</span> <span class="n">xt</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">N</span> <span class="o">*</span> <span class="n">T</span><span class="p">,</span> <span class="n">F</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">out_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">xt_flat</span><span class="p">)</span>  <span class="c1"># [N*T, 1]</span>
+
+        <span class="c1"># Reshape back to [N, T]</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out_flat</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="c1"># instantiate</span>
+<span class="n">survival_model</span> <span class="o">=</span> <span class="n">SurvivalModel</span><span class="p">(</span><span class="n">num_features</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="4.2.-Model-training">
+<h3>4.2. Model training<a class="headerlink" href="#4.2.-Model-training" title="Link to this heading">#</a></h3>
+<p>The Flexible Survival Model relies on a numerical approximation of the cumulative hazard in order to compute the likelihood. As a result, the log-hazard must be evaluated over a set of time points specified in <code class="docutils literal notranslate"><span class="pre">eval_time</span></code>. In practice, these evaluation times should be as uniformly distributed as possible, and they must include all observed event or censoring times stored in <code class="docutils literal notranslate"><span class="pre">time</span></code>. Further, we denote by <span class="math notranslate nohighlight">\(u\)</span> the number of evaluation times.</p>
+<p>Below is the code used to construct the evaluation grid:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Eval time at which to evaluate the hazard</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">time_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">df_train</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">eval_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">time_train</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">dt</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+<span class="n">extra_times</span> <span class="o">=</span> <span class="n">time_train</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()[</span><span class="o">~</span><span class="n">torch</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">time_train</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">eval_time</span><span class="p">)]</span>
+<span class="n">eval_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">eval_time</span><span class="p">,</span> <span class="n">extra_times</span><span class="p">])</span>  <span class="c1"># Add original time points</span>
+<span class="n">eval_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">eval_time</span><span class="p">)</span>  <span class="c1"># sort and remove duplicate</span>
+<span class="n">eval_time</span> <span class="o">=</span> <span class="n">eval_time</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The function <code class="docutils literal notranslate"><span class="pre">survival.neg_log_likelihood</span></code> for time-varying covariates expects a matrix <span class="math notranslate nohighlight">\(\log h_i(t)\)</span> evaluated for <code class="docutils literal notranslate"><span class="pre">id</span></code> (rows) and for all <code class="docutils literal notranslate"><span class="pre">eval_time</span></code> (columns). This yields an <span class="math notranslate nohighlight">\((n, u)\)</span> matrix, where <span class="math notranslate nohighlight">\(u = |\)</span><code class="docutils literal notranslate"><span class="pre">eval_time</span></code><span class="math notranslate nohighlight">\(|\)</span>.</p>
+<p>When we pass <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">eval_time</span></code> through our <code class="docutils literal notranslate"><span class="pre">survival_model</span></code>, we obtain <code class="docutils literal notranslate"><span class="pre">log_hz_long</span></code>, which returns a matrix of shape <span class="math notranslate nohighlight">\((m, u)\)</span>. Each entry <code class="docutils literal notranslate"><span class="pre">log_hz_long[k,</span> <span class="pre">l]</span></code> corresponds to the value <span class="math notranslate nohighlight">\(\log h_i(t) = f_\theta(x_i(t), t)\)</span> for the individual <span class="math notranslate nohighlight">\(i =\)</span><code class="docutils literal notranslate"><span class="pre">id[k]</span></code> at the time <span class="math notranslate nohighlight">\(t =\)</span> <code class="docutils literal notranslate"><span class="pre">eval_time[l]</span></code>.</p>
+<div class="line-block">
+<div class="line">where</div>
+<div class="line">- <code class="docutils literal notranslate"><span class="pre">id[k]</span></code> identifies the individual <span class="math notranslate nohighlight">\(i\)</span>,</div>
+<div class="line">- <code class="docutils literal notranslate"><span class="pre">start[k]</span></code> marks the beginning of the time interval for which the covariates <span class="math notranslate nohighlight">\(x_i(t)\)</span> are valid, and</div>
+<div class="line">- <code class="docutils literal notranslate"><span class="pre">eval_time[l]</span></code> is the evaluation time at which the hazard is computed.</div>
+</div>
+<p>To transform this <span class="math notranslate nohighlight">\((m, u)\)</span> output into the required <span class="math notranslate nohighlight">\((n, u)\)</span> format, we use the helper function <code class="docutils literal notranslate"><span class="pre">expand_log_hz_survival</span></code>, which aggregates the per-row outputs into the full <code class="docutils literal notranslate"><span class="pre">log_hz</span></code> matrix expected by the loss function.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Init optimizer for Weibull</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">survival_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">LEARNING_RATE</span><span class="p">)</span>
+
+<span class="c1"># Initialize empty list to store loss on train and validation sets</span>
+<span class="n">train_losses</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">val_losses</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># training loop</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">EPOCHS</span><span class="p">):</span>
+    <span class="n">epoch_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader_train</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">),</span> <span class="nb">id</span><span class="p">,</span> <span class="n">start</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">log_hz_long</span> <span class="o">=</span> <span class="n">survival_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">eval_time</span><span class="p">)</span>  <span class="c1"># shape = (m,u)</span>
+
+        <span class="c1"># expand log_hz to row = id, column = time</span>
+        <span class="n">log_hz</span> <span class="o">=</span> <span class="n">expand_log_hz_survival</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">eval_time</span><span class="p">,</span> <span class="n">log_hz_long</span><span class="p">)</span>  <span class="c1"># shape = (n,u)</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">survival</span><span class="o">.</span><span class="n">neg_log_likelihood</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">eval_time</span><span class="o">=</span><span class="n">eval_time</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="n">epoch_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="p">(</span><span class="n">EPOCHS</span> <span class="o">//</span> <span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">:</span><span class="s2">03</span><span class="si">}</span><span class="s2">, Training loss: </span><span class="si">{</span><span class="n">epoch_loss</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Record losses for the following figure</span>
+    <span class="n">train_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epoch_loss</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">),</span> <span class="nb">id</span><span class="p">,</span> <span class="n">start</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader_val</span><span class="p">))</span>
+        <span class="n">val_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">survival</span><span class="o">.</span><span class="n">neg_log_likelihood</span><span class="p">(</span>
+                <span class="n">expand_log_hz_survival</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">eval_time</span><span class="p">,</span> <span class="n">survival_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">eval_time</span><span class="p">)),</span>
+                <span class="n">event</span><span class="p">,</span>
+                <span class="n">time</span><span class="p">,</span>
+                <span class="n">eval_time</span><span class="o">=</span><span class="n">eval_time</span><span class="p">,</span>
+                <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Epoch: 000, Training loss: 1397500800.00
+Epoch: 010, Training loss: 211.00
+Epoch: 020, Training loss: 266.84
+Epoch: 030, Training loss: 208.24
+Epoch: 040, Training loss: 218.81
+Epoch: 050, Training loss: 237.73
+Epoch: 060, Training loss: 235.83
+Epoch: 070, Training loss: 268.04
+Epoch: 080, Training loss: 193.11
+Epoch: 090, Training loss: 216.74
+</pre></div></div>
+</div>
+<p>We can visualize the training and validation losses.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_losses</span><span class="p">(</span><span class="n">train_losses</span><span class="p">,</span> <span class="n">val_losses</span><span class="p">,</span> <span class="s2">&quot;Flexible Survival&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_regression_time_varying_47_0.png" src="../_images/notebooks_regression_time_varying_47_0.png" />
+</div>
+</div>
+</section>
+<section id="4.3.-Evaluation-Metrics">
+<h3>4.3. Evaluation Metrics<a class="headerlink" href="#4.3.-Evaluation-Metrics" title="Link to this heading">#</a></h3>
+<p>As for the Extended Cox Model, we evaluate the predictive performance of the model using the <a class="reference external" href="../_autosummary/torchsurv.metrics.cindex.html">C-index</a>, the <a class="reference external" href="../_autosummary/torchsurv.metrics.auc.html">AUC</a> and the <a class="reference external" href="../_autosummary/torchsurv.metrics.brier_score.html">Brier score</a>.</p>
+<p>We begin by computing the subject-specific log-hazard at every time <span class="math notranslate nohighlight">\(t\)</span> recorded in <code class="docutils literal notranslate"><span class="pre">time</span></code> for the test set (<code class="docutils literal notranslate"><span class="pre">test_log_hz</span></code>), as well as the log-hazard evaluated at all times in <code class="docutils literal notranslate"><span class="pre">eval_time</span></code> (<code class="docutils literal notranslate"><span class="pre">test_log_hz_eval_time</span></code>).</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="c1"># test event and test time of length n</span>
+    <span class="n">test_x</span><span class="p">,</span> <span class="p">(</span><span class="n">test_event</span><span class="p">,</span> <span class="n">test_time</span><span class="p">),</span> <span class="n">test_id</span><span class="p">,</span> <span class="n">test_start</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader_test</span><span class="p">))</span>
+    <span class="n">log_hz_eval_time_long</span> <span class="o">=</span> <span class="n">survival_model</span><span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">eval_time</span><span class="p">)</span>
+    <span class="n">test_log_hz_eval_time</span> <span class="o">=</span> <span class="n">expand_log_hz_survival</span><span class="p">(</span>
+        <span class="n">test_id</span><span class="p">,</span> <span class="n">test_start</span><span class="p">,</span> <span class="n">eval_time</span><span class="p">,</span> <span class="n">log_hz_eval_time_long</span>
+    <span class="p">)</span>  <span class="c1"># shape = (n, u)</span>
+    <span class="n">test_log_hz</span> <span class="o">=</span> <span class="n">expand_log_hz_survival</span><span class="p">(</span><span class="n">test_id</span><span class="p">,</span> <span class="n">test_start</span><span class="p">,</span> <span class="n">test_time</span><span class="p">,</span> <span class="n">log_hz_eval_time_long</span><span class="p">)</span>  <span class="c1"># shape = (n, n)</span>
+</pre></div>
+</div>
+</div>
+<p>We then obtain the subject-specific survival at every time <span class="math notranslate nohighlight">\(t\)</span> recorded in <code class="docutils literal notranslate"><span class="pre">time</span></code>:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_surv</span> <span class="o">=</span> <span class="n">survival</span><span class="o">.</span><span class="n">survival_function</span><span class="p">(</span><span class="n">test_log_hz_eval_time</span><span class="p">,</span> <span class="n">test_time</span><span class="p">,</span> <span class="n">eval_time</span><span class="p">)</span>  <span class="c1"># shape = (n,n)</span>
+</pre></div>
+</div>
+</div>
+<p>We can evaluate the concordance index, its confidence interval and the p-value of the statistical test testing whether the c-index is greater than 0.5:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Concordance index</span>
+<span class="n">survival_cindex</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cox model performance:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Concordance-index   = </span><span class="si">{</span><span class="n">survival_cindex</span><span class="p">(</span><span class="n">test_log_hz</span><span class="p">,</span><span class="w"> </span><span class="n">test_event</span><span class="p">,</span><span class="w"> </span><span class="n">test_time</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Confidence interval = </span><span class="si">{</span><span class="n">survival_cindex</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># H0: cindex = 0.5, Ha: cindex &gt; 0.5</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p-value = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">survival_cindex</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;greater&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Cox model performance:
+Concordance-index   = 0.5
+Confidence interval = tensor([0.2264, 0.7736])
+p-value = 0.5
+</pre></div></div>
+</div>
+<p>For time-dependent prediction (e.g., 3-year mortality), the C-index is not a proper measure. Instead, it is recommended to use the AUC. The probability to correctly predicts which of two comparable patients will experience an event by 5-year based on their estimated risk scores is the AUC evaluated at 3-year (1095 days) obtained with</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">survival_auc</span> <span class="o">=</span> <span class="n">Auc</span><span class="p">()</span>
+
+<span class="n">new_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1095.0</span><span class="p">)</span>
+
+<span class="c1"># subject-specific log hazard at 3-yr</span>
+<span class="n">log_hz_t</span> <span class="o">=</span> <span class="n">expand_log_hz_survival</span><span class="p">(</span><span class="n">test_id</span><span class="p">,</span> <span class="n">test_start</span><span class="p">,</span> <span class="n">new_time</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">log_hz_eval_time_long</span><span class="p">)</span>
+
+<span class="c1"># auc evaluated at new time = 1095, 3 year</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC 3-yr             = </span><span class="si">{</span><span class="n">survival_auc</span><span class="p">(</span><span class="n">log_hz_t</span><span class="p">,</span><span class="w"> </span><span class="n">test_event</span><span class="p">,</span><span class="w"> </span><span class="n">test_time</span><span class="p">,</span><span class="w"> </span><span class="n">new_time</span><span class="o">=</span><span class="n">new_time</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC 3-yr (conf int.) = </span><span class="si">{</span><span class="n">survival_auc</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC (p_value) = </span><span class="si">{</span><span class="n">survival_auc</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AUC 3-yr             = tensor([0.1061])
+AUC 3-yr (conf int.) = tensor([0.0396, 0.1725])
+AUC (p_value) = tensor([1.])
+</pre></div></div>
+</div>
+<p>Lastly, we can evaluate the time-dependent Brier score and the integrated Brier score</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">survival_brier_score</span> <span class="o">=</span> <span class="n">BrierScore</span><span class="p">()</span>
+
+<span class="c1"># brier score at last 5 times</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Brier score             = </span><span class="si">{</span><span class="n">survival_brier_score</span><span class="p">(</span><span class="n">test_surv</span><span class="p">,</span><span class="w"> </span><span class="n">test_event</span><span class="p">,</span><span class="w"> </span><span class="n">test_time</span><span class="p">)[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Brier score (conf int.) = </span><span class="si">{</span><span class="n">survival_brier_score</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()[:,</span><span class="w"> </span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># integrated brier score</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Integrated Brier score  = </span><span class="si">{</span><span class="n">survival_brier_score</span><span class="o">.</span><span class="n">integral</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># H0: bs = bs0, Ha: bs &lt; bs0;</span>
+<span class="c1"># where bs0 is the expected brier score if the survival model was not providing accurate predictions beyond random chance.</span>
+
+<span class="c1"># p-value for brier score at last 5 times</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Brier score (p-val)        = </span><span class="si">{</span><span class="n">survival_brier_score</span><span class="o">.</span><span class="n">p_value</span><span class="p">(</span><span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;less&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Brier score             = tensor([0.6305, 0.6558, 0.6556, 0.6546, 0.6546])
+Brier score (conf int.) = tensor([[0.4710, 0.5012, 0.5009, 0.4994, 0.4994],
+        [0.7901, 0.8104, 0.8104, 0.8099, 0.8099]])
+Integrated Brier score  = 0.6031082272529602
+Brier score (p-val)        = tensor([0.5450, 0.4160, 0.4130, 0.3910, 0.3930])
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="5.-Models-comparison">
+<h2>5. Models comparison<a class="headerlink" href="#5.-Models-comparison" title="Link to this heading">#</a></h2>
+<p>We can compare the predictive performance of the Cox proportional hazards model against the Flexible Survival model.</p>
+<section id="Comparing-the-Concordance-index">
+<h3>Comparing the Concordance index<a class="headerlink" href="#Comparing-the-Concordance-index" title="Link to this heading">#</a></h3>
+<p>The statistical test is formulated as follows, H0: cindex cox = cindex flexible survival, Ha: cindex cox &gt; cindex flexible survival</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cox cindex     = </span><span class="si">{</span><span class="n">cox_cindex</span><span class="o">.</span><span class="n">cindex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Flexible Survival cindex = </span><span class="si">{</span><span class="n">survival_cindex</span><span class="o">.</span><span class="n">cindex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;p-value        = </span><span class="si">{</span><span class="n">cox_cindex</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">survival_cindex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Cox cindex     = 0.5808457732200623
+Flexible Survival cindex = 0.5
+p-value        = 0.3301258087158203
+</pre></div></div>
+</div>
+</section>
+<section id="Comparing-the-AUC-at-3-year">
+<h3>Comparing the AUC at 3-year<a class="headerlink" href="#Comparing-the-AUC-at-3-year" title="Link to this heading">#</a></h3>
+<p>The statistical test is formulated as follows, H0: 3-yr auc cox = 3-yr auc flexible survival, Ha: 5-yr auc cox &gt; 5-yr auc flexible survival</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cox 5-yr AUC     = </span><span class="si">{</span><span class="n">cox_auc</span><span class="o">.</span><span class="n">auc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Flexible Survival 5-yr AUC = </span><span class="si">{</span><span class="n">survival_auc</span><span class="o">.</span><span class="n">auc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;p-value          = </span><span class="si">{</span><span class="n">cox_auc</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">survival_auc</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Cox 5-yr AUC     = tensor([0.6061])
+Flexible Survival 5-yr AUC = tensor([0.1061])
+p-value          = tensor([6.1089e-05])
+</pre></div></div>
+</div>
+</section>
+<section id="Comparing-the-Brier-Score-at-3-year">
+<h3>Comparing the Brier-Score at 3-year<a class="headerlink" href="#Comparing-the-Brier-Score-at-3-year" title="Link to this heading">#</a></h3>
+<p>The statistical test is formulated as follows, H0: 3-yr bs cox = 3-yr bs flexible survival, Ha: 3-yr bs cox &gt; 3-yr bs flexible survival</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cox 3-yr BS     = </span><span class="si">{</span><span class="n">cox_brier_score</span><span class="o">.</span><span class="n">brier_score</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Flexible Survival 3-yr BS = </span><span class="si">{</span><span class="n">survival_brier_score</span><span class="o">.</span><span class="n">brier_score</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;p-value          = </span><span class="si">{</span><span class="n">cox_brier_score</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">survival_brier_score</span><span class="p">)[</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Cox 3-yr BS     = 0.25146567821502686
+Flexible Survival 3-yr BS = 0.5034263730049133
+p-value          = 0.002828118624165654
+</pre></div></div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="momentum.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Survival Regression with MNIST</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="loss.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Loss</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#1.-Dependencies">1. Dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#2.-Dataset">2. Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#3.-Cox-Model">3. Cox Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#3.1.-MLP-model-for-log-relative-hazards">3.1. MLP model for log relative hazards</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#3.2.-Model-training">3.2. Model training</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#3.3.-Evaluation-metrics">3.3. Evaluation metrics</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#4.-Flexible-Survival-Model">4. Flexible Survival Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#4.1.-MLP-model-for-log-hazard">4.1. MLP model for log hazard</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#4.2.-Model-training">4.2. Model training</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#4.3.-Evaluation-Metrics">4.3. Evaluation Metrics</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#5.-Models-comparison">5. Models comparison</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Comparing-the-Concordance-index">Comparing the Concordance index</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Comparing-the-AUC-at-3-year">Comparing the AUC at 3-year</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Comparing-the-Brier-Score-at-3-year">Comparing the Brier-Score at 3-year</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Thibaud Coroller, Mélodie Monod, Peter Krusche, Qian Cao
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Novartis Pharma AG.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

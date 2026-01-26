@@ -1,0 +1,723 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>torchsurv.loss.cox &#8212; TorchSurv 0.1.5 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0cc05dfd" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=98feffa1"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/torchsurv.loss.cox';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="torchsurv.loss.weibull" href="torchsurv.loss.weibull.html" />
+    <link rel="prev" title="Loss" href="../loss.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">🎉 We are part of the <a href='https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis'> FDA's Regulatory Science Tools Catalog!</a> 🎉</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo_firecamp.png" class="logo__image only-light" alt="TorchSurv 0.1.5 documentation - Home"/>
+    <img src="../_static/logo_firecamp.png" class="logo__image only-dark pst-js-only" alt="TorchSurv 0.1.5 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../loss.html">Loss</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.loss.weibull.html">torchsurv.loss.weibull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.loss.survival.html">torchsurv.loss.survival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../metrics.html">Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.metrics.cindex.html">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/introduction.html">Survival Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/momentum.html">Survival Regression with MNIST</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/regression_time_varying.html">Survival Regression with Time-Varying Covariates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Under the hood:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/loss.html">Loss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/time_varying_covariates.html">Time-Varying Covariates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CODEOWNERS-copy.html">Maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CONTRIBUTING-copy.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT-copy.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devnotes.html">Development notes</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/Novartis/torchsurv" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/_autosummary/torchsurv.loss.cox.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>torchsurv.loss.cox</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.cox.neg_partial_log_likelihood"><code class="docutils literal notranslate"><span class="pre">neg_partial_log_likelihood()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.cox.baseline_survival_function"><code class="docutils literal notranslate"><span class="pre">baseline_survival_function()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.cox.survival_function_cox"><code class="docutils literal notranslate"><span class="pre">survival_function_cox()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-torchsurv.loss.cox">
+<span id="torchsurv-loss-cox"></span><h1>torchsurv.loss.cox<a class="headerlink" href="#module-torchsurv.loss.cox" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="torchsurv.loss.cox.neg_partial_log_likelihood">
+<span class="sig-name descname"><span class="pre">neg_partial_log_likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_hz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ties_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'efron'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torchsurv/loss/cox.html#neg_partial_log_likelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.loss.cox.neg_partial_log_likelihood" title="Link to this definition">#</a></dt>
+<dd><p>Compute the negative of the partial log likelihood for the Cox proportional hazards model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_hz</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Log relative hazard of shape = (n_samples,) or (n_samples, n_samples).
+If shape = (n_samples, n_samples), it represents time-varying log relative hazards for the extended Cox model.
+The entry at row i and column j corresponds to the log relative hazard for subject i at the <code class="docutils literal notranslate"><span class="pre">time</span></code> of subject j.</p></li>
+<li><p><strong>event</strong> (<em>torch.Tensor</em><em>, </em><em>bool</em>) – Event indicator (= True if event occurred) of shape = (n_samples,).</p></li>
+<li><p><strong>time</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Event or censoring time of shape = (n_samples,).</p></li>
+<li><p><strong>ties_method</strong> (<em>str</em>) – Method to handle ties in event time. Defaults to “efron”.
+Must be one of the following: “efron”, “breslow”.</p></li>
+<li><p><strong>reduction</strong> (<em>str</em><em>, </em><em>optional</em>) – Method to reduce losses. Defaults to “mean”.
+Must be one of the following: “sum”, “mean”.</p></li>
+<li><p><strong>strata</strong> (<em>torch.Tensor</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – Integer tensor of shape = (n_samples,) representing stratum for each subject defined by combinations of categorical variables.
+This is useful if a categorical covariate does not obey the proportional hazard assumption.
+This is used similar to the strata expression in <cite>R</cite> and <cite>lifelines</cite>.</p></li>
+<li><p><strong>checks</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to perform input format checks.
+Enabling checks can help catch potential issues in the input data.
+Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Negative of the Cox partial log likelihood.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(torch.tensor, float)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For each subject <span class="math notranslate nohighlight">\(i \in \{1, \cdots, N\}\)</span>, denote <span class="math notranslate nohighlight">\(X_i\)</span> as the survival time and <span class="math notranslate nohighlight">\(D_i\)</span> as the
+censoring time. Survival data consist of the event indicator, <span class="math notranslate nohighlight">\(\delta_i=1(X_i\leq D_i)\)</span>
+(argument <code class="docutils literal notranslate"><span class="pre">event</span></code>) and the time-to-event or censoring, <span class="math notranslate nohighlight">\(T_i = \min(\{ X_i,D_i \})\)</span>
+(argument <code class="docutils literal notranslate"><span class="pre">time</span></code>).</p>
+<p>The log hazard function for the Cox proportional hazards model has the form:</p>
+<div class="math notranslate nohighlight">
+\[\log h_i (t) = \log \lambda_{0}(t) + \log \lambda_i\]</div>
+<p>where <span class="math notranslate nohighlight">\(\log \lambda_i\)</span> is the log relative hazard (argument <code class="docutils literal notranslate"><span class="pre">log_hz</span></code>).</p>
+<p>If the set <span class="math notranslate nohighlight">\(\{T_i: \delta_i = 1\}_{i = 1, \cdots, N}\)</span> represent unique event times (i.e., no ties),
+the standard Cox partial likelihood can be used <span id="id1">[<a class="reference internal" href="#id7" title="D. R. Cox. Regression models and life‐tables. Journal of the Royal Statistical Society: Series B (Methodological), 34(2):187–202, January 1972.">Cox72</a>]</span>. Let <span class="math notranslate nohighlight">\(\tau_1 &lt; \tau_2 &lt; \cdots &lt; \tau_N\)</span>
+be the ordered times and let  <span class="math notranslate nohighlight">\(R(\tau_i) = \{ j: \tau_j \geq \tau_i\}\)</span>
+be the risk set at <span class="math notranslate nohighlight">\(\tau_i\)</span>. The partial log likelihood is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\text{pll} = \sum_{i: \: \delta_i = 1} \left(\log \lambda_i - \log\left(\sum_{j \in R(\tau_i)} \lambda_j \right) \right)\]</div>
+<p><strong>Ties in event time handled with Breslow’s method.</strong>
+Breslow’s method <span id="id2">[<a class="reference internal" href="#id8" title="N. E. Breslow. Analysis of survival data under the proportional hazards model. International Statistical Review / Revue Internationale de Statistique, 43(1):45, April 1975.">Bre75</a>]</span> describes the approach in which the procedure described above is used unmodified,
+even when ties are present. If two subjects A and B have the same event time, subject A will be at risk for the
+event that happened to B, and B will be at risk for the event that happened to A.
+Let <span class="math notranslate nohighlight">\(\xi_1 &lt; \xi_2 &lt; \cdots\)</span> denote the unique ordered times (i.e., unique <span class="math notranslate nohighlight">\(\tau_i\)</span>). Let <span class="math notranslate nohighlight">\(H_k\)</span> be the set of
+subjects that have an event at time <span class="math notranslate nohighlight">\(\xi_k\)</span> such that <span class="math notranslate nohighlight">\(H_k = \{i: \tau_i = \xi_k, \delta_i = 1\}\)</span>, and let <span class="math notranslate nohighlight">\(m_k\)</span>
+be the number of subjects that have an event at time <span class="math notranslate nohighlight">\(\xi_k\)</span> such that <span class="math notranslate nohighlight">\(m_k = |H_k|\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[\text{pll} = \sum_{k} \left( {\sum_{i\in H_{k}}\log \lambda_i} - m_k \: \log\left(\sum_{j \in R(\xi_k)} \lambda_j \right) \right)\]</div>
+<p><strong>Ties in event time handled with Efron’s method.</strong>
+An alternative approach that is considered to give better results is the Efron’s method <span id="id3">[<a class="reference internal" href="#id12" title="Bradley Efron. The efficiency of cox's likelihood function for censored data. Journal of the American Statistical Association, 72(359):557–565, September 1977.">Efr77</a>]</span>.
+As a compromise between the Cox’s and Breslow’s method, Efron suggested to use the average
+risk among the subjects that have an event at time <span class="math notranslate nohighlight">\(\xi_k\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\bar{\lambda}_{k} = {\frac {1}{m_{k}}}\sum_{i\in H_{k}}\lambda_i\]</div>
+<p>Efron approximation of the partial log likelihood is defined by</p>
+<div class="math notranslate nohighlight">
+\[\text{pll} = \sum_{k} \left( {\sum_{i\in H_{k}}\log \lambda_i} - \sum_{r =0}^{m_{k}-1} \log\left(\sum_{j \in R(\xi_k)}\lambda_j-r\:\bar{\lambda}_{j}\right)\right)\]</div>
+<p><strong>Stratified Cox model.</strong>
+When subjects come from different strata (argument <code class="docutils literal notranslate"><span class="pre">strata</span></code>), each stratum has its own baseline hazard function <span id="id4">[<a class="reference internal" href="#id10" title="Terry M. Therneau and Patricia M. Grambsch. Modeling Survival Data: Extending the Cox Model. Springer, New York, 2000. ISBN 978-0-387-98784-2.">TG00</a>]</span> (Chapter 3.2).
+Let <span class="math notranslate nohighlight">\(\lambda_{0}^s(t)\)</span> be the baseline hazard for stratum <span class="math notranslate nohighlight">\(s\)</span>.
+The hazard function for patient <span class="math notranslate nohighlight">\(i\)</span> in stratum <span class="math notranslate nohighlight">\(s\)</span> becomes:</p>
+<div class="math notranslate nohighlight">
+\[\log h_i^s(t) = \log \lambda_{0}^s(t) + \log \lambda_i\]</div>
+<p>The partial likelihood is computed separately within each stratum and then combined:</p>
+<div class="math notranslate nohighlight">
+\[\text{pll} = \sum_{s}  \text{pll}_{s}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\text{pll}_{s}\)</span> is the partial log likelihood contribution computed using only subjects in stratum <span class="math notranslate nohighlight">\(s\)</span></p>
+<p><strong>Extended Cox model.</strong>
+When the log relative hazard <span class="math notranslate nohighlight">\(\log \lambda_i(t)\)</span> is time-varying (i.e., a function of time), the extended Cox model can be used <span id="id5">[<a class="reference internal" href="#id11" title="John O'Quigley. Survival Analysis: Proportional and Non-Proportional Hazards Regression. Springer International Publishing, 2021. ISBN 9783030334390.">OQuigley21</a>]</span> (Chapter 6.5).
+The extended partial log likelihood is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\text{Without ties: } \text{pll} &amp;= \sum_{i: \: \delta_i = 1} \left(\log \lambda_i(\tau_i) - \log\left(\sum_{j \in R(\tau_i)} \lambda_j(\tau_i) \right) \right), \\
+\text{Breslow's correction: } \text{pll} &amp;= \sum_{k} \left( {\sum_{i\in H_{k}}\log \lambda_i(\xi_k)} - m_k \: \log\left(\sum_{j \in R(\xi_k)} \lambda_j(\xi_k) \right) \right), \\
+\text{Efron's correction: } \text{pll} &amp;= \sum_{k} \left( {\sum_{i\in H_{k}}\log \lambda_i(\xi_k)} - \sum_{r =0}^{m_{k}-1} \log\left(\sum_{j \in R(\xi_k)}\lambda_j(\xi_k)-r\:\bar{\lambda}_{j}(\xi_k)\right)\right), \: \bar{\lambda}_{k} = {\frac {1}{m_{k}}}\sum_{i\in H_{k}}\lambda_i(\xi_k).\end{split}\]</div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">43</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_hz</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neg_partial_log_likelihood</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>  <span class="c1"># default, mean of log likelihoods across patients</span>
+<span class="go">tensor(1.9908)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neg_partial_log_likelihood</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">)</span>  <span class="c1"># sum of log likelihoods across patients</span>
+<span class="go">tensor(5.9724)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Dealing with ties (default: Efron)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neg_partial_log_likelihood</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">ties_method</span><span class="o">=</span><span class="s2">&quot;efron&quot;</span><span class="p">)</span>
+<span class="go">tensor(2.9877)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neg_partial_log_likelihood</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">ties_method</span><span class="o">=</span><span class="s2">&quot;breslow&quot;</span><span class="p">)</span>  <span class="c1"># Dealing with ties (Breslow)</span>
+<span class="go">tensor(3.0371)</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<div class="docutils container" id="id6">
+<div role="list" class="citation-list">
+<div class="citation" id="id8" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Bre75</a><span class="fn-bracket">]</span></span>
+<p>N. E. Breslow. Analysis of survival data under the proportional hazards model. <em>International Statistical Review / Revue Internationale de Statistique</em>, 43(1):45, April 1975.</p>
+</div>
+<div class="citation" id="id7" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Cox72</a><span class="fn-bracket">]</span></span>
+<p>D. R. Cox. Regression models and life‐tables. <em>Journal of the Royal Statistical Society: Series B (Methodological)</em>, 34(2):187–202, January 1972.</p>
+</div>
+<div class="citation" id="id12" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">Efr77</a><span class="fn-bracket">]</span></span>
+<p>Bradley Efron. The efficiency of cox's likelihood function for censored data. <em>Journal of the American Statistical Association</em>, 72(359):557–565, September 1977.</p>
+</div>
+<div class="citation" id="id11" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">OQuigley21</a><span class="fn-bracket">]</span></span>
+<p>John O'Quigley. <em>Survival Analysis: Proportional and Non-Proportional Hazards Regression</em>. Springer International Publishing, 2021. ISBN 9783030334390.</p>
+</div>
+<div class="citation" id="id10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">TG00</a><span class="fn-bracket">]</span></span>
+<p>Terry M. Therneau and Patricia M. Grambsch. <em>Modeling Survival Data: Extending the Cox Model</em>. Springer, New York, 2000. ISBN 978-0-387-98784-2.</p>
+</div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchsurv.loss.cox.baseline_survival_function">
+<span class="sig-name descname"><span class="pre">baseline_survival_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_hz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torchsurv/loss/cox.html#baseline_survival_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.loss.cox.baseline_survival_function" title="Link to this definition">#</a></dt>
+<dd><p>Compute the baseline survival function for the Cox proportional hazards model with Breslow’s method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_hz</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Log relative hazard of shape = (n_samples,) or (n_samples, n_samples).
+If shape = (n_samples, n_samples), it represents time-varying log relative hazards for the extended Cox model.
+The entry at row i and column j corresponds to the log relative hazard for subject i at the <code class="docutils literal notranslate"><span class="pre">time</span></code> of subject j.</p></li>
+<li><p><strong>event</strong> (<em>torch.Tensor</em><em>, </em><em>bool</em>) – Event indicator (= True if event occurred) of shape = (n_samples,) used to fit the model.</p></li>
+<li><p><strong>time</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Event or censoring time of shape = (n_samples,) used to fit the model.</p></li>
+<li><p><strong>strata</strong> (<em>torch.Tensor</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – Integer tensor of shape = (n_samples,) representing stratum for each subject defined by combinations of categorical variables.</p></li>
+<li><p><strong>checks</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to perform input format checks.
+Enabling checks can help catch potential issues in the input data.
+Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Dictionary with two entries:</dt><dd><ul class="simple">
+<li><p><cite>”time”</cite> (<cite>torch.Tensor</cite>): Sorted unique <code class="docutils literal notranslate"><span class="pre">time</span></code>.</p></li>
+<li><p><cite>”baseline_survival”</cite> (<cite>torch.Tensor</cite>): Estimated baseline survival function evaluated at these times.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The baseline survival function, <span class="math notranslate nohighlight">\(S_0(t)\)</span>, and the baseline cumulative hazard, <span class="math notranslate nohighlight">\(H_0(t)\)</span>, under the Cox proportional hazards model are defined as:</p>
+<div class="math notranslate nohighlight">
+\[S_0(t) = \exp\Big(-H_0(u)\, du \Big), \quad H_0(t) = \int_{0}^{t} h_0(u)\, du.\]</div>
+<p>Using the Breslow’s estimator <span id="id26">[<a class="reference internal" href="#id30" title="N. E. Breslow. Discussion on professor cox's paper. Journal of the Royal Statistical Society Series B: Statistical Methodology, 34(2):202-220, January 1972.">Bre72</a>]</span>, we estimate the baseline cumulative hazard as:</p>
+<div class="math notranslate nohighlight">
+\[\hat{H}_0(t) = \sum_{\xi_k \le t} \frac{m_k}{\sum_{j \in R(\xi_k)} \lambda_j}.\]</div>
+<p>The estimated baseline survival function is then given by:</p>
+<div class="math notranslate nohighlight">
+\[\hat{S}_0(t) = \exp\left(-\hat{H}_0(t)\right).\]</div>
+<p><strong>Stratified Cox model.</strong>
+When <code class="docutils literal notranslate"><span class="pre">strata</span></code> are provided, the baseline cumulative hazard <span class="math notranslate nohighlight">\(\hat{H}_{0}^s(t)\)</span> and baseline survival function
+<span class="math notranslate nohighlight">\(\hat{S}_{0}^s(t)\)</span> are computed separately for each stratum <span class="math notranslate nohighlight">\(s\)</span>, using only subjects from the same stratum.</p>
+<p><strong>Extended Cox model.</strong>
+When the log relative hazard <span class="math notranslate nohighlight">\(\log \lambda_i(t)\)</span> is time-varying (i.e., a function of time), the baseline cumulative hazard is estimated as:</p>
+<div class="math notranslate nohighlight">
+\[\hat{H}_0(t) = \sum_{\xi_k \le t} \frac{m_k}{\sum_{j \in R(\xi_k)} \lambda_j(\xi_k)}.\]</div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">log_hz</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">baseline_survival_function</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="go">{&#39;time&#39;: tensor([1., 2., 3., 4.]), &#39;baseline_survival&#39;: tensor([0.8636, 0.8636, 0.8636, 0.4568])}</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<div class="docutils container" id="id27">
+<div role="list" class="citation-list">
+<div class="citation" id="id30" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id26">Bre72</a><span class="fn-bracket">]</span></span>
+<p>N. E. Breslow. Discussion on professor cox's paper. <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em>, 34(2):202–220, January 1972.</p>
+</div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchsurv.loss.cox.survival_function_cox">
+<span class="sig-name descname"><span class="pre">survival_function_cox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">baseline_survival</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_log_hz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_strata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torchsurv/loss/cox.html#survival_function_cox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchsurv.loss.cox.survival_function_cox" title="Link to this definition">#</a></dt>
+<dd><p>Compute the individual survival function for new subjects for the Cox proportional hazards model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>baseline_survival</strong> (<em>dict</em>) – Output of <code class="docutils literal notranslate"><span class="pre">baseline_survival_function</span></code>.</p></li>
+<li><p><strong>new_log_hz</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Log relative hazard for new subjects of shape = (n_samples_new,) or (n_samples_new, n_times).
+If shape = (n_samples_new, n_times), it represents time-varying log relative hazards for the extended Cox model.
+The entry at row i and column j corresponds to the log relative hazard for new subject i at the entry j of <code class="docutils literal notranslate"><span class="pre">new_time</span></code>.</p></li>
+<li><p><strong>new_time</strong> (<em>torch.Tensor</em><em>, </em><em>float</em>) – Time at which to evaluate the survival probability of shape = (n_times,).</p></li>
+<li><p><strong>new_strata</strong> (<em>torch.Tensor</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – Integer tensor of shape = (n_samples_new,) representing stratum for each new subject defined by combinations of categorical variables.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Individual survival probabilities for each new subject at <code class="docutils literal notranslate"><span class="pre">new_time</span></code> of shape = (n_samples_new, n_times).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The estimated survival function for new subject <span class="math notranslate nohighlight">\(i\)</span> under the Cox proportional hazards model is given by:</p>
+<div class="math notranslate nohighlight">
+\[\hat{S}_i(t) = \hat{S}_0(t)^{\lambda_i^{\star}},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\hat{S}_0(t)\)</span> is the estimated baseline survival function and
+<span class="math notranslate nohighlight">\(\log \lambda_i^{\star}\)</span> is the log relative hazard of new subjects (argument <code class="docutils literal notranslate"><span class="pre">new_log_hz</span></code>).</p>
+<p><strong>Stratified Cox model.</strong>
+When strata are provided for both the original model fitting and new subject prediction (argument <code class="docutils literal notranslate"><span class="pre">new_strata</span></code>),
+the survival function uses the baseline survival function specific to the subject’s stratum <span class="math notranslate nohighlight">\(\hat{S}_{0}^s(t)\)</span>.</p>
+<p><strong>Extended Cox model.</strong>
+When the log relative hazard <span class="math notranslate nohighlight">\(\log \lambda_i^{\star}(t)\)</span> is time-varying (i.e., a function of time), the estimated survival function is:</p>
+<div class="math notranslate nohighlight">
+\[\hat{S}_i(t) = \hat{S}_0(t)^{\lambda_i^{\star}(t)}.\]</div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>  <span class="c1"># original subjects</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_hz</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">baseline_survival</span> <span class="o">=</span> <span class="n">baseline_survival_function</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_log_hz</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">])</span>  <span class="c1"># 2 new subjects</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">survival_function_cox</span><span class="p">(</span><span class="n">baseline_survival</span><span class="p">,</span> <span class="n">new_log_hz</span><span class="p">,</span> <span class="n">new_time</span><span class="p">)</span>
+<span class="go">tensor([[0.8433, 0.4024],</span>
+<span class="go">        [0.8283, 0.3657]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../loss.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Loss</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="torchsurv.loss.weibull.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">torchsurv.loss.weibull</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.cox.neg_partial_log_likelihood"><code class="docutils literal notranslate"><span class="pre">neg_partial_log_likelihood()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.cox.baseline_survival_function"><code class="docutils literal notranslate"><span class="pre">baseline_survival_function()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torchsurv.loss.cox.survival_function_cox"><code class="docutils literal notranslate"><span class="pre">survival_function_cox()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Thibaud Coroller, Mélodie Monod, Peter Krusche, Qian Cao
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Novartis Pharma AG.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
