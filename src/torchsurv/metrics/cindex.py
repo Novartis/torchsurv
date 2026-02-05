@@ -1,15 +1,14 @@
+from __future__ import annotations
+
 import copy
 import sys
 import warnings
-from typing import Optional, Tuple
 
 import torch
 from scipy import stats
 from torchmetrics import regression
 
-from torchsurv.tools.validate_data import (
-    validate_survival_data,
-)
+from torchsurv.tools.validation import SurvivalData
 
 __all__ = ["ConcordanceIndex"]
 
@@ -21,7 +20,7 @@ class ConcordanceIndex:
         self,
         tied_tol: float = 1e-8,
         checks: bool = True,
-    ) -> dict:
+    ) -> None:
         """Initialize a ConcordanceIndex for survival class model evaluation.
 
         Args:
@@ -200,7 +199,7 @@ class ConcordanceIndex:
 
         # Inputs checks
         if self.checks:
-            validate_survival_data(event, time)
+            SurvivalData(event=event, time=time)
 
         # find comparable pairs
         comparable = self._get_comparable_and_tied_time(event, time)

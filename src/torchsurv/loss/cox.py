@@ -1,24 +1,22 @@
 # pylint: disable=C0103
 # pylint: disable=C0301
 
+from __future__ import annotations
+
 import sys
 import warnings
-from typing import Optional
 
 import torch
 
-from torchsurv.tools.validate_data import (
-    validate_model,
-    validate_survival_data,
-    validate_time_varying_log_hz,
-)
+from torchsurv.tools.validate_data import validate_time_varying_log_hz
+from torchsurv.tools.validation import ModelParameters, SurvivalData
 
 __all__ = [
     # "_partial_likelihood_cox",
     # "_partial_likelihood_efron",
     # "_partial_likelihood_breslow",
-    "neg_partial_log_likelihood",
     "baseline_survival_function",
+    "neg_partial_log_likelihood",
     "survival_function_cox",
 ]
 
@@ -85,10 +83,10 @@ def _partial_likelihood_efron(
     R = [torch.where(time_sorted >= time_unique[k])[0] for k in range(K)]
 
     # Length of each element in H
-    m = torch.tensor([len(h) for h in H])
+    m = torch.tensor([len(h) for h in H], device=log_hz_sorted.device)
 
     # Boolean tensor indicating whether each element in H has a length greater than 0
-    include = torch.tensor([len(h) > 0 for h in H])
+    include = torch.tensor([len(h) > 0 for h in H], device=log_hz_sorted.device)
 
     if is_time_varying_log_hz:
         # log nominator
@@ -107,12 +105,28 @@ def _partial_likelihood_efron(
         denominator_naive = torch.stack([torch.sum(torch.exp(log_hz_sorted[r])) for r in R])
         denominator_ties = torch.stack([torch.sum(torch.exp(log_hz_sorted[h])) for h in H])
 
-    # log denominator
-    log_denominator_efron = torch.zeros(K, device=log_hz_sorted.device)
-    for k in range(K):
-        mk = int(m[k].item())
-        for r in range(1, mk + 1):
-            log_denominator_efron[k] += torch.log(denominator_naive[k] - (r - 1) / float(m[k]) * denominator_ties[k])
+    # log denominator - vectorized Efron correction
+    # For each time k, we need to compute sum over r = 1 to m[k] of log(denominator_naive[k] - (r-1)/m[k] * denominator_ties[k])
+    # Vectorize by creating a range tensor and masking invalid entries
+    max_m = m.max() if m.numel() > 0 else torch.tensor(1, device=m.device)
+    r_range = torch.arange(1, max_m + 1, device=log_hz_sorted.device, dtype=torch.float32).unsqueeze(0)  # (1, max_m)
+
+    # Mask for valid r values: r <= m[k]
+    valid_r = r_range <= m.unsqueeze(1)  # (K, max_m)
+
+    # Compute the adjusted denominator for all k and r
+    # Shape: (K, 1) - (K, 1) * (1, max_m) / (K, 1) = (K, max_m)
+    adjusted_denom = denominator_naive.unsqueeze(1) - (r_range - 1) * denominator_ties.unsqueeze(1) / m.unsqueeze(
+        1
+    ).clamp(min=1)
+
+    # Take log and mask invalid entries (set to 0 so they don't contribute to sum)
+    log_adjusted_denom = torch.where(
+        valid_r, torch.log(adjusted_denom.clamp(min=1e-10)), torch.tensor(0.0, device=log_hz_sorted.device)
+    )
+
+    # Sum over r for each time k
+    log_denominator_efron = log_adjusted_denom.sum(dim=1)  # (K,)
 
     # Define results
     results: torch.Tensor = (log_nominator - log_denominator_efron)[include]
@@ -140,7 +154,7 @@ def _partial_likelihood_breslow(
 
     Returns:
         torch.Tensor: partial log likelihood for the Cox proportional hazards model using Breslow's method to handle ties in event time.
-    """  # noqa: E501
+    """
 
     # Event or censoring times sorted without ties.
     time_unique = torch.unique(time_sorted)
@@ -200,7 +214,7 @@ def _cumulative_baseline_hazard(
 
     Returns:
         torch.Tensor: Log cumulative baseline hazard evaluated at each unique time point.
-    """  # noqa: E501
+    """
 
     # Event or censoring times sorted without ties.
     time_unique = torch.unique(time_sorted)
@@ -234,7 +248,7 @@ def neg_partial_log_likelihood(
     time: torch.Tensor,
     ties_method: str = "efron",
     reduction: str = "mean",
-    strata: Optional[torch.Tensor] = None,
+    strata: torch.Tensor | None = None,
     checks: bool = True,
 ) -> torch.Tensor:
     r"""Compute the negative of the partial log likelihood for the Cox proportional hazards model.
@@ -372,15 +386,19 @@ def neg_partial_log_likelihood(
             Therneau2000
             OQuigley2021
 
-    """  # noqa: E501
+    """
 
     # If not event, or only one sample, return zero loss
-    if any([event.sum().item() == 0, len(log_hz.size()) == 0]):
+    # Check conditions without .item() for torch.compile compatibility
+    has_no_events = event.sum() == 0
+    is_empty = len(log_hz.size()) == 0
+
+    if has_no_events or is_empty:
         warnings.warn(
             "No events OR single sample. Returning zero loss for the batch",
             stacklevel=2,
         )
-        return torch.tensor(0.0, requires_grad=True)
+        return torch.tensor(0.0, requires_grad=True, device=event.device if not is_empty else None)
 
     # if no strata specified, every subject if in the same strata
     if strata is None:
@@ -393,8 +411,8 @@ def neg_partial_log_likelihood(
     strata = strata.squeeze()
 
     if checks:
-        validate_survival_data(event, time, strata)
-        validate_model(log_hz, event, model_type="cox")
+        SurvivalData(event=event, time=time, strata=strata)
+        ModelParameters(log_params=log_hz, event=event, model_type="cox")
 
     # Flag indicating whether `log_hz` is time-varying
     is_time_varying_log_hz = len(log_hz.size()) == 2
@@ -474,7 +492,7 @@ def baseline_survival_function(
     log_hz: torch.Tensor,
     event: torch.Tensor,
     time: torch.Tensor,
-    strata: Optional[torch.Tensor] = None,
+    strata: torch.Tensor | None = None,
     checks: bool = True,
 ) -> dict[int, dict[str, torch.Tensor]]:
     r"""Compute the baseline survival function for the Cox proportional hazards model with Breslow's method.
@@ -543,7 +561,7 @@ def baseline_survival_function(
             :filter: False
 
             Breslow1972
-    """  # noqa: E501
+    """
 
     # if no strata specified, every subject if in the same strata
     if strata is None:
@@ -556,7 +574,7 @@ def baseline_survival_function(
     strata = strata.squeeze()
 
     if checks:
-        validate_survival_data(event, time, strata)
+        SurvivalData(event=event, time=time, strata=strata)
 
     # Flag indicating whether `log_hz` is time-varying
     is_time_varying_log_hz = len(log_hz.size()) == 2
@@ -605,8 +623,9 @@ def baseline_survival_function(
                 "baseline_survival": torch.exp(-cumulative_baseline_hazard_strata),
             }
         else:
-            # multiple strata
-            key = int(str.item())
+            # multiple strata - avoid .item() during potential compilation
+            # Build dict outside of any compiled region by using Python int conversion
+            key = int(str.cpu().numpy()) if str.is_cuda else int(str.numpy())
             strata_results[key] = {  # type: ignore
                 "time": torch.unique(time_unique_strata),
                 "baseline_survival": torch.exp(-cumulative_baseline_hazard_strata),
@@ -619,7 +638,7 @@ def survival_function_cox(
     baseline_survival: torch.Tensor,
     new_log_hz: torch.Tensor,
     new_time: torch.Tensor,
-    new_strata: Optional[torch.Tensor] = None,
+    new_strata: torch.Tensor | None = None,
 ) -> torch.Tensor:
     r"""Compute the individual survival function for new subjects for the Cox proportional hazards model.
 
@@ -700,8 +719,8 @@ def survival_function_cox(
 
         # get baseline survival for the stratum
         if isinstance(baseline_survival, dict) and all(isinstance(v, dict) for v in baseline_survival.values()):
-            # multiple strata
-            key = int(str.item())
+            # multiple strata - avoid .item() during potential compilation
+            key = int(str.cpu().numpy()) if str.is_cuda else int(str.numpy())
             baseline_survival_strata = baseline_survival[key]
         else:
             # unique strata

@@ -1,14 +1,12 @@
+from __future__ import annotations
+
 import copy
 import warnings
-from typing import Optional
 
 import torch
 from scipy import stats
 
-from torchsurv.tools.validate_data import (
-    validate_new_time,
-    validate_survival_data,
-)
+from torchsurv.tools.validation import NewTimeData, SurvivalData
 
 __all__ = ["BrierScore"]
 
@@ -192,8 +190,8 @@ class BrierScore:
 
         # further input format checks
         if self.checks:
-            validate_survival_data(event, time)
-            validate_new_time(new_time, time, within_follow_up=False)
+            SurvivalData(event=event, time=time)
+            NewTimeData(new_time=new_time, time=time, within_follow_up=False)
 
         # Calculating the residuals for each subject and time point
         residuals = torch.zeros_like(estimate)

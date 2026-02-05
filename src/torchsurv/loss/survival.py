@@ -1,16 +1,15 @@
 # pylint: disable=C0103
 # pylint: disable=C0301
 
+from __future__ import annotations
+
 import sys
 import warnings
 
 import torch
 
-from torchsurv.tools.validate_data import (
-    validate_eval_time,
-    validate_model,
-    validate_survival_data,
-)
+from torchsurv.tools.validate_data import validate_eval_time
+from torchsurv.tools.validation import ModelParameters, SurvivalData
 
 __all__ = ["neg_log_likelihood", "survival_function"]
 
@@ -160,12 +159,16 @@ def neg_log_likelihood(
     """
 
     # If not event, or only one sample, return zero loss
-    if any([event.sum().item() == 0, len(log_hz.size()) == 0]):
+    # Check conditions without .item() for torch.compile compatibility
+    has_no_events = event.sum() == 0
+    is_empty = len(log_hz.size()) == 0
+
+    if has_no_events or is_empty:
         warnings.warn(
             "No events OR single sample. Returning zero loss for the batch",
             stacklevel=2,
         )
-        return torch.tensor(0.0, requires_grad=True)
+        return torch.tensor(0.0, requires_grad=True, device=event.device if not is_empty else None)
 
     # ensure log_hz, event, time, eval_time are squeezed
     log_hz = log_hz.squeeze()
@@ -174,19 +177,21 @@ def neg_log_likelihood(
     eval_time = eval_time.squeeze()
 
     if checks:
-        validate_survival_data(event, time)
-        validate_model(log_hz, event, model_type="survival")
+        SurvivalData(event=event, time=time)
+        ModelParameters(log_params=log_hz, event=event, model_type="survival")
         validate_eval_time(log_hz, eval_time)
 
     # Cumulative hazard
     cum_hazard = _cumulative_hazard_trapezoid(log_hz, time, eval_time, respective_times=True)
 
     # Log hazard at exact observed time (interpolate last point)
-    log_hz_at_time = torch.zeros_like(time)
-    for i in range(len(event)):
-        # Find nearest index
-        idx_last = torch.searchsorted(eval_time, time[i], right=True) - torch.tensor(1)
-        log_hz_at_time[i] = log_hz[i, idx_last.clamp(min=0)]
+    # Vectorized version - single searchsorted call for all times
+    idx_last = torch.searchsorted(eval_time, time, right=True) - 1
+    idx_last = idx_last.clamp(min=0)
+
+    # Advanced indexing for batch gather
+    batch_indices = torch.arange(len(event), device=log_hz.device)
+    log_hz_at_time = log_hz[batch_indices, idx_last]
 
     # Negative log likelihood contribution
     nll_all = -(event * log_hz_at_time) + cum_hazard

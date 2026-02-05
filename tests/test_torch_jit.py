@@ -12,7 +12,9 @@ torch.manual_seed(42)
 
 # Disable TorchScript JIT
 os.environ["PYTORCH_JIT"] = "0"
-torch._dynamo.config.suppress_errors = True
+
+# NOTE: Removed torch._dynamo.config.suppress_errors = True
+# Tests should pass without error suppression after torch.compile fixes
 
 
 class TestTorchCompile(unittest.TestCase):
@@ -32,8 +34,8 @@ class TestTorchCompile(unittest.TestCase):
         event = torch.randint(low=0, high=2, size=(self.N,), dtype=torch.bool)
         time = torch.randint(low=1, high=100, size=(self.N,), dtype=torch.float)
 
-        ccox = torch.compile(cox)  # scripted version of cox
-        scox = torch.jit.script(cox)  # compiled version of cox
+        ccox = torch.compile(cox)  # compiled version of cox
+        scox = torch.jit.script(cox)  # scripted version of cox
 
         loss_cox = cox(log_hz, event, time, ties_method="efron")
         loss_scox = scox(log_hz, event, time, ties_method="efron")
@@ -46,6 +48,62 @@ class TestTorchCompile(unittest.TestCase):
         self.assertTrue(
             torch.allclose(loss_cox, loss_ccox, rtol=1e-3, atol=1e-3),
             msg="compiled failed",
+        )
+
+    def test_cox_compile_modes(self):
+        """Test Cox loss with different torch.compile modes."""
+        # Test data with ties to exercise Efron's method
+        log_hz = torch.randn(128, dtype=torch.float, requires_grad=True)
+        event = torch.randint(low=0, high=2, size=(128,), dtype=torch.bool)
+        time = torch.randint(low=1, high=100, size=(128,), dtype=torch.float)
+
+        # Reference (eager)
+        loss_eager = cox(log_hz, event, time, ties_method="efron")
+
+        # Test different compile modes
+        for mode in ["default", "reduce-overhead"]:
+            with self.subTest(mode=mode):
+                compiled_fn = torch.compile(cox, mode=mode)
+                loss_compiled = compiled_fn(log_hz, event, time, ties_method="efron")
+
+                self.assertTrue(
+                    torch.allclose(loss_eager, loss_compiled, rtol=1e-3, atol=1e-3),
+                    msg=f"Mode {mode} results differ from eager",
+                )
+
+    def test_cox_compile_with_gradients(self):
+        """Test that gradients work correctly with torch.compile."""
+        log_hz = torch.randn(64, dtype=torch.float, requires_grad=True)
+        event = torch.randint(low=0, high=2, size=(64,), dtype=torch.bool)
+        time = torch.randint(low=1, high=100, size=(64,), dtype=torch.float)
+
+        # Compile the loss
+        compiled_cox = torch.compile(cox)
+
+        # Forward + backward
+        loss = compiled_cox(log_hz, event, time, ties_method="efron")
+        loss.backward()
+
+        # Check gradient exists and is finite
+        self.assertIsNotNone(log_hz.grad)
+        self.assertTrue(torch.isfinite(log_hz.grad).all())
+
+    def test_cox_breslow_compile(self):
+        """Test Cox loss with Breslow method and torch.compile."""
+        log_hz = torch.randn(64, dtype=torch.float)
+        event = torch.randint(low=0, high=2, size=(64,), dtype=torch.bool)
+        time = torch.randint(low=1, high=100, size=(64,), dtype=torch.float)
+
+        # Reference
+        loss_eager = cox(log_hz, event, time, ties_method="breslow")
+
+        # Compiled
+        compiled_cox = torch.compile(cox)
+        loss_compiled = compiled_cox(log_hz, event, time, ties_method="breslow")
+
+        self.assertTrue(
+            torch.allclose(loss_eager, loss_compiled, rtol=1e-3, atol=1e-3),
+            msg="Breslow method results differ",
         )
 
     def test_weibull_equivalence(self):

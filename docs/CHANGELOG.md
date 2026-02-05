@@ -1,6 +1,31 @@
 Changelog
 =========
 
+Version 0.2.0
+-------------
+
+### Breaking Changes
+* **Minimum Python version increased to 3.9+**
+* **Validation API replaced with Pydantic v2 models**
+  * `validate_survival_data()` → `SurvivalData` model
+  * `validate_model()` → `ModelParameters` model
+  * Better structured error messages with field-level details
+* **Added pydantic>=2.0 as dependency**
+
+### Added
+* Enum types for string parameters (TiesMethod, Reduction, ConfidenceMethod, Alternative)
+* Structured validation with Pydantic v2 in `tools/validation.py`
+* Type hints using Python 3.9+ syntax (dict[], list[], | union operator)
+* New `torchsurv.types` module with enum definitions
+
+### Changed
+* Improved type hints throughout codebase
+* Better error messages with Pydantic validation
+* Ruff linting now includes PIE, SIM, and RUF rules
+
+### Removed
+* Python 3.8 support
+
 Version 0.1.6
 -------------
 

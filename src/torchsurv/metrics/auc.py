@@ -1,16 +1,14 @@
+from __future__ import annotations
+
 import copy
 import sys
-from typing import Optional
 
 import torch
 from scipy import stats
 from torchmetrics import regression
 
 from torchsurv.stats import kaplan_meier
-from torchsurv.tools.validate_data import (
-    validate_new_time,
-    validate_survival_data,
-)
+from torchsurv.tools.validation import NewTimeData, SurvivalData
 
 __all__ = ["Auc"]
 
@@ -219,8 +217,8 @@ class Auc:
 
         # further input format checks
         if self.checks:
-            validate_survival_data(event, time)
-            validate_new_time(new_time, time)
+            SurvivalData(event=event, time=time)
+            NewTimeData(new_time=new_time, time=time)
 
         # sample size and length of time
         n_samples, n_times = estimate.shape[0], new_time.shape[0]

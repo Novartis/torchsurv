@@ -1,16 +1,14 @@
+from __future__ import annotations
+
 import sys
 
 import torch
 
-from torchsurv.tools.validate_data import (
-    _impute_missing_log_shape,
-    validate_model,
-    validate_survival_data,
-)
+from torchsurv.tools.validation import ModelParameters, SurvivalData, impute_missing_log_shape
 
 __all__ = [
-    "neg_log_likelihood_weibull",
     "log_hazard",
+    "neg_log_likelihood_weibull",
     "survival_function_weibull",
 ]
 
@@ -55,7 +53,7 @@ def _cumulative_hazard(
         >>> _cumulative_hazard(new_log_params, new_time, respective_times=True)
         tensor([0.8248, 2.0636])
     """
-    log_scale, log_shape = _impute_missing_log_shape(new_log_params).unbind(1)
+    log_scale, log_shape = impute_missing_log_shape(new_log_params).unbind(1)
 
     if new_time.dim() == 0:
         # Use one time for each sample
@@ -116,7 +114,7 @@ def log_hazard(
         tensor([0.0574, 0.2313])
     """
 
-    log_scale, log_shape = _impute_missing_log_shape(new_log_params).unbind(1)
+    log_scale, log_shape = impute_missing_log_shape(new_log_params).unbind(1)
 
     if new_time.dim() == 0:
         # Use one time for each sample
@@ -166,7 +164,7 @@ def survival_function_weibull(
                 [0.4127, 0.1270, 0.0338, 0.0081]])
 
     """
-    log_scale, log_shape = _impute_missing_log_shape(new_log_params).unbind(1)
+    log_scale, log_shape = impute_missing_log_shape(new_log_params).unbind(1)
 
     if new_time.dim() == 0:
         # Use one time for each sample
@@ -274,8 +272,8 @@ def neg_log_likelihood_weibull(
     """
 
     if checks:
-        validate_survival_data(event, time)
-        validate_model(log_params, event, model_type="weibull")
+        SurvivalData(event=event, time=time)
+        ModelParameters(log_params=log_params, event=event, model_type="weibull")
 
     # ensure event and time are 1-dimensional
     event = event.squeeze()
