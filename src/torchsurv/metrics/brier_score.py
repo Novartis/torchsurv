@@ -14,14 +14,8 @@ __all__ = ["BrierScore"]
 class BrierScore:
     r"""Compute the Brier Score for survival models."""
 
-    def __init__(self, checks: bool = True):
+    def __init__(self):
         """Initialize a BrierScore for survival class model evaluation.
-
-        Args:
-            checks (bool):
-                Whether to perform input format checks.
-                Enabling checks can help catch potential issues in the input data.
-                Defaults to True.
 
         Examples:
             >>> _ = torch.manual_seed(52)
@@ -44,7 +38,6 @@ class BrierScore:
             tensor([1.0000, 0.7860, 1.0000, 0.3840, 1.0000, 1.0000, 0.3840, 1.0000, 0.7000,
                     0.2380])
         """
-        self.checks = checks
 
         # init instate attributes
         self.order_time = None
@@ -188,10 +181,12 @@ class BrierScore:
         ) = BrierScore._update_brier_score_new_time(estimate, time, new_time, weight, weight_new_time)
         weight, weight_new_time = BrierScore._update_brier_score_weight(time, new_time, weight, weight_new_time)
 
-        # further input format checks
-        if self.checks:
-            SurvivalData(event=event, time=time)
-            NewTimeData(new_time=new_time, time=time, within_follow_up=False)
+        # Validate inputs and use validated values
+        survival_data = SurvivalData(event=event, time=time)
+        new_time_data = NewTimeData(new_time=new_time, time=survival_data.time, within_follow_up=False)
+        event = survival_data.event
+        time = survival_data.time
+        new_time = new_time_data.new_time
 
         # Calculating the residuals for each subject and time point
         residuals = torch.zeros_like(estimate)

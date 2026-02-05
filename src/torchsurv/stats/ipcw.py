@@ -18,7 +18,6 @@ def get_ipcw(
     event: torch.Tensor,
     time: torch.Tensor,
     new_time: torch.Tensor | None = None,
-    checks: bool = True,
 ) -> torch.Tensor:
     r"""Calculate the inverse probability censoring weights (IPCW).
 
@@ -30,10 +29,6 @@ def get_ipcw(
         new_time (torch.Tensor, float, optional):
             New time at which to evaluate the IPCW.
             Defaults to ``time``.
-        checks (bool):
-            Whether to perform input format checks.
-            Enabling checks can help catch potential issues in the input data.
-            Defaults to True.
     Returns:
         torch.Tensor: IPCW evaluated at ``new_time``.
 
@@ -60,8 +55,10 @@ def get_ipcw(
 
     """
 
-    if checks:
-        SurvivalData(event=event, time=time)
+    # Validate inputs and use validated values
+    survival_data = SurvivalData(event=event, time=time)
+    event = survival_data.event
+    time = survival_data.time
 
     # time on which to evaluate IPCW
     if new_time is None:  # if none, return ipcw of same size as time

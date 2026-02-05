@@ -249,7 +249,6 @@ def neg_partial_log_likelihood(
     ties_method: str = "efron",
     reduction: str = "mean",
     strata: torch.Tensor | None = None,
-    checks: bool = True,
 ) -> torch.Tensor:
     r"""Compute the negative of the partial log likelihood for the Cox proportional hazards model.
 
@@ -272,10 +271,6 @@ def neg_partial_log_likelihood(
             Integer tensor of shape = (n_samples,) representing stratum for each subject defined by combinations of categorical variables.
             This is useful if a categorical covariate does not obey the proportional hazard assumption.
             This is used similar to the strata expression in `R` and `lifelines`.
-        checks (bool, optional):
-            Whether to perform input format checks.
-            Enabling checks can help catch potential issues in the input data.
-            Defaults to True.
 
     Returns:
         (torch.tensor, float):
@@ -388,6 +383,16 @@ def neg_partial_log_likelihood(
 
     """
 
+    # Validate inputs and use validated values (handles numpy arrays, 2D tensors, etc.)
+    survival_data = SurvivalData(event=event, time=time, strata=strata)
+    model_params = ModelParameters(log_params=log_hz, event=survival_data.event, model_type="cox")
+
+    # Use validated and converted values
+    event = survival_data.event
+    time = survival_data.time
+    strata = survival_data.strata
+    log_hz = model_params.log_params
+
     # If not event, or only one sample, return zero loss
     # Check conditions without .item() for torch.compile compatibility
     has_no_events = event.sum() == 0
@@ -410,10 +415,6 @@ def neg_partial_log_likelihood(
     time = time.squeeze()
     strata = strata.squeeze()
 
-    if checks:
-        SurvivalData(event=event, time=time, strata=strata)
-        ModelParameters(log_params=log_hz, event=event, model_type="cox")
-
     # Flag indicating whether `log_hz` is time-varying
     is_time_varying_log_hz = len(log_hz.size()) == 2
 
@@ -426,7 +427,7 @@ def neg_partial_log_likelihood(
         log_hz_sorted = log_hz[idx]
 
     # if log_hz is time-varying, check the repetition of time points
-    if checks and is_time_varying_log_hz:
+    if is_time_varying_log_hz:
         validate_time_varying_log_hz(time_sorted, log_hz_sorted)
 
     assert strata is not None  # for mypy
@@ -493,7 +494,6 @@ def baseline_survival_function(
     event: torch.Tensor,
     time: torch.Tensor,
     strata: torch.Tensor | None = None,
-    checks: bool = True,
 ) -> dict[int, dict[str, torch.Tensor]]:
     r"""Compute the baseline survival function for the Cox proportional hazards model with Breslow's method.
 
@@ -508,10 +508,6 @@ def baseline_survival_function(
             Event or censoring time of shape = (n_samples,) used to fit the model.
         strata (torch.Tensor, int, optional):
             Integer tensor of shape = (n_samples,) representing stratum for each subject defined by combinations of categorical variables.
-        checks (bool, optional):
-            Whether to perform input format checks.
-            Enabling checks can help catch potential issues in the input data.
-            Defaults to True.
 
     Returns:
         (dict):
@@ -563,6 +559,12 @@ def baseline_survival_function(
             Breslow1972
     """
 
+    # Validate inputs and use validated values
+    survival_data = SurvivalData(event=event, time=time, strata=strata)
+    event = survival_data.event
+    time = survival_data.time
+    strata = survival_data.strata
+
     # if no strata specified, every subject if in the same strata
     if strata is None:
         strata = torch.ones_like(event, dtype=torch.long)
@@ -572,9 +574,6 @@ def baseline_survival_function(
     event = event.squeeze()
     time = time.squeeze()
     strata = strata.squeeze()
-
-    if checks:
-        SurvivalData(event=event, time=time, strata=strata)
 
     # Flag indicating whether `log_hz` is time-varying
     is_time_varying_log_hz = len(log_hz.size()) == 2
@@ -592,7 +591,7 @@ def baseline_survival_function(
         log_hz_sorted = log_hz[idx]
 
     # if log_hz is time-varying, check the repetition of time points
-    if checks and is_time_varying_log_hz:
+    if is_time_varying_log_hz:
         validate_time_varying_log_hz(time_sorted, log_hz_sorted)
 
     strata_unique = torch.unique(strata_sorted)

@@ -74,7 +74,6 @@ def neg_log_likelihood(
     time: torch.Tensor,
     eval_time: torch.Tensor,
     reduction: str = "mean",
-    checks: bool = True,
 ) -> torch.Tensor:
     r"""
     Negative log-likelihood for a survival model.
@@ -92,10 +91,6 @@ def neg_log_likelihood(
         reduction (str, optional):
             Method to reduce losses. Defaults to "mean".
             Must be one of the following: "sum", "mean".
-        checks (bool, optional):
-            Whether to perform input format checks.
-            Enabling checks can help catch potential issues in the input data.
-            Defaults to True.
 
     Returns:
         torch.Tensor: Negative of the log likelihood of survival model.
@@ -158,6 +153,16 @@ def neg_log_likelihood(
         tensor(216.3546)
     """
 
+    # Validate inputs and use validated values
+    survival_data = SurvivalData(event=event, time=time)
+    model_params = ModelParameters(log_params=log_hz, event=survival_data.event, model_type="survival")
+    validate_eval_time(log_hz, eval_time)
+
+    # Use validated values
+    event = survival_data.event
+    time = survival_data.time
+    log_hz = model_params.log_params
+
     # If not event, or only one sample, return zero loss
     # Check conditions without .item() for torch.compile compatibility
     has_no_events = event.sum() == 0
@@ -175,11 +180,6 @@ def neg_log_likelihood(
     event = event.squeeze()
     time = time.squeeze()
     eval_time = eval_time.squeeze()
-
-    if checks:
-        SurvivalData(event=event, time=time)
-        ModelParameters(log_params=log_hz, event=event, model_type="survival")
-        validate_eval_time(log_hz, eval_time)
 
     # Cumulative hazard
     cum_hazard = _cumulative_hazard_trapezoid(log_hz, time, eval_time, respective_times=True)

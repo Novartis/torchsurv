@@ -6,6 +6,7 @@ replacing the procedural validation functions in validate_data.py.
 
 from __future__ import annotations
 
+import numpy as np
 import torch
 from pydantic import BaseModel, field_validator, model_validator
 
@@ -48,46 +49,94 @@ class SurvivalData(BaseModel):
     time: torch.Tensor
     strata: torch.Tensor | None = None
 
-    @field_validator("event")
+    @field_validator("event", mode="before")
     @classmethod
-    def validate_event(cls, v: torch.Tensor) -> torch.Tensor:
-        """Validate event tensor."""
+    def validate_event(cls, v: torch.Tensor | np.ndarray) -> torch.Tensor:
+        """Validate event tensor.
+
+        Accepts numpy arrays and converts to tensors.
+        Accepts 2D tensors with shape [n, 1] and squeezes to 1D.
+        """
+        # Convert numpy array to tensor
+        if isinstance(v, np.ndarray):
+            v = torch.from_numpy(v)
+
         if not isinstance(v, torch.Tensor):
             raise TypeError("Input 'event' should be a tensor")
-        if v.dtype != torch.bool:
-            raise ValueError("Input 'event' should be of boolean type")
+
+        # Squeeze 2D tensors with shape [n, 1] to 1D
+        if v.ndim == 2 and v.shape[1] == 1:
+            v = v.squeeze(1)
+
         if v.ndim != 1:
             raise ValueError("Input 'event' should be 1-dimensional")
+
+        if v.dtype != torch.bool:
+            raise ValueError("Input 'event' should be of boolean type")
+
         if torch.sum(v) <= 0:
             raise ValueError("All samples are censored")
+
         return v
 
-    @field_validator("time")
+    @field_validator("time", mode="before")
     @classmethod
-    def validate_time(cls, v: torch.Tensor) -> torch.Tensor:
-        """Validate time tensor."""
+    def validate_time(cls, v: torch.Tensor | np.ndarray) -> torch.Tensor:
+        """Validate time tensor.
+
+        Accepts numpy arrays and converts to tensors.
+        Accepts 2D tensors with shape [n, 1] and squeezes to 1D.
+        """
+        # Convert numpy array to tensor
+        if isinstance(v, np.ndarray):
+            v = torch.from_numpy(v)
+
         if not isinstance(v, torch.Tensor):
             raise TypeError("Input 'time' should be a tensor")
-        if not torch.is_floating_point(v):
-            raise ValueError("Input 'time' should be of float type")
+
+        # Squeeze 2D tensors with shape [n, 1] to 1D
+        if v.ndim == 2 and v.shape[1] == 1:
+            v = v.squeeze(1)
+
         if v.ndim != 1:
             raise ValueError("Input 'time' should be 1-dimensional")
+
+        if not torch.is_floating_point(v):
+            raise ValueError("Input 'time' should be of float type")
+
         if torch.any(v < 0.0):
             raise ValueError("Input 'time' should be non-negative")
+
         return v
 
-    @field_validator("strata")
+    @field_validator("strata", mode="before")
     @classmethod
-    def validate_strata(cls, v: torch.Tensor | None) -> torch.Tensor | None:
-        """Validate strata tensor if provided."""
+    def validate_strata(cls, v: torch.Tensor | np.ndarray | None) -> torch.Tensor | None:
+        """Validate strata tensor if provided.
+
+        Accepts numpy arrays and converts to tensors.
+        Accepts 2D tensors with shape [n, 1] and squeezes to 1D.
+        """
         if v is None:
             return v
+
+        # Convert numpy array to tensor
+        if isinstance(v, np.ndarray):
+            v = torch.from_numpy(v)
+
         if not isinstance(v, torch.Tensor):
             raise TypeError("Input 'strata' should be a tensor")
-        if v.dtype not in (torch.int32, torch.int64):
-            raise ValueError("Input 'strata' should be of integer type")
+
+        # Squeeze 2D tensors with shape [n, 1] to 1D
+        if v.ndim == 2 and v.shape[1] == 1:
+            v = v.squeeze(1)
+
         if v.ndim != 1:
             raise ValueError("Input 'strata' should be 1-dimensional")
+
+        if v.dtype not in (torch.int32, torch.int64):
+            raise ValueError("Input 'strata' should be of integer type")
+
         return v
 
     @model_validator(mode="after")
@@ -142,24 +191,47 @@ class ModelParameters(BaseModel):
     event: torch.Tensor
     model_type: str
 
-    @field_validator("log_params")
+    @field_validator("log_params", mode="before")
     @classmethod
-    def validate_log_params(cls, v: torch.Tensor) -> torch.Tensor:
-        """Validate log parameters tensor."""
+    def validate_log_params(cls, v: torch.Tensor | np.ndarray) -> torch.Tensor:
+        """Validate log parameters tensor.
+
+        Accepts numpy arrays and converts to tensors.
+        """
+        # Convert numpy array to tensor
+        if isinstance(v, np.ndarray):
+            v = torch.from_numpy(v)
+
         if not isinstance(v, torch.Tensor):
             raise TypeError("Input 'log_params' should be a tensor")
+
         if not torch.is_floating_point(v):
             raise ValueError("Input 'log_params' should be of float type")
+
         return v
 
-    @field_validator("event")
+    @field_validator("event", mode="before")
     @classmethod
-    def validate_event(cls, v: torch.Tensor) -> torch.Tensor:
-        """Validate event tensor."""
+    def validate_event(cls, v: torch.Tensor | np.ndarray) -> torch.Tensor:
+        """Validate event tensor.
+
+        Accepts numpy arrays and converts to tensors.
+        Accepts 2D tensors with shape [n, 1] and squeezes to 1D.
+        """
+        # Convert numpy array to tensor
+        if isinstance(v, np.ndarray):
+            v = torch.from_numpy(v)
+
         if not isinstance(v, torch.Tensor):
             raise TypeError("Input 'event' should be a tensor")
+
+        # Squeeze 2D tensors with shape [n, 1] to 1D
+        if v.ndim == 2 and v.shape[1] == 1:
+            v = v.squeeze(1)
+
         if v.dtype != torch.bool:
             raise ValueError("Input 'event' should be of boolean type")
+
         return v
 
     @field_validator("model_type")
@@ -250,12 +322,25 @@ class NewTimeData(BaseModel):
     time: torch.Tensor
     within_follow_up: bool = True
 
-    @field_validator("new_time")
+    @field_validator("new_time", mode="before")
     @classmethod
-    def validate_new_time(cls, v: torch.Tensor) -> torch.Tensor:
-        """Validate new_time tensor."""
+    def validate_new_time(cls, v: torch.Tensor | np.ndarray) -> torch.Tensor:
+        """Validate new_time tensor.
+
+        Accepts numpy arrays and converts to tensors.
+        Accepts 2D tensors with shape [n, 1] and squeezes to 1D.
+        """
+        # Convert numpy array to tensor
+        if isinstance(v, np.ndarray):
+            v = torch.from_numpy(v)
+
         if not isinstance(v, torch.Tensor):
             raise TypeError("Type error: Input 'new_time' should be a tensor")
+
+        # Squeeze 2D tensors with shape [n, 1] to 1D
+        if v.ndim == 2 and v.shape[1] == 1:
+            v = v.squeeze(1)
+
         if not torch.is_floating_point(v):
             raise ValueError("Value error: Input 'new_time' should be of floating-point type")
 
@@ -270,14 +355,28 @@ class NewTimeData(BaseModel):
 
         return v
 
-    @field_validator("time")
+    @field_validator("time", mode="before")
     @classmethod
-    def validate_time(cls, v: torch.Tensor) -> torch.Tensor:
-        """Validate time tensor."""
+    def validate_time(cls, v: torch.Tensor | np.ndarray) -> torch.Tensor:
+        """Validate time tensor.
+
+        Accepts numpy arrays and converts to tensors.
+        Accepts 2D tensors with shape [n, 1] and squeezes to 1D.
+        """
+        # Convert numpy array to tensor
+        if isinstance(v, np.ndarray):
+            v = torch.from_numpy(v)
+
         if not isinstance(v, torch.Tensor):
             raise TypeError("Input 'time' should be a tensor")
+
+        # Squeeze 2D tensors with shape [n, 1] to 1D
+        if v.ndim == 2 and v.shape[1] == 1:
+            v = v.squeeze(1)
+
         if not torch.is_floating_point(v):
             raise ValueError("Input 'time' should be of floating-point type")
+
         return v
 
     @model_validator(mode="after")

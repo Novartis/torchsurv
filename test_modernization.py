@@ -59,7 +59,7 @@ try:
     from torchsurv.loss.cox import neg_partial_log_likelihood
 
     log_hz = torch.randn(n)
-    loss = neg_partial_log_likelihood(log_hz, event, time, checks=True)
+    loss = neg_partial_log_likelihood(log_hz, event, time, )
     print(f"✓ Cox loss computed: {loss.item():.4f}")
 except Exception as e:
     print(f"✗ Cox loss failed: {e}")
@@ -73,7 +73,7 @@ try:
     from torchsurv.loss.weibull import neg_log_likelihood_weibull
 
     log_params = torch.randn(n, 2)
-    loss = neg_log_likelihood_weibull(log_params, event, time, checks=True)
+    loss = neg_log_likelihood_weibull(log_params, event, time, )
     print(f"✓ Weibull loss computed: {loss.item():.4f}")
 except Exception as e:
     print(f"✗ Weibull loss failed: {e}")
@@ -89,7 +89,7 @@ try:
     n_eval_times = 50
     log_hz = torch.randn(n, n_eval_times)
     eval_time = torch.linspace(time.min().item(), time.max().item() - 1, n_eval_times)
-    loss = neg_log_likelihood(log_hz, event, time, eval_time, checks=True)
+    loss = neg_log_likelihood(log_hz, event, time, eval_time, )
     print(f"✓ Survival loss computed: {loss.item():.4f}")
 except Exception as e:
     print(f"✗ Survival loss failed: {e}")
@@ -103,7 +103,7 @@ try:
     from torchsurv.metrics.cindex import ConcordanceIndex
 
     estimate = torch.randn(n)
-    cindex = ConcordanceIndex(checks=True)
+    cindex = ConcordanceIndex()
     result = cindex(estimate, event, time)
     print(f"✓ C-index computed: {result.item():.4f}")
 except Exception as e:
@@ -120,7 +120,7 @@ try:
     n_times = 10
     estimate = torch.rand(n, n_times)
     new_time = torch.linspace(time.min().item() + 1, time.max().item() - 1, n_times)
-    auc = Auc(checks=True)
+    auc = Auc()
     result = auc(estimate, event, time, auc_type="cumulative", new_time=new_time)
     print(f"✓ AUC computed: {result.mean().item():.4f}")
 except Exception as e:
@@ -135,7 +135,7 @@ try:
     from torchsurv.metrics.brier_score import BrierScore
 
     estimate = torch.rand(n, n_times)
-    bs = BrierScore(checks=True)
+    bs = BrierScore()
     result = bs(estimate, event, time, new_time)
     print(f"✓ Brier score computed: {result.mean().item():.4f}")
 except Exception as e:
@@ -163,7 +163,7 @@ print("=" * 60)
 try:
     from torchsurv.stats.ipcw import get_ipcw
 
-    weights = get_ipcw(event, time, checks=True)
+    weights = get_ipcw(event, time, )
     print(f"✓ IPCW computed: mean={weights.mean().item():.4f}")
 except Exception as e:
     print(f"✗ IPCW failed: {e}")
