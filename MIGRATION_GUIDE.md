@@ -106,6 +106,32 @@ def func(x: torch.Tensor | None = None) -> None:
     pass
 ```
 
+### 5. TorchScript Compatibility
+
+**⚠️ Known Limitation:** `torch.jit.script` is no longer compatible with TorchSurv loss functions in v0.2.0+ due to Pydantic validation models. TorchScript performs static analysis of the entire function body, including imports, which conflicts with Pydantic's Python-only features.
+
+**What Still Works:**
+- ✅ `torch.compile` - Fully supported and tested
+- ✅ Regular eager mode execution
+- ✅ Autograd and gradients
+
+**What Doesn't Work:**
+- ❌ `torch.jit.script` - Will raise compilation errors
+
+**Workaround:** Use `torch.compile` instead of `torch.jit.script`. `torch.compile` provides better performance than TorchScript in most cases and is the recommended approach for PyTorch 2.0+.
+
+**Example:**
+```python
+import torch
+from torchsurv.loss.cox import neg_partial_log_likelihood
+
+# ✅ This works (and is recommended):
+compiled_loss = torch.compile(neg_partial_log_likelihood)
+
+# ❌ This will fail in v0.2.0+:
+# scripted_loss = torch.jit.script(neg_partial_log_likelihood)
+```
+
 ## New Features
 
 ### 1. Enum Types for Parameters
