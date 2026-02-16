@@ -58,16 +58,22 @@ def get_ipcw(
 
 
     """
-
-    if checks:
-        validate_survival_data(event, time)
-
     # time on which to evaluate IPCW
     if new_time is None:  # if none, return ipcw of same size as time
         new_time = time
 
+    devices = [event.device, time.device, new_time.device]
+
+    if len(set(devices)) != 1:
+        raise RuntimeError(f"expected to be on the same device, got {set(devices)}")
+
+    device = str(event.device)
+
+    if checks:
+        validate_survival_data(event, time)
+
     # fit KM censoring estimator
-    km = kaplan_meier.KaplanMeierEstimator()
+    km = kaplan_meier.KaplanMeierEstimator(device=device)
     km(event, time, censoring_dist=True)
 
     # predict censoring distribution at time
