@@ -58,16 +58,19 @@ def get_ipcw(
 
 
     """
+
     # time on which to evaluate IPCW
     if new_time is None:  # if none, return ipcw of same size as time
         new_time = time
 
-    devices = [event.device, time.device, new_time.device]
-
-    if len(set(devices)) != 1:
-        raise RuntimeError(f"expected to be on the same device, got {set(devices)}")
-
-    device = str(event.device)
+    device = event.device
+    if time.device != device or new_time.device != device:
+        warnings.warn(
+            f"Not all tensors on same device. Got event: {device}, time: {time.device}, new_time: {new_time.device}. Casting to event device: {device}",
+            stacklevel=2,
+        )
+        time = time.to(device)
+        new_time = new_time.to(device)
 
     if checks:
         validate_survival_data(event, time)
