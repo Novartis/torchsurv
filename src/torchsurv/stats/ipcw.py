@@ -59,15 +59,24 @@ def get_ipcw(
 
     """
 
-    if checks:
-        validate_survival_data(event, time)
-
     # time on which to evaluate IPCW
     if new_time is None:  # if none, return ipcw of same size as time
         new_time = time
 
+    device = event.device
+    if time.device != device or new_time.device != device:
+        warnings.warn(
+            f"Not all tensors on same device. Got event: {device}, time: {time.device}, new_time: {new_time.device}. Casting to event device: {device}",
+            stacklevel=2,
+        )
+        time = time.to(device)
+        new_time = new_time.to(device)
+
+    if checks:
+        validate_survival_data(event, time)
+
     # fit KM censoring estimator
-    km = kaplan_meier.KaplanMeierEstimator()
+    km = kaplan_meier.KaplanMeierEstimator(device=device)
     km(event, time, censoring_dist=True)
 
     # predict censoring distribution at time
