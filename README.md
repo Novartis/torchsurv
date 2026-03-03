@@ -11,8 +11,7 @@ Deep survival analysis made easy
 [![Python](https://img.shields.io/pypi/pyversions/torchsurv?label=Python)](https://pypi.org/project/torchsurv/)
 [![PyPI - Version](https://img.shields.io/pypi/v/torchsurv?color=green&label=PyPI)](https://pypi.org/project/torchsurv/)
 [![Conda](https://img.shields.io/conda/v/conda-forge/torchsurv?label=Conda&color=green)](https://anaconda.org/conda-forge/torchsurv)
-[![PyPI Downloads](https://img.shields.io/pypi/dm/torchsurv.svg?label=PyPI%20downloads)](
-https://pypi.org/project/torchsurv/)
+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/torchsurv?period=total&units=INTERNATIONAL_SYSTEM&left_color=GRAY&right_color=brightgreen&left_text=PyPI%20downloads)](https://pepy.tech/projects/torchsurv)
 [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/torchsurv.svg?label=Conda%20downloads)](
 https://anaconda.org/conda-forge/torchsurv)
 
