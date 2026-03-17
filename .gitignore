@@ -71,3 +71,13 @@ melodie/
 
 # anything with -copy
 *-copy.*
+
+# copilot
+.github/**
+.specify/**
+.claude/**
+specs/**
+CLAUDE.md
+
+# hypothesis generated test artifacts
+.hypothesis/

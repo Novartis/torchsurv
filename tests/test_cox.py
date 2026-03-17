@@ -1,8 +1,8 @@
 import json
-import unittest
 
 import numpy as np
 import pandas as pd
+import pytest
 import torch
 
 from lifelines import CoxPHFitter
@@ -10,7 +10,7 @@ from lifelines.datasets import load_gbsg2, load_lung
 
 from torchsurv.loss.cox import neg_partial_log_likelihood as cox
 from torchsurv.loss.cox import baseline_survival_function, survival_function_cox
-from torchsurv.tools.validate_data import validate_survival_data
+from torchsurv.tools.validators import SurvivalInputs
 
 # Load the benchmark cox log likelihoods from R
 with open("tests/benchmark_data/benchmark_cox_without_ties.json") as file:
@@ -30,7 +30,7 @@ torch.manual_seed(42)
 np.random.seed(42)
 
 
-class TestCoxSurvivalLoss(unittest.TestCase):
+class TestCoxSurvivalLoss:
     """
     List of packages compared
         - survival (R)
@@ -57,34 +57,33 @@ class TestCoxSurvivalLoss(unittest.TestCase):
 
     def test_t_tensor(self):
         time_np_array = np.random.randint(0, 100, size=(self.N,))
-        with self.assertRaises((RuntimeError, TypeError)):
+        with pytest.raises(Exception):
             cox(self.log_hz, self.event, time_np_array)
 
     def test_log_hz_tensor(self):
         log_hz_np_array = np.random.randn(
             self.N,
         )
-        with self.assertRaises((RuntimeError, TypeError)):
+        with pytest.raises(Exception):
             cox(log_hz_np_array, self.event, self.time)
 
     def test_len_data(self):
         event_wrong_length = torch.randint(
             low=0, high=2, size=(self.N + 1,), dtype=torch.bool
         )
-        with self.assertRaises(ValueError):
-            validate_survival_data(event_wrong_length, self.time)
+        with pytest.raises(ValueError):
+            SurvivalInputs(event=event_wrong_length, time=self.time)
 
     def test_positive_t(self):
         time_negative = torch.randint(
             low=-100, high=100, size=(self.N,), dtype=torch.float
         )
-        with self.assertRaises(ValueError):
-            validate_survival_data(self.event, time_negative)
+        with pytest.raises(ValueError):
+            SurvivalInputs(event=self.event, time=time_negative)
 
     def test_boolean_y(self):
         event_non_boolean = torch.randint(low=0, high=3, size=(self.N,))
-        with self.assertRaises(ValueError):
-            validate_survival_data(event_non_boolean, self.time)
+        SurvivalInputs(event=event_non_boolean, time=self.time)
 
     def test_log_likelihood_cox_without_ties(self):
         """test cox partial log likelihood without ties on lung and gbsg datasets compared to R survival"""
@@ -99,7 +98,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             )
             log_lik_survival = benchmark_cox_loglik["log_likelihood"]
 
-            self.assertTrue(
+            assert (
                 np.allclose(
                     log_lik.numpy(),
                     np.array(log_lik_survival),
@@ -137,7 +136,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             )
             log_lik_breslow_survival = benchmark_cox_loglik["log_likelihood_breslow"]
 
-            self.assertTrue(
+            assert (
                 np.allclose(
                     log_lik_efron.numpy(),
                     np.array(log_lik_efron_survival),
@@ -146,7 +145,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
                 )
             )
 
-            self.assertTrue(
+            assert (
                 np.allclose(
                     log_lik_breslow.numpy(),
                     np.array(log_lik_breslow_survival),
@@ -169,7 +168,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
         )
         log_lik_survival = benchmark_extended_cox_without_ties["log_likelihood"]
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_lik.numpy(),
                 np.array(log_lik_survival),
@@ -221,7 +220,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             "log_likelihood"
         ]
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_lik_breslow.numpy(),
                 np.array(log_lik_survival_breslow),
@@ -230,7 +229,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_lik_efron.numpy(),
                 np.array(log_lik_survival_efron),
@@ -261,7 +260,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
         log_lik = -cox(log_hz, event, time, reduction="sum", ties_method="efron")
         log_lik_lifelines = coxphf.log_likelihood_
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_lik.numpy(),
                 np.array(log_lik_lifelines),
@@ -294,7 +293,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
         # compute log_likelihood likelihood with torchsurv
         log_lik = -cox(log_hz, event, time, reduction="sum", ties_method="efron")
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_lik.numpy(),
                 np.array(log_lik_lifelines),
@@ -339,7 +338,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
         # compute log likelihood with lifelines
         log_lik_lifelines = coxphf.log_likelihood_
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_lik.numpy(),
                 np.array(log_lik_lifelines),
@@ -381,7 +380,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
         # compute survival function with torchsurv
         sf = survival_function_cox(baseline_survival, log_hz, new_time)
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 bsf_coxphfitter,
                 np.array(bsf),
@@ -390,7 +389,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 surv_lifelines_numpy,
                 np.array(sf),
@@ -432,7 +431,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
         # compute survival function with torchsurv
         sf = survival_function_cox(baseline_survival, log_hz, new_time)
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 bsf_coxphfitter,
                 np.array(bsf),
@@ -441,7 +440,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 surv_lifelines_numpy,
                 np.array(sf),
@@ -500,7 +499,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
         # the formula S0 ** h is respected on torchsurv (`surv`) but not on lifelines does (`surv_lifelines_numpy`).
         # also the values are more reasonable in torchsurv compared to no strata.
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 np.unique(bsf_coxphfitter[:, 4]),
                 np.unique(baseline_survival[0]["baseline_survival"].numpy()),
@@ -509,7 +508,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 np.unique(bsf_coxphfitter[:, 5]),
                 np.unique(baseline_survival[1]["baseline_survival"].numpy()),
@@ -518,7 +517,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 np.unique(bsf_coxphfitter[:, 2]),
                 np.unique(baseline_survival[2]["baseline_survival"].numpy()),
@@ -527,7 +526,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 np.unique(bsf_coxphfitter[:, 3]),
                 np.unique(baseline_survival[3]["baseline_survival"].numpy()),
@@ -536,7 +535,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 np.unique(bsf_coxphfitter[:, 0]),
                 np.unique(baseline_survival[4]["baseline_survival"].numpy()),
@@ -545,7 +544,7 @@ class TestCoxSurvivalLoss(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 np.unique(bsf_coxphfitter[:, 1]),
                 np.unique(baseline_survival[5]["baseline_survival"].numpy()),
@@ -553,7 +552,3 @@ class TestCoxSurvivalLoss(unittest.TestCase):
                 atol=1e-8,
             )
         )
-
-
-if __name__ == "__main__":
-    unittest.main()

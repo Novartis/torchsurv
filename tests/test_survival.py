@@ -1,6 +1,5 @@
 # global modules
 import json
-import unittest
 
 import numpy as np
 import torch
@@ -21,7 +20,7 @@ torch.manual_seed(42)
 np.random.seed(42)
 
 
-class TestSurvivalLoss(unittest.TestCase):
+class TestSurvivalLoss:
     """
     List of packages compared
         - survival (R)
@@ -70,7 +69,7 @@ class TestSurvivalLoss(unittest.TestCase):
 
             log_lik_survival = benchmark_weibull_loglik["log_likelihood"]
 
-            self.assertTrue(
+            assert (
                 np.allclose(
                     log_lik.numpy(),
                     np.array(log_lik_survival),
@@ -123,7 +122,7 @@ class TestSurvivalLoss(unittest.TestCase):
             eval_time,
             reduction="sum",
         )
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_likelihood.numpy(),
                 np.array(log_likelihood_lifelines),
@@ -168,7 +167,7 @@ class TestSurvivalLoss(unittest.TestCase):
             eval_time,
             reduction="sum",
         )
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_likelihood.numpy(),
                 np.array(log_likelihood_lifelines),
@@ -214,7 +213,7 @@ class TestSurvivalLoss(unittest.TestCase):
             eval_time,
             reduction="sum",
         )
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_likelihood.numpy(),
                 np.array(log_likelihood_lifelines),
@@ -262,7 +261,7 @@ class TestSurvivalLoss(unittest.TestCase):
             eval_time,
             reduction="sum",
         )
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_likelihood.numpy(),
                 np.array(log_likelihood_lifelines),
@@ -307,7 +306,7 @@ class TestSurvivalLoss(unittest.TestCase):
             eval_time,
             reduction="sum",
         )
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_likelihood.numpy(),
                 np.array(log_likelihood_lifelines),
@@ -353,7 +352,7 @@ class TestSurvivalLoss(unittest.TestCase):
             eval_time,
             reduction="sum",
         )
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_likelihood.numpy(),
                 np.array(log_likelihood_lifelines),
@@ -417,7 +416,7 @@ class TestSurvivalLoss(unittest.TestCase):
             new_time,
         )
 
-        self.assertTrue(
+        assert (
             np.allclose(
                 survival.numpy(),
                 np.array(survival_weibull),
@@ -425,7 +424,3 @@ class TestSurvivalLoss(unittest.TestCase):
                 atol=1e-8,
             )
         )
-
-
-if __name__ == "__main__":
-    unittest.main()

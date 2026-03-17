@@ -1,7 +1,16 @@
 from typing import Tuple
 
-import lifelines
-import lightning as L
+try:
+    import lifelines
+except ImportError:
+    lifelines = None  # type: ignore[assignment]
+
+try:
+    import lightning as L
+    _LightningModuleBase: type = L.LightningModule
+except ImportError:
+    L = None  # type: ignore[assignment]
+    _LightningModuleBase = object
 import numpy as np
 import torch
 from torch import nn
@@ -11,7 +20,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchsurv.loss.momentum import Momentum
 
 
-class LitSurvival(L.LightningModule):
+class LitSurvival(_LightningModuleBase):
     """Survival Model Fitter"""
 
     def __init__(self, backbone, loss, batch_size: int = 64, dataname: str = "lung"):
@@ -86,7 +95,7 @@ class LitSurvivalTwins(LitSurvival):
         return loss
 
 
-class SimpleLinearNNOneParameter(L.LightningModule):
+class SimpleLinearNNOneParameter(_LightningModuleBase):
     """Neural network with output = bias + weight * x"""
 
     def __init__(self, input_size: int):
@@ -97,7 +106,7 @@ class SimpleLinearNNOneParameter(L.LightningModule):
         return self.linear(x)
 
 
-class SimpleLinearNNTwoParameters(L.LightningModule):
+class SimpleLinearNNTwoParameters(_LightningModuleBase):
     """Neural network with output1 = bias_2 + weight_2 * x and output2 = bias_1 + 0 * x"""
 
     def __init__(self, input_size: int):
@@ -123,6 +132,8 @@ class SimpleLinearNNTwoParameters(L.LightningModule):
 class SurvivalDataset(Dataset):
     def __init__(self, name: str = "lung"):
         self.name = name
+        if lifelines is None:
+            raise ImportError("lifelines is required for dataset loading. Install with: pip install lifelines")
         self.df = lifelines.datasets.load_lung() if "lung" in name else lifelines.datasets.load_gbsg2()
 
     def __len__(self):

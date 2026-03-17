@@ -1,11 +1,12 @@
+from __future__ import annotations
+
 import itertools
 import sys
-from typing import Tuple
 
 import pandas as pd
 import torch
 
-from torchsurv.tools.validate_data import validate_survival_data
+from torchsurv.tools.validators import SurvivalInputs
 
 __all__ = [
     "KaplanMeierEstimator",
@@ -76,8 +77,9 @@ class KaplanMeierEstimator:
         self.time = time.to(self.device)
 
         # Check input validity if required
-        if check:
-            validate_survival_data(event, time)
+        if check and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+            _surv = SurvivalInputs(event=event, time=time)
+            event, time = _surv.event, _surv.time
 
         # Compute the counts of events, censorings, and the number at risk at each unique time
         uniq_times, n_events, n_at_risk, n_censored = self._compute_counts()
@@ -209,7 +211,7 @@ class KaplanMeierEstimator:
 
     def _compute_counts(
         self,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """Compute the counts of events, censorings and risk set at ``time``.
 
         Returns: Tuple[torch.tensor, torch.tensor, torch.tensor, torch.tensor]

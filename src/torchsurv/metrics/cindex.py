@@ -1,15 +1,14 @@
+from __future__ import annotations
+
 import copy
 import sys
 import warnings
-from typing import Optional, Tuple
 
 import torch
 from scipy import stats
 from torchmetrics import regression
 
-from torchsurv.tools.validate_data import (
-    validate_survival_data,
-)
+from torchsurv.tools.validators import SurvivalInputs
 
 __all__ = ["ConcordanceIndex"]
 
@@ -69,8 +68,8 @@ class ConcordanceIndex:
         estimate: torch.Tensor,
         event: torch.Tensor,
         time: torch.Tensor,
-        weight: Optional[torch.Tensor] = None,
-        tmax: Optional[torch.Tensor] = None,
+        weight: torch.Tensor | None = None,
+        tmax: torch.Tensor | None = None,
         instate: bool = True,
     ) -> torch.Tensor:
         r"""Compute the Concordance Index (C-index).
@@ -199,8 +198,9 @@ class ConcordanceIndex:
         weight_squared = torch.square(weight)
 
         # Inputs checks
-        if self.checks:
-            validate_survival_data(event, time)
+        if self.checks and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+            _surv = SurvivalInputs(event=event, time=time)
+            event, time = _surv.event, _surv.time
 
         # find comparable pairs
         comparable = self._get_comparable_and_tied_time(event, time)
@@ -758,7 +758,7 @@ class ConcordanceIndex:
     def _get_comparable_and_tied_time(
         event,
         time,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """Identify comparable pairs and count tied time pairs.
         The function iterates through the sorted time points to identify comparable samples
         (those with the same time point) and count the number of tied time points.
@@ -827,7 +827,7 @@ class ConcordanceIndex:
     def _update_weight(
         time: torch.Tensor,
         weight: torch.Tensor,
-        tmax: Optional[torch.Tensor] = None,
+        tmax: torch.Tensor | None = None,
     ) -> torch.Tensor:
         """Obtain subject-specific weight."""
 

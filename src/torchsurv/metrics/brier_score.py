@@ -1,14 +1,12 @@
+from __future__ import annotations
+
 import copy
 import warnings
-from typing import Optional
 
 import torch
 from scipy import stats
 
-from torchsurv.tools.validate_data import (
-    validate_new_time,
-    validate_survival_data,
-)
+from torchsurv.tools.validators import NewTimeInputs, SurvivalInputs
 
 __all__ = ["BrierScore"]
 
@@ -64,9 +62,9 @@ class BrierScore:
         estimate: torch.Tensor,
         event: torch.Tensor,
         time: torch.Tensor,
-        new_time: Optional[torch.Tensor] = None,
-        weight: Optional[torch.Tensor] = None,
-        weight_new_time: Optional[torch.Tensor] = None,
+        new_time: torch.Tensor | None = None,
+        weight: torch.Tensor | None = None,
+        weight_new_time: torch.Tensor | None = None,
         instate: bool = True,
     ) -> torch.Tensor:
         r"""Compute the Brier Score.
@@ -191,9 +189,10 @@ class BrierScore:
         weight, weight_new_time = BrierScore._update_brier_score_weight(time, new_time, weight, weight_new_time)
 
         # further input format checks
-        if self.checks:
-            validate_survival_data(event, time)
-            validate_new_time(new_time, time, within_follow_up=False)
+        if self.checks and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+            _surv = SurvivalInputs(event=event, time=time)
+            event, time = _surv.event, _surv.time
+            NewTimeInputs(new_time=new_time, time=time, within_follow_up=False)
 
         # Calculating the residuals for each subject and time point
         residuals = torch.zeros_like(estimate)

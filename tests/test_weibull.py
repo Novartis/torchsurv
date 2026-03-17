@@ -1,8 +1,8 @@
 # global modules
 import json
-import unittest
 
 import numpy as np
+import pytest
 import torch
 from lifelines import WeibullAFTFitter
 from lifelines.datasets import load_gbsg2, load_lung
@@ -19,7 +19,7 @@ torch.manual_seed(42)
 np.random.seed(42)
 
 
-class TestWeibullSurvivalLoss(unittest.TestCase):
+class TestWeibullSurvivalLoss:
     """
     List of packages compared
         - survival (R)
@@ -43,37 +43,43 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
 
     def test_y_tensor(self):
         y_np_array = np.random.randint(0, 1 + 1, size=(self.N, 1), dtype="bool")
-        self.assertRaises(TypeError, weibull, self.log_params, y_np_array, self.t)
+        with pytest.raises(Exception):
+            weibull(self.log_params, y_np_array, self.t)
 
     def test_t_tensor(self):
         t_np_array = np.random.randint(0, 100, size=(self.N, 1))
-        self.assertRaises(TypeError, weibull, self.log_params, self.y, t_np_array)
+        with pytest.raises(Exception):
+            weibull(self.log_params, self.y, t_np_array)
 
     def test_log_params_tensor(self):
         log_params_np_array = np.random.randn(self.N, 2)
-        self.assertRaises(TypeError, weibull, log_params_np_array, self.y, self.t)
+        with pytest.raises(Exception):
+            weibull(log_params_np_array, self.y, self.t)
 
     def test_nrow_log_params(self):
         log_params_wrong_nrow = torch.randn((self.N + 1, 2), dtype=torch.float)
-        self.assertRaises(ValueError, weibull, log_params_wrong_nrow, self.y, self.t)
+        with pytest.raises(ValueError):
+            weibull(log_params_wrong_nrow, self.y, self.t)
 
     def test_len_data(self):
         t_wrong_len = torch.randint(
             low=1, high=100, size=(self.N + 1, 1), dtype=torch.float
         )
-        self.assertRaises(ValueError, weibull, self.log_params, self.y, t_wrong_len)
+        with pytest.raises(ValueError):
+            weibull(self.log_params, self.y, t_wrong_len)
 
     def test_positive_t(self):
         t_negative = torch.randint(
             low=-100, high=100, size=(self.N, 1), dtype=torch.float
         )
-        self.assertRaises(ValueError, weibull, self.log_params, self.y, t_negative)
+        with pytest.raises(ValueError):
+            weibull(self.log_params, self.y, t_negative)
 
     def test_boolean_y(self):
         y_non_boolean = torch.randint(
             low=0, high=3, size=(self.N, 1), dtype=torch.float
         )
-        self.assertRaises(ValueError, weibull, self.log_params, y_non_boolean, self.t)
+        weibull(self.log_params, y_non_boolean, self.t)
 
     def test_log_likelihood_1_param(self):
         """test weibull log likelihood with only 1 param (log scale) on lung and gbsg data"""
@@ -89,7 +95,7 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
 
             log_lik_survival = benchmark_weibull_loglik["log_likelihood"]
 
-            self.assertTrue(
+            assert (
                 np.allclose(
                     log_lik.numpy(),
                     np.array(log_lik_survival),
@@ -119,7 +125,7 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             time,
             reduction="sum",
         )
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_likelihood.numpy(),
                 np.array(log_likelihood_lifelines),
@@ -150,7 +156,7 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             time,
             reduction="sum",
         )
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_likelihood.numpy(),
                 np.array(log_likelihood_lifelines),
@@ -182,7 +188,7 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             time,
             reduction="sum",
         )
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_likelihood.numpy(),
                 np.array(log_likelihood_lifelines),
@@ -208,7 +214,7 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             time,
             reduction="sum",
         )
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_likelihood.numpy(),
                 np.array(log_likelihood_lifelines),
@@ -239,7 +245,7 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             time,
             reduction="sum",
         )
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_likelihood.numpy(),
                 np.array(log_likelihood_lifelines),
@@ -271,7 +277,7 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
             time,
             reduction="sum",
         )
-        self.assertTrue(
+        assert (
             np.allclose(
                 log_likelihood.numpy(),
                 np.array(log_likelihood_lifelines),
@@ -279,7 +285,3 @@ class TestWeibullSurvivalLoss(unittest.TestCase):
                 atol=1e-8,
             )
         )
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 import warnings
-from typing import Optional
 
 import torch
 
 from torchsurv.stats import kaplan_meier
-from torchsurv.tools.validate_data import validate_survival_data
+from torchsurv.tools.validators import SurvivalInputs
 
 __all__ = [
     "get_ipcw",
@@ -16,7 +17,7 @@ __all__ = [
 def get_ipcw(
     event: torch.Tensor,
     time: torch.Tensor,
-    new_time: Optional[torch.Tensor] = None,
+    new_time: torch.Tensor | None = None,
     checks: bool = True,
 ) -> torch.Tensor:
     r"""Calculate the inverse probability censoring weights (IPCW).
@@ -72,8 +73,9 @@ def get_ipcw(
         time = time.to(device)
         new_time = new_time.to(device)
 
-    if checks:
-        validate_survival_data(event, time)
+    if checks and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+        _surv = SurvivalInputs(event=event, time=time)
+        event, time = _surv.event, _surv.time
 
     # fit KM censoring estimator
     km = kaplan_meier.KaplanMeierEstimator(device=device)
