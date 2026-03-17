@@ -28,3 +28,8 @@ dependencies:
   - sphinx-math-dollar=1.2.1
   - pre-commit=4.2.0
   - ruff=0.12.4
+  - pydantic>=2.0
+  - torchmetrics
+  - pytest>=7.0
+  - pytest-cov>=4.0
+  - hypothesis>=6.0
