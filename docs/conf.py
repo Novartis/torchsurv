@@ -8,6 +8,8 @@
 import os
 import sys
 
+import torchsurv
+
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.insert(0, os.path.abspath("../src"))
@@ -17,7 +19,8 @@ sys.path.insert(0, os.path.abspath("../src"))
 project = "TorchSurv"
 copyright = "2024, Novartis Pharma AG"
 author = "Thibaud Coroller, Mélodie Monod, Peter Krusche, Qian Cao"
-release = "0.1.5"
+
+release = torchsurv.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
