@@ -4,7 +4,7 @@ import pytest
 import torch
 from hypothesis import HealthCheck, given, settings
 
-from tests.strategies import (
+from strategies import (
     cox_log_hazard,
     survival_tensors,
     weibull_log_params as weibull_log_params_strategy,
