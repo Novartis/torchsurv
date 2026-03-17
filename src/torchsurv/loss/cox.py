@@ -69,49 +69,61 @@ def _partial_likelihood_efron(
         torch.Tensor: partial log likelihood for the Cox proportional hazards model using Efron's method to handle ties in event time.
     """
 
-    # Event or censoring times sorted without ties.
     time_unique = torch.unique(time_sorted)
-
-    # Number of unique time points
     K = len(time_unique)
-
-    # H[k] = indices of subjects who experienced an event at time_unique[k]
-    H = [torch.where((time_sorted == time_unique[k]) & (event_sorted))[0] for k in range(K)]
-
-    # R[k] = indices of subjects who are still at risk at time_unique[k]
-    R = [torch.where(time_sorted >= time_unique[k])[0] for k in range(K)]
-
-    # Length of each element in H
-    m = torch.tensor([len(h) for h in H])
-
-    # Boolean tensor indicating whether each element in H has a length greater than 0
-    include = torch.tensor([len(h) > 0 for h in H])
+    device = log_hz_sorted.device
 
     if is_time_varying_log_hz:
-        # log nominator
+        # Variable-size 2-D indexing — keep per-time-point loops
+        H = [torch.where((time_sorted == time_unique[k]) & (event_sorted))[0] for k in range(K)]
+        R = [torch.where(time_sorted >= time_unique[k])[0] for k in range(K)]
+        m = torch.tensor([len(h) for h in H], device=device)
+        include = torch.tensor([len(h) > 0 for h in H], device=device)
         log_nominator = torch.stack([torch.sum(log_hz_sorted[h, h]) for h in H])
-
-        # denominator
         denominator_naive = torch.stack(
             [torch.sum(torch.exp(log_hz_sorted[R[k]][:, H[k]][:, :1])) for k in range(K)]
-        )  # the columns are identifical for tied time points
+        )  # columns are identical for tied time points
         denominator_ties = torch.stack([torch.sum(torch.exp(log_hz_sorted[h, h])) for h in H])
     else:
-        # log nominator
-        log_nominator = torch.stack([torch.sum(log_hz_sorted[h]) for h in H])
+        # Map each sorted subject to its unique-time index
+        time_to_k = torch.searchsorted(time_unique, time_sorted)  # (N,)
+        event_idx = time_to_k[event_sorted]  # unique-time index for each event
 
-        # denominator
-        denominator_naive = torch.stack([torch.sum(torch.exp(log_hz_sorted[r])) for r in R])
-        denominator_ties = torch.stack([torch.sum(torch.exp(log_hz_sorted[h])) for h in H])
+        # m[k] = number of events at time_unique[k]
+        m = torch.zeros(K, dtype=torch.long, device=device)
+        m.scatter_add_(0, event_idx, torch.ones(event_idx.shape[0], dtype=torch.long, device=device))
+        include = m > 0
 
-    # log denominator
-    log_denominator_efron = torch.zeros(K, device=log_hz_sorted.device)
-    for k in range(K):
-        mk = int(m[k].item())
-        for r in range(1, mk + 1):
-            log_denominator_efron[k] += torch.log(denominator_naive[k] - (r - 1) / float(m[k]) * denominator_ties[k])
+        # log_nominator[k] = sum of log_hz for event subjects at time_unique[k]
+        log_nominator = torch.zeros(K, device=device)
+        log_nominator.scatter_add_(0, event_idx, log_hz_sorted[event_sorted])
 
-    # Define results
+        exp_hz = torch.exp(log_hz_sorted)
+
+        # denominator_naive[k] = sum of exp(log_hz) for risk set R[k] = {i : time[i] >= time_unique[k]}
+        # Since data is sorted, R[k] is a suffix of the sorted array starting at first_idx[k].
+        # reverse_cumsum[i] = sum(exp_hz[i:]), so denominator_naive[k] = reverse_cumsum[first_idx[k]].
+        reverse_cumsum = exp_hz.flip(0).cumsum(0).flip(0)  # (N,)
+        first_idx = torch.searchsorted(time_sorted, time_unique)  # (K,)
+        denominator_naive = reverse_cumsum[first_idx]
+
+        # denominator_ties[k] = sum of exp(log_hz) for event subjects at time_unique[k]
+        denominator_ties = torch.zeros(K, device=device)
+        denominator_ties.scatter_add_(0, event_idx, exp_hz[event_sorted])
+
+    # Efron log-denominator: for each k, sum_{r=0}^{m[k]-1} log(D_k - r/m[k] * T_k)
+    # Vectorized over k using a (K, max_ties) padded tensor.
+    max_ties = max(1, int(m.max().item()))
+    r_vals = torch.arange(max_ties, device=device)  # (max_ties,)
+    valid = r_vals.unsqueeze(0) < m.unsqueeze(1)  # (K, max_ties) bool mask
+    m_float = m.clamp(min=1).to(log_hz_sorted.dtype)
+    terms = denominator_naive.unsqueeze(1) - (
+        r_vals.to(log_hz_sorted.dtype).unsqueeze(0) / m_float.unsqueeze(1)
+    ) * denominator_ties.unsqueeze(1)  # (K, max_ties)
+    # Set padding positions to 1 so log(1) = 0 and they don't contribute
+    terms = torch.where(valid, terms, torch.ones_like(terms))
+    log_denominator_efron = torch.log(terms).sum(dim=1)  # (K,)
+
     results: torch.Tensor = (log_nominator - log_denominator_efron)[include]
     return results
 
@@ -139,40 +151,42 @@ def _partial_likelihood_breslow(
         torch.Tensor: partial log likelihood for the Cox proportional hazards model using Breslow's method to handle ties in event time.
     """  # noqa: E501
 
-    # Event or censoring times sorted without ties.
     time_unique = torch.unique(time_sorted)
-
-    # Number of unique time points
     K = len(time_unique)
-
-    # H[k] = indices of subjects who experienced an event at time_unique[k]
-    H = [torch.where((time_sorted == time_unique[k]) & (event_sorted))[0] for k in range(K)]
-
-    # R[k] = indices of subjects who are still at risk"at time_unique[k]
-    R = [torch.where(time_sorted >= time_unique[k])[0] for k in range(K)]
-
-    # Length of each element in H
-    m = torch.tensor([len(h) for h in H])
-
-    # Boolean tensor indicating whether each element in H has a length greater than 0
-    include = torch.tensor([len(h) > 0 for h in H])
+    device = log_hz_sorted.device
 
     if is_time_varying_log_hz:
-        # log nominator
+        # Variable-size 2-D indexing — keep per-time-point loops
+        H = [torch.where((time_sorted == time_unique[k]) & (event_sorted))[0] for k in range(K)]
+        R = [torch.where(time_sorted >= time_unique[k])[0] for k in range(K)]
+        m = torch.tensor([len(h) for h in H], device=device)
+        include = torch.tensor([len(h) > 0 for h in H], device=device)
         log_nominator = torch.stack([torch.sum(log_hz_sorted[h, h]) for h in H])
-
-        # log denominator
         log_denominator = torch.stack(
             [torch.sum(torch.logsumexp(log_hz_sorted[R[k]][:, H[k]][:, :1], dim=0)) for k in range(K)]
-        )  # the columns are identifical for tied time points; sum to handle empty tensor with 0.0
+        )  # columns are identical for tied time points; sum handles empty tensors as 0.0
     else:
-        log_nominator = torch.stack([torch.sum(log_hz_sorted[h]) for h in H])
+        # Map each sorted subject to its unique-time index
+        time_to_k = torch.searchsorted(time_unique, time_sorted)  # (N,)
+        event_idx = time_to_k[event_sorted]
 
-        # log denominator
-        log_denominator = torch.stack([torch.logsumexp(log_hz_sorted[r], dim=0) for r in R])
+        # m[k] = number of events at time_unique[k]
+        m = torch.zeros(K, dtype=torch.long, device=device)
+        m.scatter_add_(0, event_idx, torch.ones(event_idx.shape[0], dtype=torch.long, device=device))
+        include = m > 0
 
-    # Define results
-    results: torch.Tensor = (log_nominator - m * log_denominator)[include]
+        # log_nominator[k] = sum of log_hz for event subjects at time_unique[k]
+        log_nominator = torch.zeros(K, device=device)
+        log_nominator.scatter_add_(0, event_idx, log_hz_sorted[event_sorted])
+
+        # log_denominator[k] = log(sum of exp(log_hz) for risk set R[k])
+        # Since data is sorted, R[k] is a suffix; use reverse cumsum for O(N) computation.
+        exp_hz = torch.exp(log_hz_sorted)
+        reverse_cumsum = exp_hz.flip(0).cumsum(0).flip(0)  # reverse_cumsum[i] = sum(exp_hz[i:])
+        first_idx = torch.searchsorted(time_sorted, time_unique)  # start of R[k] in sorted array
+        log_denominator = torch.log(reverse_cumsum[first_idx])
+
+    results: torch.Tensor = (log_nominator - m.to(log_hz_sorted.dtype) * log_denominator)[include]
     return results
 
 
@@ -199,30 +213,31 @@ def _cumulative_baseline_hazard(
         torch.Tensor: Log cumulative baseline hazard evaluated at each unique time point.
     """  # noqa: E501
 
-    # Event or censoring times sorted without ties.
     time_unique = torch.unique(time_sorted)
-
-    # Number of unique time points
     K = len(time_unique)
+    device = log_hz_sorted.device
 
-    # H[k] = indices of subjects who experienced an event at time_unique[k]
-    H = [torch.where((time_sorted == time_unique[k]) & (event_sorted))[0] for k in range(K)]
+    # m[k] = number of events at time_unique[k] (0 for censored-only times)
+    time_to_k = torch.searchsorted(time_unique, time_sorted)
+    event_idx = time_to_k[event_sorted]
+    m = torch.zeros(K, dtype=torch.long, device=device)
+    m.scatter_add_(0, event_idx, torch.ones(event_idx.shape[0], dtype=torch.long, device=device))
 
-    # R[k] = indices of subjects who are still at risk"at time_unique[k]
-    R = [torch.where(time_sorted >= time_unique[k])[0] for k in range(K)]
-
-    # Length of each element in H
-    m = torch.tensor([len(h) for h in H])
-
-    # log denominator
     if is_time_varying_log_hz:
+        # Variable-size 2-D indexing — keep per-time-point loops
+        R = [torch.where(time_sorted >= time_unique[k])[0] for k in range(K)]
+        H = [torch.where((time_sorted == time_unique[k]) & event_sorted)[0] for k in range(K)]
         log_denominator = torch.stack(
             [torch.sum(torch.logsumexp(log_hz_sorted[R[k]][:, H[k]][:, :1], dim=0)) for k in range(K)]
-        )  # the columns are identifical for tied time points; sum to handle empty tensor with 0.0
+        )  # columns are identical for tied time points; sum handles empty tensors as 0.0
     else:
-        log_denominator = torch.stack([torch.logsumexp(log_hz_sorted[r], dim=0) for r in R])
+        # log_denominator[k] = log(sum of exp(log_hz) for risk set R[k])
+        exp_hz = torch.exp(log_hz_sorted)
+        reverse_cumsum = exp_hz.flip(0).cumsum(0).flip(0)  # reverse_cumsum[i] = sum(exp_hz[i:])
+        first_idx = torch.searchsorted(time_sorted, time_unique)
+        log_denominator = torch.log(reverse_cumsum[first_idx])
 
-    return torch.cumsum(m / torch.exp(log_denominator), dim=0)
+    return torch.cumsum(m.to(log_hz_sorted.dtype) / torch.exp(log_denominator), dim=0)
 
 
 def neg_partial_log_likelihood(
