@@ -7,7 +7,52 @@ from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 
 class SurvivalInputs(BaseModel):
-    """Validates and coerces survival analysis inputs."""
+    """Validates and coerces survival analysis inputs.
+
+    Coerces ``event`` to ``bool``, ``time`` to ``float``, and ``strata`` to
+    ``long``.  When ``strata`` is omitted it defaults to a tensor of ones
+    (single stratum).
+
+    Examples:
+        >>> import torch
+        >>> from torchsurv.tools.validators import SurvivalInputs
+        >>> event = torch.tensor([True, False, True])
+        >>> time = torch.tensor([1.0, 2.0, 3.0])
+        >>> inp = SurvivalInputs(event=event, time=time)
+        >>> inp.event
+        tensor([ True, False,  True])
+        >>> inp.time
+        tensor([1., 2., 3.])
+        >>> inp.strata  # auto-filled with ones when omitted
+        tensor([1, 1, 1])
+
+        Integer ``event`` tensors are silently coerced to ``bool``:
+
+        >>> SurvivalInputs(event=torch.tensor([1, 0, 1]), time=time).event
+        tensor([ True, False,  True])
+
+        An explicit ``strata`` tensor is cast to ``long``:
+
+        >>> SurvivalInputs(event=event, time=time, strata=torch.tensor([0, 0, 1])).strata
+        tensor([0, 0, 1])
+
+        Fully-censored data raises a ``ValidationError``:
+
+        >>> from pydantic import ValidationError
+        >>> try:
+        ...     SurvivalInputs(event=torch.zeros(3, dtype=torch.bool), time=time)
+        ... except ValidationError as e:
+        ...     print(e.errors()[0]["msg"])
+        Value error, All samples are censored. At least one event=True is required.
+
+        Mismatched lengths between ``event`` and ``time`` also raise:
+
+        >>> try:
+        ...     SurvivalInputs(event=event, time=torch.tensor([1.0, 2.0]))
+        ... except ValidationError as e:
+        ...     print(e.errors()[0]["msg"])
+        Value error, Dimension mismatch: 'event' has 3 samples but 'time' has 2.
+    """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -62,7 +107,42 @@ class SurvivalInputs(BaseModel):
 
 
 class ModelInputs(BaseModel):
-    """Validates and coerces model parameter inputs."""
+    """Validates and coerces model parameter inputs.
+
+    ``model_type`` is normalised to lowercase.  ``log_params`` is cast to
+    ``float`` and checked for NaN.  Shape constraints are enforced per model.
+
+    Examples:
+        >>> import torch
+        >>> from torchsurv.tools.validators import ModelInputs
+        >>> event = torch.tensor([True, False, True, True])
+        >>> log_hz = torch.tensor([0.1, -0.2, 0.3, -0.4])
+        >>> inp = ModelInputs(log_params=log_hz, event=event, model_type="cox")
+        >>> inp.model_type
+        'cox'
+        >>> inp.log_params.shape
+        torch.Size([4])
+
+        ``model_type`` is case-insensitive and whitespace-stripped:
+
+        >>> ModelInputs(log_params=log_hz, event=event, model_type="  COX  ").model_type
+        'cox'
+
+        Weibull models accept a 2-column ``log_params`` tensor:
+
+        >>> log_params2d = torch.zeros(4, 2)
+        >>> ModelInputs(log_params=log_params2d, event=event, model_type="weibull").log_params.shape
+        torch.Size([4, 2])
+
+        A length mismatch between ``log_params`` and ``event`` raises:
+
+        >>> from pydantic import ValidationError
+        >>> try:
+        ...     ModelInputs(log_params=torch.randn(3), event=event, model_type="cox")
+        ... except ValidationError as e:
+        ...     print(e.errors()[0]["msg"])
+        Value error, Dimension mismatch: 'log_params' has 3 samples but 'event' has 4.
+    """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -120,7 +200,41 @@ class ModelInputs(BaseModel):
 
 
 class NewTimeInputs(BaseModel):
-    """Validates new evaluation times."""
+    """Validates new evaluation times.
+
+    ``new_time`` must be sorted, contain unique values, and (by default) lie
+    strictly within the follow-up range ``[time.min(), time.max())``.
+
+    Examples:
+        >>> import torch
+        >>> from torchsurv.tools.validators import NewTimeInputs
+        >>> time = torch.tensor([1.0, 2.0, 3.0, 5.0])
+        >>> inp = NewTimeInputs(new_time=torch.tensor([1.5, 2.5]), time=time)
+        >>> inp.new_time
+        tensor([1.5000, 2.5000])
+
+        Unsorted ``new_time`` raises a ``ValidationError``:
+
+        >>> from pydantic import ValidationError
+        >>> try:
+        ...     NewTimeInputs(new_time=torch.tensor([2.5, 1.5]), time=time)
+        ... except ValidationError as e:
+        ...     print(e.errors()[0]["msg"])
+        Value error, Input 'new_time' must be sorted from smallest to largest.
+
+        Times outside the follow-up window also raise:
+
+        >>> try:
+        ...     NewTimeInputs(new_time=torch.tensor([6.0]), time=time)
+        ... except ValidationError as e:
+        ...     print(e.errors()[0]["msg"])
+        Value error, All 'new_time' values must be within follow-up range [1.0, 5.0).
+
+        Pass ``within_follow_up=False`` to skip the range check:
+
+        >>> NewTimeInputs(new_time=torch.tensor([6.0]), time=time, within_follow_up=False).new_time
+        tensor([6.])
+    """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -166,7 +280,31 @@ class NewTimeInputs(BaseModel):
 
 
 class EvalTimeInputs(BaseModel):
-    """Validates log_hz shape against eval_times for the Survival model."""
+    """Validates log_hz shape against eval_times for the Survival model.
+
+    ``log_hz`` must be 2-D with shape ``(n_samples, n_eval_times)``.
+    ``eval_times`` must be strictly increasing.
+
+    Examples:
+        >>> import torch
+        >>> from torchsurv.tools.validators import EvalTimeInputs
+        >>> log_hz = torch.zeros(4, 3)
+        >>> eval_times = torch.tensor([1.0, 2.0, 3.0])
+        >>> inp = EvalTimeInputs(log_hz=log_hz, eval_times=eval_times)
+        >>> inp.log_hz.shape
+        torch.Size([4, 3])
+        >>> inp.eval_times
+        tensor([1., 2., 3.])
+
+        A column-count mismatch raises a ``ValidationError``:
+
+        >>> from pydantic import ValidationError
+        >>> try:
+        ...     EvalTimeInputs(log_hz=log_hz, eval_times=torch.tensor([1.0, 2.0]))
+        ... except ValidationError as e:
+        ...     print(e.errors()[0]["msg"])
+        Value error, Shape mismatch: 'log_hz' has 3 time columns but 'eval_times' has 2 entries.
+    """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -220,6 +358,22 @@ def impute_missing_log_shape(log_params: torch.Tensor) -> torch.Tensor:
 
     Returns:
         Tensor of shape (n, 2).
+
+    Examples:
+        >>> import torch
+        >>> from torchsurv.tools.validators import impute_missing_log_shape
+        >>> impute_missing_log_shape(torch.tensor([1.0, 2.0, 3.0]))
+        tensor([[1., 0.],
+                [2., 0.],
+                [3., 0.]])
+        >>> impute_missing_log_shape(torch.tensor([[1.0], [2.0], [3.0]]))
+        tensor([[1., 0.],
+                [2., 0.],
+                [3., 0.]])
+        >>> impute_missing_log_shape(torch.tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]]))
+        tensor([[1., 2.],
+                [3., 4.],
+                [5., 6.]])
     """
     if log_params.dim() == 1:
         log_params = log_params.unsqueeze(1)
@@ -229,7 +383,35 @@ def impute_missing_log_shape(log_params: torch.Tensor) -> torch.Tensor:
 
 
 def validate_time_varying_log_hz(time_sorted: torch.Tensor, log_hz_sorted: torch.Tensor) -> None:
-    """Validate consistency of time-varying log hazard at repeated time points."""
+    """Validate consistency of time-varying log hazard at repeated time points.
+
+    For each pair of adjacent identical times, the corresponding columns of
+    ``log_hz_sorted`` must be equal across all subjects.
+
+    Args:
+        time_sorted: 1-D tensor of times in ascending order.
+        log_hz_sorted: 2-D tensor of shape ``(n_subjects, n_times)``.
+
+    Raises:
+        ValueError: If any repeated time point has inconsistent log-hazard
+            columns.
+
+    Examples:
+        >>> import torch
+        >>> from torchsurv.tools.validators import validate_time_varying_log_hz
+        >>> time = torch.tensor([1.0, 2.0, 2.0, 3.0])
+        >>> log_hz = torch.tensor([[0.1, 0.2, 0.2, 0.3], [0.4, 0.5, 0.5, 0.6]])
+        >>> validate_time_varying_log_hz(time, log_hz)  # identical columns → no error
+
+        Inconsistent columns at a repeated time raise ``ValueError``:
+
+        >>> log_hz_bad = torch.tensor([[0.1, 0.2, 0.9, 0.3], [0.4, 0.5, 0.5, 0.6]])
+        >>> try:
+        ...     validate_time_varying_log_hz(time, log_hz_bad)
+        ... except ValueError as e:
+        ...     print("ValueError raised")
+        ValueError raised
+    """
     for i in range(len(time_sorted) - 1):
         if time_sorted[i] == time_sorted[i + 1]:
             if not torch.all(log_hz_sorted[:, i] == log_hz_sorted[:, i + 1]):
