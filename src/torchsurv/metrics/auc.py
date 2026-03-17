@@ -16,17 +16,13 @@ __all__ = ["Auc"]
 class Auc:
     """Area Under the Curve class for survival models."""
 
-    def __init__(self, checks: bool = True, tied_tol: float = 1e-8):
+    def __init__(self, tied_tol: float = 1e-8):
         """Initialize an Auc for survival class model evaluation.
 
         Args:
             tied_tol (float):
                 Tolerance for tied risk scores.
                 Defaults to 1e-8.
-            checks (bool):
-                Whether to perform input format checks.
-                Enabling checks can help catch potential issues in the input data.
-                Defaults to True.
 
         Examples:
             >>> _ = torch.manual_seed(42)
@@ -46,7 +42,6 @@ class Auc:
             tensor([0.1360, 0.7826, 0.4089])
         """
         self.tied_tol = tied_tol
-        self.checks = checks
 
         # init instate variables
         self.order_time = None
@@ -216,7 +211,7 @@ class Auc:
         weight, weight_new_time = self._update_auc_weight(time, new_time, weight, weight_new_time)
 
         # further input format checks
-        if self.checks and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+        if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
             _surv = SurvivalInputs(event=event, time=time)
             event, time = _surv.event, _surv.time
             NewTimeInputs(new_time=new_time, time=time)

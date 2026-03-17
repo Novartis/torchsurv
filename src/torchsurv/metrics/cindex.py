@@ -19,7 +19,6 @@ class ConcordanceIndex:
     def __init__(
         self,
         tied_tol: float = 1e-8,
-        checks: bool = True,
     ) -> dict:
         """Initialize a ConcordanceIndex for survival class model evaluation.
 
@@ -27,10 +26,6 @@ class ConcordanceIndex:
             tied_tol (float):
                 Tolerance for tied risk scores.
                 Defaults to 1e-8.
-            checks (bool):
-                Whether to perform input format checks.
-                Enabling checks can help catch potential issues in the input data.
-                Defaults to True.
 
         Examples:
             >>> _ = torch.manual_seed(42)
@@ -47,7 +42,6 @@ class ConcordanceIndex:
             tensor(0.2620)
         """
         self.tied_tol = tied_tol
-        self.checks = checks
 
         # init instate attributes
         self.time = None
@@ -198,7 +192,7 @@ class ConcordanceIndex:
         weight_squared = torch.square(weight)
 
         # Inputs checks
-        if self.checks and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+        if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
             _surv = SurvivalInputs(event=event, time=time)
             event, time = _surv.event, _surv.time
 

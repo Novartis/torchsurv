@@ -232,7 +232,6 @@ def neg_partial_log_likelihood(
     ties_method: str = "efron",
     reduction: str = "mean",
     strata: torch.Tensor | None = None,
-    checks: bool = True,
 ) -> torch.Tensor:
     r"""Compute the negative of the partial log likelihood for the Cox proportional hazards model.
 
@@ -255,10 +254,6 @@ def neg_partial_log_likelihood(
             Integer tensor of shape = (n_samples,) representing stratum for each subject defined by combinations of categorical variables.
             This is useful if a categorical covariate does not obey the proportional hazard assumption.
             This is used similar to the strata expression in `R` and `lifelines`.
-        checks (bool, optional):
-            Whether to perform input format checks.
-            Enabling checks can help catch potential issues in the input data.
-            Defaults to True.
 
     Returns:
         (torch.tensor, float):
@@ -389,7 +384,7 @@ def neg_partial_log_likelihood(
     time = time.squeeze()
     strata = strata.squeeze()
 
-    if checks and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+    if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
         _surv = SurvivalInputs(event=event, time=time, strata=strata)
         event, time = _surv.event, _surv.time
         strata = _surv.strata
@@ -408,7 +403,7 @@ def neg_partial_log_likelihood(
         log_hz_sorted = log_hz[idx]
 
     # if log_hz is time-varying, check the repetition of time points
-    if checks and is_time_varying_log_hz and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+    if is_time_varying_log_hz and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
         validate_time_varying_log_hz(time_sorted, log_hz_sorted)
 
     assert strata is not None  # for mypy
@@ -475,7 +470,6 @@ def baseline_survival_function(
     event: torch.Tensor,
     time: torch.Tensor,
     strata: torch.Tensor | None = None,
-    checks: bool = True,
 ) -> dict[int, dict[str, torch.Tensor]]:
     r"""Compute the baseline survival function for the Cox proportional hazards model with Breslow's method.
 
@@ -490,10 +484,6 @@ def baseline_survival_function(
             Event or censoring time of shape = (n_samples,) used to fit the model.
         strata (torch.Tensor, int, optional):
             Integer tensor of shape = (n_samples,) representing stratum for each subject defined by combinations of categorical variables.
-        checks (bool, optional):
-            Whether to perform input format checks.
-            Enabling checks can help catch potential issues in the input data.
-            Defaults to True.
 
     Returns:
         (dict):
@@ -555,7 +545,7 @@ def baseline_survival_function(
     time = time.squeeze()
     strata = strata.squeeze()
 
-    if checks and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+    if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
         _surv = SurvivalInputs(event=event, time=time, strata=strata)
         event, time = _surv.event, _surv.time
         strata = _surv.strata
@@ -578,7 +568,7 @@ def baseline_survival_function(
         log_hz_sorted = log_hz[idx]
 
     # if log_hz is time-varying, check the repetition of time points
-    if checks and is_time_varying_log_hz and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+    if is_time_varying_log_hz and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
         validate_time_varying_log_hz(time_sorted, log_hz_sorted)
 
     strata_unique = torch.unique(strata_sorted)

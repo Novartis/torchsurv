@@ -183,7 +183,6 @@ def neg_log_likelihood_weibull(
     event: torch.Tensor,
     time: torch.Tensor,
     reduction: str = "mean",
-    checks: bool = True,
 ) -> torch.Tensor:
     r"""
     Negative of the log likelihood for the Weibull Accelerated Time Failure (AFT) survival model.
@@ -201,10 +200,6 @@ def neg_log_likelihood_weibull(
         reduction (str):
             Method to reduce losses. Defaults to "mean".
             Must be one of the following: "sum", "mean".
-        checks (bool):
-            Whether to perform input format checks.
-            Enabling checks can help catch potential issues in the input data.
-            Defaults to True.
 
     Returns:
         (torch.Tensor, float): Negative of the log likelihood.
@@ -271,7 +266,7 @@ def neg_log_likelihood_weibull(
 
     """
 
-    if checks and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+    if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
         _surv = SurvivalInputs(event=event, time=time)
         event, time = _surv.event, _surv.time
         _model = ModelInputs(log_params=log_params, event=event, model_type="weibull")

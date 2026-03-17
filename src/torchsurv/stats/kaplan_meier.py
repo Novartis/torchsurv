@@ -31,7 +31,6 @@ class KaplanMeierEstimator:
         event: torch.Tensor,
         time: torch.Tensor,
         censoring_dist: bool = False,
-        check: bool = True,
     ):
         """Initialize Kaplan Meier estimator.
 
@@ -44,10 +43,6 @@ class KaplanMeierEstimator:
                 If False, returns the Kaplan-Meier estimate of the survival distribution.
                 If True, returns the Kaplan-Meier estimate of the censoring distribution.
                 Defaults to False.
-            check (bool):
-                Whether to perform input format checks.
-                Enabling checks can help catch potential issues in the input data.
-                Defaults to True.
 
         Examples:
             >>> _ = torch.manual_seed(42)
@@ -77,7 +72,7 @@ class KaplanMeierEstimator:
         self.time = time.to(self.device)
 
         # Check input validity if required
-        if check and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+        if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
             _surv = SurvivalInputs(event=event, time=time)
             event, time = _surv.event, _surv.time
 

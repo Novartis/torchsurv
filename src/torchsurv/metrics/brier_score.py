@@ -14,14 +14,8 @@ __all__ = ["BrierScore"]
 class BrierScore:
     r"""Compute the Brier Score for survival models."""
 
-    def __init__(self, checks: bool = True):
+    def __init__(self):
         """Initialize a BrierScore for survival class model evaluation.
-
-        Args:
-            checks (bool):
-                Whether to perform input format checks.
-                Enabling checks can help catch potential issues in the input data.
-                Defaults to True.
 
         Examples:
             >>> _ = torch.manual_seed(52)
@@ -44,9 +38,6 @@ class BrierScore:
             tensor([1.0000, 0.7860, 1.0000, 0.3840, 1.0000, 1.0000, 0.3840, 1.0000, 0.7000,
                     0.2380])
         """
-        self.checks = checks
-
-        # init instate attributes
         self.order_time = None
         self.time = None
         self.event = None
@@ -189,7 +180,7 @@ class BrierScore:
         weight, weight_new_time = BrierScore._update_brier_score_weight(time, new_time, weight, weight_new_time)
 
         # further input format checks
-        if self.checks and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+        if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
             _surv = SurvivalInputs(event=event, time=time)
             event, time = _surv.event, _surv.time
             NewTimeInputs(new_time=new_time, time=time, within_follow_up=False)
