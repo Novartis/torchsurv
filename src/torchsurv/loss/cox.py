@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import sys
 import warnings
+from typing import Optional
 
 import torch
 
@@ -18,6 +19,11 @@ __all__ = [
     "baseline_survival_function",
     "survival_function_cox",
 ]
+
+
+def _searchsorted(sorted_seq: torch.Tensor, values: torch.Tensor, right: bool = False) -> torch.Tensor:
+    """torch.searchsorted with CPU fallback for devices that don't support it (e.g. MPS)."""
+    return torch.searchsorted(sorted_seq.cpu(), values.cpu(), right=right).to(sorted_seq.device)
 
 
 def _partial_likelihood_cox(
@@ -86,7 +92,7 @@ def _partial_likelihood_efron(
         denominator_ties = torch.stack([torch.sum(torch.exp(log_hz_sorted[h, h])) for h in H])
     else:
         # Map each sorted subject to its unique-time index
-        time_to_k = torch.searchsorted(time_unique, time_sorted)  # (N,)
+        time_to_k = _searchsorted(time_unique, time_sorted)  # (N,)
         event_idx = time_to_k[event_sorted]  # unique-time index for each event
 
         # m[k] = number of events at time_unique[k]
@@ -104,7 +110,7 @@ def _partial_likelihood_efron(
         # Since data is sorted, R[k] is a suffix of the sorted array starting at first_idx[k].
         # reverse_cumsum[i] = sum(exp_hz[i:]), so denominator_naive[k] = reverse_cumsum[first_idx[k]].
         reverse_cumsum = exp_hz.flip(0).cumsum(0).flip(0)  # (N,)
-        first_idx = torch.searchsorted(time_sorted, time_unique)  # (K,)
+        first_idx = _searchsorted(time_sorted, time_unique)  # (K,)
         denominator_naive = reverse_cumsum[first_idx]
 
         # denominator_ties[k] = sum of exp(log_hz) for event subjects at time_unique[k]
@@ -167,7 +173,7 @@ def _partial_likelihood_breslow(
         )  # columns are identical for tied time points; sum handles empty tensors as 0.0
     else:
         # Map each sorted subject to its unique-time index
-        time_to_k = torch.searchsorted(time_unique, time_sorted)  # (N,)
+        time_to_k = _searchsorted(time_unique, time_sorted)  # (N,)
         event_idx = time_to_k[event_sorted]
 
         # m[k] = number of events at time_unique[k]
@@ -183,7 +189,7 @@ def _partial_likelihood_breslow(
         # Since data is sorted, R[k] is a suffix; use reverse cumsum for O(N) computation.
         exp_hz = torch.exp(log_hz_sorted)
         reverse_cumsum = exp_hz.flip(0).cumsum(0).flip(0)  # reverse_cumsum[i] = sum(exp_hz[i:])
-        first_idx = torch.searchsorted(time_sorted, time_unique)  # start of R[k] in sorted array
+        first_idx = _searchsorted(time_sorted, time_unique)  # start of R[k] in sorted array
         log_denominator = torch.log(reverse_cumsum[first_idx])
 
     results: torch.Tensor = (log_nominator - m.to(log_hz_sorted.dtype) * log_denominator)[include]
@@ -218,7 +224,7 @@ def _cumulative_baseline_hazard(
     device = log_hz_sorted.device
 
     # m[k] = number of events at time_unique[k] (0 for censored-only times)
-    time_to_k = torch.searchsorted(time_unique, time_sorted)
+    time_to_k = _searchsorted(time_unique, time_sorted)
     event_idx = time_to_k[event_sorted]
     m = torch.zeros(K, dtype=torch.long, device=device)
     m.scatter_add_(0, event_idx, torch.ones(event_idx.shape[0], dtype=torch.long, device=device))
@@ -234,7 +240,7 @@ def _cumulative_baseline_hazard(
         # log_denominator[k] = log(sum of exp(log_hz) for risk set R[k])
         exp_hz = torch.exp(log_hz_sorted)
         reverse_cumsum = exp_hz.flip(0).cumsum(0).flip(0)  # reverse_cumsum[i] = sum(exp_hz[i:])
-        first_idx = torch.searchsorted(time_sorted, time_unique)
+        first_idx = _searchsorted(time_sorted, time_unique)
         log_denominator = torch.log(reverse_cumsum[first_idx])
 
     return torch.cumsum(m.to(log_hz_sorted.dtype) / torch.exp(log_denominator), dim=0)
@@ -246,7 +252,7 @@ def neg_partial_log_likelihood(
     time: torch.Tensor,
     ties_method: str = "efron",
     reduction: str = "mean",
-    strata: torch.Tensor | None = None,
+    strata: Optional[torch.Tensor] = None,  # noqa: UP045
 ) -> torch.Tensor:
     r"""Compute the negative of the partial log likelihood for the Cox proportional hazards model.
 
@@ -484,7 +490,7 @@ def baseline_survival_function(
     log_hz: torch.Tensor,
     event: torch.Tensor,
     time: torch.Tensor,
-    strata: torch.Tensor | None = None,
+    strata: Optional[torch.Tensor] = None,  # noqa: UP045
 ) -> dict[int, dict[str, torch.Tensor]]:
     r"""Compute the baseline survival function for the Cox proportional hazards model with Breslow's method.
 
@@ -628,7 +634,7 @@ def survival_function_cox(
     baseline_survival: torch.Tensor,
     new_log_hz: torch.Tensor,
     new_time: torch.Tensor,
-    new_strata: torch.Tensor | None = None,
+    new_strata: Optional[torch.Tensor] = None,  # noqa: UP045
 ) -> torch.Tensor:
     r"""Compute the individual survival function for new subjects for the Cox proportional hazards model.
 
@@ -721,7 +727,7 @@ def survival_function_cox(
 
         # new_time values may not exactly match any entry in time_stratum
         # Index of last time_stratum value <= new_time (floor index)
-        time_index = torch.searchsorted(time_stratum, new_time, right=True) - torch.tensor(1)
+        time_index = _searchsorted(time_stratum, new_time, right=True) - torch.tensor(1)
 
         # If new_time is smaller than the first element of time_stratum,
         # Clamp these cases to 0 so we use the earliest available time point.

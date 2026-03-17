@@ -221,16 +221,24 @@ def test_brier_score_simulated_data():
             weight_new_time=ipcw_new_time,
         )
 
-        _, bs_sksurv = brier_score_sksurv(y_train_array, y_test_array, estimate.numpy(), new_time_array)
+        # sksurv requires eval times strictly within follow-up [test_min, test_max).
+        # Filter out any new_time == test_time.max() before comparing.
+        sksurv_mask = new_time_array < test_time.numpy().max()
+        sksurv_new_time = new_time_array[sksurv_mask]
+        if len(sksurv_new_time) == 0:
+            continue
 
-        assert (np.allclose(bs.numpy(), bs_sksurv, rtol=1e-5, atol=1e-8))
+        _, bs_sksurv = brier_score_sksurv(y_train_array, y_test_array, estimate.numpy()[:, sksurv_mask], sksurv_new_time)
 
-        if len(new_time) > 2:
+        assert (np.allclose(bs.numpy()[sksurv_mask], bs_sksurv, rtol=1e-5, atol=1e-8))
+
+        # IBS comparison requires identical time grids; skip when new_time was filtered
+        if sksurv_mask.all() and len(sksurv_new_time) > 2:
             ibs = brier_score.integral()
             ibs_sksurv = integrated_brier_score_sksurv(
                 y_train_array,
                 y_test_array,
-                estimate.numpy(),
-                new_time_array,
+                estimate.numpy()[:, sksurv_mask],
+                sksurv_new_time,
             )
             assert (np.allclose(ibs.numpy(), ibs_sksurv, rtol=1e-5, atol=1e-8))
