@@ -5,8 +5,61 @@ from typing import Literal
 import torch
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
+# ---------------------------------------------------------------------------
+# Private helpers — shared coercion logic used by all field validators
+# ---------------------------------------------------------------------------
 
-class SurvivalInputs(BaseModel):
+
+def _to_float_tensor(name: str, v: object, *, allow_inf: bool = False) -> torch.Tensor:
+    """Coerce *v* to a float32 tensor on its original device.
+
+    Args:
+        name: Field name used in error messages.
+        v: Value to coerce; must be a :class:`torch.Tensor`.
+        allow_inf: When ``False`` (default) Inf values raise ``ValueError``.
+
+    Raises:
+        ValueError: If *v* is not a tensor, or contains NaN / Inf (when
+            *allow_inf* is ``False``).
+    """
+    if not isinstance(v, torch.Tensor):
+        raise ValueError(f"Input '{name}' must be a torch.Tensor.")
+    coerced = v.float().to(v.device)
+    if torch.any(torch.isnan(coerced)):
+        raise ValueError(f"Input '{name}' contains NaN values, which are not allowed.")
+    if not allow_inf and torch.any(torch.isinf(coerced)):
+        raise ValueError(f"Input '{name}' contains Inf values, which are not allowed.")
+    return coerced
+
+
+def _to_bool_tensor(name: str, v: object) -> torch.Tensor:
+    """Coerce *v* to a bool tensor on its original device.
+
+    Raises:
+        ValueError: If *v* is not a :class:`torch.Tensor`.
+    """
+    if not isinstance(v, torch.Tensor):
+        raise ValueError(f"Input '{name}' must be a torch.Tensor.")
+    return v.bool().to(v.device)
+
+
+# ---------------------------------------------------------------------------
+# Shared base — enables torch.Tensor fields in every model
+# ---------------------------------------------------------------------------
+
+
+class _TorchModel(BaseModel):
+    """Base model that allows arbitrary types (required for :class:`torch.Tensor` fields)."""
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+
+# ---------------------------------------------------------------------------
+# Public validators
+# ---------------------------------------------------------------------------
+
+
+class SurvivalInputs(_TorchModel):
     """Validates and coerces survival analysis inputs.
 
     Coerces ``event`` to ``bool``, ``time`` to ``float``, and ``strata`` to
@@ -54,8 +107,6 @@ class SurvivalInputs(BaseModel):
         Value error, Dimension mismatch: 'event' has 3 samples but 'time' has 2.
     """
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
     event: torch.Tensor
     time: torch.Tensor
     strata: torch.Tensor | None = None
@@ -63,23 +114,15 @@ class SurvivalInputs(BaseModel):
     @field_validator("event", mode="before")
     @classmethod
     def coerce_event(cls, v: object) -> torch.Tensor:
-        if not isinstance(v, torch.Tensor):
-            raise ValueError("Input 'event' must be a torch.Tensor.")
-        original_device = v.device
-        coerced = v.bool().to(original_device)
-        if torch.sum(coerced) <= 0:
+        coerced = _to_bool_tensor("event", v)
+        if not coerced.any():
             raise ValueError("All samples are censored. At least one event=True is required.")
         return coerced
 
     @field_validator("time", mode="before")
     @classmethod
     def coerce_time(cls, v: object) -> torch.Tensor:
-        if not isinstance(v, torch.Tensor):
-            raise ValueError("Input 'time' must be a torch.Tensor.")
-        original_device = v.device
-        coerced = v.float().to(original_device)
-        if torch.any(torch.isnan(coerced)) or torch.any(torch.isinf(coerced)):
-            raise ValueError("Input 'time' contains NaN or Inf values, which are not allowed.")
+        coerced = _to_float_tensor("time", v)
         if torch.any(coerced < 0.0):
             raise ValueError("Input 'time' must be non-negative.")
         return coerced
@@ -91,8 +134,7 @@ class SurvivalInputs(BaseModel):
             return None
         if not isinstance(v, torch.Tensor):
             raise ValueError("Input 'strata' must be a torch.Tensor or None.")
-        original_device = v.device
-        return v.long().to(original_device)
+        return v.long().to(v.device)
 
     @model_validator(mode="after")
     def check_dimensions(self) -> SurvivalInputs:
@@ -106,11 +148,14 @@ class SurvivalInputs(BaseModel):
         return self
 
 
-class ModelInputs(BaseModel):
+class ModelInputs(_TorchModel):
     """Validates and coerces model parameter inputs.
 
     ``model_type`` is normalised to lowercase.  ``log_params`` is cast to
     ``float`` and checked for NaN.  Shape constraints are enforced per model.
+    For Weibull models, ``log_params`` is always normalised to shape ``(n, 2)``
+    by :func:`impute_missing_log_shape` so callers receive a fully-specified
+    tensor without needing to call the function separately.
 
     Examples:
         >>> import torch
@@ -128,10 +173,9 @@ class ModelInputs(BaseModel):
         >>> ModelInputs(log_params=log_hz, event=event, model_type="  COX  ").model_type
         'cox'
 
-        Weibull models accept a 2-column ``log_params`` tensor:
+        1-D Weibull ``log_params`` are promoted to ``(n, 2)`` automatically:
 
-        >>> log_params2d = torch.zeros(4, 2)
-        >>> ModelInputs(log_params=log_params2d, event=event, model_type="weibull").log_params.shape
+        >>> ModelInputs(log_params=log_hz, event=event, model_type="weibull").log_params.shape
         torch.Size([4, 2])
 
         A length mismatch between ``log_params`` and ``event`` raises:
@@ -144,7 +188,7 @@ class ModelInputs(BaseModel):
         Value error, Dimension mismatch: 'log_params' has 3 samples but 'event' has 4.
     """
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+    model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())
 
     log_params: torch.Tensor
     event: torch.Tensor
@@ -153,21 +197,12 @@ class ModelInputs(BaseModel):
     @field_validator("log_params", mode="before")
     @classmethod
     def coerce_log_params(cls, v: object) -> torch.Tensor:
-        if not isinstance(v, torch.Tensor):
-            raise ValueError("Input 'log_params' must be a torch.Tensor.")
-        original_device = v.device
-        coerced = v.float().to(original_device)
-        if torch.any(torch.isnan(coerced)):
-            raise ValueError("Input 'log_params' contains NaN values, which are not allowed.")
-        return coerced
+        return _to_float_tensor("log_params", v)
 
     @field_validator("event", mode="before")
     @classmethod
     def coerce_event(cls, v: object) -> torch.Tensor:
-        if not isinstance(v, torch.Tensor):
-            raise ValueError("Input 'event' must be a torch.Tensor.")
-        original_device = v.device
-        return v.bool().to(original_device)
+        return _to_bool_tensor("event", v)
 
     @field_validator("model_type", mode="before")
     @classmethod
@@ -188,6 +223,12 @@ class ModelInputs(BaseModel):
                 raise ValueError(
                     f"For Weibull model, 'log_params' must have 1 or 2 dimensions. Found {self.log_params.dim()}."
                 )
+            if self.log_params.dim() == 2 and self.log_params.size(1) not in (1, 2):
+                raise ValueError(
+                    f"For Weibull model, 'log_params' must have 1 or 2 columns. Found {self.log_params.size(1)}."
+                )
+            # Normalise to (n, 2) so callers always receive a fully-specified tensor.
+            self.log_params = impute_missing_log_shape(self.log_params)
         elif self.model_type == "cox":
             if self.log_params.dim() > 2 or (
                 self.log_params.dim() == 2 and self.log_params.shape[0] != self.log_params.shape[1]
@@ -199,7 +240,7 @@ class ModelInputs(BaseModel):
         return self
 
 
-class NewTimeInputs(BaseModel):
+class NewTimeInputs(_TorchModel):
     """Validates new evaluation times.
 
     ``new_time`` must be sorted, contain unique values, and (by default) lie
@@ -236,8 +277,6 @@ class NewTimeInputs(BaseModel):
         tensor([6.])
     """
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
     new_time: torch.Tensor
     time: torch.Tensor
     within_follow_up: bool = True
@@ -245,24 +284,12 @@ class NewTimeInputs(BaseModel):
     @field_validator("new_time", mode="before")
     @classmethod
     def coerce_new_time(cls, v: object) -> torch.Tensor:
-        if not isinstance(v, torch.Tensor):
-            raise ValueError("Input 'new_time' must be a torch.Tensor.")
-        original_device = v.device
-        coerced = v.float().to(original_device)
-        if torch.any(torch.isnan(coerced)) or torch.any(torch.isinf(coerced)):
-            raise ValueError("Input 'new_time' contains NaN or Inf values, which are not allowed.")
-        return coerced
+        return _to_float_tensor("new_time", v)
 
     @field_validator("time", mode="before")
     @classmethod
     def coerce_time(cls, v: object) -> torch.Tensor:
-        if not isinstance(v, torch.Tensor):
-            raise ValueError("Input 'time' must be a torch.Tensor.")
-        original_device = v.device
-        coerced = v.float().to(original_device)
-        if torch.any(torch.isnan(coerced)) or torch.any(torch.isinf(coerced)):
-            raise ValueError("Input 'time' contains NaN or Inf values, which are not allowed.")
-        return coerced
+        return _to_float_tensor("time", v)
 
     @model_validator(mode="after")
     def check_new_time(self) -> NewTimeInputs:
@@ -279,7 +306,7 @@ class NewTimeInputs(BaseModel):
         return self
 
 
-class EvalTimeInputs(BaseModel):
+class EvalTimeInputs(_TorchModel):
     """Validates log_hz shape against eval_times for the Survival model.
 
     ``log_hz`` must be 2-D with shape ``(n_samples, n_eval_times)``.
@@ -306,32 +333,18 @@ class EvalTimeInputs(BaseModel):
         Value error, Shape mismatch: 'log_hz' has 3 time columns but 'eval_times' has 2 entries.
     """
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
     log_hz: torch.Tensor
     eval_times: torch.Tensor
 
     @field_validator("log_hz", mode="before")
     @classmethod
     def coerce_log_hz(cls, v: object) -> torch.Tensor:
-        if not isinstance(v, torch.Tensor):
-            raise ValueError("Input 'log_hz' must be a torch.Tensor.")
-        original_device = v.device
-        coerced = v.float().to(original_device)
-        if torch.any(torch.isnan(coerced)):
-            raise ValueError("Input 'log_hz' contains NaN values, which are not allowed.")
-        return coerced
+        return _to_float_tensor("log_hz", v)
 
     @field_validator("eval_times", mode="before")
     @classmethod
     def coerce_eval_times(cls, v: object) -> torch.Tensor:
-        if not isinstance(v, torch.Tensor):
-            raise ValueError("Input 'eval_times' must be a torch.Tensor.")
-        original_device = v.device
-        coerced = v.float().to(original_device)
-        if torch.any(torch.isnan(coerced)) or torch.any(torch.isinf(coerced)):
-            raise ValueError("Input 'eval_times' contains NaN or Inf values, which are not allowed.")
-        return coerced
+        return _to_float_tensor("eval_times", v)
 
     @model_validator(mode="after")
     def check_shapes(self) -> EvalTimeInputs:
@@ -344,6 +357,70 @@ class EvalTimeInputs(BaseModel):
             )
         if torch.any(self.eval_times[:-1] >= self.eval_times[1:]):
             raise ValueError("Input 'eval_times' must be strictly increasing with no duplicate values.")
+        return self
+
+
+class TimeVaryingCoxInputs(_TorchModel):
+    """Validates consistency of time-varying log hazard at repeated time points.
+
+    For each pair of adjacent identical times in ``time_sorted``, the
+    corresponding columns of ``log_hz_sorted`` must be equal across all
+    subjects (checked with :func:`torch.allclose` to guard against
+    floating-point rounding).
+
+    Examples:
+        >>> import torch
+        >>> from torchsurv.tools.validators import TimeVaryingCoxInputs
+        >>> time = torch.tensor([1.0, 2.0, 2.0, 3.0])
+        >>> log_hz = torch.tensor([[0.1, 0.2, 0.2, 0.3], [0.4, 0.5, 0.5, 0.6]])
+        >>> TimeVaryingCoxInputs(time_sorted=time, log_hz_sorted=log_hz)  # no error
+        TimeVaryingCoxInputs(time_sorted=tensor([1., 2., 2., 3.]), log_hz_sorted=tensor([[0.1000, 0.2000, 0.2000, 0.3000],
+                [0.4000, 0.5000, 0.5000, 0.6000]]))
+
+        Inconsistent columns at a repeated time raise a ``ValidationError``:
+
+        >>> from pydantic import ValidationError
+        >>> log_hz_bad = torch.tensor([[0.1, 0.2, 0.9, 0.3], [0.4, 0.5, 0.5, 0.6]])
+        >>> try:
+        ...     TimeVaryingCoxInputs(time_sorted=time, log_hz_sorted=log_hz_bad)
+        ... except ValidationError as e:
+        ...     print(e.errors()[0]["msg"])
+        Value error, Inconsistency found for repeated time 2 at columns 1 and 2. The columns must have identical values at the same time.
+    """
+
+    time_sorted: torch.Tensor
+    log_hz_sorted: torch.Tensor
+
+    @field_validator("time_sorted", mode="before")
+    @classmethod
+    def coerce_time_sorted(cls, v: object) -> torch.Tensor:
+        return _to_float_tensor("time_sorted", v)
+
+    @field_validator("log_hz_sorted", mode="before")
+    @classmethod
+    def coerce_log_hz_sorted(cls, v: object) -> torch.Tensor:
+        return _to_float_tensor("log_hz_sorted", v)
+
+    @model_validator(mode="after")
+    def check_consistency(self) -> TimeVaryingCoxInputs:
+        time = self.time_sorted
+        log_hz = self.log_hz_sorted
+        if log_hz.dim() != 2:
+            raise ValueError("Input 'log_hz_sorted' must be a 2D tensor.")
+        if log_hz.shape[1] != len(time):
+            raise ValueError(
+                f"Shape mismatch: 'log_hz_sorted' has {log_hz.shape[1]} columns "
+                f"but 'time_sorted' has {len(time)} entries."
+            )
+        # Vectorised: find all tie positions in one shot, then check only those columns.
+        tie_indices = (time[:-1] == time[1:]).nonzero(as_tuple=False).squeeze(1)
+        for i in tie_indices.tolist():
+            if not torch.allclose(log_hz[:, i], log_hz[:, i + 1]):
+                raise ValueError(
+                    f"Inconsistency found for repeated time {time[i].item():.6g} "
+                    f"at columns {i} and {i + 1}. "
+                    "The columns must have identical values at the same time."
+                )
         return self
 
 
@@ -385,16 +462,17 @@ def impute_missing_log_shape(log_params: torch.Tensor) -> torch.Tensor:
 def validate_time_varying_log_hz(time_sorted: torch.Tensor, log_hz_sorted: torch.Tensor) -> None:
     """Validate consistency of time-varying log hazard at repeated time points.
 
-    For each pair of adjacent identical times, the corresponding columns of
-    ``log_hz_sorted`` must be equal across all subjects.
+    Delegates to :class:`TimeVaryingCoxInputs`.  For each pair of adjacent
+    identical times, the corresponding columns of ``log_hz_sorted`` must be
+    equal across all subjects (checked with :func:`torch.allclose`).
 
     Args:
         time_sorted: 1-D tensor of times in ascending order.
         log_hz_sorted: 2-D tensor of shape ``(n_subjects, n_times)``.
 
     Raises:
-        ValueError: If any repeated time point has inconsistent log-hazard
-            columns.
+        ValidationError: If any repeated time point has inconsistent
+            log-hazard columns.
 
     Examples:
         >>> import torch
@@ -403,19 +481,13 @@ def validate_time_varying_log_hz(time_sorted: torch.Tensor, log_hz_sorted: torch
         >>> log_hz = torch.tensor([[0.1, 0.2, 0.2, 0.3], [0.4, 0.5, 0.5, 0.6]])
         >>> validate_time_varying_log_hz(time, log_hz)  # identical columns → no error
 
-        Inconsistent columns at a repeated time raise ``ValueError``:
+        Inconsistent columns at a repeated time raise:
 
         >>> log_hz_bad = torch.tensor([[0.1, 0.2, 0.9, 0.3], [0.4, 0.5, 0.5, 0.6]])
         >>> try:
         ...     validate_time_varying_log_hz(time, log_hz_bad)
-        ... except ValueError as e:
-        ...     print("ValueError raised")
-        ValueError raised
+        ... except Exception as e:
+        ...     print("error raised")
+        error raised
     """
-    for i in range(len(time_sorted) - 1):
-        if time_sorted[i] == time_sorted[i + 1]:
-            if not torch.all(log_hz_sorted[:, i] == log_hz_sorted[:, i + 1]):
-                raise ValueError(
-                    f"Inconsistency found for repeated time {time_sorted[i]} at columns {i} and {i + 1}. "
-                    "The columns must have identical values at the same time."
-                )
+    TimeVaryingCoxInputs(time_sorted=time_sorted, log_hz_sorted=log_hz_sorted)

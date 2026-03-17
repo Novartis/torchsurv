@@ -52,6 +52,7 @@ docs = [
     "sphinx-rtd-theme",
     "numpydoc",
     "jupyter-book",
+    "myst-parser",
 ]
 
 

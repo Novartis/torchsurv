@@ -9,7 +9,7 @@ from typing import Optional
 
 import torch
 
-from torchsurv.tools.validators import ModelInputs, SurvivalInputs, validate_time_varying_log_hz
+from torchsurv.tools.validators import ModelInputs, SurvivalInputs, TimeVaryingCoxInputs
 
 __all__ = [
     # "_partial_likelihood_cox",
@@ -425,7 +425,7 @@ def neg_partial_log_likelihood(
 
     # if log_hz is time-varying, check the repetition of time points
     if is_time_varying_log_hz and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
-        validate_time_varying_log_hz(time_sorted, log_hz_sorted)
+        TimeVaryingCoxInputs(time_sorted=time_sorted, log_hz_sorted=log_hz_sorted)
 
     assert strata is not None  # for mypy
     strata_sorted = strata[idx]
@@ -590,7 +590,7 @@ def baseline_survival_function(
 
     # if log_hz is time-varying, check the repetition of time points
     if is_time_varying_log_hz and not (torch.jit.is_scripting() or torch.jit.is_tracing()):
-        validate_time_varying_log_hz(time_sorted, log_hz_sorted)
+        TimeVaryingCoxInputs(time_sorted=time_sorted, log_hz_sorted=log_hz_sorted)
 
     strata_unique = torch.unique(strata_sorted)
 

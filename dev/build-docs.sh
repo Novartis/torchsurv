@@ -1,15 +1,17 @@
 #!/bin/bash
-# build & preview the documentation locally
+# Build and optionally preview the documentation locally.
+# Usage: build-docs.sh [serve]
+#   serve  Start a local HTTP server on http://127.0.0.1:8000 after building.
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+set -euo pipefail
 
-set -e
-cd "${DIR}/../docs"
+DOCS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../docs" && pwd)"
+
+cd "${DOCS_DIR}"
 make clean
 make html
-make html
-cd _build/html
 
-if [ "$1" == "serve" ]; then
+if [[ "${1-}" == "serve" ]]; then
+    cd _build/html
     python -m http.server --bind 127.0.0.1 8000
 fi
