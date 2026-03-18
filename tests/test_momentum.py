@@ -18,10 +18,10 @@ class TestMometum:
         x = torch.randn((3, 8))
         results = model.infer(x)
         assert results.size() == (3, 2)
-        assert results.requires_grad == False
-        assert model.online.training == True
-        assert model.target.training == False
-        assert (torch.equal(results, model.target(x)))
+        assert not results.requires_grad
+        assert model.online.training
+        assert not model.target.training
+        assert torch.equal(results, model.target(x))
 
     def test_momentum_cox(self):
         model = Momentum(
@@ -31,7 +31,7 @@ class TestMometum:
         x = torch.randn((3, 8))
         results = model.infer(x)
         assert results.size() == (3, 1)
-        assert results.requires_grad == False
-        assert model.online.training == True
-        assert model.target.training == False
-        assert (torch.equal(results, model.target(x)))
+        assert not results.requires_grad
+        assert model.online.training
+        assert not model.target.training
+        assert torch.equal(results, model.target(x))

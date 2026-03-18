@@ -1,15 +1,13 @@
 import json
 
 import numpy as np
-import pandas as pd
 import pytest
 import torch
-
 from lifelines import CoxPHFitter
 from lifelines.datasets import load_gbsg2, load_lung
 
-from torchsurv.loss.cox import neg_partial_log_likelihood as cox
 from torchsurv.loss.cox import baseline_survival_function, survival_function_cox
+from torchsurv.loss.cox import neg_partial_log_likelihood as cox
 from torchsurv.tools.validators import SurvivalInputs
 
 # Load the benchmark cox log likelihoods from R
@@ -57,27 +55,23 @@ class TestCoxSurvivalLoss:
 
     def test_t_tensor(self):
         time_np_array = np.random.randint(0, 100, size=(self.N,))
-        with pytest.raises(Exception):
+        with pytest.raises((ValueError, TypeError)):
             cox(self.log_hz, self.event, time_np_array)
 
     def test_log_hz_tensor(self):
         log_hz_np_array = np.random.randn(
             self.N,
         )
-        with pytest.raises(Exception):
+        with pytest.raises((ValueError, TypeError)):
             cox(log_hz_np_array, self.event, self.time)
 
     def test_len_data(self):
-        event_wrong_length = torch.randint(
-            low=0, high=2, size=(self.N + 1,), dtype=torch.bool
-        )
+        event_wrong_length = torch.randint(low=0, high=2, size=(self.N + 1,), dtype=torch.bool)
         with pytest.raises(ValueError):
             SurvivalInputs(event=event_wrong_length, time=self.time)
 
     def test_positive_t(self):
-        time_negative = torch.randint(
-            low=-100, high=100, size=(self.N,), dtype=torch.float
-        )
+        time_negative = torch.randint(low=-100, high=100, size=(self.N,), dtype=torch.float)
         with pytest.raises(ValueError):
             SurvivalInputs(event=self.event, time=time_negative)
 
@@ -89,22 +83,18 @@ class TestCoxSurvivalLoss:
         """test cox partial log likelihood without ties on lung and gbsg datasets compared to R survival"""
         for benchmark_cox_loglik in benchmark_cox_without_ties:
             log_lik = -cox(
-                torch.tensor(
-                    benchmark_cox_loglik["log_hazard"], dtype=torch.float32
-                ).squeeze(0),
+                torch.tensor(benchmark_cox_loglik["log_hazard"], dtype=torch.float32).squeeze(0),
                 torch.tensor(benchmark_cox_loglik["status"]).bool(),
                 torch.tensor(benchmark_cox_loglik["time"], dtype=torch.float32),
                 reduction="sum",
             )
             log_lik_survival = benchmark_cox_loglik["log_likelihood"]
 
-            assert (
-                np.allclose(
-                    log_lik.numpy(),
-                    np.array(log_lik_survival),
-                    rtol=1e-5,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                log_lik.numpy(),
+                np.array(log_lik_survival),
+                rtol=1e-5,
+                atol=1e-8,
             )
 
     def test_log_likelihood_cox_with_ties(self):
@@ -136,106 +126,80 @@ class TestCoxSurvivalLoss:
             )
             log_lik_breslow_survival = benchmark_cox_loglik["log_likelihood_breslow"]
 
-            assert (
-                np.allclose(
-                    log_lik_efron.numpy(),
-                    np.array(log_lik_efron_survival),
-                    rtol=1e-5,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                log_lik_efron.numpy(),
+                np.array(log_lik_efron_survival),
+                rtol=1e-5,
+                atol=1e-8,
             )
 
-            assert (
-                np.allclose(
-                    log_lik_breslow.numpy(),
-                    np.array(log_lik_breslow_survival),
-                    rtol=1e-5,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                log_lik_breslow.numpy(),
+                np.array(log_lik_breslow_survival),
+                rtol=1e-5,
+                atol=1e-8,
             )
 
     def test_log_likelihood_extended_cox_without_ties(self):
         """test extended cox partial log likelihood without ties on heart dataset compared to R survival"""
         log_lik = -cox(
-            torch.tensor(
-                benchmark_extended_cox_without_ties["log_hazard"], dtype=torch.float32
-            ),
+            torch.tensor(benchmark_extended_cox_without_ties["log_hazard"], dtype=torch.float32),
             torch.tensor(benchmark_extended_cox_without_ties["status"]).bool(),
-            torch.tensor(
-                benchmark_extended_cox_without_ties["time"], dtype=torch.float32
-            ),
+            torch.tensor(benchmark_extended_cox_without_ties["time"], dtype=torch.float32),
             reduction="sum",
         )
         log_lik_survival = benchmark_extended_cox_without_ties["log_likelihood"]
 
-        assert (
-            np.allclose(
-                log_lik.numpy(),
-                np.array(log_lik_survival),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            log_lik.numpy(),
+            np.array(log_lik_survival),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
     def test_log_likelihood_extended_cox_with_ties(self):
         """test extended cox partial log likelihood with ties on heart dataset compared to R survival"""
 
         # breslow method
-        benchmark_extended_cox_with_ties_breslow = benchmark_extended_cox_with_ties[
-            "breslow"
-        ]
+        benchmark_extended_cox_with_ties_breslow = benchmark_extended_cox_with_ties["breslow"]
         log_lik_breslow = -cox(
             torch.tensor(
                 benchmark_extended_cox_with_ties_breslow["log_hazard"],
                 dtype=torch.float32,
             ),
             torch.tensor(benchmark_extended_cox_with_ties_breslow["status"]).bool(),
-            torch.tensor(
-                benchmark_extended_cox_with_ties_breslow["time"], dtype=torch.float32
-            ),
+            torch.tensor(benchmark_extended_cox_with_ties_breslow["time"], dtype=torch.float32),
             ties_method="breslow",
             reduction="sum",
         )
-        log_lik_survival_breslow = benchmark_extended_cox_with_ties_breslow[
-            "log_likelihood"
-        ]
+        log_lik_survival_breslow = benchmark_extended_cox_with_ties_breslow["log_likelihood"]
 
         # efron method
-        benchmark_extended_cox_with_ties_efron = benchmark_extended_cox_with_ties[
-            "efron"
-        ]
+        benchmark_extended_cox_with_ties_efron = benchmark_extended_cox_with_ties["efron"]
         log_lik_efron = -cox(
             torch.tensor(
                 benchmark_extended_cox_with_ties_efron["log_hazard"],
                 dtype=torch.float32,
             ),
             torch.tensor(benchmark_extended_cox_with_ties_efron["status"]).bool(),
-            torch.tensor(
-                benchmark_extended_cox_with_ties_efron["time"], dtype=torch.float32
-            ),
+            torch.tensor(benchmark_extended_cox_with_ties_efron["time"], dtype=torch.float32),
             ties_method="efron",
             reduction="sum",
         )
-        log_lik_survival_efron = benchmark_extended_cox_with_ties_efron[
-            "log_likelihood"
-        ]
+        log_lik_survival_efron = benchmark_extended_cox_with_ties_efron["log_likelihood"]
 
-        assert (
-            np.allclose(
-                log_lik_breslow.numpy(),
-                np.array(log_lik_survival_breslow),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            log_lik_breslow.numpy(),
+            np.array(log_lik_survival_breslow),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
-        assert (
-            np.allclose(
-                log_lik_efron.numpy(),
-                np.array(log_lik_survival_efron),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            log_lik_efron.numpy(),
+            np.array(log_lik_survival_efron),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
     def test_log_likelihood_cox_lung_lifelines(self):
@@ -260,13 +224,11 @@ class TestCoxSurvivalLoss:
         log_lik = -cox(log_hz, event, time, reduction="sum", ties_method="efron")
         log_lik_lifelines = coxphf.log_likelihood_
 
-        assert (
-            np.allclose(
-                log_lik.numpy(),
-                np.array(log_lik_lifelines),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            log_lik.numpy(),
+            np.array(log_lik_lifelines),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
     def test_log_likelihood_cox_gbsg_lifelines(self):
@@ -293,22 +255,18 @@ class TestCoxSurvivalLoss:
         # compute log_likelihood likelihood with torchsurv
         log_lik = -cox(log_hz, event, time, reduction="sum", ties_method="efron")
 
-        assert (
-            np.allclose(
-                log_lik.numpy(),
-                np.array(log_lik_lifelines),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            log_lik.numpy(),
+            np.array(log_lik_lifelines),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
     def test_log_likelihood_cox_strata_lifelines(self):
         """test cox partial log likelihood with strata on gbsg datasets compared to lifelines"""
 
         time = torch.tensor(self.gbsg_strata["time"].values, dtype=torch.float32)
-        event = torch.tensor(
-            self.gbsg_strata["cens"].values, dtype=torch.float32
-        ).bool()
+        event = torch.tensor(self.gbsg_strata["cens"].values, dtype=torch.float32).bool()
 
         # fit (Ties are handled using Efron’s method on lifelines)
         coxphf = CoxPHFitter()
@@ -324,11 +282,7 @@ class TestCoxSurvivalLoss:
         log_hz = torch.log(torch.tensor(hz))
 
         # Create a torch tensor from the codes
-        strata_comb = (
-            self.gbsg_strata["tgrade"].astype(str)
-            + "_"
-            + self.gbsg_strata["menostat"].astype(str)
-        )
+        strata_comb = self.gbsg_strata["tgrade"].astype(str) + "_" + self.gbsg_strata["menostat"].astype(str)
         strata_code = strata_comb.astype("category").cat.codes
         strata = torch.tensor(strata_code.values, dtype=torch.long)
 
@@ -338,13 +292,11 @@ class TestCoxSurvivalLoss:
         # compute log likelihood with lifelines
         log_lik_lifelines = coxphf.log_likelihood_
 
-        assert (
-            np.allclose(
-                log_lik.numpy(),
-                np.array(log_lik_lifelines),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            log_lik.numpy(),
+            np.array(log_lik_lifelines),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
     def test_survival_function_lung_lifelines(self):
@@ -380,22 +332,18 @@ class TestCoxSurvivalLoss:
         # compute survival function with torchsurv
         sf = survival_function_cox(baseline_survival, log_hz, new_time)
 
-        assert (
-            np.allclose(
-                bsf_coxphfitter,
-                np.array(bsf),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            bsf_coxphfitter,
+            np.array(bsf),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
-        assert (
-            np.allclose(
-                surv_lifelines_numpy,
-                np.array(sf),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            surv_lifelines_numpy,
+            np.array(sf),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
     def test_survival_function_gbsg_lifelines(self):
@@ -431,31 +379,25 @@ class TestCoxSurvivalLoss:
         # compute survival function with torchsurv
         sf = survival_function_cox(baseline_survival, log_hz, new_time)
 
-        assert (
-            np.allclose(
-                bsf_coxphfitter,
-                np.array(bsf),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            bsf_coxphfitter,
+            np.array(bsf),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
-        assert (
-            np.allclose(
-                surv_lifelines_numpy,
-                np.array(sf),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            surv_lifelines_numpy,
+            np.array(sf),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
     def test_survival_function_strata_lifelines(self):
         """test survival function with strata on gbsg datasets compared to lifelines"""
 
         time = torch.tensor(self.gbsg_strata["time"].values, dtype=torch.float32)
-        event = torch.tensor(
-            self.gbsg_strata["cens"].values, dtype=torch.float32
-        ).bool()
+        event = torch.tensor(self.gbsg_strata["cens"].values, dtype=torch.float32).bool()
 
         # fit (Ties are handled using Efron’s method on lifelines)
         coxphf = CoxPHFitter()
@@ -475,80 +417,62 @@ class TestCoxSurvivalLoss:
 
         # predicted survival function lifelines
         surv_lifelines = coxphf.predict_survival_function(self.gbsg_strata)
-        surv_lifelines_numpy = surv_lifelines.T.to_numpy()
         new_time = torch.tensor(surv_lifelines.index.values)
 
         # Create strata
-        strata_comb = (
-            self.gbsg_strata["tgrade"].astype(str)
-            + "_"
-            + self.gbsg_strata["menostat"].astype(str)
-        )
+        strata_comb = self.gbsg_strata["tgrade"].astype(str) + "_" + self.gbsg_strata["menostat"].astype(str)
         strata_code = strata_comb.astype("category").cat.codes
         strata = torch.tensor(strata_code.values, dtype=torch.long)
 
         # compute baseline survival with torchsurv
-        baseline_survival = baseline_survival_function(
-            log_hz, event, time, strata=strata
-        )
+        baseline_survival = baseline_survival_function(log_hz, event, time, strata=strata)
 
-        # predict survival function torchsurv
-        surv = survival_function_cox(baseline_survival, log_hz, new_time, strata)
+        # predict survival function torchsurv (not compared to lifelines due to
+        # formula differences, but confirms execution without errors)
+        survival_function_cox(baseline_survival, log_hz, new_time, strata)
 
         # the baseline survival function correspond but not the individual survival function
-        # the formula S0 ** h is respected on torchsurv (`surv`) but not on lifelines does (`surv_lifelines_numpy`).
+        # the formula S0 ** h is respected on torchsurv but not on lifelines.
         # also the values are more reasonable in torchsurv compared to no strata.
 
-        assert (
-            np.allclose(
-                np.unique(bsf_coxphfitter[:, 4]),
-                np.unique(baseline_survival[0]["baseline_survival"].numpy()),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            np.unique(bsf_coxphfitter[:, 4]),
+            np.unique(baseline_survival[0]["baseline_survival"].numpy()),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
-        assert (
-            np.allclose(
-                np.unique(bsf_coxphfitter[:, 5]),
-                np.unique(baseline_survival[1]["baseline_survival"].numpy()),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            np.unique(bsf_coxphfitter[:, 5]),
+            np.unique(baseline_survival[1]["baseline_survival"].numpy()),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
-        assert (
-            np.allclose(
-                np.unique(bsf_coxphfitter[:, 2]),
-                np.unique(baseline_survival[2]["baseline_survival"].numpy()),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            np.unique(bsf_coxphfitter[:, 2]),
+            np.unique(baseline_survival[2]["baseline_survival"].numpy()),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
-        assert (
-            np.allclose(
-                np.unique(bsf_coxphfitter[:, 3]),
-                np.unique(baseline_survival[3]["baseline_survival"].numpy()),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            np.unique(bsf_coxphfitter[:, 3]),
+            np.unique(baseline_survival[3]["baseline_survival"].numpy()),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
-        assert (
-            np.allclose(
-                np.unique(bsf_coxphfitter[:, 0]),
-                np.unique(baseline_survival[4]["baseline_survival"].numpy()),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            np.unique(bsf_coxphfitter[:, 0]),
+            np.unique(baseline_survival[4]["baseline_survival"].numpy()),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
-        assert (
-            np.allclose(
-                np.unique(bsf_coxphfitter[:, 1]),
-                np.unique(baseline_survival[5]["baseline_survival"].numpy()),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            np.unique(bsf_coxphfitter[:, 1]),
+            np.unique(baseline_survival[5]["baseline_survival"].numpy()),
+            rtol=1e-5,
+            atol=1e-8,
         )

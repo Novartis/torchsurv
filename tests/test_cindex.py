@@ -60,27 +60,23 @@ class TestCIndex:
             c_uno_survAUC = benchmark_cindex["c_Uno_survAUC"]  # survAUC
             c_uno_survC1 = benchmark_cindex["c_Uno_survC1"]  # survC1
 
-            assert (
-                np.isclose(
-                    c_harrell,
-                    c_harrell_survival,
-                    rtol=1e-4,
-                    atol=1e-8,
-                )
+            assert np.isclose(
+                c_harrell,
+                c_harrell_survival,
+                rtol=1e-4,
+                atol=1e-8,
             )
 
-            assert (
-                np.isclose(
-                    c_harrell,
-                    c_harrell_survcomp,
-                    rtol=1e-2,
-                    atol=1e-8,
-                )
+            assert np.isclose(
+                c_harrell,
+                c_harrell_survcomp,
+                rtol=1e-2,
+                atol=1e-8,
             )
 
-            assert (np.isclose(c_uno.numpy(), np.array(c_uno_survAUC), rtol=1e-1, atol=1e-8))
+            assert np.isclose(c_uno.numpy(), np.array(c_uno_survAUC), rtol=1e-1, atol=1e-8)
 
-            assert (np.isclose(c_uno.numpy(), np.array(c_uno_survC1), rtol=1e-1, atol=1e-8))
+            assert np.isclose(c_uno.numpy(), np.array(c_uno_survC1), rtol=1e-1, atol=1e-8)
 
     def test_cindex_se_real_data(self):
         """test standard error of concordance index on lung and gbsg datasets"""
@@ -104,22 +100,18 @@ class TestCIndex:
             cindex_lower = cindex._confidence_interval_conservative(alpha=0.05, alternative="two_sided")[0]
             cindex_lower_survcomp = np.array(benchmark_cindex["c_lower_conservative_survcomp"])  # survcomp
 
-            assert (
-                np.isclose(
-                    cindex_se.numpy(),
-                    np.array(cindex_se_survcomp),
-                    rtol=1e-1,
-                    atol=1e-8,
-                )
+            assert np.isclose(
+                cindex_se.numpy(),
+                np.array(cindex_se_survcomp),
+                rtol=1e-1,
+                atol=1e-8,
             )
 
-            assert (
-                np.isclose(
-                    cindex_lower.numpy(),
-                    np.array(cindex_lower_survcomp),
-                    rtol=1e-1,
-                    atol=1e-8,
-                )
+            assert np.isclose(
+                cindex_lower.numpy(),
+                np.array(cindex_lower_survcomp),
+                rtol=1e-1,
+                atol=1e-8,
             )
 
     def test_cindex_simulated_data(self):
@@ -177,8 +169,8 @@ class TestCIndex:
                 tau=new_time_array[-1],
             )[0]
 
-            assert (np.isclose(c_harrell.numpy(), c_harrell_sksurv, rtol=1e-2, atol=1e-8))
-            assert (np.isclose(c_uno, c_uno_sksurv, rtol=1e-2, atol=1e-8))
+            assert np.isclose(c_harrell.numpy(), c_harrell_sksurv, rtol=1e-2, atol=1e-8)
+            assert np.isclose(c_uno, c_uno_sksurv, rtol=1e-2, atol=1e-8)
 
     def test_cindex_confidence_interval_pvalue(self):
         """test concordance index confidence interval and p value are as expected"""
@@ -210,25 +202,21 @@ class TestCIndex:
 
             for method in ["noether", "conservative", "bootstrap"]:
                 for alternative in ["two_sided", "less", "greater"]:
-                    assert (
-                        conditions_ci(
-                            cindex.confidence_interval(
-                                method=method,
-                                alternative=alternative,
-                                n_bootstraps=n_bootstraps,
-                            )
+                    assert conditions_ci(
+                        cindex.confidence_interval(
+                            method=method,
+                            alternative=alternative,
+                            n_bootstraps=n_bootstraps,
                         )
                     )
 
             for method in ["noether", "bootstrap"]:
                 for alternative in ["two_sided", "less", "greater"]:
-                    assert (
-                        conditions_p_value(
-                            cindex.p_value(
-                                method=method,
-                                alternative=alternative,
-                                n_bootstraps=n_bootstraps,
-                            )
+                    assert conditions_p_value(
+                        cindex.p_value(
+                            method=method,
+                            alternative=alternative,
+                            n_bootstraps=n_bootstraps,
                         )
                     )
 
@@ -252,8 +240,8 @@ class TestCIndex:
 
         p_value_compare = cindex_informative.compare(cindex_non_informative)
 
-        assert (c1.numpy() > c2.numpy())
-        assert (p_value_compare < 0.05)
+        assert c1.numpy() > c2.numpy()
+        assert p_value_compare < 0.05
 
     def test_cindex_error_raised(self):
         """test that error are raised in not-accepted edge cases."""

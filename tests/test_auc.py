@@ -61,21 +61,17 @@ class TestAUC:
             auc_cd_survAUC = benchmark_auc["auc_cd_survAUC"]  # survAUC
             auc_cd_Uno_riskRegression = benchmark_auc["auc_cd_Uno_riskRegression"]  # riskRegression
 
-            assert (
-                np.allclose(
-                    auc_cd.numpy(),
-                    np.array(auc_cd_survAUC),
-                    rtol=1e-1,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                auc_cd.numpy(),
+                np.array(auc_cd_survAUC),
+                rtol=1e-1,
+                atol=1e-8,
             )
-            assert (
-                np.allclose(
-                    auc_cd.numpy(),
-                    np.array(auc_cd_Uno_riskRegression),
-                    rtol=1e-1,
-                    atol=1e-2,
-                )
+            assert np.allclose(
+                auc_cd.numpy(),
+                np.array(auc_cd_Uno_riskRegression),
+                rtol=1e-1,
+                atol=1e-2,
             )
 
             # commented out: riskRegression does not match other R packages
@@ -120,22 +116,18 @@ class TestAUC:
             auc_cd_Uno_timeROC = benchmark_auc["auc_cd_Uno_timeROC"]  # point estimate
             auc_cd_Uno_se_timeROC = benchmark_auc["auc_cd_Uno_se_timeROC"]  # standard error
 
-            assert (
-                np.allclose(
-                    auc_cd.numpy(),
-                    np.array(auc_cd_Uno_timeROC),
-                    rtol=1e-1,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                auc_cd.numpy(),
+                np.array(auc_cd_Uno_timeROC),
+                rtol=1e-1,
+                atol=1e-8,
             )
 
-            assert (
-                np.allclose(
-                    auc_cd_se.numpy(),
-                    np.array(auc_cd_Uno_se_timeROC),
-                    rtol=1e-1,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                auc_cd_se.numpy(),
+                np.array(auc_cd_Uno_se_timeROC),
+                rtol=1e-1,
+                atol=1e-8,
             )
 
     def test_i_auc_real_data(self):
@@ -153,13 +145,11 @@ class TestAUC:
 
             i_auc_cd_survAUC = benchmark_auc["iauc_cd_survAUC"]  # survAUC
 
-            assert (
-                np.isclose(
-                    i_auc_cd.numpy(),
-                    np.array(i_auc_cd_survAUC),
-                    rtol=1e-3,
-                    atol=1e-8,
-                )
+            assert np.isclose(
+                i_auc_cd.numpy(),
+                np.array(i_auc_cd_survAUC),
+                rtol=1e-3,
+                atol=1e-8,
             )
 
             # integral of auc incident/dynamic
@@ -170,13 +160,11 @@ class TestAUC:
             i_auc_id_sz = auc_ne._integrate_incident(S, times.max())
             i_auc_id_sz_survAUC = benchmark_auc["i_auc_id_sz_survAUC"]  # survAUC
 
-            assert (
-                np.isclose(
-                    i_auc_id_sz.numpy(),
-                    np.array(i_auc_id_sz_survAUC),
-                    rtol=1e-3,
-                    atol=1e-8,
-                )
+            assert np.isclose(
+                i_auc_id_sz.numpy(),
+                np.array(i_auc_id_sz_survAUC),
+                rtol=1e-3,
+                atol=1e-8,
             )
 
     def test_auc_cd_simulated_data(self):
@@ -234,7 +222,7 @@ class TestAUC:
                 y_train_array, y_test_array, estimate.numpy(), new_time_array
             )  # sksurv
 
-            assert (np.allclose(auc_cd.numpy(), auc_cd_sksurv, rtol=1e-5, atol=1e-8))
+            assert np.allclose(auc_cd.numpy(), auc_cd_sksurv, rtol=1e-5, atol=1e-8)
 
     def test_auc_confidence_interval_pvalue(self):
         """test auc confidence interval and p-value are as expected"""
@@ -271,7 +259,7 @@ class TestAUC:
                         alternative=alternative,
                         n_bootstraps=n_bootstraps,
                     )
-                    assert (all(conditions_ci(auc_ci[:, i]) for i in range(len(auc.auc))))
+                    assert all(conditions_ci(auc_ci[:, i]) for i in range(len(auc.auc)))
 
             for method in ["blanche", "bootstrap"]:
                 for alternative in ["two_sided", "less", "greater"]:
@@ -281,7 +269,7 @@ class TestAUC:
                         n_bootstraps=n_bootstraps,
                     )
 
-                    assert (all(conditions_p_value(auc_p_value[i]) for i in range(len(auc.auc))))
+                    assert all(conditions_p_value(auc_p_value[i]) for i in range(len(auc.auc)))
 
     def test_auc_compare(self):
         "test compare function of auc behavesas expected."
@@ -303,9 +291,9 @@ class TestAUC:
         p_value_compare_informative = Auc_informative.compare(Auc_non_informative)
         p_value_compare_non_informative = Auc_non_informative.compare(Auc_informative)
 
-        assert (np.all(auc_informative.numpy() > auc_non_informative.numpy()))
-        assert (np.any(p_value_compare_informative.numpy() < 0.05))
-        assert (np.all(p_value_compare_non_informative.numpy() > 0.05))
+        assert np.all(auc_informative.numpy() > auc_non_informative.numpy())
+        assert np.any(p_value_compare_informative.numpy() < 0.05)
+        assert np.all(p_value_compare_non_informative.numpy() > 0.05)
 
     def test_auc_error_raised(self):
         """test that errors are raised in not-accepted edge cases."""

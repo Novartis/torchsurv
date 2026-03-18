@@ -58,13 +58,11 @@ class TestNonParametric:
 
             st_survival = np.array(benchmark_kaplan_meier["surv_prob_survival"])
 
-            assert (
-                np.allclose(
-                    st.numpy(),
-                    st_survival,
-                    rtol=1e-3,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                st.numpy(),
+                st_survival,
+                rtol=1e-3,
+                atol=1e-8,
             )
 
     def test_kaplan_meier_censoring_distribution_simulated_data(self):
@@ -92,7 +90,7 @@ class TestNonParametric:
             if not event.all():
                 ct_sksurv = ct_sksurv[1:]
 
-            assert (np.allclose(ct.numpy(), ct_sksurv, rtol=1e-5, atol=1e-8))
+            assert np.allclose(ct.numpy(), ct_sksurv, rtol=1e-5, atol=1e-8)
 
     def test_kaplan_meier_survival_distribution_simulated_data(self):
         """test Kaplan Meier estimate of survival distribution on simulated batches including edge cases"""
@@ -117,7 +115,7 @@ class TestNonParametric:
             surv.fit(y_array)
             st_sksurv = surv.prob_[1:]
 
-            assert (np.allclose(st.numpy(), st_sksurv, rtol=1e-5, atol=1e-8))
+            assert np.allclose(st.numpy(), st_sksurv, rtol=1e-5, atol=1e-8)
 
     def test_kaplan_meier_predict_censoring_distribution_simulated_data(self):
         """test Kaplan Meier prediction of censoring distribution on simulated batches including edge cases"""
@@ -157,7 +155,7 @@ class TestNonParametric:
             cens.fit(y_train_array)
             ct_pred_sksurv = cens.predict_proba(y_test_array["futime"])
 
-            assert (np.allclose(ct_pred.numpy(), ct_pred_sksurv, rtol=1e-5, atol=1e-8))
+            assert np.allclose(ct_pred.numpy(), ct_pred_sksurv, rtol=1e-5, atol=1e-8)
 
     def test_kaplan_meier_predict_survival_distribution_simulated_data(self):
         """test Kaplan Meier prediction of survival distribution on simulated batches including edge cases"""
@@ -197,7 +195,7 @@ class TestNonParametric:
             surv.fit(y_train_array)
             st_pred_sksurv = surv.predict_proba(y_test_array["futime"])
 
-            assert (np.allclose(st_pred.numpy(), st_pred_sksurv, rtol=1e-5, atol=1e-8))
+            assert np.allclose(st_pred.numpy(), st_pred_sksurv, rtol=1e-5, atol=1e-8)
 
     def test_kaplan_meier_estimate_error_raised(self):
         """test that errors are raised for estimation in not-accepted edge cases."""
@@ -244,5 +242,5 @@ class TestNonParametric:
         survival = table["Survival"].values
 
         # Use torch.allclose to allow for floating-point tolerance
-        assert (np.allclose(times, expected_times, atol=1e-4))
-        assert (np.allclose(survival, expected_survival, atol=1e-4))
+        assert np.allclose(times, expected_times, atol=1e-4)
+        assert np.allclose(survival, expected_survival, atol=1e-4)

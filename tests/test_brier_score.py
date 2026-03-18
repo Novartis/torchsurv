@@ -73,8 +73,8 @@ class TestBrierScore:
             bs_survMetrics = np.array(benchmark_brier_score["brier_score_survMetrics"])
             ibs_survMetrics = np.array(benchmark_brier_score["ibrier_score_survMetrics"])
 
-            assert (np.allclose(bs.numpy(), bs_survMetrics, rtol=1e-2, atol=1e-3))
-            assert (np.allclose(ibs.numpy(), ibs_survMetrics, rtol=1e-2, atol=1e-3))
+            assert np.allclose(bs.numpy(), bs_survMetrics, rtol=1e-2, atol=1e-3)
+            assert np.allclose(ibs.numpy(), ibs_survMetrics, rtol=1e-2, atol=1e-3)
 
     def test_brier_score_confidence_interval_pvalue(self):
         """test brier score confidense interval and p value are as expected"""
@@ -109,9 +109,7 @@ class TestBrierScore:
                         alternative=alternative,
                         n_bootstraps=n_bootstraps,
                     )
-                    assert (
-                        all(conditions_ci(brier_score_ci[:, i]) for i in range(len(brier_score.brier_score)))
-                    )
+                    assert all(conditions_ci(brier_score_ci[:, i]) for i in range(len(brier_score.brier_score)))
 
             for alternative in ["two_sided", "less", "greater"]:
                 brier_score_pvalue = brier_score.p_value(
@@ -119,18 +117,14 @@ class TestBrierScore:
                     alternative=alternative,
                     n_bootstraps=n_bootstraps,
                 )
-                assert (
-                    all(conditions_p_value(brier_score_pvalue[i]) for i in range(len(brier_score.brier_score)))
-                )
+                assert all(conditions_p_value(brier_score_pvalue[i]) for i in range(len(brier_score.brier_score)))
                 brier_score_pvalue = brier_score.p_value(
                     method="parametric",
                     alternative=alternative,
                     n_bootstraps=n_bootstraps,
                     null_value=0.3,
                 )
-                assert (
-                    all(conditions_p_value(brier_score_pvalue[i]) for i in range(len(brier_score.brier_score)))
-                )
+                assert all(conditions_p_value(brier_score_pvalue[i]) for i in range(len(brier_score.brier_score)))
 
     def test_brier_score_compare(self):
         """test compare function of brier score behaves as expected"""
@@ -168,10 +162,10 @@ class TestBrierScore:
         p_value_compare_informative = brier_score_informative.compare(brier_score_non_informative)
         p_value_compare_non_informative = brier_score_non_informative.compare(brier_score_informative)
 
-        assert (np.all(bs_informative.numpy() < bs_non_informative.numpy()))
-        assert (np.all(ibs_informative.numpy() < ibs_non_informative.numpy()))
-        assert (np.any(p_value_compare_informative.numpy() < 0.05))
-        assert (np.all(p_value_compare_non_informative.numpy() > 0.05))
+        assert np.all(bs_informative.numpy() < bs_non_informative.numpy())
+        assert np.all(ibs_informative.numpy() < ibs_non_informative.numpy())
+        assert np.any(p_value_compare_informative.numpy() < 0.05)
+        assert np.all(p_value_compare_non_informative.numpy() > 0.05)
 
 
 def test_brier_score_simulated_data():
@@ -228,9 +222,11 @@ def test_brier_score_simulated_data():
         if len(sksurv_new_time) == 0:
             continue
 
-        _, bs_sksurv = brier_score_sksurv(y_train_array, y_test_array, estimate.numpy()[:, sksurv_mask], sksurv_new_time)
+        _, bs_sksurv = brier_score_sksurv(
+            y_train_array, y_test_array, estimate.numpy()[:, sksurv_mask], sksurv_new_time
+        )
 
-        assert (np.allclose(bs.numpy()[sksurv_mask], bs_sksurv, rtol=1e-5, atol=1e-8))
+        assert np.allclose(bs.numpy()[sksurv_mask], bs_sksurv, rtol=1e-5, atol=1e-8)
 
         # IBS comparison requires identical time grids; skip when new_time was filtered
         if sksurv_mask.all() and len(sksurv_new_time) > 2:
@@ -241,4 +237,4 @@ def test_brier_score_simulated_data():
                 estimate.numpy()[:, sksurv_mask],
                 sksurv_new_time,
             )
-            assert (np.allclose(ibs.numpy(), ibs_sksurv, rtol=1e-5, atol=1e-8))
+            assert np.allclose(ibs.numpy(), ibs_sksurv, rtol=1e-5, atol=1e-8)

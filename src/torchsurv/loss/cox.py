@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import sys
 import warnings
-from typing import Optional
 
 import torch
 
@@ -252,7 +251,7 @@ def neg_partial_log_likelihood(
     time: torch.Tensor,
     ties_method: str = "efron",
     reduction: str = "mean",
-    strata: Optional[torch.Tensor] = None,  # noqa: UP045
+    strata: torch.Tensor | None = None,
 ) -> torch.Tensor:
     r"""Compute the negative of the partial log likelihood for the Cox proportional hazards model.
 
@@ -475,12 +474,12 @@ def neg_partial_log_likelihood(
                 raise ValueError(f'Ties method {ties_method} should be one of ["efron", "breslow"]')
 
     # Negative partial log likelihood
-    pll = torch.neg(torch.cat(pll))
+    pll_tensor: torch.Tensor = torch.neg(torch.cat(pll))
     if reduction.lower() == "mean":
-        mean_loss: torch.Tensor = pll.nanmean()
+        mean_loss: torch.Tensor = pll_tensor.nanmean()
         return mean_loss
     elif reduction.lower() == "sum":
-        sum_loss: torch.Tensor = pll.sum()
+        sum_loss: torch.Tensor = pll_tensor.sum()
         return sum_loss
     else:
         raise (ValueError(f"Reduction {reduction} is not implemented yet, should be one of ['mean', 'sum']."))
@@ -490,8 +489,8 @@ def baseline_survival_function(
     log_hz: torch.Tensor,
     event: torch.Tensor,
     time: torch.Tensor,
-    strata: Optional[torch.Tensor] = None,  # noqa: UP045
-) -> dict[int, dict[str, torch.Tensor]]:
+    strata: torch.Tensor | None = None,
+) -> dict[str, torch.Tensor] | dict[int, dict[str, torch.Tensor]]:
     r"""Compute the baseline survival function for the Cox proportional hazards model with Breslow's method.
 
     Args:
@@ -634,7 +633,7 @@ def survival_function_cox(
     baseline_survival: torch.Tensor,
     new_log_hz: torch.Tensor,
     new_time: torch.Tensor,
-    new_strata: Optional[torch.Tensor] = None,  # noqa: UP045
+    new_strata: torch.Tensor | None = None,
 ) -> torch.Tensor:
     r"""Compute the individual survival function for new subjects for the Cox proportional hazards model.
 

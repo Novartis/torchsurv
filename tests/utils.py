@@ -1,4 +1,4 @@
-from typing import Tuple
+from __future__ import annotations
 
 try:
     import lifelines
@@ -7,6 +7,7 @@ except ImportError:
 
 try:
     import lightning as L
+
     _LightningModuleBase: type = L.LightningModule
 except ImportError:
     L = None  # type: ignore[assignment]
@@ -255,7 +256,7 @@ class SurvivalDataGenerator:
 
     def get_input(
         self,
-    ) -> Tuple[
+    ) -> tuple[
         torch.Tensor,
         torch.Tensor,
         torch.Tensor,
@@ -282,7 +283,7 @@ class SurvivalDataGenerator:
             self.new_time,
         )
 
-    def get_input_array(self) -> Tuple[np.array, np.array, np.array, np.array]:
+    def get_input_array(self) -> tuple[np.array, np.array, np.array, np.array]:
         """Returns simulated data as np array.
 
         Returns (Tuple, np.array):
@@ -357,7 +358,7 @@ class SurvivalDataGenerator:
 
     def _enforce_conditions_data(
         self, time: torch.tensor, event: torch.tensor, dataset_type: str
-    ) -> Tuple[torch.tensor, torch.tensor]:
+    ) -> tuple[torch.tensor, torch.tensor]:
         # if test max time should be greater than train max time
         if dataset_type == "test":
             if self.test_max_time_gt_train_max_time:
@@ -377,13 +378,13 @@ class SurvivalDataGenerator:
         if (dataset_type == "train" and self.train_ties_time_censoring) or (
             dataset_type == "test" and self.test_ties_time_censoring
         ):
-            time[torch.where(event == False)[0][0]] = time[torch.where(event == False)[0][1]]
+            time[torch.where(event == 0)[0][0]] = time[torch.where(event == 0)[0][1]]
 
         # if there should be a tie in an event time and a censoring time
         if (dataset_type == "train" and self.train_ties_time_event_censoring) or (
             dataset_type == "test" and self.test_ties_time_event_censoring
         ):
-            time[torch.where(event == True)[0][0]] = time[torch.where(event == False)[0][0]]
+            time[torch.where(event != 0)[0][0]] = time[torch.where(event == 0)[0][0]]
 
         # if there should be an event at the last time
         if dataset_type == "test" and self.test_event_at_last_time:

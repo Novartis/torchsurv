@@ -3,6 +3,7 @@ import pytest
 pytest.importorskip("lightning")
 import lightning as L
 import torch
+
 pytest.importorskip("loguru")
 from loguru import logger
 from utils import (

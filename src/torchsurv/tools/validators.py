@@ -5,6 +5,16 @@ from typing import Literal
 import torch
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
+__all__ = [
+    "EvalTimeInputs",
+    "ModelInputs",
+    "NewTimeInputs",
+    "SurvivalInputs",
+    "TimeVaryingCoxInputs",
+    "impute_missing_log_shape",
+    "validate_time_varying_log_hz",
+]
+
 # ---------------------------------------------------------------------------
 # Private helpers — shared coercion logic used by all field validators
 # ---------------------------------------------------------------------------
@@ -197,7 +207,7 @@ class ModelInputs(_TorchModel):
     @field_validator("log_params", mode="before")
     @classmethod
     def coerce_log_params(cls, v: object) -> torch.Tensor:
-        return _to_float_tensor("log_params", v)
+        return _to_float_tensor("log_params", v, allow_inf=True)
 
     @field_validator("event", mode="before")
     @classmethod
@@ -339,7 +349,7 @@ class EvalTimeInputs(_TorchModel):
     @field_validator("log_hz", mode="before")
     @classmethod
     def coerce_log_hz(cls, v: object) -> torch.Tensor:
-        return _to_float_tensor("log_hz", v)
+        return _to_float_tensor("log_hz", v, allow_inf=True)
 
     @field_validator("eval_times", mode="before")
     @classmethod
@@ -399,7 +409,7 @@ class TimeVaryingCoxInputs(_TorchModel):
     @field_validator("log_hz_sorted", mode="before")
     @classmethod
     def coerce_log_hz_sorted(cls, v: object) -> torch.Tensor:
-        return _to_float_tensor("log_hz_sorted", v)
+        return _to_float_tensor("log_hz_sorted", v, allow_inf=True)
 
     @model_validator(mode="after")
     def check_consistency(self) -> TimeVaryingCoxInputs:
@@ -424,7 +434,7 @@ class TimeVaryingCoxInputs(_TorchModel):
         return self
 
 
-@torch.jit.script
+@torch.jit.script  # type: ignore[misc]
 def impute_missing_log_shape(log_params: torch.Tensor) -> torch.Tensor:
     """
     Pure tensor function (torch.jit.script-compatible).

@@ -41,22 +41,18 @@ class TestIPCW:
             ipcw_new_time = get_ipcw(event, time, new_time)
             ipcw_new_time_pec = np.array(benchmark_ipcw["ipcw_times"])
 
-            assert (
-                np.allclose(
-                    ipcw_subject_time.numpy(),
-                    ipcw_subject_time_pec,
-                    rtol=1e-4,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                ipcw_subject_time.numpy(),
+                ipcw_subject_time_pec,
+                rtol=1e-4,
+                atol=1e-8,
             )
 
-            assert (
-                np.allclose(
-                    ipcw_new_time.numpy(),
-                    ipcw_new_time_pec,
-                    rtol=1e-4,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                ipcw_new_time.numpy(),
+                ipcw_new_time_pec,
+                rtol=1e-4,
+                atol=1e-8,
             )
 
     def test_ipcw_simulated_data(self):
@@ -105,4 +101,4 @@ class TestIPCW:
             cens.fit(y_train_array)
             ipcw_sksurv = cens.predict_ipcw(y_test_array)
 
-            assert (np.all(np.isclose(ipcw.numpy(), ipcw_sksurv, rtol=1e-4, atol=1e-8)))
+            assert np.all(np.isclose(ipcw.numpy(), ipcw_sksurv, rtol=1e-4, atol=1e-8))

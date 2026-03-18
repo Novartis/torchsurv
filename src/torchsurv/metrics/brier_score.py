@@ -14,7 +14,7 @@ __all__ = ["BrierScore"]
 class BrierScore:
     r"""Compute the Brier Score for survival models."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize a BrierScore for survival class model evaluation.
 
         Examples:
@@ -38,15 +38,15 @@ class BrierScore:
             tensor([1.0000, 0.7860, 1.0000, 0.3840, 1.0000, 1.0000, 0.3840, 1.0000, 0.7000,
                     0.2380])
         """
-        self.order_time = None
-        self.time = None
-        self.event = None
-        self.weight = None
-        self.new_time = None
-        self.weight_new_time = None
-        self.estimate = None
-        self.brier_score = None
-        self.residuals = None
+        self.order_time: torch.Tensor | None = None
+        self.time: torch.Tensor | None = None
+        self.event: torch.Tensor | None = None
+        self.weight: torch.Tensor | None = None
+        self.new_time: torch.Tensor | None = None
+        self.weight_new_time: torch.Tensor | None = None
+        self.estimate: torch.Tensor | None = None
+        self.brier_score: torch.Tensor | None = None
+        self.residuals: torch.Tensor | None = None
 
     def __call__(
         self,
@@ -214,7 +214,7 @@ class BrierScore:
 
         return brier_score
 
-    def integral(self):
+    def integral(self) -> torch.Tensor:
         r"""Compute the integrated Brier Score.
 
         Returns:
@@ -248,6 +248,8 @@ class BrierScore:
             The integral is estimated with the trapzoidal rule.
 
         """
+        assert self.new_time is not None
+        assert self.brier_score is not None
         # Single time available
         if len(self.new_time) == 1:
             brier = self.brier_score[0]
@@ -330,7 +332,7 @@ class BrierScore:
         method: str = "bootstrap",
         alternative: str = "two_sided",
         n_bootstraps: int = 999,
-        null_value: float = None,
+        null_value: float | None = None,
     ) -> torch.Tensor:
         """Perform a one-sample hypothesis test on the Brier score.
 
@@ -405,7 +407,7 @@ class BrierScore:
             raise ValueError(f"Method {method} not implemented. Please choose either 'parametric' or 'bootstrap'.")
         return pvalue
 
-    def compare(self, other, method: str = "parametric", n_bootstraps: int = 999) -> torch.Tensor:
+    def compare(self, other: BrierScore, method: str = "parametric", n_bootstraps: int = 999) -> torch.Tensor:
         """Compare two Brier scores.
 
         This function compares two Brier scores computed on the
@@ -473,9 +475,11 @@ class BrierScore:
             raise ValueError("Method not implemented. Please choose either 'parametric' or 'bootstrap'.")
         return pvalue
 
-    def _brier_score_se(self):
+    def _brier_score_se(self) -> torch.Tensor:
         """Brier Score's empirical standard errors."""
 
+        assert self.residuals is not None
+        assert self.time is not None
         return torch.std(self.residuals, axis=0) / (self.time.shape[0] ** (1 / 2))
 
     def _confidence_interval_parametric(self, alpha: float, alternative: str) -> torch.Tensor:
@@ -514,6 +518,7 @@ class BrierScore:
         """
 
         # brier score given bootstrap distribution
+        assert self.brier_score is not None
         brier_score_bootstrap = self._bootstrap_brier_score(metric="confidence_interval", n_bootstraps=n_bootstraps)
 
         # initialize tensor to store confidence intervals
@@ -546,13 +551,15 @@ class BrierScore:
 
         return torch.stack([lower, upper], dim=0)
 
-    def _p_value_parametric(self, alternative: str, null_value: float = 0.5) -> torch.Tensor:
+    def _p_value_parametric(self, alternative: str, null_value: float | None = 0.5) -> torch.Tensor:
         """p-value for a one-sample hypothesis test of the Brier score
         assuming that the Brier score is normally distributed and using empirical standard error.
         """
 
+        assert null_value is not None
         brier_score_se = self._brier_score_se()
 
+        assert self.brier_score is not None
         if torch.any(brier_score_se) == 0:
             time_index = torch.where(brier_score_se == 0)
             warnings.warn(
@@ -572,13 +579,14 @@ class BrierScore:
 
         return p
 
-    def _p_value_bootstrap(self, alternative, n_bootstraps) -> torch.Tensor:
+    def _p_value_bootstrap(self, alternative: str, n_bootstraps: int) -> torch.Tensor:
         """p-value for a one-sample hypothesis test of the Brier score using
         permutation of survival distribution prediction to estimate sampling distribution under the null
         hypothesis.
         """
 
         # brier score bootstraps given null distribution
+        assert self.brier_score is not None
         brierscore0 = self._bootstrap_brier_score(metric="p_value", n_bootstraps=n_bootstraps)
 
         # initialize empty tensor to store p-values
@@ -602,12 +610,15 @@ class BrierScore:
 
         return p_values
 
-    def _compare_parametric(self, other):
+    def _compare_parametric(self, other: BrierScore) -> torch.Tensor:
         """Student t-test for paired samples assuming that
         the Brier scores are normally distributed and using
         empirical standard errors."""
 
         # sample size
+        assert self.time is not None
+        assert self.brier_score is not None
+        assert self.residuals is not None
         n_samples = self.time.shape[0]
 
         # initialize empty vector to store p_values
@@ -616,6 +627,8 @@ class BrierScore:
         # iterate over time
         for index_t, brier_score_t in enumerate(self.brier_score):
             # compute standard error of the difference
+            assert other.residuals is not None
+            assert other.brier_score is not None
             paired_se = torch.std(self.residuals[:, index_t] - other.residuals[:, index_t]) / (n_samples ** (1 / 2))
 
             # compute t-stat
@@ -630,11 +643,12 @@ class BrierScore:
 
         return p_values
 
-    def _compare_bootstrap(self, other, n_bootstraps) -> torch.Tensor:
+    def _compare_bootstrap(self, other: BrierScore, n_bootstraps: int) -> torch.Tensor:
         """Bootstrap two-sample test to compare two Brier scores."""
 
         # bootstrap brier scores given null hypothesis that brierscore1 and
         # brierscore2 come from the same distribution
+        assert self.brier_score is not None
         brier_score1_null = self._bootstrap_brier_score(metric="compare", other=other, n_bootstraps=n_bootstraps)
         brier_score2_null = self._bootstrap_brier_score(metric="compare", other=other, n_bootstraps=n_bootstraps)
 
@@ -653,7 +667,7 @@ class BrierScore:
 
         return p_values
 
-    def _bootstrap_brier_score(self, metric: str, n_bootstraps: int, other=None) -> torch.Tensor:
+    def _bootstrap_brier_score(self, metric: str, n_bootstraps: int, other: BrierScore | None = None) -> torch.Tensor:
         """Compute bootstrap samples of the Brier Score.
 
         Args:
@@ -675,6 +689,10 @@ class BrierScore:
         # Initiate empty list to store brier score
         brier_scores = []
 
+        assert self.estimate is not None
+        assert self.event is not None
+        assert self.time is not None
+        assert self.weight is not None
         # Get the bootstrap samples of brier score
         for _ in range(n_bootstraps):
             if metric == "confidence_interval":  # bootstrap samples given data distribution
@@ -695,6 +713,7 @@ class BrierScore:
                     )
                 )  # Run without saving internal state
             elif metric == "compare":  # bootstrap samples given null distribution (brierscore1 = brierscore2)
+                assert other is not None
                 index = torch.randint(
                     low=0,
                     high=self.estimate.shape[0] * 2,

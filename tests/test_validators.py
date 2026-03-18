@@ -8,7 +8,6 @@ from torchsurv.tools.validators import (
     impute_missing_log_shape,
 )
 
-
 N = 10
 
 

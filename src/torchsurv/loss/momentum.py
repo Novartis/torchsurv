@@ -3,15 +3,19 @@ from __future__ import annotations
 import collections
 import copy
 import sys
-from typing import Callable
+from collections.abc import Callable
+from typing import Any
 
 import torch
 from torch import nn
 
 __all__ = ["Momentum"]
 
+# Module-level NamedTuple for survival data (class-level namedtuple is not supported by mypy).
+_SurvivalTuple = collections.namedtuple("_SurvivalTuple", ["estimate", "event", "time"])
 
-class Momentum(nn.Module):
+
+class Momentum(nn.Module):  # type: ignore[misc]
     r"""
     Survival framework to momentum update learning to decouple batch size during model training.
     Two networks are concurrently trained, an online network and a target network. The online network outputs batches
@@ -64,7 +68,7 @@ class Momentum(nn.Module):
     def __init__(
         self,
         backbone: nn.Module,
-        loss: Callable,
+        loss: Callable[..., Any],
         batchsize: int = 16,
         steps: int = 10,
         rate: float = 0.999,
@@ -116,11 +120,11 @@ class Momentum(nn.Module):
         self.loss = loss
 
         # survival data structure
-        self.survtuple = collections.namedtuple("survival", ["estimate", "event", "time"])
+        self.survtuple = _SurvivalTuple
 
         # Hazards: current batch & memory
-        self.memory_q = collections.deque(maxlen=batchsize)  # online (q)
-        self.memory_k = collections.deque(maxlen=batchsize * steps)  # target (k)
+        self.memory_q: collections.deque[Any] = collections.deque(maxlen=batchsize)  # online (q)
+        self.memory_k: collections.deque[Any] = collections.deque(maxlen=batchsize * steps)  # target (k)
 
     def forward(self, inputs: torch.Tensor, event: torch.Tensor, time: torch.Tensor) -> torch.Tensor:
         """Compute the loss for the current batch and update the memory bank using momentum class.
@@ -155,16 +159,16 @@ class Momentum(nn.Module):
 
         online_estimate = self.online(inputs)
         for estimate in zip(online_estimate, event, time):
-            self.memory_q.append(self.survtuple(*estimate))  # type: ignore
+            self.memory_q.append(self.survtuple(*estimate))
         loss = self._bank_loss()
         with torch.no_grad():
             self._update_momentum_encoder()
             target_estimate = self.target(inputs)
             for estimate in zip(target_estimate, event, time):
-                self.memory_k.append(self.survtuple(*estimate))  # type: ignore
+                self.memory_k.append(self.survtuple(*estimate))
         return loss
 
-    @torch.no_grad()  # deactivates autograd
+    @torch.no_grad()  # type: ignore[misc]
     def infer(self, inputs: torch.Tensor) -> torch.Tensor:
         """Evaluate data with target network
 
@@ -201,13 +205,13 @@ class Momentum(nn.Module):
         loss: torch.Tensor = self.loss(log_estimates, events, times)
         return loss
 
-    @torch.no_grad()
+    @torch.no_grad()  # type: ignore[misc]
     def _update_momentum_encoder(self) -> None:
         """Exponential moving average"""
         for param_b, param_m in zip(self.online.parameters(), self.target.parameters()):
             param_m.data = param_m.data * self.rate + param_b.data * (1.0 - self.rate)
 
-    @torch.no_grad()
+    @torch.no_grad()  # type: ignore[misc]
     def _init_encoder_k(self) -> None:
         """
         Initialize the target network (encoder_k) with the parameters of the online network (encoder_q).

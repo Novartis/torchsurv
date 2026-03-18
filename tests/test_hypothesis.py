@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-import pytest
 import torch
 from hypothesis import HealthCheck, given, settings
-
 from strategies import (
     cox_log_hazard,
     survival_tensors,
+)
+from strategies import (
     weibull_log_params as weibull_log_params_strategy,
 )
 
 from torchsurv.loss.cox import neg_partial_log_likelihood
 from torchsurv.loss.weibull import neg_log_likelihood_weibull
 from torchsurv.metrics.auc import Auc
+from torchsurv.metrics.brier_score import BrierScore
 from torchsurv.metrics.cindex import ConcordanceIndex
 from torchsurv.stats.kaplan_meier import KaplanMeierEstimator
 
@@ -86,3 +87,20 @@ def test_kaplan_meier_estimator(survival_and_time):
     assert km.km_est is not None
     assert torch.all(km.km_est >= 0)
     assert torch.all(km.km_est <= 1)
+
+
+@given(survival_tensors())
+@settings(max_examples=50, suppress_health_check=[HealthCheck.too_slow])
+def test_brier_score_output_range(survival_and_time):
+    event, time = survival_and_time
+    n = len(event)
+    torch.manual_seed(0)
+    # Survival probability estimate: (n, n) — subject i's survival at subject j's time.
+    # Values must be in [0, 1].
+    estimate = torch.rand(n, n)
+    brier = BrierScore()
+    result = brier(estimate, event, time)
+    assert result is not None
+    assert torch.all(torch.isfinite(result)), f"Brier score not finite: {result}"
+    assert torch.all(result >= 0.0), f"Brier score below 0: {result}"
+    assert torch.all(result <= 1.0), f"Brier score above 1: {result}"
