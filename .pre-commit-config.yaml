@@ -37,7 +37,7 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/lorenzwalthert/precommit
-    rev: v0.4.3.9009
+    rev: v0.4.3  # NOTE: was pinned to dev version v0.4.3.9009; update if a newer stable tag exists
     hooks:
     -   id: style-files
         args: [--style_pkg=styler, --style_fun=tidyverse_style]
@@ -48,7 +48,16 @@ repos:
     hooks:
       - id: sphinx-lint
 
-
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: mypy
+        language: system
+        types: [python]
+        args: ["--config-file", "pyproject.toml"]
+        files: ^src/torchsurv/
+        pass_filenames: false
 
 ci:
   autofix_prs: true
