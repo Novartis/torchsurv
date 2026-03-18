@@ -5,6 +5,10 @@
 
 set -euo pipefail
 
+# On macOS, PyTorch and conda can bundle duplicate OpenMP runtimes which causes
+# an abort unless this is set. Safe to set on all platforms.
+export KMP_DUPLICATE_LIB_OK=TRUE
+
 DOCS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../docs" && pwd)"
 
 cd "${DOCS_DIR}"
