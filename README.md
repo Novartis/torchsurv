@@ -8,12 +8,14 @@ Deep survival analysis made easy
 </h1>
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![Python](https://img.shields.io/pypi/pyversions/torchsurv?label=Python)](https://pypi.org/project/torchsurv/)
 [![PyPI - Version](https://img.shields.io/pypi/v/torchsurv?color=green&label=PyPI)](https://pypi.org/project/torchsurv/)
 [![Conda](https://img.shields.io/conda/v/conda-forge/torchsurv?label=Conda&color=green)](https://anaconda.org/conda-forge/torchsurv)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/torchsurv?period=total&units=INTERNATIONAL_SYSTEM&left_color=GRAY&right_color=brightgreen&left_text=PyPI%20downloads)](https://pepy.tech/projects/torchsurv)
 [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/torchsurv.svg?label=Conda%20downloads)](
 https://anaconda.org/conda-forge/torchsurv)
+
 
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
@@ -22,9 +24,12 @@ https://anaconda.org/conda-forge/torchsurv)
 [![License](https://img.shields.io/badge/License-MIT-black)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
 
+
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
 
 If you find this repository useful, please give us a star!   🌟 ⭐ 🌟
+
+[![GitHub Stars](https://img.shields.io/github/stars/Novartis/torchsurv?label=GitHub%20stars&color=yellow)](https://github.com/Novartis/torchsurv/stargazers)
 
 ---
 
@@ -99,17 +104,17 @@ pip install torchsurv
 <details>
 <summary><em>Other installation details </em></summary>
 <br>
--  Using for local installation (latest version for example)
+-  Using for local development (latest version)
 
 ```bash
-git clone <repo>
-cd <repo>
-pip install -e .
+git clone https://github.com/Novartis/torchsurv.git
+cd torchsurv
+uv sync --group dev   # creates .venv with all dependencies
+uv run pytest          # run the test suite
 ```
 
-
-Additionally, to build the documentation (`notebooks`, `sphinx`) and for package development (`tests`), please see [the development notes](https://opensource.nibr.com/torchsurv/devnotes.html) and
-[dev/environment.yml](dev/environment.yml). This step is **not required** to use `TorchSurv` in your projects but only for optional features.
+> [uv](https://docs.astral.sh/uv/) is the recommended tool for development.
+> See the [development notes](https://opensource.nibr.com/torchsurv/devnotes.html) for full setup instructions.
 
 </details>
 

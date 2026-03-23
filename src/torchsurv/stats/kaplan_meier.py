@@ -1,11 +1,13 @@
+from __future__ import annotations
+
 import itertools
 import sys
-from typing import Tuple
+from typing import Any
 
 import pandas as pd
 import torch
 
-from torchsurv.tools.validate_data import validate_survival_data
+from torchsurv.tools.validators import SurvivalInputs
 
 __all__ = [
     "KaplanMeierEstimator",
@@ -15,11 +17,12 @@ __all__ = [
 class KaplanMeierEstimator:
     """Kaplan-Meier estimate of survival or censoring distribution for right-censored data :cite:p:`Kaplan1958`."""
 
-    def __init__(self, device: str = None):
+    def __init__(self, device: str | None = None) -> None:
         """
         Args:
             device (str, optional): Device to use for tensor computations (e.g., 'cpu', 'cuda'). Defaults to None (uses CPU).
         """
+        self.device: Any
         if device is None:
             self.device = torch.device("cpu")
         else:
@@ -30,8 +33,7 @@ class KaplanMeierEstimator:
         event: torch.Tensor,
         time: torch.Tensor,
         censoring_dist: bool = False,
-        check: bool = True,
-    ):
+    ) -> None:
         """Initialize Kaplan Meier estimator.
 
         Args:
@@ -43,10 +45,6 @@ class KaplanMeierEstimator:
                 If False, returns the Kaplan-Meier estimate of the survival distribution.
                 If True, returns the Kaplan-Meier estimate of the censoring distribution.
                 Defaults to False.
-            check (bool):
-                Whether to perform input format checks.
-                Enabling checks can help catch potential issues in the input data.
-                Defaults to True.
 
         Examples:
             >>> _ = torch.manual_seed(42)
@@ -76,8 +74,9 @@ class KaplanMeierEstimator:
         self.time = time.to(self.device)
 
         # Check input validity if required
-        if check:
-            validate_survival_data(event, time)
+        if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+            _surv = SurvivalInputs(event=event, time=time)
+            event, time = _surv.event, _surv.time
 
         # Compute the counts of events, censorings, and the number at risk at each unique time
         uniq_times, n_events, n_at_risk, n_censored = self._compute_counts()
@@ -102,7 +101,7 @@ class KaplanMeierEstimator:
         self.time = uniq_times
         self.km_est = y
 
-    def plot_km(self, ax=None, **kwargs):
+    def plot_km(self, ax: Any = None, **kwargs: Any) -> None:
         """Plot the Kaplan-Meier estimate of the survival distribution.
 
         Args:
@@ -187,7 +186,7 @@ class KaplanMeierEstimator:
 
         return km_pred
 
-    def get_survival_table(self):
+    def get_survival_table(self) -> pd.DataFrame:
         """Prints the survival table with the unique times and Kaplan-Meier estimates.
 
         Examples:
@@ -209,7 +208,7 @@ class KaplanMeierEstimator:
 
     def _compute_counts(
         self,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """Compute the counts of events, censorings and risk set at ``time``.
 
         Returns: Tuple[torch.tensor, torch.tensor, torch.tensor, torch.tensor]
@@ -236,8 +235,8 @@ class KaplanMeierEstimator:
         j = 0
 
         # Iterate through unique times
-        for _, group_indices in groups:
-            group_indices = list(group_indices)
+        for _, group_iter in groups:
+            group_indices: list[int] = list(group_iter)
 
             # Count events and total occurrences
             count_event = sum(self.event[order[i]].item() for i in group_indices)

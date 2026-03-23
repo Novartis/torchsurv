@@ -9,41 +9,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
-    - name: Setup Miniconda
-      uses: conda-incubator/setup-miniconda@v3
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
       with:
-        auto-update-conda: true
-        miniconda-version: "latest"
-        python-version: 3.11
-        activate-environment: torchsurv
+        enable-cache: true
 
-    - name: Get Date
-      id: get-date
-      run: echo "today=$(/bin/date -u '+%Y%m%d')" >> $GITHUB_OUTPUT
-      shell: bash
+    - name: Set up Python
+      run: uv python install 3.11
 
-    - name: Cache Conda env
-      uses: actions/cache@v3
-      with:
-        path: ${{ env.CONDA }}/envs
-        key:
-          conda-${{ runner.os }}--${{ runner.arch }}--${{ steps.get-date.outputs.today }}-${{ hashFiles('dev/environment.yml') }}-${{ env.CACHE_NUMBER }}
-      env:
-        # Increase this value to reset cache if environment.yml has not changed
-        CACHE_NUMBER: 0
+    - name: Install system dependencies
+      run: sudo apt-get update && sudo apt-get install -y pandoc
 
-    - name: Update conda environment
-      run:
-        conda env update -n torchsurv -f dev/environment.yml
-      if: steps.cache.outputs.cache-hit != 'true'
+    - name: Install dependencies
+      run: uv sync --group dev --extra docs
 
     - name: Build docs
-      shell: bash -l {0}
-      run: |
-        conda activate torchsurv
-        ./dev/build-docs.sh
+      run: uv run ./dev/build-docs.sh
 
     - name: Deploy to GitHub Pages
       run: |
