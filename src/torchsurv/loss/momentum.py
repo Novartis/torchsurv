@@ -168,7 +168,7 @@ class Momentum(nn.Module):  # type: ignore[misc]
                 self.memory_k.append(self.survtuple(*estimate))
         return loss
 
-    @torch.no_grad()  # type: ignore[misc]
+    @torch.no_grad()  # type: ignore[untyped-decorator]
     def infer(self, inputs: torch.Tensor) -> torch.Tensor:
         """Evaluate data with target network
 
@@ -205,13 +205,13 @@ class Momentum(nn.Module):  # type: ignore[misc]
         loss: torch.Tensor = self.loss(log_estimates, events, times)
         return loss
 
-    @torch.no_grad()  # type: ignore[misc]
+    @torch.no_grad()  # type: ignore[untyped-decorator]
     def _update_momentum_encoder(self) -> None:
         """Exponential moving average"""
         for param_b, param_m in zip(self.online.parameters(), self.target.parameters()):
             param_m.data = param_m.data * self.rate + param_b.data * (1.0 - self.rate)
 
-    @torch.no_grad()  # type: ignore[misc]
+    @torch.no_grad()  # type: ignore[untyped-decorator]
     def _init_encoder_k(self) -> None:
         """
         Initialize the target network (encoder_k) with the parameters of the online network (encoder_q).

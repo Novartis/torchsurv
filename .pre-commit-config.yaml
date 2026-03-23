@@ -52,10 +52,10 @@ repos:
     hooks:
       - id: mypy
         name: mypy
-        entry: mypy
+        entry: uv run --no-sync mypy
         language: system
         types: [python]
-        args: ["--config-file", "pyproject.toml"]
+        args: ["--config-file", "pyproject.toml", "src/"]
         files: ^src/torchsurv/
         pass_filenames: false
 

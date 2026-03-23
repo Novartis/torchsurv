@@ -434,7 +434,7 @@ class TimeVaryingCoxInputs(_TorchModel):
         return self
 
 
-@torch.jit.script  # type: ignore[misc]
+@torch.jit.script  # type: ignore[untyped-decorator]
 def impute_missing_log_shape(log_params: torch.Tensor) -> torch.Tensor:
     """
     Pure tensor function (torch.jit.script-compatible).
