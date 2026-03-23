@@ -71,3 +71,11 @@ melodie/
 
 # anything with -copy
 *-copy.*
+
+# LLMs
+.claude/
+.github/
+.hypothesis/
+CLAUDE.md
+specs/
+.specify/

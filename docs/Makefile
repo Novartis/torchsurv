@@ -19,13 +19,15 @@ help:
 # cat command on top fixes relative locations in the README file
 %: Makefile
 	# remove old copies
-	rm -f README-copy.md CODEOWNERS-copy.md CONTRIBUTING-copy.md CODE_OF_CONDUCT-copy.md
+	rm -f README-copy.md CODEOWNERS-copy.md CONTRIBUTING-copy.md CODE_OF_CONDUCT-copy.md benchmarks.md
 	# create new copies
 	cp ../README.md README-copy.md
 	cp ../CODEOWNERS.md CODEOWNERS-copy.md
 	cp ../CONTRIBUTING.md CONTRIBUTING-copy.md
 	cp ../CODE_OF_CONDUCT.md CODE_OF_CONDUCT-copy.md
+	cp ../tests/README.md benchmarks.md
 	sed -i.bak -e 's|docs/_static/|_static/|g' -e 's|/docs/_static/|_static/|g' README-copy.md
 	sed -i.bak 's|<img src=_static/logo_firecamp.png width="200">|<img src="_static/logo_firecamp.png" width="200" class="readme-logo">|g' README-copy.md
-	rm -f README-copy.md.bak
+	sed -i.bak 's|\.\./docs/_static/|_static/|g' benchmarks.md
+	rm -f README-copy.md.bak benchmarks.md.bak
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
