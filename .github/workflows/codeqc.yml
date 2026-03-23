@@ -21,6 +21,9 @@ jobs:
     - name: Set up Python ${{ matrix.python-version }}
       run: uv python install ${{ matrix.python-version }}
 
+    - name: Install system dependencies
+      run: sudo apt-get update && sudo apt-get install -y pandoc
+
     - name: Install dependencies
       run: uv sync --group dev --extra docs
 
@@ -30,7 +33,7 @@ jobs:
     - name: Tests
       run: |
         uv run ./dev/run-doctests.sh
-        uv run ./dev/run-unittests.sh
+        uv run pytest
 
     - name: Test-build docs
       run: |
