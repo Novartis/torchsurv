@@ -1,3 +1,14 @@
+# ⚠️  DEPRECATED — use uv instead
+#
+# This file is kept for backward compatibility but is no longer actively maintained.
+# The canonical dependency definitions live in pyproject.toml.
+#
+# Recommended setup:
+#   uv sync --group dev          # install dev dependencies
+#   uv sync --group dev --extra docs  # include docs dependencies
+#
+# See docs/devnotes.md for full instructions.
+
 name: torchsurv
 channels:
   - conda-forge
