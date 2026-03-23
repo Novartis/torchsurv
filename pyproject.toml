@@ -40,6 +40,7 @@ requires-python = ">=3.9"
 docs = [
     "sphinx>=7.0",
     "sphinx-autoapi",
+    "sphinx-book-theme",
     "sphinx-rtd-theme",
     "numpydoc",
     "jupyter-book",
