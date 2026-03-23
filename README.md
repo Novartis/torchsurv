@@ -103,17 +103,17 @@ pip install torchsurv
 <details>
 <summary><em>Other installation details </em></summary>
 <br>
--  Using for local installation (latest version for example)
+-  Using for local development (latest version)
 
 ```bash
-git clone <repo>
-cd <repo>
-pip install -e .
+git clone https://github.com/Novartis/torchsurv.git
+cd torchsurv
+uv sync --group dev   # creates .venv with all dependencies
+uv run pytest          # run the test suite
 ```
 
-
-Additionally, to build the documentation (`notebooks`, `sphinx`) and for package development (`tests`), please see [the development notes](https://opensource.nibr.com/torchsurv/devnotes.html) and
-[dev/environment.yml](dev/environment.yml). This step is **not required** to use `TorchSurv` in your projects but only for optional features.
+> [uv](https://docs.astral.sh/uv/) is the recommended tool for development.
+> See the [development notes](https://opensource.nibr.com/torchsurv/devnotes.html) for full setup instructions.
 
 </details>
 
