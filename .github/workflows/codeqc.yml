@@ -25,7 +25,7 @@ jobs:
       run: uv sync --group dev --extra docs
 
     - name: Code QC
-      run: ./dev/codeqc.sh check
+      run: uv run ./dev/codeqc.sh check
 
     - name: Tests
       run: |
