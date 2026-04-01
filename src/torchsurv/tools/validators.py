@@ -6,6 +6,8 @@ import torch
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 __all__ = [
+    "CompetingRisksInputs",
+    "CompetingRisksModelInputs",
     "EvalTimeInputs",
     "ModelInputs",
     "NewTimeInputs",
@@ -158,6 +160,60 @@ class SurvivalInputs(_TorchModel):
         return self
 
 
+class CompetingRisksInputs(_TorchModel):
+    """Validates and coerces competing-risks survival inputs.
+
+    ``event`` is encoded as integers with ``0`` for censoring and ``1..K`` for
+    observed causes. Unlike :class:`SurvivalInputs`, fully-censored data is
+    allowed so batch-level helpers can decide how to handle it.
+    """
+
+    event: torch.Tensor
+    time: torch.Tensor
+    strata: torch.Tensor | None = None
+
+    @field_validator("event", mode="before")
+    @classmethod
+    def coerce_event(cls, v: object) -> torch.Tensor:
+        if not isinstance(v, torch.Tensor):
+            raise ValueError("Input 'event' must be a torch.Tensor.")
+        if torch.is_floating_point(v):
+            if not torch.allclose(v, v.round()):
+                raise ValueError("Input 'event' must contain integer-coded causes.")
+        coerced = v.long().to(v.device)
+        if torch.any(coerced < 0):
+            raise ValueError("Input 'event' must contain non-negative cause labels.")
+        return coerced
+
+    @field_validator("time", mode="before")
+    @classmethod
+    def coerce_time(cls, v: object) -> torch.Tensor:
+        coerced = _to_float_tensor("time", v)
+        if torch.any(coerced < 0.0):
+            raise ValueError("Input 'time' must be non-negative.")
+        return coerced
+
+    @field_validator("strata", mode="before")
+    @classmethod
+    def coerce_strata(cls, v: object) -> torch.Tensor | None:
+        if v is None:
+            return None
+        if not isinstance(v, torch.Tensor):
+            raise ValueError("Input 'strata' must be a torch.Tensor or None.")
+        return v.long().to(v.device)
+
+    @model_validator(mode="after")
+    def check_dimensions(self) -> CompetingRisksInputs:
+        n = len(self.event)
+        if len(self.time) != n:
+            raise ValueError(f"Dimension mismatch: 'event' has {n} samples but 'time' has {len(self.time)}.")
+        if self.strata is not None and len(self.strata) != n:
+            raise ValueError(f"Dimension mismatch: 'event' has {n} samples but 'strata' has {len(self.strata)}.")
+        if self.strata is None:
+            self.strata = torch.ones_like(self.event, dtype=torch.long)
+        return self
+
+
 class ModelInputs(_TorchModel):
     """Validates and coerces model parameter inputs.
 
@@ -247,6 +303,41 @@ class ModelInputs(_TorchModel):
         elif self.model_type == "survival":
             if self.log_params.dim() != 2:
                 raise ValueError("For Survival model, 'log_hz' must have shape (n_samples, n_eval_times).")
+        return self
+
+
+class CompetingRisksModelInputs(_TorchModel):
+    """Validates multi-cause log-hazard tensors against competing-risks labels."""
+
+    log_hz: torch.Tensor
+    event: torch.Tensor
+
+    @field_validator("log_hz", mode="before")
+    @classmethod
+    def coerce_log_hz(cls, v: object) -> torch.Tensor:
+        return _to_float_tensor("log_hz", v, allow_inf=True)
+
+    @field_validator("event", mode="before")
+    @classmethod
+    def coerce_event(cls, v: object) -> torch.Tensor:
+        if not isinstance(v, torch.Tensor):
+            raise ValueError("Input 'event' must be a torch.Tensor.")
+        return v.long().to(v.device)
+
+    @model_validator(mode="after")
+    def check_shape(self) -> CompetingRisksModelInputs:
+        n = len(self.event)
+        if self.log_hz.dim() != 2:
+            raise ValueError("For competing risks, 'log_hz' must have shape (n_samples, n_causes).")
+        if self.log_hz.shape[0] != n:
+            raise ValueError(f"Dimension mismatch: 'log_hz' has {self.log_hz.shape[0]} samples but 'event' has {n}.")
+        if self.log_hz.shape[1] == 0:
+            raise ValueError("For competing risks, 'log_hz' must contain at least one cause column.")
+        if len(self.event) > 0 and int(self.event.max().item()) > self.log_hz.shape[1]:
+            raise ValueError(
+                f"Input 'event' contains cause label {int(self.event.max().item())}, "
+                f"but 'log_hz' only has {self.log_hz.shape[1]} cause columns."
+            )
         return self
 
 
