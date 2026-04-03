@@ -1,7 +1,8 @@
-"""This module provides validation utilities for survival analysis inputs."""
+"""Utilities for survival analysis inputs and synthetic benchmarking data."""
 
 from __future__ import annotations
 
+from torchsurv.tools.synthetic import make_synthetic_data
 from torchsurv.tools.validators import (
     EvalTimeInputs,
     ModelInputs,
@@ -18,6 +19,7 @@ __all__ = [
     "NewTimeInputs",
     "SurvivalInputs",
     "TimeVaryingCoxInputs",
+    "make_synthetic_data",
     "impute_missing_log_shape",
     "validate_time_varying_log_hz",
 ]

@@ -21,6 +21,7 @@ Welcome to TorchSurv's documentation!
     notebooks/introduction
     notebooks/momentum
     notebooks/regression_time_varying
+    notebooks/synthetic_data_signal
     notebooks/non_medical_applications
 
 .. toctree::
