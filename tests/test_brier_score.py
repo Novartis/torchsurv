@@ -1,6 +1,5 @@
 # global modules
 import json
-import unittest
 
 import numpy as np
 import torch
@@ -25,7 +24,7 @@ with open("tests/benchmark_data/benchmark_brier_score.json") as file:
 brier_score = BrierScore()
 
 
-class TestBrierScore(unittest.TestCase):
+class TestBrierScore:
     """
     List of packages compared
         - survMetrics (R)
@@ -74,8 +73,8 @@ class TestBrierScore(unittest.TestCase):
             bs_survMetrics = np.array(benchmark_brier_score["brier_score_survMetrics"])
             ibs_survMetrics = np.array(benchmark_brier_score["ibrier_score_survMetrics"])
 
-            self.assertTrue(np.allclose(bs.numpy(), bs_survMetrics, rtol=1e-2, atol=1e-3))
-            self.assertTrue(np.allclose(ibs.numpy(), ibs_survMetrics, rtol=1e-2, atol=1e-3))
+            assert np.allclose(bs.numpy(), bs_survMetrics, rtol=1e-2, atol=1e-3)
+            assert np.allclose(ibs.numpy(), ibs_survMetrics, rtol=1e-2, atol=1e-3)
 
     def test_brier_score_confidence_interval_pvalue(self):
         """test brier score confidense interval and p value are as expected"""
@@ -110,9 +109,7 @@ class TestBrierScore(unittest.TestCase):
                         alternative=alternative,
                         n_bootstraps=n_bootstraps,
                     )
-                    self.assertTrue(
-                        all(conditions_ci(brier_score_ci[:, i]) for i in range(len(brier_score.brier_score)))
-                    )
+                    assert all(conditions_ci(brier_score_ci[:, i]) for i in range(len(brier_score.brier_score)))
 
             for alternative in ["two_sided", "less", "greater"]:
                 brier_score_pvalue = brier_score.p_value(
@@ -120,18 +117,14 @@ class TestBrierScore(unittest.TestCase):
                     alternative=alternative,
                     n_bootstraps=n_bootstraps,
                 )
-                self.assertTrue(
-                    all(conditions_p_value(brier_score_pvalue[i]) for i in range(len(brier_score.brier_score)))
-                )
+                assert all(conditions_p_value(brier_score_pvalue[i]) for i in range(len(brier_score.brier_score)))
                 brier_score_pvalue = brier_score.p_value(
                     method="parametric",
                     alternative=alternative,
                     n_bootstraps=n_bootstraps,
                     null_value=0.3,
                 )
-                self.assertTrue(
-                    all(conditions_p_value(brier_score_pvalue[i]) for i in range(len(brier_score.brier_score)))
-                )
+                assert all(conditions_p_value(brier_score_pvalue[i]) for i in range(len(brier_score.brier_score)))
 
     def test_brier_score_compare(self):
         """test compare function of brier score behaves as expected"""
@@ -169,13 +162,13 @@ class TestBrierScore(unittest.TestCase):
         p_value_compare_informative = brier_score_informative.compare(brier_score_non_informative)
         p_value_compare_non_informative = brier_score_non_informative.compare(brier_score_informative)
 
-        self.assertTrue(np.all(bs_informative.numpy() < bs_non_informative.numpy()))
-        self.assertTrue(np.all(ibs_informative.numpy() < ibs_non_informative.numpy()))
-        self.assertTrue(np.any(p_value_compare_informative.numpy() < 0.05))
-        self.assertTrue(np.all(p_value_compare_non_informative.numpy() > 0.05))
+        assert np.all(bs_informative.numpy() < bs_non_informative.numpy())
+        assert np.all(ibs_informative.numpy() < ibs_non_informative.numpy())
+        assert np.any(p_value_compare_informative.numpy() < 0.05)
+        assert np.all(p_value_compare_non_informative.numpy() > 0.05)
 
 
-def test_brier_score_simulated_data(self):
+def test_brier_score_simulated_data():
     """test point estimate of brier score and integrated brier score on simulated batches including edge cases"""
     batch_container = DataBatchContainer()
     batch_container.generate_batches(
@@ -222,20 +215,26 @@ def test_brier_score_simulated_data(self):
             weight_new_time=ipcw_new_time,
         )
 
-        _, bs_sksurv = brier_score_sksurv(y_train_array, y_test_array, estimate.numpy(), new_time_array)
+        # sksurv requires eval times strictly within follow-up [test_min, test_max).
+        # Filter out any new_time == test_time.max() before comparing.
+        sksurv_mask = new_time_array < test_time.numpy().max()
+        sksurv_new_time = new_time_array[sksurv_mask]
+        if len(sksurv_new_time) == 0:
+            continue
 
-        self.assertTrue(np.allclose(bs.numpy(), bs_sksurv, rtol=1e-5, atol=1e-8))
+        _, bs_sksurv = brier_score_sksurv(
+            y_train_array, y_test_array, estimate.numpy()[:, sksurv_mask], sksurv_new_time
+        )
 
-        if len(new_time) > 2:
+        assert np.allclose(bs.numpy()[sksurv_mask], bs_sksurv, rtol=1e-5, atol=1e-8)
+
+        # IBS comparison requires identical time grids; skip when new_time was filtered
+        if sksurv_mask.all() and len(sksurv_new_time) > 2:
             ibs = brier_score.integral()
             ibs_sksurv = integrated_brier_score_sksurv(
                 y_train_array,
                 y_test_array,
-                estimate.numpy(),
-                new_time_array,
+                estimate.numpy()[:, sksurv_mask],
+                sksurv_new_time,
             )
-            self.assertTrue(np.allclose(ibs.numpy(), ibs_sksurv, rtol=1e-5, atol=1e-8))
-
-
-if __name__ == "__main__":
-    unittest.main()
+            assert np.allclose(ibs.numpy(), ibs_sksurv, rtol=1e-5, atol=1e-8)
