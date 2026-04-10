@@ -1,12 +1,12 @@
-# TorchSurv: Deep Survival Analysis in Pure PyTorch
+# TorchSurv: Deep Survival Analysis in PyTorch
 
 *By Thibaud Coroller, Mélodie Monod, Peter Krusche, Qian Cao — Novartis & FDA*
 
 ---
 
-Time-to-event prediction shows up everywhere: How long before a customer cancels their subscription? When will a turbine fail? How quickly will a borrower default on a loan? These are not classification problems. They are not regression problems. They are **survival analysis** problems — and most ML toolkits handle them poorly.
+Time-to-event prediction shows up everywhere: How long before a customer cancels their subscription? When will a turbine fail? How quickly will a borrower default on a loan? These are not classification problems. They are not regression problems. They are **survival analysis** problems - and most ML toolkits handle them poorly.
 
-The core challenge is **censoring**. In real-world data, you rarely observe every event. A customer is still subscribed when you pull the data. A machine is still running. The loan is still open. Standard loss functions silently discard these observations or misrepresent them, introducing bias. Survival analysis handles this correctly by incorporating the information that an event *hasn't happened yet* — and that matters.
+The core challenge is **censoring**. In real-world data, you rarely observe all events. A customer is still subscribed when you pull the data. A machine is still running. The loan is still open. Standard loss functions silently discard these observations or misrepresent them, introducing bias. Survival analysis handles this correctly by incorporating the information that an event *hasn't happened yet* — and that matters.
 
 ## Introducing TorchSurv
 
@@ -32,7 +32,7 @@ Survival analysis originated in clinical trials, but the mathematics applies to 
 | Finance / Credit | Loan default | Time since origination |
 | Meteorology | Extreme weather event | Days since last occurrence |
 
-Each of these has censored observations — customers who haven't churned yet, machines that are still running — and TorchSurv handles them all with the same API.
+Each of these domain has censored observations — customers who haven't churned yet, machines that are still running — and TorchSurv handles them all with the same API.
 
 ## What TorchSurv Provides
 
