@@ -1,16 +1,14 @@
 # pylint: disable=C0103
 # pylint: disable=C0301
 
+from __future__ import annotations
+
 import sys
 import warnings
 
 import torch
 
-from torchsurv.tools.validate_data import (
-    validate_eval_time,
-    validate_model,
-    validate_survival_data,
-)
+from torchsurv.tools.validators import EvalTimeInputs, ModelInputs, SurvivalInputs
 
 __all__ = ["neg_log_likelihood", "survival_function"]
 
@@ -75,7 +73,6 @@ def neg_log_likelihood(
     time: torch.Tensor,
     eval_time: torch.Tensor,
     reduction: str = "mean",
-    checks: bool = True,
 ) -> torch.Tensor:
     r"""
     Negative log-likelihood for a survival model.
@@ -93,10 +90,6 @@ def neg_log_likelihood(
         reduction (str, optional):
             Method to reduce losses. Defaults to "mean".
             Must be one of the following: "sum", "mean".
-        checks (bool, optional):
-            Whether to perform input format checks.
-            Enabling checks can help catch potential issues in the input data.
-            Defaults to True.
 
     Returns:
         torch.Tensor: Negative of the log likelihood of survival model.
@@ -173,10 +166,12 @@ def neg_log_likelihood(
     time = time.squeeze()
     eval_time = eval_time.squeeze()
 
-    if checks:
-        validate_survival_data(event, time)
-        validate_model(log_hz, event, model_type="survival")
-        validate_eval_time(log_hz, eval_time)
+    if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+        _surv = SurvivalInputs(event=event, time=time)
+        event, time = _surv.event, _surv.time
+        _model = ModelInputs(log_params=log_hz, event=event, model_type="survival")
+        log_hz = _model.log_params
+        EvalTimeInputs(log_hz=log_hz, eval_times=eval_time)
 
     # Cumulative hazard
     cum_hazard = _cumulative_hazard_trapezoid(log_hz, time, eval_time, respective_times=True)
@@ -205,7 +200,6 @@ def survival_function(
     new_log_hz: torch.Tensor,
     new_time: torch.Tensor,
     eval_time: torch.Tensor,
-    checks: bool = True,
 ) -> torch.Tensor:
     r"""
     Compute the individual survival function for new subjects for the survival model.
@@ -217,10 +211,6 @@ def survival_function(
             Time at which to evaluate the survival probability of shape = (n_times,).
         eval_time (torch.Tensor, float):
             Times at which ``new_log_hz`` is evaluated of shape = (n_eval_time,)
-        checks (bool, optional):
-            Whether to perform input format checks.
-            Enabling checks can help catch potential issues in the input data.
-            Defaults to True.
 
     Returns:
         torch.Tensor:
@@ -256,8 +246,8 @@ def survival_function(
     new_time = new_time.squeeze()
     eval_time = eval_time.squeeze()
 
-    if checks:
-        validate_eval_time(new_log_hz, eval_time)
+    if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+        EvalTimeInputs(log_hz=new_log_hz, eval_times=eval_time)
 
     return torch.exp(-_cumulative_hazard_trapezoid(new_log_hz, new_time, eval_time))
 

@@ -1,17 +1,20 @@
 #!/bin/bash
+# Run code-quality checks: formatting, linting, and type checking.
+# Usage: codeqc.sh [check]
+#   check  Run ruff format in check-only mode (no writes). Default: format in-place.
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+set -euo pipefail
 
-set -e
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${REPO_ROOT}"
 
-cd "${DIR}/.."
+export PYTHONPATH="${REPO_ROOT}/src"
 
-if [ "$1" == "check" ]; then
-    CHECK="--check"
+if [[ "${1-}" == "check" ]]; then
+    ruff format --check .
 else
-    CHECK=""
+    ruff format .
 fi
 
-export PYTHONPATH=${DIR}/../src
-
-ruff format --check
+ruff check .
+mypy src/

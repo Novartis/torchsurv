@@ -11,87 +11,110 @@ pre-commit install
 
 This only needs to do once and ensures code formatting & checks are performed on each commit.
 
-## Set up a development environment via conda
+## Set up a development environment
 
-If you use Conda, you can install requirements into a conda environment
-using the `environment.yml` file included in the `dev` subfolder of the source repository.
+[uv](https://docs.astral.sh/uv/) is a fast Python package manager from Astral (the team behind `ruff`).
+It handles environment creation, dependency resolution, building, and publishing in a single tool.
 
-Using the package has the following dependencies which will be installed automatically via pip:
+Install uv (if not already installed):
 
-* [torch](https://pytorch.org/): Consider pre-installing if you have specific system requirements (CPU / GPU / CUDA version).
-* [scipy](https://scipy.org/): We use some statistical helper functions to calculate metrics.
-* [torchmetrics](https://lightning.ai/docs/torchmetrics/stable/): We use some statistical helper functions to calculate metrics.
+```bash
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-To run the tests and example notebooks, you need to install the following additional packages:
+# Windows
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 
-* [lifelines](https://lifelines.readthedocs.io/en/latest/)
-* [scikit-survival](https://scikit-survival.readthedocs.io/en/stable/)
-* [pytorch_lightning](https://lightning.ai/docs/pytorch/stable/) (and [lightning](https://lightning.ai/))
+# Or see https://docs.astral.sh/uv/getting-started/installation/ for more options
+```
 
-To use conda to install all package dependencies locally and start development,
-run the following commands in the root directory of the repository.
+Create the environment and install all dependencies:
 
-Create the environment:
+```bash
+uv sync --group dev
+```
+
+This creates a `.venv` virtual environment and installs the project in editable mode with all dev
+dependencies. To also include documentation dependencies:
+
+```bash
+uv sync --group dev --extra docs
+```
+
+Run commands in the project environment (no manual activation needed):
+
+```bash
+uv run pytest              # run tests
+uv run ruff check .        # lint
+uv run mypy src/           # type-check
+uv run pre-commit install  # set up git hooks
+```
+
+> **Tip:** You can also activate the virtual environment directly with
+> `source .venv/bin/activate` (Unix) or `.venv\Scripts\activate` (Windows),
+> then run commands without the `uv run` prefix.
+
+<details>
+<summary><em>Legacy: conda-based setup</em></summary>
+
+> **Note:** conda-based development is no longer actively maintained. The `dev/environment.yml`
+> file is provided for convenience but may drift from the canonical dependencies in
+> `pyproject.toml`. We recommend using uv instead.
 
 ```bash
 conda create -y -n torchsurv python=3.10
 conda env update -n torchsurv -f dev/environment.yml
-```
-
-Activate the environment:
-
-```bash
 conda activate torchsurv
 ```
 
+</details>
+
 ## Test and develop the package
 
-To run all unit tests either use `dev/run-unittests.sh` or run the
-following command from the repository root directory:
+Run all tests:
 
 ```bash
-PYTHONPATH=src python -m unittest discover -s tests -v
+uv run pytest
 ```
 
-To run other scripts within the repo, you can run the following
-from the top level directory of the repository clone, and then run
-scripts from there that import `TorchSurv`. Alternatively you may give
-an absolute path to the source directory.
+You can also use `dev/run-unittests.sh` which sets up `PYTHONPATH` automatically:
 
 ```bash
-export PYTHONPATH=src
+uv run ./dev/run-unittests.sh
 ```
 
-To test building the package, run:
+## Building the package
 
 ```bash
-python -m build # builds the package as a tarball -> dist
+uv build                   # outputs dist/*.whl and dist/*.tar.gz
 ```
 
 To get a local installation for testing e.g. other tools that depend on `TorchSurv`
 with a local development version of the code:
 
 ```bash
-pip install -e <repo-clone-directory>  # install for development ("editable")
+uv sync                    # editable install is the default
 ```
 
 ## Installing a local package build
 
-To install a specific package build e.g. into a local conda environment / virtualenv:
+To install a specific package build e.g. into a local virtual environment:
 
 ```bash
-python -m build
-# ... activate virtualenv
-# install the first tarball in dist
-pip install "$(set -- dist/*.tar.gz; echo "$1")"
+uv build
+uv run --with dist/torchsurv-*.whl -- python -c "from torchsurv.loss import cox"
 ```
 
 ## Code formatting
 
-We use `black` for code formatting. To format the code, run the following command:
+We use `ruff` for code formatting and linting. To format and check the code, run:
 
 ```bash
-./dev/codeqc.sh
+uv run ruff format .
+uv run ruff check .
+
+# Or use the convenience script
+uv run ./dev/codeqc.sh
 ```
 
 Code should be properly formatted before merging with `dev` or `main`.
@@ -103,7 +126,7 @@ run the following script:
 
 ```bash
 # just run ./dev/build-docs.sh to build but not start a webserver
-./dev/build-docs.sh serve
+uv run ./dev/build-docs.sh serve
 ```
 
 You can then access the documentation at `http://localhost:8000` in your web browser.
@@ -129,45 +152,46 @@ file.
 
 ## Steps to create a new release
 
-### 1. On pypi
+### 1. On PyPI
 
 Follow the steps below, ensure each one is successful.
 
-1. Update the version number in `pyproject.toml`.
+1. Update the version number in `src/torchsurv/__init__.py`.
 2. Ensure [CHANGELOG.md](CHANGELOG.md) is up-to-date with the new version number and changes.
 3. Ensure all PRs to be included are merged with `main`, pushed to Github and that all tests & checks have run successfully.
 4. Clean up any development artifacts: `rm -rf testenv testenv.bak dist build *.egg-info .pytest_cache __pycache__`
-5. Build the release from the latest main branch: `git checkout main && git pull && python -m build`
-6. Check the built package: `python -m twine check dist/*`
-7. Upload the package to testPyPI: `python -m twine upload -r testpypi dist/*`
-8. Check if the package can be installed (also check this installs the correct version):
+5. Build the release from the latest main branch:
 
     ```bash
-    rm -rf testenv # ensure a new test env is created
-    python -m virtualenv testenv
-    . ./testenv/bin/activate
-    # these don't simply install from testpypi
-    pip install torch torchmetrics scipy numpy
-    pip install -i https://test.pypi.org/simple/ torchsurv
-    python
-    >>> from torchsurv.loss import cox
-    >>> from torchsurv.metrics.cindex import ConcordanceIndex
+    git checkout main && git pull
+    uv build
     ```
 
-9. Upload to pypi: `python -m twine upload -r pypi dist/*`
-10. Check that the package can be installed:
+6. Upload the package to TestPyPI and verify:
 
     ```bash
-    rm -rf testenv # ensure a new test env is created
-    python -m virtualenv testenv
-    . ./testenv/bin/activate
-    pip install torchsurv
-    python
-    >>> from torchsurv.loss import cox
-    >>> from torchsurv.metrics.cindex import ConcordanceIndex
+    uv publish --index testpypi
     ```
 
-11. Create a new tag for the release, e.g. `git tag -a v0.1.3 -m "Version 0.1.3"`. Push the tag to Github: `git push origin v0.1.3`. Create a release on Github from the tag via <https://github.com/Novartis/torchsurv/releases>.
+7. Check if the package can be installed (also check this installs the correct version):
+
+    ```bash
+    uv run --with torchsurv --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --no-project -- python -c "from torchsurv.loss import cox; from torchsurv.metrics.cindex import ConcordanceIndex; print('OK')"
+    ```
+
+8. Upload to PyPI:
+
+    ```bash
+    uv publish
+    ```
+
+9. Check that the package can be installed:
+
+    ```bash
+    uv run --with torchsurv --no-project -- python -c "from torchsurv.loss import cox; from torchsurv.metrics.cindex import ConcordanceIndex; print('OK')"
+    ```
+
+10. Create a new tag for the release, e.g. `git tag -a v0.1.3 -m "Version 0.1.3"`. Push the tag to Github: `git push origin v0.1.3`. Create a release on Github from the tag via <https://github.com/Novartis/torchsurv/releases>.
 
 ### 2. Update on conda-forge
 

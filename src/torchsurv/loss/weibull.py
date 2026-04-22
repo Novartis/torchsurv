@@ -1,12 +1,10 @@
+from __future__ import annotations
+
 import sys
 
 import torch
 
-from torchsurv.tools.validate_data import (
-    _impute_missing_log_shape,
-    validate_model,
-    validate_survival_data,
-)
+from torchsurv.tools.validators import ModelInputs, SurvivalInputs, impute_missing_log_shape
 
 __all__ = [
     "neg_log_likelihood_weibull",
@@ -55,7 +53,7 @@ def _cumulative_hazard(
         >>> _cumulative_hazard(new_log_params, new_time, respective_times=True)
         tensor([0.8248, 2.0636])
     """
-    log_scale, log_shape = _impute_missing_log_shape(new_log_params).unbind(1)
+    log_scale, log_shape = impute_missing_log_shape(new_log_params).unbind(1)
 
     if new_time.dim() == 0:
         # Use one time for each sample
@@ -116,7 +114,7 @@ def log_hazard(
         tensor([0.0574, 0.2313])
     """
 
-    log_scale, log_shape = _impute_missing_log_shape(new_log_params).unbind(1)
+    log_scale, log_shape = impute_missing_log_shape(new_log_params).unbind(1)
 
     if new_time.dim() == 0:
         # Use one time for each sample
@@ -166,7 +164,7 @@ def survival_function_weibull(
                 [0.4127, 0.1270, 0.0338, 0.0081]])
 
     """
-    log_scale, log_shape = _impute_missing_log_shape(new_log_params).unbind(1)
+    log_scale, log_shape = impute_missing_log_shape(new_log_params).unbind(1)
 
     if new_time.dim() == 0:
         # Use one time for each sample
@@ -185,7 +183,6 @@ def neg_log_likelihood_weibull(
     event: torch.Tensor,
     time: torch.Tensor,
     reduction: str = "mean",
-    checks: bool = True,
 ) -> torch.Tensor:
     r"""
     Negative of the log likelihood for the Weibull Accelerated Time Failure (AFT) survival model.
@@ -203,10 +200,6 @@ def neg_log_likelihood_weibull(
         reduction (str):
             Method to reduce losses. Defaults to "mean".
             Must be one of the following: "sum", "mean".
-        checks (bool):
-            Whether to perform input format checks.
-            Enabling checks can help catch potential issues in the input data.
-            Defaults to True.
 
     Returns:
         (torch.Tensor, float): Negative of the log likelihood.
@@ -273,9 +266,11 @@ def neg_log_likelihood_weibull(
 
     """
 
-    if checks:
-        validate_survival_data(event, time)
-        validate_model(log_params, event, model_type="weibull")
+    if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+        _surv = SurvivalInputs(event=event, time=time)
+        event, time = _surv.event, _surv.time
+        _model = ModelInputs(log_params=log_params, event=event, model_type="weibull")
+        log_params = _model.log_params
 
     # ensure event and time are 1-dimensional
     event = event.squeeze()
