@@ -71,6 +71,7 @@ dev = [
     "torchvision",
     "pandas",
     "pandas-stubs",
+    "ipykernel>=6.31.0",
 ]
 publish = [
     "build",

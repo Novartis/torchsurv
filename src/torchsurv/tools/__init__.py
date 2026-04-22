@@ -9,7 +9,6 @@ from torchsurv.tools.validators import (
     SurvivalInputs,
     TimeVaryingCoxInputs,
     impute_missing_log_shape,
-    validate_time_varying_log_hz,
 )
 
 __all__ = [
@@ -19,5 +18,4 @@ __all__ = [
     "SurvivalInputs",
     "TimeVaryingCoxInputs",
     "impute_missing_log_shape",
-    "validate_time_varying_log_hz",
 ]

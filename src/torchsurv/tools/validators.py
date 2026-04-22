@@ -12,7 +12,6 @@ __all__ = [
     "SurvivalInputs",
     "TimeVaryingCoxInputs",
     "impute_missing_log_shape",
-    "validate_time_varying_log_hz",
 ]
 
 # ---------------------------------------------------------------------------
@@ -467,37 +466,3 @@ def impute_missing_log_shape(log_params: torch.Tensor) -> torch.Tensor:
     if log_params.dim() == 2 and log_params.size(1) == 1:
         log_params = torch.hstack((log_params, torch.zeros_like(log_params)))
     return log_params
-
-
-def validate_time_varying_log_hz(time_sorted: torch.Tensor, log_hz_sorted: torch.Tensor) -> None:
-    """Validate consistency of time-varying log hazard at repeated time points.
-
-    Delegates to :class:`TimeVaryingCoxInputs`.  For each pair of adjacent
-    identical times, the corresponding columns of ``log_hz_sorted`` must be
-    equal across all subjects (checked with :func:`torch.allclose`).
-
-    Args:
-        time_sorted: 1-D tensor of times in ascending order.
-        log_hz_sorted: 2-D tensor of shape ``(n_subjects, n_times)``.
-
-    Raises:
-        ValidationError: If any repeated time point has inconsistent
-            log-hazard columns.
-
-    Examples:
-        >>> import torch
-        >>> from torchsurv.tools.validators import validate_time_varying_log_hz
-        >>> time = torch.tensor([1.0, 2.0, 2.0, 3.0])
-        >>> log_hz = torch.tensor([[0.1, 0.2, 0.2, 0.3], [0.4, 0.5, 0.5, 0.6]])
-        >>> validate_time_varying_log_hz(time, log_hz)  # identical columns → no error
-
-        Inconsistent columns at a repeated time raise:
-
-        >>> log_hz_bad = torch.tensor([[0.1, 0.2, 0.9, 0.3], [0.4, 0.5, 0.5, 0.6]])
-        >>> try:
-        ...     validate_time_varying_log_hz(time, log_hz_bad)
-        ... except Exception as e:
-        ...     print("error raised")
-        error raised
-    """
-    TimeVaryingCoxInputs(time_sorted=time_sorted, log_hz_sorted=log_hz_sorted)
