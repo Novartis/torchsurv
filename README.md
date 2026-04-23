@@ -218,6 +218,24 @@ We obtain the concordance index for this batch with:
 ```python
 >>> from torchsurv.metrics.cindex import ConcordanceIndex
 >>> cindex = ConcordanceIndex()
+
+### Competing risks with cause-specific Cox
+
+For competing risks, the model outputs one log relative hazard per cause. Event labels are integer-coded with `0` for censoring and `1..K` for the observed cause.
+
+```python
+>>> from torch import nn
+>>> from torchsurv.loss import competing_risks
+>>> n_causes = 2
+>>> event_cr = torch.randint(low=0, high=n_causes + 1, size=(n,), dtype=torch.long)
+>>> model_cr = nn.Sequential(nn.Linear(16, n_causes))
+>>> log_hz_cr = model_cr(x)
+>>> loss = competing_risks.neg_partial_log_likelihood(log_hz_cr, event_cr, time)
+>>> baseline = competing_risks.baseline_cumulative_incidence_function(log_hz_cr.detach(), event_cr, time)
+>>> cif = competing_risks.cumulative_incidence_function(baseline, log_hz_cr.detach(), torch.tensor([25.0, 50.0]))
+>>> print(cif.shape)
+torch.Size([64, 2, 2])
+```
 >>> print(cindex(log_hz, event, time))
 tensor(0.4062)
 ```
