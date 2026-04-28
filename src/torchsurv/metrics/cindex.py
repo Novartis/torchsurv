@@ -1,15 +1,14 @@
+from __future__ import annotations
+
 import copy
 import sys
 import warnings
-from typing import Optional, Tuple
 
 import torch
 from scipy import stats
 from torchmetrics import regression
 
-from torchsurv.tools.validate_data import (
-    validate_survival_data,
-)
+from torchsurv.tools.validators import SurvivalInputs
 
 __all__ = ["ConcordanceIndex"]
 
@@ -20,18 +19,13 @@ class ConcordanceIndex:
     def __init__(
         self,
         tied_tol: float = 1e-8,
-        checks: bool = True,
-    ) -> dict:
+    ) -> None:
         """Initialize a ConcordanceIndex for survival class model evaluation.
 
         Args:
             tied_tol (float):
                 Tolerance for tied risk scores.
                 Defaults to 1e-8.
-            checks (bool):
-                Whether to perform input format checks.
-                Enabling checks can help catch potential issues in the input data.
-                Defaults to True.
 
         Examples:
             >>> _ = torch.manual_seed(42)
@@ -48,19 +42,18 @@ class ConcordanceIndex:
             tensor(0.2620)
         """
         self.tied_tol = tied_tol
-        self.checks = checks
 
         # init instate attributes
-        self.time = None
-        self.event = None
-        self.estimate = None
-        self.cindex = None
-        self.concordant = None
-        self.discordant = None
-        self.tied_risk = None
-        self.weight = None
-        self.weight_squared = None
-        self.tmax = None
+        self.time: torch.Tensor | None = None
+        self.event: torch.Tensor | None = None
+        self.estimate: torch.Tensor | None = None
+        self.cindex: torch.Tensor | None = None
+        self.concordant: torch.Tensor | None = None
+        self.discordant: torch.Tensor | None = None
+        self.tied_risk: torch.Tensor | None = None
+        self.weight: torch.Tensor | None = None
+        self.weight_squared: torch.Tensor | None = None
+        self.tmax: torch.Tensor | None = None
 
     # disable long line check for this function due to docstring. Might be better to try and do multiline math in the TeX formula
     # pylint: disable=C0301
@@ -69,8 +62,8 @@ class ConcordanceIndex:
         estimate: torch.Tensor,
         event: torch.Tensor,
         time: torch.Tensor,
-        weight: Optional[torch.Tensor] = None,
-        tmax: Optional[torch.Tensor] = None,
+        weight: torch.Tensor | None = None,
+        tmax: torch.Tensor | None = None,
         instate: bool = True,
     ) -> torch.Tensor:
         r"""Compute the Concordance Index (C-index).
@@ -199,8 +192,9 @@ class ConcordanceIndex:
         weight_squared = torch.square(weight)
 
         # Inputs checks
-        if self.checks:
-            validate_survival_data(event, time)
+        if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+            _surv = SurvivalInputs(event=event, time=time)
+            event, time = _surv.event, _surv.time
 
         # find comparable pairs
         comparable = self._get_comparable_and_tied_time(event, time)
@@ -212,7 +206,8 @@ class ConcordanceIndex:
         concordant, discordant, tied_risk = [], [], []
 
         # Initialize numerator and denominator for calculating the concordance index
-        numerator, denominator = 0.0, 0.0
+        numerator: float | torch.Tensor = 0.0
+        denominator: float | torch.Tensor = 0.0
 
         # Iterate through the comparable items over time
         # (dictionary with indices that have an event occurred at time and boolean masks of comparable pair a time)
@@ -399,7 +394,7 @@ class ConcordanceIndex:
             raise ValueError(f"Method {method} not implemented. Please choose either 'noether' or 'bootstrap'.")
         return pvalue
 
-    def compare(self, other, method: str = "noether", n_bootstraps: int = 999) -> torch.Tensor:
+    def compare(self, other: ConcordanceIndex, method: str = "noether", n_bootstraps: int = 999) -> torch.Tensor:
         """Compare two Concordance indices.
 
         This function compares two concordance indices computed on the
@@ -474,6 +469,7 @@ class ConcordanceIndex:
 
         alpha = alpha / 2 if alternative == "two_sided" else alpha
 
+        assert self.cindex is not None
         cindex_se = self._concordance_index_se()
 
         if cindex_se > 0:
@@ -500,6 +496,10 @@ class ConcordanceIndex:
         """
         alpha = alpha / 2 if alternative == "two_sided" else alpha
 
+        assert self.cindex is not None
+        assert self.weight is not None
+        assert self.concordant is not None
+        assert self.discordant is not None
         N = torch.sum(self.weight)
 
         pc = (1 / (N * (N - 1))) * torch.sum(self.concordant)
@@ -531,6 +531,7 @@ class ConcordanceIndex:
         """
 
         # c-index bootstraps given bootstrap distribution
+        assert self.cindex is not None
         cindex_bootstrap = self._bootstrap_cindex(metric="confidence_interval", n_bootstraps=n_bootstraps)
 
         # obtain confidence interval
@@ -551,12 +552,13 @@ class ConcordanceIndex:
 
         return torch.stack([lower, upper])
 
-    def _p_value_noether(self, alternative, null_value: float = 0.5) -> torch.Tensor:
+    def _p_value_noether(self, alternative: str, null_value: float = 0.5) -> torch.Tensor:
         """p-value for a one-sample hypothesis test of the Concordance index
         assuming that the concordance index is normally distributed and using standard
         errors estimated with Noether's method.
         """
 
+        assert self.cindex is not None
         cindex_se = self._concordance_index_se()
 
         # get p-value
@@ -573,13 +575,14 @@ class ConcordanceIndex:
 
         return p
 
-    def _p_value_bootstrap(self, alternative, n_bootstraps) -> torch.Tensor:
+    def _p_value_bootstrap(self, alternative: str, n_bootstraps: int) -> torch.Tensor:
         """p-value for a one-sample hypothesis test of the Concordance Index using
         permutation of risk prediction to estimate sampling distribution under the null
         hypothesis.
         """
 
         # c-index bootstraps given null distribution cindex = 0.5
+        assert self.cindex is not None
         cindex0 = self._bootstrap_cindex(metric="p_value", n_bootstraps=n_bootstraps)
 
         # Derive p-value
@@ -597,12 +600,15 @@ class ConcordanceIndex:
         return p
 
     # pylint: disable=W0212
-    def _compare_noether(self, other):
+    def _compare_noether(self, other: ConcordanceIndex) -> torch.Tensor:
         """Student t-test for dependent samples given Noether's standard error to
         compare two concordance indices.
         """
 
         # sample size
+        assert self.weight is not None
+        assert self.estimate is not None
+        assert self.cindex is not None
         N = sum(self.weight)
 
         # compute noether standard error
@@ -617,6 +623,7 @@ class ConcordanceIndex:
         )
 
         # compute spearman correlation between risk prediction
+        assert other.estimate is not None
         corr = regression.SpearmanCorrCoef()(self.estimate.reshape(-1), other.estimate.reshape(-1))
 
         # check for perfect positive monotonic relationship between two variables
@@ -635,11 +642,12 @@ class ConcordanceIndex:
             device=self.cindex.device,
         )  # student-t cdf not available on torch
 
-    def _compare_bootstrap(self, other, n_bootstraps):
+    def _compare_bootstrap(self, other: ConcordanceIndex, n_bootstraps: int) -> torch.Tensor:
         """Bootstrap two-sample test to compare two concordance indices."""
 
         # c-index bootstraps given null hypothesis that cindex1
         # and cindex2 come from the same distribution
+        assert self.cindex is not None
         cindex1_null = self._bootstrap_cindex(metric="compare", other=other, n_bootstraps=n_bootstraps)
         cindex2_null = self._bootstrap_cindex(metric="compare", other=other, n_bootstraps=n_bootstraps)
 
@@ -652,9 +660,12 @@ class ConcordanceIndex:
         # return p-value
         return torch.tensor(1) - (torch.tensor(1) + torch.sum(t_boot <= t_obs)) / torch.tensor(n_bootstraps + 1)
 
-    def _concordance_index_se(self):
+    def _concordance_index_se(self) -> torch.Tensor:
         """Standard error of concordance index using Noether's method."""
 
+        assert self.weight is not None
+        assert self.concordant is not None
+        assert self.discordant is not None
         N = sum(self.weight)
 
         pc = (1 / (N * (N - 1))) * torch.sum(self.concordant)
@@ -666,7 +677,7 @@ class ConcordanceIndex:
 
         return torch.sqrt(varp / N)
 
-    def _bootstrap_cindex(self, metric: str, n_bootstraps: int, other=None) -> torch.Tensor:
+    def _bootstrap_cindex(self, metric: str, n_bootstraps: int, other: ConcordanceIndex | None = None) -> torch.Tensor:
         """Compute bootstrap samples of the Concordance Index (C-index).
 
         Args:
@@ -689,6 +700,9 @@ class ConcordanceIndex:
         # Initiate empty list to store concordance index
         cindexes = []
 
+        assert self.estimate is not None
+        assert self.event is not None
+        assert self.time is not None
         # Get the bootstrap samples of concordance index
         for _ in range(n_bootstraps):
             if metric == "p_value":  # bootstrap samples given null distribution (cindex = 0.5)
@@ -725,6 +739,7 @@ class ConcordanceIndex:
                     )
                 )  # Run Concordance index, without saving internal state
             elif metric == "compare":  # bootstrap samples given null distribution (cindex1 = cindex2)
+                assert other is not None
                 index = torch.randint(
                     low=0,
                     high=len(self.event) * 2,
@@ -756,9 +771,9 @@ class ConcordanceIndex:
 
     @staticmethod
     def _get_comparable_and_tied_time(
-        event,
-        time,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        event: torch.Tensor,
+        time: torch.Tensor,
+    ) -> dict[int, torch.Tensor]:
         """Identify comparable pairs and count tied time pairs.
         The function iterates through the sorted time points to identify comparable samples
         (those with the same time point) and count the number of tied time points.
@@ -827,7 +842,7 @@ class ConcordanceIndex:
     def _update_weight(
         time: torch.Tensor,
         weight: torch.Tensor,
-        tmax: Optional[torch.Tensor] = None,
+        tmax: torch.Tensor | None = None,
     ) -> torch.Tensor:
         """Obtain subject-specific weight."""
 

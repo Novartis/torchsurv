@@ -1,6 +1,5 @@
 # global modules
 import json
-import unittest
 
 import numpy as np
 import torch
@@ -21,7 +20,7 @@ torch.manual_seed(42)
 np.random.seed(42)
 
 
-class TestSurvivalLoss(unittest.TestCase):
+class TestSurvivalLoss:
     """
     List of packages compared
         - survival (R)
@@ -48,16 +47,9 @@ class TestSurvivalLoss(unittest.TestCase):
         for benchmark_weibull_loglik in benchmark_weibull_logliks:
             time = torch.tensor(benchmark_weibull_loglik["time"], dtype=torch.float32)
             event = torch.tensor(benchmark_weibull_loglik["status"]).bool()
-            log_scale = torch.tensor(
-                benchmark_weibull_loglik["log_scale"], dtype=torch.float32
-            ).squeeze(0)
+            log_scale = torch.tensor(benchmark_weibull_loglik["log_scale"], dtype=torch.float32).squeeze(0)
 
-            eval_time = (
-                torch.cat([torch.linspace(0, time.max(), steps=100), time])
-                .unique()
-                .sort()
-                .values
-            )
+            eval_time = torch.cat([torch.linspace(0, time.max(), steps=100), time]).unique().sort().values
             log_hz = -log_scale.unsqueeze(1).expand(-1, len(eval_time))
 
             log_lik = -survival(
@@ -70,13 +62,11 @@ class TestSurvivalLoss(unittest.TestCase):
 
             log_lik_survival = benchmark_weibull_loglik["log_likelihood"]
 
-            self.assertTrue(
-                np.allclose(
-                    log_lik.numpy(),
-                    np.array(log_lik_survival),
-                    rtol=1e-5,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                log_lik.numpy(),
+                np.array(log_lik_survival),
+                rtol=1e-5,
+                atol=1e-8,
             )
 
     def test_log_likelihood_2_params_lung(self):
@@ -105,15 +95,8 @@ class TestSurvivalLoss(unittest.TestCase):
         log_likelihood_lifelines = wbf.log_likelihood_
 
         # compute log_hz
-        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[
-            :, 1
-        ].unsqueeze(1)
-        log_hz = (
-            log_shape
-            - log_scale
-            + (torch.exp(log_shape) - 1)
-            * (torch.log(eval_time).unsqueeze(0) - log_scale)
-        )
+        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[:, 1].unsqueeze(1)
+        log_hz = log_shape - log_scale + (torch.exp(log_shape) - 1) * (torch.log(eval_time).unsqueeze(0) - log_scale)
 
         # compute log likelihood
         log_likelihood = -survival(
@@ -123,13 +106,11 @@ class TestSurvivalLoss(unittest.TestCase):
             eval_time,
             reduction="sum",
         )
-        self.assertTrue(
-            np.allclose(
-                log_likelihood.numpy(),
-                np.array(log_likelihood_lifelines),
-                rtol=1e-4,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            log_likelihood.numpy(),
+            np.array(log_likelihood_lifelines),
+            rtol=1e-4,
+            atol=1e-8,
         )
 
         # one covariate
@@ -143,22 +124,13 @@ class TestSurvivalLoss(unittest.TestCase):
             wbf.summary.loc[:, "coef"].lambda_.Intercept
             + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
         )
-        log_shape = (
-            np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
-        )
+        log_shape = np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = torch.tensor(np.column_stack((log_scale, log_shape)))
         log_likelihood_lifelines = wbf.log_likelihood_
 
         # compute log_hz
-        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[
-            :, 1
-        ].unsqueeze(1)
-        log_hz = (
-            log_shape
-            - log_scale
-            + (torch.exp(log_shape) - 1)
-            * (torch.log(eval_time).unsqueeze(0) - log_scale)
-        )
+        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[:, 1].unsqueeze(1)
+        log_hz = log_shape - log_scale + (torch.exp(log_shape) - 1) * (torch.log(eval_time).unsqueeze(0) - log_scale)
 
         # compute log likelihood
         log_likelihood = -survival(
@@ -168,13 +140,11 @@ class TestSurvivalLoss(unittest.TestCase):
             eval_time,
             reduction="sum",
         )
-        self.assertTrue(
-            np.allclose(
-                log_likelihood.numpy(),
-                np.array(log_likelihood_lifelines),
-                rtol=1e-4,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            log_likelihood.numpy(),
+            np.array(log_likelihood_lifelines),
+            rtol=1e-4,
+            atol=1e-8,
         )
 
         # two covariates
@@ -189,22 +159,13 @@ class TestSurvivalLoss(unittest.TestCase):
             + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
             + np.array(self.lung["sex"]) * wbf.summary.loc[:, "coef"].lambda_.sex
         )
-        log_shape = (
-            np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
-        )
+        log_shape = np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = torch.tensor(np.column_stack((log_scale, log_shape)))
         log_likelihood_lifelines = wbf.log_likelihood_
 
         # compute log_hz
-        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[
-            :, 1
-        ].unsqueeze(1)
-        log_hz = (
-            log_shape
-            - log_scale
-            + (torch.exp(log_shape) - 1)
-            * (torch.log(eval_time).unsqueeze(0) - log_scale)
-        )
+        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[:, 1].unsqueeze(1)
+        log_hz = log_shape - log_scale + (torch.exp(log_shape) - 1) * (torch.log(eval_time).unsqueeze(0) - log_scale)
 
         # compute log likelihood
         log_likelihood = -survival(
@@ -214,13 +175,11 @@ class TestSurvivalLoss(unittest.TestCase):
             eval_time,
             reduction="sum",
         )
-        self.assertTrue(
-            np.allclose(
-                log_likelihood.numpy(),
-                np.array(log_likelihood_lifelines),
-                rtol=1e-4,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            log_likelihood.numpy(),
+            np.array(log_likelihood_lifelines),
+            rtol=1e-4,
+            atol=1e-8,
         )
 
     def test_log_likelihood_2_params_gbsg(self):
@@ -238,21 +197,12 @@ class TestSurvivalLoss(unittest.TestCase):
         # intercept only
         wbf = WeibullAFTFitter()
         wbf.fit(self.gbsg[["time", "cens"]], duration_col="time", event_col="cens")
-        log_params = torch.tensor(
-            np.ones((len(event), 1)) * wbf.summary.loc[:, "coef"].values
-        )
+        log_params = torch.tensor(np.ones((len(event), 1)) * wbf.summary.loc[:, "coef"].values)
         log_likelihood_lifelines = wbf.log_likelihood_
 
         # compute log_hz
-        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[
-            :, 1
-        ].unsqueeze(1)
-        log_hz = (
-            log_shape
-            - log_scale
-            + (torch.exp(log_shape) - 1)
-            * (torch.log(eval_time).unsqueeze(0) - log_scale)
-        )
+        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[:, 1].unsqueeze(1)
+        log_hz = log_shape - log_scale + (torch.exp(log_shape) - 1) * (torch.log(eval_time).unsqueeze(0) - log_scale)
 
         # compute log likelihood
         log_likelihood = -survival(
@@ -262,13 +212,11 @@ class TestSurvivalLoss(unittest.TestCase):
             eval_time,
             reduction="sum",
         )
-        self.assertTrue(
-            np.allclose(
-                log_likelihood.numpy(),
-                np.array(log_likelihood_lifelines),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            log_likelihood.numpy(),
+            np.array(log_likelihood_lifelines),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
         # one covariate
@@ -282,22 +230,13 @@ class TestSurvivalLoss(unittest.TestCase):
             wbf.summary.loc[:, "coef"].lambda_.Intercept
             + np.array(self.gbsg["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
         )
-        log_shape = (
-            np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
-        )
+        log_shape = np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = torch.tensor(np.column_stack((log_scale, log_shape)))
         log_likelihood_lifelines = wbf.log_likelihood_
 
         # compute log_hz
-        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[
-            :, 1
-        ].unsqueeze(1)
-        log_hz = (
-            log_shape
-            - log_scale
-            + (torch.exp(log_shape) - 1)
-            * (torch.log(eval_time).unsqueeze(0) - log_scale)
-        )
+        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[:, 1].unsqueeze(1)
+        log_hz = log_shape - log_scale + (torch.exp(log_shape) - 1) * (torch.log(eval_time).unsqueeze(0) - log_scale)
 
         # compute log likelihood
         log_likelihood = -survival(
@@ -307,13 +246,11 @@ class TestSurvivalLoss(unittest.TestCase):
             eval_time,
             reduction="sum",
         )
-        self.assertTrue(
-            np.allclose(
-                log_likelihood.numpy(),
-                np.array(log_likelihood_lifelines),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            log_likelihood.numpy(),
+            np.array(log_likelihood_lifelines),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
         # two covariates
@@ -328,22 +265,13 @@ class TestSurvivalLoss(unittest.TestCase):
             + np.array(self.gbsg["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
             + np.array(self.gbsg["tsize"]) * wbf.summary.loc[:, "coef"].lambda_.tsize
         )
-        log_shape = (
-            np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
-        )
+        log_shape = np.ones((self.gbsg.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = torch.tensor(np.column_stack((log_scale, log_shape)))
         log_likelihood_lifelines = wbf.log_likelihood_
 
         # compute log_hz
-        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[
-            :, 1
-        ].unsqueeze(1)
-        log_hz = (
-            log_shape
-            - log_scale
-            + (torch.exp(log_shape) - 1)
-            * (torch.log(eval_time).unsqueeze(0) - log_scale)
-        )
+        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[:, 1].unsqueeze(1)
+        log_hz = log_shape - log_scale + (torch.exp(log_shape) - 1) * (torch.log(eval_time).unsqueeze(0) - log_scale)
 
         # compute log likelihood
         log_likelihood = -survival(
@@ -353,13 +281,11 @@ class TestSurvivalLoss(unittest.TestCase):
             eval_time,
             reduction="sum",
         )
-        self.assertTrue(
-            np.allclose(
-                log_likelihood.numpy(),
-                np.array(log_likelihood_lifelines),
-                rtol=1e-5,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            log_likelihood.numpy(),
+            np.array(log_likelihood_lifelines),
+            rtol=1e-5,
+            atol=1e-8,
         )
 
     def test_survival_function_2_params_lung(self):
@@ -385,21 +311,12 @@ class TestSurvivalLoss(unittest.TestCase):
             + np.array(self.lung["age"]) * wbf.summary.loc[:, "coef"].lambda_.age
             + np.array(self.lung["sex"]) * wbf.summary.loc[:, "coef"].lambda_.sex
         )
-        log_shape = (
-            np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
-        )
+        log_shape = np.ones((self.lung.shape[0],)) * wbf.summary.loc[:, "coef"].rho_.Intercept
         log_params = torch.tensor(np.column_stack((log_scale, log_shape)))
 
         # compute log_hz
-        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[
-            :, 1
-        ].unsqueeze(1)
-        log_hz = (
-            log_shape
-            - log_scale
-            + (torch.exp(log_shape) - 1)
-            * (torch.log(eval_time).unsqueeze(0) - log_scale)
-        )
+        log_scale, log_shape = log_params[:, 0].unsqueeze(1), log_params[:, 1].unsqueeze(1)
+        log_hz = log_shape - log_scale + (torch.exp(log_shape) - 1) * (torch.log(eval_time).unsqueeze(0) - log_scale)
 
         # pick new time
         new_time = time[0:10]
@@ -417,15 +334,9 @@ class TestSurvivalLoss(unittest.TestCase):
             new_time,
         )
 
-        self.assertTrue(
-            np.allclose(
-                survival.numpy(),
-                np.array(survival_weibull),
-                rtol=1e-3,
-                atol=1e-8,
-            )
+        assert np.allclose(
+            survival.numpy(),
+            np.array(survival_weibull),
+            rtol=1e-3,
+            atol=1e-8,
         )
-
-
-if __name__ == "__main__":
-    unittest.main()

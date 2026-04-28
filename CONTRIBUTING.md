@@ -6,6 +6,18 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 
 Before contributing, please ensure you can set up the development environment by following the instructions in our [developer notes](/docs/devnotes.md).
 
+The quickest way to get started is with [uv](https://docs.astral.sh/uv/):
+
+```bash
+git clone https://github.com/Novartis/torchsurv.git
+cd torchsurv
+uv sync --group dev       # creates .venv and installs everything
+uv run pre-commit install # set up pre-commit hooks
+uv run pytest             # run the test suite
+```
+
+See the [developer notes](/docs/devnotes.md) for more details.
+
 ## How to Contribute
 
 ### Reporting Issues
