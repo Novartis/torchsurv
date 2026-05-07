@@ -13,7 +13,7 @@ DOCS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../docs" && pwd)"
 
 cd "${DOCS_DIR}"
 make clean
-make html
+make html SPHINXBUILD="uv run --group docs sphinx-build"
 
 if [[ "${1-}" == "serve" ]]; then
     cd _build/html

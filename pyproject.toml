@@ -36,24 +36,6 @@ classifiers = [
 dependencies = ["torch>=2.8", "scipy", "numpy", "torchmetrics", "pydantic>=2.0"]
 requires-python = ">=3.9"
 
-[project.optional-dependencies]
-docs = [
-    "sphinx>=7.0",
-    "sphinx-autoapi",
-    "sphinx-book-theme",
-    "sphinx-rtd-theme",
-    "numpydoc",
-    "jupyter-book",
-    "myst-parser",
-    "nbsphinx",
-    "sphinxcontrib-bibtex>=2.6",
-    "sphinx-math-dollar>=1.2",
-    "ipython>=8.0",
-    "matplotlib",
-    "pandas",
-    "lightning",
-]
-
 [dependency-groups]
 dev = [
     "pytest>=7.0",
@@ -76,6 +58,22 @@ dev = [
 publish = [
     "build",
     "twine",
+]
+docs = [
+    "sphinx>=7.0",
+    "sphinx-autoapi",
+    "sphinx-book-theme",
+    "sphinx-rtd-theme",
+    "numpydoc",
+    "jupyter-book",
+    "myst-parser",
+    "nbsphinx",
+    "sphinxcontrib-bibtex>=2.6",
+    "sphinx-math-dollar>=1.2",
+    "ipython>=8.0",
+    "matplotlib",
+    "pandas",
+    "lightning",
 ]
 
 

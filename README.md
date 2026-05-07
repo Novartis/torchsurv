@@ -91,17 +91,25 @@ Tool Reference
 
 ## Installation and dependencies
 
-First, install the package using either [PyPI]([https://pypi.org/](https://pypi.org/project/torchsurv/)) or [Conda]([https://anaconda.org/anaconda/conda](https://anaconda.org/conda-forge/torchsurv))
+First, install the package:
 
-- Using conda
+- Using [uv]([https://docs.astral.sh/uv/guides/integration/pytorch/)
 ```bash
-conda install conda-forge::torchsurv
+uv add torchsurv
 ```
-- Using PyPI
+
+- Using [PyPI][https://pypi.org/](https://pypi.org/project/torchsurv/)
 ```bash
 pip install torchsurv
 ```
+
+- Using [Conda][https://anaconda.org/anaconda/conda](https://anaconda.org/conda-forge/torchsurv)
+```bash
+conda install conda-forge::torchsurv
+```
+
 <details>
+
 <summary><em>Other installation details </em></summary>
 <br>
 -  Using for local development (latest version)
