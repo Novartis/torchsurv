@@ -10,6 +10,7 @@ graph LR
 
     %% LOSS
     LOSS --> COX["Cox"]:::sub
+    LOSS --> CR["Competing\nRisks"]:::sub
     LOSS --> WEIBULL["Weibull"]:::sub
     LOSS --> SURVIVAL["Survival\n(discrete-time)"]:::sub
     LOSS --> MOMENTUM["Momentum"]:::sub
@@ -17,6 +18,10 @@ graph LR
     COX --> C1["neg_partial_log_likelihood\n· Efron  · Breslow"]:::fn
     COX --> C2["baseline_survival_function"]:::fn
     COX --> C3["survival_function"]:::fn
+
+    CR --> CR1["neg_partial_log_likelihood"]:::fn
+    CR --> CR2["baseline_cumulative_incidence_function"]:::fn
+    CR --> CR3["cumulative_incidence_function\n· survival_function"]:::fn
 
     WEIBULL --> W1["neg_log_likelihood"]:::fn
     WEIBULL --> W2["log_hazard"]:::fn

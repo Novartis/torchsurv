@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 0.2.1
+-------------
+
+* Added a first competing-risks implementation based on cause-specific Cox models, including CIF and event-free survival helpers.
+
 Version 0.1.6
 -------------
 

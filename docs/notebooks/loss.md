@@ -158,6 +158,38 @@ This model is particularly powerful when the true hazard does not follow a stand
 - Observations are conditionally independent given the covariates.
 - Numerical integration (trapezoidal rule) is sufficiently accurate given the time discretization.
 
+### 5. Competing Risks with Cause-Specific Cox
+
+The first competing-risks loss is available through:
+
+```python
+from torchsurv.loss.competing_risks import neg_partial_log_likelihood
+```
+
+In this setting, the event variable is integer-coded with `0` for censoring and `1, \ldots, K` for the observed cause. The model outputs one log relative hazard per cause,
+
+$$
+\log \lambda_{ik} = f_{\theta, k}(\mathbf{x}_i), \quad k \in \{1, \ldots, K\}.
+$$
+
+For each cause $k$, `TorchSurv` fits a cause-specific Cox model by treating cause $k$ as the event of interest and all other outcomes as censored at their observed times. The total loss is the sum of the per-cause Cox partial log-likelihoods:
+
+$$
+\text{npll}_{CR} = \sum_{k=1}^{K} \text{npll}_{k}.
+$$
+
+This parameterization supports neural networks with a final layer of width $K$, keeps the same Cox-style training loop, and enables prediction of:
+
+- cause-specific baseline hazard increments,
+- event-free survival,
+- cumulative incidence functions (CIFs) for each cause.
+
+**Assumptions.**
+- Cause-specific proportional hazards within each cause.
+- Independent right censoring.
+- Correct specification of the cause-specific log-risk functions.
+- Competing events are handled through separate cause-specific hazards rather than a direct subdistribution hazard model.
+
 
 ### FAQ: Choosing the Right Survival Model
 
@@ -214,3 +246,4 @@ Use the **Flexible Survival model** when you do not want to impose any parametri
 | **Weibull** | $h_i(t) = \frac{\exp(f_{\theta_1}(\mathbf{x}_i))}{\exp(f_{\theta_2}(\mathbf{x}_i))} \left(\frac{t}{\exp(f_{\theta_2}(\mathbf{x}_i))}\right)^{\exp(f_{\theta_1}(\mathbf{x}_i)) - 1}$ | ✗ | ✓ | You expect monotonic hazard shape |
 | **Exponential** | $h_i(t) = \frac{1}{\exp(f_\theta(\mathbf{x}_i))}$ | ✗ | ✓ | You expect constant risk over time |
 | **Flexible Survival** | $h_i(t) = \exp(f_{\theta}(\mathbf{x}_i, t))$ | ✓ | ✗ (numerical approximation) | You need full flexibility, no parametric form |
+| **Competing Risks (Cause-Specific Cox)** | $h_{ik}(t) = \lambda_{0k}(t)\exp(f_{\theta,k}(\mathbf{x}_i))$ | ✗ | ✓ (per-cause partial likelihood) | You need CIFs with multiple mutually exclusive event types |
