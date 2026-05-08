@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies and override PyTorch ${{ matrix.torch-version }}
         run: |
           uv sync --group dev
-          uv pip install torch==${{ matrix.torch-version }}
+          uv pip install torch==${{ matrix.torch-version }} torchvision torchaudio --upgrade
 
       - name: Verify PyTorch version
         run: uv run --no-sync python -c "import torch; v = torch.__version__.split('+')[0]; assert v == '${{ matrix.torch-version }}', f'Expected ${{ matrix.torch-version }}, got {torch.__version__}'"
