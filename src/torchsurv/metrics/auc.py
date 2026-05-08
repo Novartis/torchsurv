@@ -1,16 +1,14 @@
+from __future__ import annotations
+
 import copy
 import sys
-from typing import Optional
 
 import torch
 from scipy import stats
 from torchmetrics import regression
 
 from torchsurv.stats import kaplan_meier
-from torchsurv.tools.validate_data import (
-    validate_new_time,
-    validate_survival_data,
-)
+from torchsurv.tools.validators import NewTimeInputs, SurvivalInputs
 
 __all__ = ["Auc"]
 
@@ -18,17 +16,13 @@ __all__ = ["Auc"]
 class Auc:
     """Area Under the Curve class for survival models."""
 
-    def __init__(self, checks: bool = True, tied_tol: float = 1e-8):
+    def __init__(self, tied_tol: float = 1e-8) -> None:
         """Initialize an Auc for survival class model evaluation.
 
         Args:
             tied_tol (float):
                 Tolerance for tied risk scores.
                 Defaults to 1e-8.
-            checks (bool):
-                Whether to perform input format checks.
-                Enabling checks can help catch potential issues in the input data.
-                Defaults to True.
 
         Examples:
             >>> _ = torch.manual_seed(42)
@@ -48,20 +42,19 @@ class Auc:
             tensor([0.1360, 0.7826, 0.4089])
         """
         self.tied_tol = tied_tol
-        self.checks = checks
 
         # init instate variables
-        self.order_time = None
-        self.time = None
-        self.event = None
-        self.weight = None
-        self.new_time = None
-        self.weight_new_time = None
-        self.estimate = None
-        self.is_case = None
-        self.is_control = None
-        self.auc_type = None
-        self.auc = None
+        self.order_time: torch.Tensor | None = None
+        self.time: torch.Tensor | None = None
+        self.event: torch.Tensor | None = None
+        self.weight: torch.Tensor | None = None
+        self.new_time: torch.Tensor | None = None
+        self.weight_new_time: torch.Tensor | None = None
+        self.estimate: torch.Tensor | None = None
+        self.is_case: torch.Tensor | None = None
+        self.is_control: torch.Tensor | None = None
+        self.auc_type: str | None = None
+        self.auc: torch.Tensor | None = None
 
     def __call__(
         self,
@@ -69,9 +62,9 @@ class Auc:
         event: torch.Tensor,
         time: torch.Tensor,
         auc_type: str = "cumulative",
-        weight: Optional[torch.Tensor] = None,
-        new_time: Optional[torch.Tensor] = None,
-        weight_new_time: Optional[torch.Tensor] = None,
+        weight: torch.Tensor | None = None,
+        new_time: torch.Tensor | None = None,
+        weight_new_time: torch.Tensor | None = None,
         instate: bool = True,
     ) -> torch.Tensor:
         r"""Compute the time-dependent Area Under the Receiver Operating Characteristic Curve (AUC).
@@ -218,9 +211,10 @@ class Auc:
         weight, weight_new_time = self._update_auc_weight(time, new_time, weight, weight_new_time)
 
         # further input format checks
-        if self.checks:
-            validate_survival_data(event, time)
-            validate_new_time(new_time, time)
+        if not (torch.jit.is_scripting() or torch.jit.is_tracing()):
+            _surv = SurvivalInputs(event=event, time=time)
+            event, time = _surv.event, _surv.time
+            NewTimeInputs(new_time=new_time, time=time)
 
         # sample size and length of time
         n_samples, n_times = estimate.shape[0], new_time.shape[0]
@@ -299,7 +293,7 @@ class Auc:
 
         return auc
 
-    def integral(self, tmax: Optional[torch.Tensor] = None):
+    def integral(self, tmax: torch.Tensor | None = None) -> torch.Tensor:
         """Compute the integral of the time-dependent AUC.
 
         Args:
@@ -339,6 +333,9 @@ class Auc:
                 Heagerty2005
         """
         # Only one time step available
+        assert self.new_time is not None
+        assert self.auc is not None
+        assert self.auc_type is not None
         if len(self.new_time) == 1:
             auc = self.auc[0]
         else:
@@ -490,7 +487,7 @@ class Auc:
             raise ValueError("Method not implemented. Please choose either 'blanche' or 'bootstrap'.")
         return pvalue
 
-    def compare(self, other, method: str = "blanche", n_bootstraps: int = 999) -> torch.Tensor:
+    def compare(self, other: Auc, method: str = "blanche", n_bootstraps: int = 999) -> torch.Tensor:
         """Compare two AUCs.
 
         This function compares two AUCs computed on the same data with different
@@ -562,6 +559,8 @@ class Auc:
         Meier estimator.
         """
 
+        assert self.new_time is not None
+        assert self.auc is not None
         # Find the index corresponding to tmax in times
         tmax_index = torch.sum(self.new_time <= tmax)
 
@@ -598,6 +597,8 @@ class Auc:
         incremental changes of the Kalpan-Meier estimate of the survival function.
         """
 
+        assert self.new_time is not None
+        assert self.auc is not None
         # Find the index corresponding to tmax in times
 
         tmax_index = torch.sum(self.new_time <= tmax)
@@ -661,6 +662,7 @@ class Auc:
         """
 
         # auc bootstraps given bootstrap distribution
+        assert self.auc is not None
         auc_bootstrap = self._bootstrap_auc(metric="confidence_interval", n_bootstraps=n_bootstraps)
 
         # initialize tensor to store confidence intervals
@@ -698,6 +700,7 @@ class Auc:
 
         auc_se = self._auc_se()
 
+        assert self.auc is not None
         # get p-value
         if torch.all(auc_se >= 0.0):
             p = torch.distributions.normal.Normal(0, 1).cdf((self.auc - null_value) / auc_se)
@@ -712,13 +715,14 @@ class Auc:
 
         return p
 
-    def _p_value_bootstrap(self, alternative, n_bootstraps) -> torch.Tensor:
+    def _p_value_bootstrap(self, alternative: str, n_bootstraps: int) -> torch.Tensor:
         """p-value for a one-sample hypothesis test of the AUC using
         permutation of risk prediction to estimate sampling distribution under the null
         hypothesis.
         """
 
         # auc bootstraps given null distribution auc = 0.5
+        assert self.auc is not None
         auc0 = self._bootstrap_auc(metric="p_value", n_bootstraps=n_bootstraps)
 
         # initialize empty tensor to store p-values
@@ -744,12 +748,14 @@ class Auc:
 
         return p_values
 
-    def _compare_blanche(self, other) -> torch.Tensor:
+    def _compare_blanche(self, other: Auc) -> torch.Tensor:
         """Student t-test for dependent samples given Blanche's standard error to
         compare two AUCs.
         """
 
         # sample size
+        assert self.estimate is not None
+        assert self.auc is not None
         N = self.estimate.shape[0]
 
         # compute noether standard error
@@ -763,6 +769,8 @@ class Auc:
         # iterate over time
         for index_t, _ in enumerate(self.auc):
             # compute spearman correlation between risk prediction
+            assert other.estimate is not None
+            assert other.auc is not None
             corr = regression.SpearmanCorrCoef()(self.estimate[:, index_t], other.estimate[:, index_t])
 
             # check for perfect positive monotonic relationship between two variables
@@ -783,11 +791,12 @@ class Auc:
 
         return p_values
 
-    def _compare_bootstrap(self, other, n_bootstraps) -> torch.Tensor:
+    def _compare_bootstrap(self, other: Auc, n_bootstraps: int) -> torch.Tensor:
         """Bootstrap two-sample test to compare two AUCs."""
 
         # auc bootstraps given null hypothesis that auc1 and
         # auc2 come from the same distribution
+        assert self.auc is not None
         auc1_null = self._bootstrap_auc(metric="compare", other=other, n_bootstraps=n_bootstraps)
         auc2_null = self._bootstrap_auc(metric="compare", other=other, n_bootstraps=n_bootstraps)
 
@@ -809,6 +818,14 @@ class Auc:
     def _auc_se(self) -> torch.Tensor:
         """AUC's standard error estimated using Blanche et al's method."""
 
+        assert self.estimate is not None
+        assert self.new_time is not None
+        assert self.time is not None
+        assert self.event is not None
+        assert self.weight is not None
+        assert self.weight_new_time is not None
+        assert self.is_case is not None
+        assert self.is_control is not None
         # sample size and length of time
         n_samples, n_times = self.estimate.shape[0], self.new_time.shape[0]
 
@@ -918,7 +935,7 @@ class Auc:
             )
         )
 
-        def divide_by_empirical_survival(v):
+        def divide_by_empirical_survival(v: torch.Tensor) -> torch.Tensor:
             return v / torch.cat((torch.tensor([1.0]), 1 - torch.arange(1, len(v)) / len(v)))
 
         d_censoring_martingale_div_s = torch.stack(
@@ -962,7 +979,7 @@ class Auc:
 
         return phi
 
-    def _bootstrap_auc(self, metric: str, n_bootstraps: int, other=None) -> torch.Tensor:
+    def _bootstrap_auc(self, metric: str, n_bootstraps: int, other: Auc | None = None) -> torch.Tensor:
         """Compute bootstrap samples of the AUC.
 
         Args:
@@ -981,6 +998,11 @@ class Auc:
         Returns:
             torch.Tensor: Bootstrap samples of AUC.
         """
+        assert self.estimate is not None
+        assert self.event is not None
+        assert self.time is not None
+        assert self.auc_type is not None
+        assert self.weight is not None
         # Initiate empty list to store auc
         aucs = []
 
@@ -1034,6 +1056,7 @@ class Auc:
                 )  # Run without saving internal state
 
             elif metric == "compare":  # bootstrap samples given null distribution (auc1 = auc2)
+                assert other is not None
                 # index included in bootstrap samples
                 index = torch.randint(
                     low=0,
@@ -1098,7 +1121,14 @@ class Auc:
         return ind_sorted[cum_sum]
 
     @staticmethod
-    def _validate_auc_inputs(estimate, time, auc_type, new_time, weight, weight_new_time):
+    def _validate_auc_inputs(
+        estimate: torch.Tensor,
+        time: torch.Tensor,
+        auc_type: str,
+        new_time: torch.Tensor | None,
+        weight: torch.Tensor | None,
+        weight_new_time: torch.Tensor | None,
+    ) -> None:
         # check new_time and weight are provided, weight_new_time should be provided
         if all([new_time is not None, weight is not None, weight_new_time is None]):
             raise ValueError("Please provide 'weight_new_time', the weight evaluated at 'new_time'.")

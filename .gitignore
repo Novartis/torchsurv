@@ -72,10 +72,12 @@ melodie/
 # anything with -copy
 *-copy.*
 
-# LLMs
-.claude/
-.github/
-.hypothesis/
+# copilot
+.github/**
+.specify/**
+.claude/**
+specs/**
 CLAUDE.md
-specs/
-.specify/
+
+# hypothesis generated test artifacts
+.hypothesis/

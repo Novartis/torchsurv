@@ -9,4 +9,4 @@ cd "${DIR}/.."
 
 export PYTHONPATH="${DIR}/../src"
 
-python -m unittest discover -s tests $@
+pytest tests/ -x $@

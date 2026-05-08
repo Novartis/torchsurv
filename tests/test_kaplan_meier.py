@@ -1,7 +1,7 @@
 import json
-import unittest
 
 import numpy as np
+import pytest
 import torch
 from sksurv.metrics import (
     CensoringDistributionEstimator,
@@ -21,11 +21,11 @@ torch.manual_seed(42)
 np.random.seed(42)
 
 
-class TestNonParametric(unittest.TestCase):
+class TestNonParametric:
     def test_kaplan_meier_gpu_device(self):
         """Test KaplanMeierEstimator on GPU if available."""
         if not torch.cuda.is_available():
-            self.skipTest("CUDA is not available.")
+            pytest.skip("CUDA is not available.")
         device = "cuda"
         event = torch.tensor([1, 0, 1, 1, 0], dtype=torch.bool, device=device)
         time = torch.tensor([1.0, 2.0, 2.0, 3.0, 4.0], dtype=torch.float32, device=device)
@@ -34,9 +34,9 @@ class TestNonParametric(unittest.TestCase):
         km(event, time, censoring_dist=False)
         st = km.predict(new_time)
         # Check that all outputs are on the correct device
-        self.assertEqual(km.time.device.type, "cuda")
-        self.assertEqual(km.km_est.device.type, "cuda")
-        self.assertEqual(st.device.type, "cuda")
+        assert km.time.device.type == "cuda"
+        assert km.km_est.device.type == "cuda"
+        assert st.device.type == "cuda"
 
     """
     List of packages compared
@@ -58,13 +58,11 @@ class TestNonParametric(unittest.TestCase):
 
             st_survival = np.array(benchmark_kaplan_meier["surv_prob_survival"])
 
-            self.assertTrue(
-                np.allclose(
-                    st.numpy(),
-                    st_survival,
-                    rtol=1e-3,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                st.numpy(),
+                st_survival,
+                rtol=1e-3,
+                atol=1e-8,
             )
 
     def test_kaplan_meier_censoring_distribution_simulated_data(self):
@@ -92,7 +90,7 @@ class TestNonParametric(unittest.TestCase):
             if not event.all():
                 ct_sksurv = ct_sksurv[1:]
 
-            self.assertTrue(np.allclose(ct.numpy(), ct_sksurv, rtol=1e-5, atol=1e-8))
+            assert np.allclose(ct.numpy(), ct_sksurv, rtol=1e-5, atol=1e-8)
 
     def test_kaplan_meier_survival_distribution_simulated_data(self):
         """test Kaplan Meier estimate of survival distribution on simulated batches including edge cases"""
@@ -117,7 +115,7 @@ class TestNonParametric(unittest.TestCase):
             surv.fit(y_array)
             st_sksurv = surv.prob_[1:]
 
-            self.assertTrue(np.allclose(st.numpy(), st_sksurv, rtol=1e-5, atol=1e-8))
+            assert np.allclose(st.numpy(), st_sksurv, rtol=1e-5, atol=1e-8)
 
     def test_kaplan_meier_predict_censoring_distribution_simulated_data(self):
         """test Kaplan Meier prediction of censoring distribution on simulated batches including edge cases"""
@@ -157,7 +155,7 @@ class TestNonParametric(unittest.TestCase):
             cens.fit(y_train_array)
             ct_pred_sksurv = cens.predict_proba(y_test_array["futime"])
 
-            self.assertTrue(np.allclose(ct_pred.numpy(), ct_pred_sksurv, rtol=1e-5, atol=1e-8))
+            assert np.allclose(ct_pred.numpy(), ct_pred_sksurv, rtol=1e-5, atol=1e-8)
 
     def test_kaplan_meier_predict_survival_distribution_simulated_data(self):
         """test Kaplan Meier prediction of survival distribution on simulated batches including edge cases"""
@@ -197,7 +195,7 @@ class TestNonParametric(unittest.TestCase):
             surv.fit(y_train_array)
             st_pred_sksurv = surv.predict_proba(y_test_array["futime"])
 
-            self.assertTrue(np.allclose(st_pred.numpy(), st_pred_sksurv, rtol=1e-5, atol=1e-8))
+            assert np.allclose(st_pred.numpy(), st_pred_sksurv, rtol=1e-5, atol=1e-8)
 
     def test_kaplan_meier_estimate_error_raised(self):
         """test that errors are raised for estimation in not-accepted edge cases."""
@@ -209,7 +207,8 @@ class TestNonParametric(unittest.TestCase):
         for batch in batch_container.batches:
             (train_time, train_event, *_) = batch
 
-            self.assertRaises(ValueError, KaplanMeierEstimator(), train_event, train_time)
+            with pytest.raises(ValueError):
+                KaplanMeierEstimator()(train_event, train_time)
 
     def test_kaplan_meier_plot_km(self):
         """test Kaplan Meier plot function"""
@@ -243,9 +242,5 @@ class TestNonParametric(unittest.TestCase):
         survival = table["Survival"].values
 
         # Use torch.allclose to allow for floating-point tolerance
-        self.assertTrue(np.allclose(times, expected_times, atol=1e-4))
-        self.assertTrue(np.allclose(survival, expected_survival, atol=1e-4))
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert np.allclose(times, expected_times, atol=1e-4)
+        assert np.allclose(survival, expected_survival, atol=1e-4)

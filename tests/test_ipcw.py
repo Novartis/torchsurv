@@ -1,6 +1,5 @@
 # global modules
 import json
-import unittest
 
 import numpy as np
 import torch
@@ -19,7 +18,7 @@ torch.manual_seed(42)
 np.random.seed(42)
 
 
-class TestIPCW(unittest.TestCase):
+class TestIPCW:
     """
     List of packages compared
         - pec (R)
@@ -42,22 +41,18 @@ class TestIPCW(unittest.TestCase):
             ipcw_new_time = get_ipcw(event, time, new_time)
             ipcw_new_time_pec = np.array(benchmark_ipcw["ipcw_times"])
 
-            self.assertTrue(
-                np.allclose(
-                    ipcw_subject_time.numpy(),
-                    ipcw_subject_time_pec,
-                    rtol=1e-4,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                ipcw_subject_time.numpy(),
+                ipcw_subject_time_pec,
+                rtol=1e-4,
+                atol=1e-8,
             )
 
-            self.assertTrue(
-                np.allclose(
-                    ipcw_new_time.numpy(),
-                    ipcw_new_time_pec,
-                    rtol=1e-4,
-                    atol=1e-8,
-                )
+            assert np.allclose(
+                ipcw_new_time.numpy(),
+                ipcw_new_time_pec,
+                rtol=1e-4,
+                atol=1e-8,
             )
 
     def test_ipcw_simulated_data(self):
@@ -106,8 +101,4 @@ class TestIPCW(unittest.TestCase):
             cens.fit(y_train_array)
             ipcw_sksurv = cens.predict_ipcw(y_test_array)
 
-            self.assertTrue(np.all(np.isclose(ipcw.numpy(), ipcw_sksurv, rtol=1e-4, atol=1e-8)))
-
-
-if __name__ == "__main__":
-    unittest.main()
+            assert np.all(np.isclose(ipcw.numpy(), ipcw_sksurv, rtol=1e-4, atol=1e-8))

@@ -1,7 +1,17 @@
-from typing import Tuple
+from __future__ import annotations
 
-import lifelines
-import lightning as L
+try:
+    import lifelines
+except ImportError:
+    lifelines = None  # type: ignore[assignment]
+
+try:
+    import lightning as L
+
+    _LightningModuleBase: type = L.LightningModule
+except ImportError:
+    L = None  # type: ignore[assignment]
+    _LightningModuleBase = object
 import numpy as np
 import torch
 from torch import nn
@@ -11,7 +21,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchsurv.loss.momentum import Momentum
 
 
-class LitSurvival(L.LightningModule):
+class LitSurvival(_LightningModuleBase):
     """Survival Model Fitter"""
 
     def __init__(self, backbone, loss, batch_size: int = 64, dataname: str = "lung"):
@@ -86,7 +96,7 @@ class LitSurvivalTwins(LitSurvival):
         return loss
 
 
-class SimpleLinearNNOneParameter(L.LightningModule):
+class SimpleLinearNNOneParameter(_LightningModuleBase):
     """Neural network with output = bias + weight * x"""
 
     def __init__(self, input_size: int):
@@ -97,7 +107,7 @@ class SimpleLinearNNOneParameter(L.LightningModule):
         return self.linear(x)
 
 
-class SimpleLinearNNTwoParameters(L.LightningModule):
+class SimpleLinearNNTwoParameters(_LightningModuleBase):
     """Neural network with output1 = bias_2 + weight_2 * x and output2 = bias_1 + 0 * x"""
 
     def __init__(self, input_size: int):
@@ -123,6 +133,8 @@ class SimpleLinearNNTwoParameters(L.LightningModule):
 class SurvivalDataset(Dataset):
     def __init__(self, name: str = "lung"):
         self.name = name
+        if lifelines is None:
+            raise ImportError("lifelines is required for dataset loading. Install with: pip install lifelines")
         self.df = lifelines.datasets.load_lung() if "lung" in name else lifelines.datasets.load_gbsg2()
 
     def __len__(self):
@@ -244,7 +256,7 @@ class SurvivalDataGenerator:
 
     def get_input(
         self,
-    ) -> Tuple[
+    ) -> tuple[
         torch.Tensor,
         torch.Tensor,
         torch.Tensor,
@@ -271,7 +283,7 @@ class SurvivalDataGenerator:
             self.new_time,
         )
 
-    def get_input_array(self) -> Tuple[np.array, np.array, np.array, np.array]:
+    def get_input_array(self) -> tuple[np.array, np.array, np.array, np.array]:
         """Returns simulated data as np array.
 
         Returns (Tuple, np.array):
@@ -346,7 +358,7 @@ class SurvivalDataGenerator:
 
     def _enforce_conditions_data(
         self, time: torch.tensor, event: torch.tensor, dataset_type: str
-    ) -> Tuple[torch.tensor, torch.tensor]:
+    ) -> tuple[torch.tensor, torch.tensor]:
         # if test max time should be greater than train max time
         if dataset_type == "test":
             if self.test_max_time_gt_train_max_time:
@@ -366,13 +378,13 @@ class SurvivalDataGenerator:
         if (dataset_type == "train" and self.train_ties_time_censoring) or (
             dataset_type == "test" and self.test_ties_time_censoring
         ):
-            time[torch.where(event == False)[0][0]] = time[torch.where(event == False)[0][1]]
+            time[torch.where(event == 0)[0][0]] = time[torch.where(event == 0)[0][1]]
 
         # if there should be a tie in an event time and a censoring time
         if (dataset_type == "train" and self.train_ties_time_event_censoring) or (
             dataset_type == "test" and self.test_ties_time_event_censoring
         ):
-            time[torch.where(event == True)[0][0]] = time[torch.where(event == False)[0][0]]
+            time[torch.where(event != 0)[0][0]] = time[torch.where(event == 0)[0][0]]
 
         # if there should be an event at the last time
         if dataset_type == "test" and self.test_event_at_last_time:

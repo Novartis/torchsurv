@@ -1,7 +1,10 @@
-import unittest
+import pytest
 
+pytest.importorskip("lightning")
 import lightning as L
 import torch
+
+pytest.importorskip("loguru")
 from loguru import logger
 from utils import (
     LitSurvival,
@@ -18,7 +21,7 @@ torch.manual_seed(42)
 trainer = L.Trainer(max_epochs=2, log_every_n_steps=5)
 
 
-class TestLitTraining(unittest.TestCase):
+class TestLitTraining:
     BATCH_N = 10
 
     def run_training(self, trainer, model):
@@ -39,7 +42,7 @@ class TestLitTraining(unittest.TestCase):
         )
         with torch.no_grad():
             params = model(torch.randn((1, 2), dtype=torch.float))
-        self.assertEqual(params.size(), (1, 1))
+        assert params.size() == (1, 1)
 
     def test_two_params(self):
         """Two parameters Weibull"""
@@ -54,7 +57,7 @@ class TestLitTraining(unittest.TestCase):
         )
         with torch.no_grad():
             params = model(torch.randn((1, 2), dtype=torch.float))
-        self.assertEqual(params.size(), (1, 2))
+        assert params.size() == (1, 2)
 
     def test_twins(self):
         """Two parameters Weibull"""
@@ -71,8 +74,4 @@ class TestLitTraining(unittest.TestCase):
 
         with torch.no_grad():
             params = model.momentum.infer(torch.randn(4, 2))
-        self.assertEqual(params.size(), (4, 1))
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert params.size() == (4, 1)

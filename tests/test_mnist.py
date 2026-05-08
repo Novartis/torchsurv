@@ -1,4 +1,7 @@
-import unittest
+import pytest
+
+pytest.importorskip("pytorch_lightning")
+pytest.importorskip("torchvision")
 
 import torch
 from pytorch_lightning import LightningModule, Trainer
@@ -132,7 +135,7 @@ class LitMNIST(LightningModule):
         )
 
 
-class TestMetrics(unittest.TestCase):
+class TestMetrics:
     def test_training(self):
         model = LitMNIST()
         trainer = Trainer(
@@ -145,10 +148,6 @@ class TestMetrics(unittest.TestCase):
         results = trainer.validate(model)[0]
         values = list(results.values())
         names = list(results.keys())
-        self.assertTrue(names == ["val_loss_epoch", "cindex_epoch"])
-        self.assertTrue(values[0] > 0)  # Loss
-        self.assertTrue(all([values[1] <= 1, values[1] >= 0]))  # Cindex
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert names == ["val_loss_epoch", "cindex_epoch"]
+        assert values[0] > 0  # Loss
+        assert all([values[1] <= 1, values[1] >= 0])  # Cindex
