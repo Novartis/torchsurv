@@ -10,6 +10,12 @@ jobs:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
         torch-version: ["2.10.0", "2.11.0"]
+        exclude:
+          # torch 2.10+ requires Python >=3.10
+          - python-version: "3.9"
+            torch-version: "2.10.0"
+          - python-version: "3.9"
+            torch-version: "2.11.0"
 
     steps:
       - uses: actions/checkout@v4
@@ -22,11 +28,10 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         run: uv python install ${{ matrix.python-version }}
 
-      - name: Install with specific PyTorch ${{ matrix.torch-version }}
+      - name: Install dependencies and override PyTorch ${{ matrix.torch-version }}
         run: |
-          echo 'torch==${{ matrix.torch-version }}' > /tmp/torch-override.txt
-          UV_OVERRIDE=/tmp/torch-override.txt uv lock
-          UV_OVERRIDE=/tmp/torch-override.txt uv sync --group dev
+          uv sync --group dev
+          uv pip install torch==${{ matrix.torch-version }}
 
       - name: Verify PyTorch version
         run: uv run python -c "import torch; v = torch.__version__.split('+')[0]; assert v == '${{ matrix.torch-version }}', f'Expected ${{ matrix.torch-version }}, got {torch.__version__}'"
