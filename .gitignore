@@ -73,7 +73,8 @@ melodie/
 *-copy.*
 
 # copilot
-.github/**
+.github/agents/**
+.github/prompts/**
 .specify/**
 .claude/**
 specs/**
