@@ -93,17 +93,17 @@ Tool Reference
 
 First, install the package:
 
-- Using [uv]([https://docs.astral.sh/uv/guides/integration/pytorch/)
+- Using [uv](https://docs.astral.sh/uv/guides/integration/pytorch/)
 ```bash
 uv add torchsurv
 ```
 
-- Using [PyPI][https://pypi.org/](https://pypi.org/project/torchsurv/)
+- Using [PyPI](https://pypi.org/project/torchsurv/)
 ```bash
 pip install torchsurv
 ```
 
-- Using [Conda][https://anaconda.org/anaconda/conda](https://anaconda.org/conda-forge/torchsurv)
+- Using [Conda](https://anaconda.org/conda-forge/torchsurv)
 ```bash
 conda install conda-forge::torchsurv
 ```
