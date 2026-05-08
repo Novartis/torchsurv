@@ -3,13 +3,9 @@ name: "QC 🛠️"
 on: [push]
 
 jobs:
-  build:
+  lint:
+    name: "Lint & Type Check"
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.10"]
-
     steps:
     - uses: actions/checkout@v4
 
@@ -18,8 +14,51 @@ jobs:
       with:
         enable-cache: true
 
-    - name: Set up Python ${{ matrix.python-version }}
-      run: uv python install ${{ matrix.python-version }}
+    - name: Set up Python
+      run: uv python install 3.10
+
+    - name: Install dependencies
+      run: uv sync --group dev
+
+    - name: Code QC
+      run: uv run ./dev/codeqc.sh check
+
+  test:
+    name: "Tests"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+
+    - name: Set up Python
+      run: uv python install 3.10
+
+    - name: Install dependencies
+      run: uv sync --group dev
+
+    - name: Doctests
+      run: uv run ./dev/run-doctests.sh
+
+    - name: Unit tests
+      run: uv run pytest
+
+  docs:
+    name: "Docs Build"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+
+    - name: Set up Python
+      run: uv python install 3.10
 
     - name: Install system dependencies
       run: sudo apt-get update && sudo apt-get install -y pandoc
@@ -27,20 +66,12 @@ jobs:
     - name: Install dependencies
       run: uv sync --group dev --group docs
 
-    - name: Code QC
-      run: uv run ./dev/codeqc.sh check
-
-    - name: Tests
-      run: |
-        uv run ./dev/run-doctests.sh
-        uv run pytest
-
-    - name: Test-build docs
+    - name: Build docs
       run: |
         uv run ./dev/build-docs.sh
         tar czvf docs.tar.gz -C docs/_build/html .
 
-    - name: 'Upload Docs Tarball'
+    - name: Upload Docs Tarball
       uses: actions/upload-artifact@v4
       with:
         name: docs.tar.gz

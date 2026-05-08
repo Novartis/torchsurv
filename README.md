@@ -9,7 +9,8 @@ Deep survival analysis made easy
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
-[![Python](https://img.shields.io/pypi/pyversions/torchsurv?label=Python)](https://pypi.org/project/torchsurv/)
+[![Python](https://img.shields.io/pypi/pyversions/torchsurv?label=Python)](https://github.com/Novartis/torchsurv/actions/workflows/torch-compatibility.yml)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.10%20|%202.11-ee4c2c?logo=pytorch&logoColor=white)](https://github.com/Novartis/torchsurv/actions/workflows/torch-compatibility.yml)
 [![PyPI - Version](https://img.shields.io/pypi/v/torchsurv?color=green&label=PyPI)](https://pypi.org/project/torchsurv/)
 [![Conda](https://img.shields.io/conda/v/conda-forge/torchsurv?label=Conda&color=green)](https://anaconda.org/conda-forge/torchsurv)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/torchsurv?period=total&units=INTERNATIONAL_SYSTEM&left_color=GRAY&right_color=brightgreen&left_text=PyPI%20downloads)](https://pepy.tech/projects/torchsurv)
