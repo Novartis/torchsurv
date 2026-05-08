@@ -25,7 +25,7 @@ jobs:
       - name: Install with specific PyTorch ${{ matrix.torch-version }}
         run: |
           echo 'torch==${{ matrix.torch-version }}' > /tmp/torch-override.txt
-          uv sync --group dev --override /tmp/torch-override.txt
+          UV_OVERRIDE=/tmp/torch-override.txt uv sync --group dev
 
       - name: Run tests
         run: uv run pytest --no-cov -x -q
