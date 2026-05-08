@@ -38,7 +38,7 @@ This creates a `.venv` virtual environment and installs the project in editable 
 dependencies. To also include documentation dependencies:
 
 ```bash
-uv sync --group dev --extra docs
+uv sync --group dev --group docs
 ```
 
 Run commands in the project environment (no manual activation needed):

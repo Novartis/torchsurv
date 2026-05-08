@@ -25,7 +25,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y pandoc
 
     - name: Install dependencies
-      run: uv sync --group dev --extra docs
+      run: uv sync --group dev --group docs
 
     - name: Code QC
       run: uv run ./dev/codeqc.sh check

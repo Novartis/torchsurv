@@ -5,7 +5,7 @@
 #
 # Recommended setup:
 #   uv sync --group dev          # install dev dependencies
-#   uv sync --group dev --extra docs  # include docs dependencies
+#   uv sync --group dev --group docs  # include docs dependencies
 #
 # See docs/devnotes.md for full instructions.
 
