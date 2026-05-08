@@ -28,7 +28,7 @@ jobs:
           uv pip install torch==${{ matrix.torch-version }}
 
       - name: Verify PyTorch version
-        run: uv run python -c "import torch; v = torch.__version__.split('+')[0]; assert v == '${{ matrix.torch-version }}', f'Expected ${{ matrix.torch-version }}, got {torch.__version__}'"
+        run: uv run --no-sync python -c "import torch; v = torch.__version__.split('+')[0]; assert v == '${{ matrix.torch-version }}', f'Expected ${{ matrix.torch-version }}, got {torch.__version__}'"
 
       - name: Run tests
-        run: uv run pytest --no-cov -x -q
+        run: uv run --no-sync pytest --no-cov -x -q
