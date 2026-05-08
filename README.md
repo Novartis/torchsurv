@@ -19,6 +19,7 @@ https://anaconda.org/conda-forge/torchsurv)
 
 ![CodeQC](https://github.com/Novartis/torchsurv/actions/workflows/codeqc.yml/badge.svg?branch=main)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.10%20|%202.11-ee4c2c?logo=pytorch&logoColor=white)](https://github.com/Novartis/torchsurv/actions/workflows/torch-compatibility.yml)
 [![CodeFactor](https://www.codefactor.io/repository/github/novartis/torchsurv/badge/main)](https://www.codefactor.io/repository/github/novartis/torchsurv/overview/main)
 [![JOSS](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d/status.svg)](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d)
 [![License](https://img.shields.io/badge/License-MIT-black)](https://opensource.org/licenses/MIT)
