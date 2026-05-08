@@ -276,6 +276,20 @@ weights (e.g., inverse probability of censoring weighting (IPCW)). Packages `sur
 </details>
 
 
+## Releases
+
+TorchSurv follows [Semantic Versioning](https://semver.org/). Releases are
+published to [PyPI](https://pypi.org/project/torchsurv/) and
+[conda-forge](https://anaconda.org/conda-forge/torchsurv) and tagged on
+GitHub.
+
+- **Compatibility:** Each release is validated against the latest two PyTorch
+  versions (see the [torch-compatibility](https://github.com/Novartis/torchsurv/actions/workflows/torch-compatibility.yml) CI workflow).
+- **Changelog:** See [CHANGELOG](https://opensource.nibr.com/torchsurv/CHANGELOG.html)
+  for a history of changes.
+- **Release process:** Detailed steps for maintainers are documented in the
+  [developer notes](https://opensource.nibr.com/torchsurv/devnotes.html#steps-to-create-a-new-release).
+
 ## Citation
 
 If you use this project in academic work or publications, we appreciate citing it using the following BibTeX entry:
