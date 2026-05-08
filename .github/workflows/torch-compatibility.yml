@@ -25,10 +25,11 @@ jobs:
       - name: Install with specific PyTorch ${{ matrix.torch-version }}
         run: |
           echo 'torch==${{ matrix.torch-version }}' > /tmp/torch-override.txt
+          UV_OVERRIDE=/tmp/torch-override.txt uv lock
           UV_OVERRIDE=/tmp/torch-override.txt uv sync --group dev
 
       - name: Verify PyTorch version
-        run: uv run python -c "import torch; assert torch.__version__.startswith('${{ matrix.torch-version }}'), f'Expected ${{ matrix.torch-version }}, got {torch.__version__}'"
+        run: uv run python -c "import torch; v = torch.__version__.split('+')[0]; assert v == '${{ matrix.torch-version }}', f'Expected ${{ matrix.torch-version }}, got {torch.__version__}'"
 
       - name: Run tests
         run: uv run pytest --no-cov -x -q
