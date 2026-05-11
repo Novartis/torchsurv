@@ -1,0 +1,1348 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Survival Analysis Beyond Medicine &#8212; TorchSurv 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0cc05dfd" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=7f7c277e"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/non_medical_applications';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Loss" href="loss.html" />
+    <link rel="prev" title="Survival Regression with Time-Varying Covariates" href="regression_time_varying.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">🎉 We are part of the <a href='https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis'> FDA's Regulatory Science Tools Catalog!</a> 🎉</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo_firecamp.png" class="logo__image only-light" alt="TorchSurv 0.2.0 documentation - Home"/>
+    <img src="../_static/logo_firecamp.png" class="logo__image only-dark pst-js-only" alt="TorchSurv 0.2.0 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../loss.html">Loss</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.cox.html">torchsurv.loss.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.weibull.html">torchsurv.loss.weibull</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.survival.html">torchsurv.loss.survival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.loss.momentum.html">torchsurv.loss.momentum</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../metrics.html">Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.metrics.auc.html">torchsurv.metrics.auc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.metrics.cindex.html">torchsurv.metrics.cindex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.metrics.brier_score.html">torchsurv.metrics.brier_score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.stats.kaplan_meier.html">torchsurv.stats.kaplan_meier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/torchsurv.stats.ipcw.html">torchsurv.stats.ipcw</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Survival Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="momentum.html">Survival Regression with MNIST</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="regression_time_varying.html">Survival Regression with Time-Varying Covariates</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Survival Analysis Beyond Medicine</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Under the hood:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="loss.html">Loss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="time_varying_covariates.html">Time-Varying Covariates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CODEOWNERS-copy.html">Maintainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CONTRIBUTING-copy.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT-copy.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devnotes.html">Development notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Related packages</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/Novartis/torchsurv" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/non_medical_applications.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Survival Analysis Beyond Medicine</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Shared-Utilities">Shared Utilities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#1.-Customer-Churn-—-Telecom-/-SaaS">1. Customer Churn — Telecom / SaaS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#2.-Employee-Attrition-—-HR-Analytics">2. Employee Attrition — HR Analytics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#3.-Equipment-Failure-—-Predictive-Maintenance">3. Equipment Failure — Predictive Maintenance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#4.-Loan-Default-—-Credit-Risk">4. Loan Default — Credit Risk</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#5.-Extreme-Weather-Events-—-Meteorology">5. Extreme Weather Events — Meteorology</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#6.-Cross-Domain-Comparison">6. Cross-Domain Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Summary">Summary</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Next-steps">Next steps</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="Survival-Analysis-Beyond-Medicine">
+<h1>Survival Analysis Beyond Medicine<a class="headerlink" href="#Survival-Analysis-Beyond-Medicine" title="Link to this heading">#</a></h1>
+<p>Survival analysis is often associated with clinical trials, but the same mathematical framework applies to any domain where you are modeling <strong>time until an event</strong> in the presence of <strong>incomplete observations (censoring)</strong>.</p>
+<p>This notebook demonstrates <code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code> across five real-world domains:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>#</p></th>
+<th class="head"><p>Domain</p></th>
+<th class="head"><p>“Event”</p></th>
+<th class="head"><p>“Time”</p></th>
+<th class="head"><p>Model</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p><strong>Customer Churn</strong> (Telecom)</p></td>
+<td><p>Subscription cancellation</p></td>
+<td><p>Duration as subscriber</p></td>
+<td><p>Cox</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p><strong>Employee Attrition</strong> (HR)</p></td>
+<td><p>Employee resignation</p></td>
+<td><p>Tenure</p></td>
+<td><p>Weibull AFT</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p><strong>Equipment Failure</strong> (Maintenance)</p></td>
+<td><p>Machine breakdown</p></td>
+<td><p>Operating hours</p></td>
+<td><p>Cox</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p><strong>Loan Default</strong> (Finance)</p></td>
+<td><p>Default event</p></td>
+<td><p>Months since origination</p></td>
+<td><p>Weibull AFT</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p><strong>Extreme Weather Events</strong> (Meteorology)</p></td>
+<td><p>Threshold exceedance</p></td>
+<td><p>Days between events</p></td>
+<td><p>Cox</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Each section:</p>
+<ul class="simple">
+<li><p>Generates <strong>synthetic data</strong> with realistic distributions (fixed seeds for reproducibility)</p></li>
+<li><p>Points to a <strong>real public dataset</strong> you can use as a drop-in replacement</p></li>
+<li><p>Trains either a <strong>Cox</strong> or <strong>Weibull AFT</strong> model using a simple MLP backbone</p></li>
+<li><p>Evaluates with <strong>C-index</strong> and <strong>time-dependent AUC</strong></p></li>
+</ul>
+<p>A final section compares performance across all domains.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Optional: install dependencies if running in a fresh environment</span>
+<span class="c1"># %pip install torchsurv matplotlib scikit-learn</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.loss</span><span class="w"> </span><span class="kn">import</span> <span class="n">cox</span><span class="p">,</span> <span class="n">weibull</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.auc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Auc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchsurv.metrics.cindex</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConcordanceIndex</span>
+
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="Shared-Utilities">
+<h2>Shared Utilities<a class="headerlink" href="#Shared-Utilities" title="Link to this heading">#</a></h2>
+<p>The helper code below is used by all domain sections. It defines:</p>
+<ul class="simple">
+<li><p>A generic <strong>MLP</strong> backbone</p></li>
+<li><p>A generic <strong>training loop</strong></p></li>
+<li><p>A <strong>SurvivalDataset</strong> wrapper</p></li>
+<li><p>A <strong>plot_losses</strong> utility</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MLP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple multi-layer perceptron for survival modeling.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_features: Number of input features.</span>
+<span class="sd">        out_features: 1 for Cox (log relative hazard), 2 for Weibull (log scale parameter, log shape parameter).</span>
+<span class="sd">        hidden: Sequence of hidden layer widths.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">32</span><span class="p">)):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">prev</span> <span class="o">=</span> <span class="n">in_features</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hidden</span><span class="p">:</span>
+            <span class="n">layers</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="n">h</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()]</span>
+            <span class="n">prev</span> <span class="o">=</span> <span class="n">h</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="n">out_features</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SurvivalDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps feature matrix X with (event, time) survival targets.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_loaders</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">val_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split into train/val/test and return DataLoaders.&quot;&quot;&quot;</span>
+    <span class="n">X_tv</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">e_tv</span><span class="p">,</span> <span class="n">e_test</span><span class="p">,</span> <span class="n">t_tv</span><span class="p">,</span> <span class="n">t_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">e_train</span><span class="p">,</span> <span class="n">e_val</span><span class="p">,</span> <span class="n">t_train</span><span class="p">,</span> <span class="n">t_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+        <span class="n">X_tv</span><span class="p">,</span> <span class="n">e_tv</span><span class="p">,</span> <span class="n">t_tv</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">val_size</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">test_size</span><span class="p">),</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+    <span class="p">)</span>
+    <span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+    <span class="n">X_train</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+    <span class="n">X_val</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_val</span><span class="p">)</span>
+    <span class="n">X_test</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+    <span class="n">loader_train</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">SurvivalDataset</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">e_train</span><span class="p">,</span> <span class="n">t_train</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">loader_val</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">SurvivalDataset</span><span class="p">(</span><span class="n">X_val</span><span class="p">,</span> <span class="n">e_val</span><span class="p">,</span> <span class="n">t_val</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+    <span class="n">loader_test</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">SurvivalDataset</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">e_test</span><span class="p">,</span> <span class="n">t_test</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">loader_train</span><span class="p">,</span> <span class="n">loader_val</span><span class="p">,</span> <span class="n">loader_test</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">loader_train</span><span class="p">,</span> <span class="n">loader_val</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">60</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic training loop. Returns (train_losses, val_losses).&quot;&quot;&quot;</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
+    <span class="n">train_losses</span><span class="p">,</span> <span class="n">val_losses</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="n">epoch_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">X_batch</span><span class="p">,</span> <span class="p">(</span><span class="n">event_batch</span><span class="p">,</span> <span class="n">time_batch</span><span class="p">)</span> <span class="ow">in</span> <span class="n">loader_train</span><span class="p">:</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_batch</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">event_batch</span><span class="p">,</span> <span class="n">time_batch</span><span class="p">)</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">epoch_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="n">train_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epoch_loss</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader_train</span><span class="p">))</span>
+
+        <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">val_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">X_batch</span><span class="p">,</span> <span class="p">(</span><span class="n">event_batch</span><span class="p">,</span> <span class="n">time_batch</span><span class="p">)</span> <span class="ow">in</span> <span class="n">loader_val</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_batch</span><span class="p">)</span>
+                <span class="n">val_loss</span> <span class="o">+=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">event_batch</span><span class="p">,</span> <span class="n">time_batch</span><span class="p">)</span>
+            <span class="n">val_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val_loss</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader_val</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">train_losses</span><span class="p">,</span> <span class="n">val_losses</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_losses</span><span class="p">(</span><span class="n">train_losses</span><span class="p">,</span> <span class="n">val_losses</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">train_norm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">train_losses</span><span class="p">)</span> <span class="o">/</span> <span class="n">train_losses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">val_norm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">val_losses</span><span class="p">)</span> <span class="o">/</span> <span class="n">val_losses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">train_norm</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">val_norm</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;validation&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Epoch&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized loss&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_cox</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">loader_test</span><span class="p">,</span> <span class="n">domain_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate a Cox model. Returns dict of metrics.&quot;&quot;&quot;</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">X_test</span><span class="p">,</span> <span class="p">(</span><span class="n">event_test</span><span class="p">,</span> <span class="n">time_test</span><span class="p">)</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loader_test</span><span class="p">))</span>
+        <span class="n">log_hz</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+    <span class="c1"># Survival function estimate via Breslow</span>
+    <span class="c1"># C-index</span>
+    <span class="n">ci</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">ci</span><span class="p">(</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event_test</span><span class="p">,</span> <span class="n">time_test</span><span class="p">)</span>
+
+    <span class="c1"># AUC at median time</span>
+    <span class="n">median_t</span> <span class="o">=</span> <span class="n">time_test</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+    <span class="n">auc_metric</span> <span class="o">=</span> <span class="n">Auc</span><span class="p">()</span>
+    <span class="n">auc_val</span> <span class="o">=</span> <span class="n">auc_metric</span><span class="p">(</span><span class="n">estimate</span><span class="o">=</span><span class="n">log_hz</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="n">event_test</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">time_test</span><span class="p">,</span> <span class="n">new_time</span><span class="o">=</span><span class="n">median_t</span><span class="p">)</span>
+
+    <span class="c1"># Brier Score</span>
+    <span class="c1"># Estimate survival probabilities using Cox baseline</span>
+    <span class="c1"># We use the proportional hazards structure: S(t|x) = S0(t)^exp(log_hz)</span>
+    <span class="c1"># Baseline survival from Kaplan-Meier on training (approximation)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">domain_name</span><span class="si">}</span><span class="s2"> — Cox Model Results&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">50</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  C-index         : </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  95% CI          : </span><span class="si">{</span><span class="n">ci</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  AUC (median t)  : </span><span class="si">{</span><span class="n">auc_val</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">50</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;domain&quot;</span><span class="p">:</span> <span class="n">domain_name</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;Cox&quot;</span><span class="p">,</span> <span class="s2">&quot;cindex&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="s2">&quot;auc&quot;</span><span class="p">:</span> <span class="n">auc_val</span><span class="o">.</span><span class="n">item</span><span class="p">()}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_weibull</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">loader_test</span><span class="p">,</span> <span class="n">domain_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate a Weibull AFT model. Returns dict of metrics.&quot;&quot;&quot;</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">X_test</span><span class="p">,</span> <span class="p">(</span><span class="n">event_test</span><span class="p">,</span> <span class="n">time_test</span><span class="p">)</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loader_test</span><span class="p">))</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>  <span class="c1"># shape (N, 2): [log_scale, log_shape]</span>
+        <span class="n">log_scale</span> <span class="o">=</span> <span class="n">params</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># C-index (use negative log_scale as risk score — higher scale = longer survival)</span>
+    <span class="n">ci</span> <span class="o">=</span> <span class="n">ConcordanceIndex</span><span class="p">()</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">ci</span><span class="p">(</span><span class="o">-</span><span class="n">log_scale</span><span class="p">,</span> <span class="n">event_test</span><span class="p">,</span> <span class="n">time_test</span><span class="p">)</span>
+
+    <span class="c1"># AUC at median time</span>
+    <span class="n">median_t</span> <span class="o">=</span> <span class="n">time_test</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+    <span class="n">auc_metric</span> <span class="o">=</span> <span class="n">Auc</span><span class="p">()</span>
+    <span class="n">auc_val</span> <span class="o">=</span> <span class="n">auc_metric</span><span class="p">(</span><span class="n">estimate</span><span class="o">=-</span><span class="n">log_scale</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="n">event_test</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">time_test</span><span class="p">,</span> <span class="n">new_time</span><span class="o">=</span><span class="n">median_t</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">domain_name</span><span class="si">}</span><span class="s2"> — Weibull AFT Model Results&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">50</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  C-index         : </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  95% CI          : </span><span class="si">{</span><span class="n">ci</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  AUC (median t)  : </span><span class="si">{</span><span class="n">auc_val</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">50</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;domain&quot;</span><span class="p">:</span> <span class="n">domain_name</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;Weibull AFT&quot;</span><span class="p">,</span> <span class="s2">&quot;cindex&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="s2">&quot;auc&quot;</span><span class="p">:</span> <span class="n">auc_val</span><span class="o">.</span><span class="n">item</span><span class="p">()}</span>
+
+
+<span class="c1"># Store results for the final comparison</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="1.-Customer-Churn-—-Telecom-/-SaaS">
+<h2>1. Customer Churn — Telecom / SaaS<a class="headerlink" href="#1.-Customer-Churn-—-Telecom-/-SaaS" title="Link to this heading">#</a></h2>
+<p><strong>Scenario</strong>: A telecom company wants to predict <em>when</em> a subscriber will cancel their contract. The event is <strong>churn</strong> (cancellation). The time is <strong>months as a subscriber</strong>. Many customers are still active at the observation cutoff — these are <strong>right-censored</strong> observations.</p>
+<p><strong>Features</strong>: Monthly charges, contract type (encoded), number of support calls, tenure group, usage level.</p>
+<blockquote>
+<div><p>📂 <strong>Real Dataset</strong>: <a class="reference external" href="https://www.kaggle.com/datasets/blastchar/telco-customer-churn">Telco Customer Churn — Kaggle</a> 7,043 customers with 20 features including contract type, monthly charges, and churn indicator. <em>In this notebook we use synthetic data with matching statistical properties to keep the example self-contained and fast to run.</em></p>
+</div></blockquote>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Synthetic Churn Data ──────────────────────────────────────────────────────</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">800</span>
+
+<span class="n">monthly_charges</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># USD per month</span>
+<span class="n">support_calls</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># number of support interactions</span>
+<span class="n">contract_type</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># 0=month-to-month, 1=1yr, 2=2yr</span>
+<span class="n">usage_level</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># GB data used per month</span>
+
+<span class="c1"># Log-relative hazard: high charges + many calls + month-to-month contract -&gt; higher churn risk</span>
+<span class="n">log_hz_true</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mf">0.02</span> <span class="o">*</span> <span class="n">monthly_charges</span>
+    <span class="o">+</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">support_calls</span>
+    <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">contract_type</span>  <span class="c1"># longer contracts = lower churn</span>
+    <span class="o">-</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">usage_level</span>
+    <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="c1"># Generate survival times from exponential proportional hazards</span>
+<span class="n">baseline_scale</span> <span class="o">=</span> <span class="mf">36.0</span>  <span class="c1"># months</span>
+<span class="n">churn_time</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="n">baseline_scale</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_hz_true</span><span class="p">))</span>
+<span class="c1"># Censoring: observation window of 48 months</span>
+<span class="n">censoring_time</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">time_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">churn_time</span><span class="p">,</span> <span class="n">censoring_time</span><span class="p">)</span>
+<span class="n">event_obs</span> <span class="o">=</span> <span class="p">(</span><span class="n">churn_time</span> <span class="o">&lt;=</span> <span class="n">censoring_time</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Churn rate: </span><span class="si">{</span><span class="n">event_obs</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">  |  Median tenure: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">time_obs</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> months&quot;</span><span class="p">)</span>
+
+<span class="n">X_churn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">monthly_charges</span><span class="p">,</span> <span class="n">support_calls</span><span class="p">,</span> <span class="n">contract_type</span><span class="p">,</span> <span class="n">usage_level</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Churn rate: 72.8%  |  Median tenure: 6.3 months
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Data loaders ─────────────────────────────────────────────────────────────</span>
+<span class="n">loader_train_ch</span><span class="p">,</span> <span class="n">loader_val_ch</span><span class="p">,</span> <span class="n">loader_test_ch</span> <span class="o">=</span> <span class="n">make_loaders</span><span class="p">(</span><span class="n">X_churn</span><span class="p">,</span> <span class="n">event_obs</span><span class="p">,</span> <span class="n">time_obs</span><span class="p">)</span>
+
+<span class="c1"># ── Cox model ────────────────────────────────────────────────────────────────</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">cox_churn</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">train_losses_ch</span><span class="p">,</span> <span class="n">val_losses_ch</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span>
+    <span class="n">cox_churn</span><span class="p">,</span>
+    <span class="n">loader_train_ch</span><span class="p">,</span>
+    <span class="n">loader_val_ch</span><span class="p">,</span>
+    <span class="n">loss_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">out</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="n">cox</span><span class="o">.</span><span class="n">neg_partial_log_likelihood</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plot_losses</span><span class="p">(</span><span class="n">train_losses_ch</span><span class="p">,</span> <span class="n">val_losses_ch</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Churn — Cox training&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_non_medical_applications_9_0.png" src="../_images/notebooks_non_medical_applications_9_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluate_cox</span><span class="p">(</span><span class="n">cox_churn</span><span class="p">,</span> <span class="n">loader_test_ch</span><span class="p">,</span> <span class="s2">&quot;Customer Churn&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+==================================================
+ Customer Churn — Cox Model Results
+==================================================
+  C-index         : 0.6917
+  95% CI          : tensor([0.5998, 0.7835])
+  AUC (median t)  : 0.7358
+==================================================
+</pre></div></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="2.-Employee-Attrition-—-HR-Analytics">
+<h2>2. Employee Attrition — HR Analytics<a class="headerlink" href="#2.-Employee-Attrition-—-HR-Analytics" title="Link to this heading">#</a></h2>
+<p><strong>Scenario</strong>: An HR team wants to model <em>when</em> an employee is likely to resign. The event is <strong>resignation</strong>. The time is <strong>months of tenure</strong>. Employees still at the company at the snapshot date are <strong>right-censored</strong>.</p>
+<p><strong>Features</strong>: Job satisfaction score, distance from home, overtime flag, salary band, years since last promotion.</p>
+<blockquote>
+<div><p>📂 <strong>Real Dataset</strong>: <a class="reference external" href="https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset">IBM HR Analytics Employee Attrition — Kaggle</a> 1,470 employees with 35 features including satisfaction scores, overtime, and attrition indicator. <em>In this notebook we use synthetic data with matching statistical properties to keep the example self-contained and fast to run.</em></p>
+</div></blockquote>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Synthetic Attrition Data ─────────────────────────────────────────────────</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">800</span>
+
+<span class="n">satisfaction</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># 1=low, 5=high job satisfaction</span>
+<span class="n">distance_home</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># km from home</span>
+<span class="n">overtime</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">N</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">salary_band</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># 1=lowest, 4=highest</span>
+<span class="n">yrs_since_promo</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+<span class="c1"># log_scale scales with time in Weibull AFT, so positive coeff = longer survival (lower resignation risk)</span>
+<span class="n">log_scale</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mf">0.3</span> <span class="o">*</span> <span class="n">satisfaction</span>
+    <span class="o">-</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">distance_home</span>
+    <span class="o">-</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">overtime</span>
+    <span class="o">+</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">salary_band</span>
+    <span class="o">-</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">yrs_since_promo</span>
+    <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_scale</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span>  <span class="c1"># baseline ~20 months</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="mf">1.5</span>
+<span class="n">attrition_time</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">weibull</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">censoring_time</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">time_obs_att</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">attrition_time</span><span class="p">,</span> <span class="n">censoring_time</span><span class="p">)</span>
+<span class="n">event_obs_att</span> <span class="o">=</span> <span class="p">(</span><span class="n">attrition_time</span> <span class="o">&lt;=</span> <span class="n">censoring_time</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Resignation rate: </span><span class="si">{</span><span class="n">event_obs_att</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">  |  Median tenure: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">time_obs_att</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> months&quot;</span><span class="p">)</span>
+
+<span class="n">X_att</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">satisfaction</span><span class="p">,</span> <span class="n">distance_home</span><span class="p">,</span> <span class="n">overtime</span><span class="p">,</span> <span class="n">salary_band</span><span class="p">,</span> <span class="n">yrs_since_promo</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Resignation rate: 37.1%  |  Median tenure: 20.5 months
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Data loaders ─────────────────────────────────────────────────────────────</span>
+<span class="n">loader_train_att</span><span class="p">,</span> <span class="n">loader_val_att</span><span class="p">,</span> <span class="n">loader_test_att</span> <span class="o">=</span> <span class="n">make_loaders</span><span class="p">(</span><span class="n">X_att</span><span class="p">,</span> <span class="n">event_obs_att</span><span class="p">,</span> <span class="n">time_obs_att</span><span class="p">)</span>
+
+<span class="c1"># ── Weibull AFT model ────────────────────────────────────────────────────────</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">weibull_att</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">weibull_loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">weibull</span><span class="o">.</span><span class="n">neg_log_likelihood_weibull</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+
+<span class="n">train_losses_att</span><span class="p">,</span> <span class="n">val_losses_att</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span><span class="n">weibull_att</span><span class="p">,</span> <span class="n">loader_train_att</span><span class="p">,</span> <span class="n">loader_val_att</span><span class="p">,</span> <span class="n">loss_fn</span><span class="o">=</span><span class="n">weibull_loss</span><span class="p">)</span>
+<span class="n">plot_losses</span><span class="p">(</span><span class="n">train_losses_att</span><span class="p">,</span> <span class="n">val_losses_att</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Attrition — Weibull AFT training&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_non_medical_applications_14_0.png" src="../_images/notebooks_non_medical_applications_14_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluate_weibull</span><span class="p">(</span><span class="n">weibull_att</span><span class="p">,</span> <span class="n">loader_test_att</span><span class="p">,</span> <span class="s2">&quot;Employee Attrition&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+==================================================
+ Employee Attrition — Weibull AFT Model Results
+==================================================
+  C-index         : 0.5867
+  95% CI          : tensor([0.4423, 0.7311])
+  AUC (median t)  : 0.6214
+==================================================
+</pre></div></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="3.-Equipment-Failure-—-Predictive-Maintenance">
+<h2>3. Equipment Failure — Predictive Maintenance<a class="headerlink" href="#3.-Equipment-Failure-—-Predictive-Maintenance" title="Link to this heading">#</a></h2>
+<p><strong>Scenario</strong>: A manufacturer monitors industrial machines and wants to predict <em>when</em> each unit will fail. The event is <strong>mechanical failure</strong>. The time is <strong>operating hours</strong>. Machines still running at the end of the monitoring window are <strong>right-censored</strong>.</p>
+<p><strong>Features</strong>: Average load (%), operating temperature (°C), vibration level, machine age (years), maintenance cycles.</p>
+<blockquote>
+<div><p>📂 <strong>Real Dataset</strong>: <a class="reference external" href="https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/">NASA CMAPSS Turbofan Engine Degradation Dataset</a> Engine run-to-failure data with multiple sensor readings. Widely used benchmark for RUL prediction. <em>In this notebook we use synthetic data with matching statistical properties to keep the example self-contained and fast to run.</em></p>
+</div></blockquote>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Synthetic Equipment Failure Data ──────────────────────────────────────────</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">800</span>
+
+<span class="n">load</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># % capacity</span>
+<span class="n">temperature</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># °C operating temperature</span>
+<span class="n">vibration</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># vibration index</span>
+<span class="n">age_years</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># years in service</span>
+<span class="n">maint_cycles</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># # of maintenance events</span>
+
+<span class="n">log_hz_true</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mf">0.01</span> <span class="o">*</span> <span class="n">load</span> <span class="o">+</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">temperature</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">vibration</span> <span class="o">+</span> <span class="mf">0.08</span> <span class="o">*</span> <span class="n">age_years</span> <span class="o">-</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">maint_cycles</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">baseline_hours</span> <span class="o">=</span> <span class="mf">2000.0</span>
+<span class="n">time_failure</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="n">baseline_hours</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_hz_true</span><span class="p">))</span>
+<span class="n">censoring_h</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">4000</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">time_obs_eq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">time_failure</span><span class="p">,</span> <span class="n">censoring_h</span><span class="p">)</span>
+<span class="n">event_obs_eq</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_failure</span> <span class="o">&lt;=</span> <span class="n">censoring_h</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failure rate: </span><span class="si">{</span><span class="n">event_obs_eq</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">  |  Median observed hours: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">time_obs_eq</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">X_eq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">load</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">vibration</span><span class="p">,</span> <span class="n">age_years</span><span class="p">,</span> <span class="n">maint_cycles</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Failure rate: 91.4%  |  Median observed hours: 219
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Data loaders ─────────────────────────────────────────────────────────────</span>
+<span class="n">loader_train_eq</span><span class="p">,</span> <span class="n">loader_val_eq</span><span class="p">,</span> <span class="n">loader_test_eq</span> <span class="o">=</span> <span class="n">make_loaders</span><span class="p">(</span><span class="n">X_eq</span><span class="p">,</span> <span class="n">event_obs_eq</span><span class="p">,</span> <span class="n">time_obs_eq</span><span class="p">)</span>
+
+<span class="c1"># ── Cox model ────────────────────────────────────────────────────────────────</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">cox_eq</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">train_losses_eq</span><span class="p">,</span> <span class="n">val_losses_eq</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span>
+    <span class="n">cox_eq</span><span class="p">,</span>
+    <span class="n">loader_train_eq</span><span class="p">,</span>
+    <span class="n">loader_val_eq</span><span class="p">,</span>
+    <span class="n">loss_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">out</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="n">cox</span><span class="o">.</span><span class="n">neg_partial_log_likelihood</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plot_losses</span><span class="p">(</span><span class="n">train_losses_eq</span><span class="p">,</span> <span class="n">val_losses_eq</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Equipment Failure — Cox training&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_non_medical_applications_19_0.png" src="../_images/notebooks_non_medical_applications_19_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluate_cox</span><span class="p">(</span><span class="n">cox_eq</span><span class="p">,</span> <span class="n">loader_test_eq</span><span class="p">,</span> <span class="s2">&quot;Equipment Failure&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+==================================================
+ Equipment Failure — Cox Model Results
+==================================================
+  C-index         : 0.5932
+  95% CI          : tensor([0.4863, 0.7002])
+  AUC (median t)  : 0.5961
+==================================================
+</pre></div></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="4.-Loan-Default-—-Credit-Risk">
+<h2>4. Loan Default — Credit Risk<a class="headerlink" href="#4.-Loan-Default-—-Credit-Risk" title="Link to this heading">#</a></h2>
+<p><strong>Scenario</strong>: A lender wants to model <em>when</em> a borrower will default on a loan. The event is <strong>default</strong>. The time is <strong>months since loan origination</strong>. Loans that were fully repaid or are still active are <strong>right-censored</strong>.</p>
+<p><strong>Features</strong>: Loan amount (USD), credit score, debt-to-income ratio, employment length (years), loan purpose (encoded).</p>
+<blockquote>
+<div><p>📂 <strong>Real Dataset</strong>: <a class="reference external" href="https://www.kaggle.com/c/GiveMeSomeCredit">Give Me Some Credit — Kaggle</a> 150,000 borrowers with features including revolving utilization, age, and 90-day delinquency history. <em>In this notebook we use synthetic data with matching statistical properties to keep the example self-contained and fast to run.</em></p>
+</div></blockquote>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Synthetic Loan Default Data ──────────────────────────────────────────────</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">800</span>
+
+<span class="n">loan_amount</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="mi">50000</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">credit_score</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">680</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">850</span><span class="p">)</span>
+<span class="n">dti_ratio</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">beta</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="mi">60</span>  <span class="c1"># debt-to-income (%)</span>
+<span class="n">emp_length</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>  <span class="c1"># years employed</span>
+<span class="n">loan_purpose</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># 0=personal,1=auto,2=home,3=education</span>
+
+<span class="n">log_scale_true</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="o">-</span><span class="mf">0.0001</span> <span class="o">*</span> <span class="n">loan_amount</span>
+    <span class="o">+</span> <span class="mf">0.005</span> <span class="o">*</span> <span class="n">credit_score</span>
+    <span class="o">-</span> <span class="mf">0.03</span> <span class="o">*</span> <span class="n">dti_ratio</span>
+    <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">emp_length</span>
+    <span class="o">-</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">loan_purpose</span>
+    <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_scale_true</span> <span class="o">+</span> <span class="mf">3.5</span><span class="p">)</span>  <span class="c1"># baseline ~33 months</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="mf">1.2</span>
+<span class="n">time_default</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">weibull</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="c1"># Loan term is 36 or 60 months</span>
+<span class="n">loan_term</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">36</span><span class="p">,</span> <span class="mi">60</span><span class="p">],</span> <span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">time_obs_ln</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">time_default</span><span class="p">,</span> <span class="n">loan_term</span><span class="p">)</span>
+<span class="n">event_obs_ln</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_default</span> <span class="o">&lt;=</span> <span class="n">loan_term</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Default rate: </span><span class="si">{</span><span class="n">event_obs_ln</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">  |  Median time to default/payoff: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">time_obs_ln</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> months&quot;</span><span class="p">)</span>
+
+<span class="n">X_ln</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">loan_amount</span><span class="p">,</span> <span class="n">credit_score</span><span class="p">,</span> <span class="n">dti_ratio</span><span class="p">,</span> <span class="n">emp_length</span><span class="p">,</span> <span class="n">loan_purpose</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Default rate: 60.8%  |  Median time to default/payoff: 27.5 months
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Data loaders ─────────────────────────────────────────────────────────────</span>
+<span class="n">loader_train_ln</span><span class="p">,</span> <span class="n">loader_val_ln</span><span class="p">,</span> <span class="n">loader_test_ln</span> <span class="o">=</span> <span class="n">make_loaders</span><span class="p">(</span><span class="n">X_ln</span><span class="p">,</span> <span class="n">event_obs_ln</span><span class="p">,</span> <span class="n">time_obs_ln</span><span class="p">)</span>
+
+<span class="c1"># ── Weibull AFT model ────────────────────────────────────────────────────────</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">weibull_ln</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">train_losses_ln</span><span class="p">,</span> <span class="n">val_losses_ln</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span><span class="n">weibull_ln</span><span class="p">,</span> <span class="n">loader_train_ln</span><span class="p">,</span> <span class="n">loader_val_ln</span><span class="p">,</span> <span class="n">loss_fn</span><span class="o">=</span><span class="n">weibull_loss</span><span class="p">)</span>
+<span class="n">plot_losses</span><span class="p">(</span><span class="n">train_losses_ln</span><span class="p">,</span> <span class="n">val_losses_ln</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Loan Default — Weibull AFT training&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_non_medical_applications_24_0.png" src="../_images/notebooks_non_medical_applications_24_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluate_weibull</span><span class="p">(</span><span class="n">weibull_ln</span><span class="p">,</span> <span class="n">loader_test_ln</span><span class="p">,</span> <span class="s2">&quot;Loan Default&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+==================================================
+ Loan Default — Weibull AFT Model Results
+==================================================
+  C-index         : 0.7817
+  95% CI          : tensor([0.6919, 0.8715])
+  AUC (median t)  : 0.8634
+==================================================
+</pre></div></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="5.-Extreme-Weather-Events-—-Meteorology">
+<h2>5. Extreme Weather Events — Meteorology<a class="headerlink" href="#5.-Extreme-Weather-Events-—-Meteorology" title="Link to this heading">#</a></h2>
+<p><strong>Scenario</strong>: A meteorologist wants to model <em>when</em> a weather station will next record an extreme temperature event (&gt;95th percentile). The event is <strong>threshold exceedance</strong>. The time is <strong>days between consecutive extreme events</strong> at a station. Stations still under observation (no event yet) are <strong>right-censored</strong>.</p>
+<p><strong>Features</strong>: Average summer temperature anomaly (°C), elevation (m), coastal proximity (0/1), mean annual rainfall (mm), latitude zone (encoded).</p>
+<blockquote>
+<div><p>📂 <strong>Real Dataset</strong>: <a class="reference external" href="https://www.ncdc.noaa.gov/stormevents/">NOAA Storm Events Database</a> Detailed records of storm events across the US with start/end dates, location, and severity — suitable for time-to-event modeling of extreme weather. <em>In this notebook we use synthetic data with matching statistical properties to keep the example self-contained and fast to run.</em></p>
+</div></blockquote>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Synthetic Extreme Weather Data ───────────────────────────────────────────</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">800</span>
+
+<span class="n">temp_anomaly</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># °C above historical mean</span>
+<span class="n">elevation</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># meters</span>
+<span class="n">coastal</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">N</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">rainfall_mm</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>  <span class="c1"># mm/year</span>
+<span class="n">latitude_zone</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># 0=tropical,1=temperate,2=polar</span>
+
+<span class="n">log_hz_true</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mf">0.4</span> <span class="o">*</span> <span class="n">temp_anomaly</span>
+    <span class="o">-</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">elevation</span>
+    <span class="o">-</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">coastal</span>  <span class="c1"># coastal areas more buffered</span>
+    <span class="o">-</span> <span class="mf">0.0005</span> <span class="o">*</span> <span class="n">rainfall_mm</span>
+    <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">latitude_zone</span>
+    <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">baseline_days</span> <span class="o">=</span> <span class="mf">120.0</span>
+<span class="n">time_weather</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="n">baseline_days</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_hz_true</span><span class="p">))</span>
+<span class="n">obs_window</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">365</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">time_obs_wt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">time_weather</span><span class="p">,</span> <span class="n">obs_window</span><span class="p">)</span>
+<span class="n">event_obs_wt</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_weather</span> <span class="o">&lt;=</span> <span class="n">obs_window</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event rate: </span><span class="si">{</span><span class="n">event_obs_wt</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">  |  Median inter-event gap: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">time_obs_wt</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> days&quot;</span><span class="p">)</span>
+
+<span class="n">X_wt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">temp_anomaly</span><span class="p">,</span> <span class="n">elevation</span><span class="p">,</span> <span class="n">coastal</span><span class="p">,</span> <span class="n">rainfall_mm</span><span class="p">,</span> <span class="n">latitude_zone</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Event rate: 68.2%  |  Median inter-event gap: 73 days
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Data loaders ─────────────────────────────────────────────────────────────</span>
+<span class="n">loader_train_wt</span><span class="p">,</span> <span class="n">loader_val_wt</span><span class="p">,</span> <span class="n">loader_test_wt</span> <span class="o">=</span> <span class="n">make_loaders</span><span class="p">(</span><span class="n">X_wt</span><span class="p">,</span> <span class="n">event_obs_wt</span><span class="p">,</span> <span class="n">time_obs_wt</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+
+<span class="c1"># ── Cox model ────────────────────────────────────────────────────────────────</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">cox_wt</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">train_losses_wt</span><span class="p">,</span> <span class="n">val_losses_wt</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span>
+    <span class="n">cox_wt</span><span class="p">,</span>
+    <span class="n">loader_train_wt</span><span class="p">,</span>
+    <span class="n">loader_val_wt</span><span class="p">,</span>
+    <span class="n">loss_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">out</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="n">cox</span><span class="o">.</span><span class="n">neg_partial_log_likelihood</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plot_losses</span><span class="p">(</span><span class="n">train_losses_wt</span><span class="p">,</span> <span class="n">val_losses_wt</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Extreme Weather — Cox training&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_non_medical_applications_29_0.png" src="../_images/notebooks_non_medical_applications_29_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluate_cox</span><span class="p">(</span><span class="n">cox_wt</span><span class="p">,</span> <span class="n">loader_test_wt</span><span class="p">,</span> <span class="s2">&quot;Extreme Weather&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+==================================================
+ Extreme Weather — Cox Model Results
+==================================================
+  C-index         : 0.6317
+  95% CI          : tensor([0.5160, 0.7475])
+  AUC (median t)  : 0.6831
+==================================================
+</pre></div></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="6.-Cross-Domain-Comparison">
+<h2>6. Cross-Domain Comparison<a class="headerlink" href="#6.-Cross-Domain-Comparison" title="Link to this heading">#</a></h2>
+<p>Below we summarize the C-index and AUC (at median event time) across all five domains.</p>
+<p>A C-index of <strong>0.5</strong> is equivalent to random guessing; <strong>1.0</strong> is perfect discrimination. The same interpretation holds for AUC.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;domain&quot;</span><span class="p">)</span>
+<span class="n">summary</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Model&quot;</span><span class="p">,</span> <span class="s2">&quot;C-index&quot;</span><span class="p">,</span> <span class="s2">&quot;AUC (median t)&quot;</span><span class="p">]</span>
+<span class="n">summary</span><span class="p">[</span><span class="s2">&quot;C-index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary</span><span class="p">[</span><span class="s2">&quot;C-index&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.4f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+<span class="n">summary</span><span class="p">[</span><span class="s2">&quot;AUC (median t)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary</span><span class="p">[</span><span class="s2">&quot;AUC (median t)&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.4f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+                          Model C-index AUC (median t)
+domain
+Customer Churn              Cox  0.6917         0.7358
+Employee Attrition  Weibull AFT  0.5867         0.6214
+Equipment Failure           Cox  0.5932         0.5961
+Loan Default        Weibull AFT  0.7817         0.8634
+Extreme Weather             Cox  0.6317         0.6831
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visual comparison</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">domains</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;domain&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+<span class="n">cindexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;cindex&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#4C72B0&quot;</span><span class="p">,</span> <span class="s2">&quot;#DD8452&quot;</span><span class="p">,</span> <span class="s2">&quot;#55A868&quot;</span><span class="p">,</span> <span class="s2">&quot;#C44E52&quot;</span><span class="p">,</span> <span class="s2">&quot;#8172B3&quot;</span><span class="p">]</span>
+
+<span class="n">bars</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="n">domains</span><span class="p">,</span> <span class="n">cindexes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Random (0.5)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;C-index&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Concordance Index by Domain (test set)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">bar</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bars</span><span class="p">,</span> <span class="n">cindexes</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">val</span> <span class="o">+</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">bar</span><span class="o">.</span><span class="n">get_y</span><span class="p">()</span> <span class="o">+</span> <span class="n">bar</span><span class="o">.</span><span class="n">get_height</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_non_medical_applications_33_0.png" src="../_images/notebooks_non_medical_applications_33_0.png" />
+</div>
+</div>
+</section>
+<section id="Summary">
+<h2>Summary<a class="headerlink" href="#Summary" title="Link to this heading">#</a></h2>
+<p>This notebook demonstrated that <code class="docutils literal notranslate"><span class="pre">TorchSurv</span></code> applies cleanly to <strong>any time-to-event problem</strong>:</p>
+<ul class="simple">
+<li><p><strong>Same API</strong> regardless of domain — swap in your data and your architecture</p></li>
+<li><p><strong>Cox model</strong>: great when the proportional hazards assumption holds; outputs a risk ranking</p></li>
+<li><p><strong>Weibull AFT model</strong>: directly models survival time; outputs interpretable scale/shape parameters</p></li>
+<li><p><strong>Censoring is handled automatically</strong> — no need to drop or impute incomplete observations</p></li>
+</ul>
+<section id="Next-steps">
+<h3>Next steps<a class="headerlink" href="#Next-steps" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Replace synthetic data with the linked real datasets for each domain</p></li>
+<li><p>Try deeper architectures or domain-specific features</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">cindex.compare(other_cindex)</span></code> to test whether one model significantly outperforms another</p></li>
+<li><p>See the <a class="reference external" href="https://opensource.nibr.com/torchsurv/">TorchSurv documentation</a> for time-varying covariates, momentum training, and more</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="regression_time_varying.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Survival Regression with Time-Varying Covariates</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="loss.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Loss</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Shared-Utilities">Shared Utilities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#1.-Customer-Churn-—-Telecom-/-SaaS">1. Customer Churn — Telecom / SaaS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#2.-Employee-Attrition-—-HR-Analytics">2. Employee Attrition — HR Analytics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#3.-Equipment-Failure-—-Predictive-Maintenance">3. Equipment Failure — Predictive Maintenance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#4.-Loan-Default-—-Credit-Risk">4. Loan Default — Credit Risk</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#5.-Extreme-Weather-Events-—-Meteorology">5. Extreme Weather Events — Meteorology</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#6.-Cross-Domain-Comparison">6. Cross-Domain Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Summary">Summary</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Next-steps">Next steps</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Thibaud Coroller, Mélodie Monod, Peter Krusche, Qian Cao
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Novartis Pharma AG.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
