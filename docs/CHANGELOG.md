@@ -1,6 +1,47 @@
 Changelog
 =========
 
+Version 0.2.0
+-------------
+
+### Breaking Changes
+
+* Dropped Python 3.8 support; now requires Python >=3.9 (#148)
+* Bumped torch dependency to >=2.8 (#148)
+* Replaced ``validate_data.py`` with pydantic-based validators (``pydantic>=2.0`` now required) (#148)
+
+### Bug Fixes
+
+* Fixed IPCW device mismatch issue (#147)
+
+### Core Refactoring
+
+* Refactored all loss modules (cox, weibull, momentum, survival) to use pydantic validators (#148)
+* Refactored all metric modules (auc, brier_score, cindex) to use new validators (#148)
+* Vectorized Cox partial likelihood and cumulative hazard computations (#148)
+* Added ``__init__.py`` with ``__all__`` exports to all subpackages (#148)
+
+### Development Tooling
+
+* Migrated from conda to uv as primary development tool (#148)
+* Added dependency-groups in ``pyproject.toml`` (dev, docs, publish) (#148)
+* Added ruff + mypy strict mode to pre-commit and CI (#148)
+* Modernized CI workflows to use uv + astral-sh/setup-uv@v5 (#148)
+* Upgraded workflow tests with better Python/PyTorch version coverage (#158)
+
+### Testing
+
+* Added hypothesis-based property tests (#148)
+* Added shared test fixtures via ``conftest.py`` (#148)
+* Added pydantic validation tests (#148)
+
+### Documentation
+
+* Added GOVERNANCE.md, CODEOWNERS, and release info for PyTorch Ecosystem compliance (#156)
+* Updated README with versioning, compatibility, and changelog links (#156)
+* Fixed URL typos and broken links (#150)
+* Added package overview docs and non-medical applications notebook (#148)
+
 Version 0.1.6
 -------------
 
