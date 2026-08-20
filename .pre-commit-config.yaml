@@ -50,6 +50,13 @@ repos:
 
   - repo: local
     hooks:
+      - id: sync-pytorch-badge
+        name: sync-pytorch-badge
+        entry: python dev/sync-badges.py
+        language: system
+        files: (torch-compatibility\.yml|README\.md)$
+        pass_filenames: false
+
       - id: mypy
         name: mypy
         entry: uv run --no-sync mypy
