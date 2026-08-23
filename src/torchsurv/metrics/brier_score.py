@@ -491,7 +491,7 @@ class BrierScore:
 
         brier_score_se = self._brier_score_se()
 
-        if torch.any(brier_score_se) == 0:
+        if torch.any(brier_score_se == 0):
             time_index = torch.where(brier_score_se == 0)
             warnings.warn(
                 f"The standard error of the brier score at time index: {time_index}are zero. This indicates that the brier score is constant across all samples. Confidence interval will equal to the point estimate",
@@ -560,7 +560,7 @@ class BrierScore:
         brier_score_se = self._brier_score_se()
 
         assert self.brier_score is not None
-        if torch.any(brier_score_se) == 0:
+        if torch.any(brier_score_se == 0):
             time_index = torch.where(brier_score_se == 0)
             warnings.warn(
                 f"The standard error of the brier score at time index: {time_index} are zero. This indicates that the brier score is constant across all samples. Confidence interval will equal to the point estimate",
