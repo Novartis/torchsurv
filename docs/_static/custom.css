@@ -34,6 +34,7 @@ img[src$=".png"] {
     color: #ffffff !important;
 }
 .bd-header-announcement a {
-    color: #fff3cd !important;
+    color: #ffffff !important;
     text-decoration: underline !important;
+    font-weight: bold !important;
 }
