@@ -27,3 +27,14 @@ img[src$=".png"] {
     background: transparent !important;
     background-color: transparent !important;
 }
+
+/* Announcement banner: PyTorch orange, readable in both light and dark mode */
+.bd-header-announcement {
+    background-color: #4a7c6f !important;
+    color: #ffffff !important;
+}
+.bd-header-announcement a {
+    color: #ffffff !important;
+    text-decoration: underline !important;
+    font-weight: bold !important;
+}

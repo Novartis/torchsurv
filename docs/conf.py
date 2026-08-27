@@ -61,8 +61,9 @@ templates_path = ["_templates"]
 html_css_files = ["custom.css"]
 html_theme_options = {
     "announcement": (
-        "🎉 We are part of the "
-        "<a href='https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis'> FDA's Regulatory Science Tools Catalog!</a> 🎉"
+        "🔥 TorchSurv is now part of the "
+        "<a href='https://landscape.pytorch.org/'> PyTorch Ecosystem Landscape!</a> "
+        "Read the <a href='https://pytorch.org/blog/pytorch-ecosystem-landscape-q3-update/'>announcement</a> 🔥"
     ),
     "repository_url": "https://github.com/Novartis/torchsurv",
     "repository_branch": "main",

@@ -20,8 +20,9 @@ https://anaconda.org/conda-forge/torchsurv)
 ![Docs](https://github.com/Novartis/torchsurv/actions/workflows/docs.yml/badge.svg?branch=main)
 [![CodeFactor](https://www.codefactor.io/repository/github/novartis/torchsurv/badge/main)](https://www.codefactor.io/repository/github/novartis/torchsurv/overview/main)
 [![JOSS](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d/status.svg)](https://joss.theoj.org/papers/02d7496da2b9cc34f9a6e04cabf2298d)
+[![PyTorch Ecosystem](https://img.shields.io/badge/PyTorch-Ecosystem-ee4c2c?logo=pytorch&logoColor=white)](https://landscape.pytorch.org/)
 [![License](https://img.shields.io/badge/License-MIT-black)](https://opensource.org/licenses/MIT)
-[![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/)
+<!-- [![Documentation](https://img.shields.io/badge/GithubPage-Sphinx-blue)](https://opensource.nibr.com/torchsurv/) -->
 
 
 `TorchSurv` is a Python package that serves as a companion tool to perform deep survival modeling within the `PyTorch` environment. Unlike existing libraries that impose specific parametric forms on users, `TorchSurv` enables the use of custom `PyTorch`-based deep survival models.  With its lightweight design, minimal input requirements, full `PyTorch` backend, and freedom from restrictive survival model parameterizations, `TorchSurv` facilitates efficient survival model implementation, particularly beneficial for high-dimensional input data scenarios.
@@ -69,7 +70,9 @@ cindex.compare(cindexB)
 
 This package was developed by **Novartis** and the **US Food and Drug Administration (FDA)** as part of a **research collaboration** agreement on [radiogenomics](https://www.medrxiv.org/content/10.1101/2023.08.30.23294367v1.full.pdf).
 
-`TorchSurv` is now part of the **FDA’s [Regulatory Science Tool Catalog](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)**  🎉.
+`TorchSurv` is now part of the **[PyTorch Ecosystem Landscape](https://landscape.pytorch.org/)** 🔥. Read the [announcement](https://pytorch.org/blog/pytorch-ecosystem-landscape-q3-update/).
+
+`TorchSurv` is also part of the **FDA's [Regulatory Science Tool Catalog](https://cdrh-rst.fda.gov/torchsurv-deep-learning-tools-survival-analysis)**  🎉.
 
 <details>
 <summary><em>Disclaimer Regarding the Catalog of Regulatory Science Tools</em></summary>
