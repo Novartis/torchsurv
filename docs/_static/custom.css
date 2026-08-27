@@ -30,7 +30,7 @@ img[src$=".png"] {
 
 /* Announcement banner: PyTorch orange, readable in both light and dark mode */
 .bd-header-announcement {
-    background-color: #ee4c2c !important;
+    background-color: #4a7c6f !important;
     color: #ffffff !important;
 }
 .bd-header-announcement a {
