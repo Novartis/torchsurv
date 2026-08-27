@@ -1,5 +1,6 @@
 # global modules
 import json
+import warnings
 
 import numpy as np
 import torch
@@ -238,3 +239,59 @@ def test_brier_score_simulated_data():
                 sksurv_new_time,
             )
             assert np.allclose(ibs.numpy(), ibs_sksurv, rtol=1e-5, atol=1e-8)
+
+
+def _brier_score_with_residuals(columns: list) -> BrierScore:
+    """Build a BrierScore whose residual columns are given directly.
+
+    A column that is constant across samples has standard deviation zero, which
+    is how a zero standard error arises at one time point but not the others.
+    """
+    bs = BrierScore()
+    bs.residuals = torch.tensor(columns, dtype=torch.float32).T
+    bs.time = torch.arange(bs.residuals.shape[0], dtype=torch.float32)
+    bs.brier_score = bs.residuals.mean(axis=0)
+    return bs
+
+
+def _warned_about_zero_se(warning_list) -> bool:
+    return any("standard error" in str(w.message) for w in warning_list)
+
+
+def test_zero_standard_error_warns_when_only_some_time_points_are_degenerate():
+    """The warning names the offending indices, so it has to fire on any of them.
+
+    `torch.any(se) == 0` reduces the vector first and is true only when *every*
+    standard error is zero, which is the one case that also happens to be caught.
+    The realistic case, one constant time point among several, went unreported
+    while the parametric p-value divided by that zero.
+    """
+    varying = [0.1, 0.5, 0.2, 0.9]
+    constant = [0.3, 0.3, 0.3, 0.3]
+
+    partly_degenerate = _brier_score_with_residuals([varying, constant, varying])
+    assert int((partly_degenerate._brier_score_se() == 0).sum()) == 1
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        partly_degenerate._confidence_interval_parametric(alpha=0.05, alternative="two_sided")
+    assert _warned_about_zero_se(caught)
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        partly_degenerate._p_value_parametric(null_value=0.25, alternative="two_sided")
+    assert _warned_about_zero_se(caught)
+
+    # Controls: the all-zero case already warned and must keep doing so, and a
+    # well-behaved vector must not start warning.
+    all_degenerate = _brier_score_with_residuals([constant, constant])
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        all_degenerate._confidence_interval_parametric(alpha=0.05, alternative="two_sided")
+    assert _warned_about_zero_se(caught)
+
+    none_degenerate = _brier_score_with_residuals([varying, varying])
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        none_degenerate._confidence_interval_parametric(alpha=0.05, alternative="two_sided")
+    assert not _warned_about_zero_se(caught)
