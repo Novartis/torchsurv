@@ -12,6 +12,8 @@ Version 0.2.0
 
 ### Bug Fixes
 
+* Preserve small nonzero Weibull survival probabilities by evaluating the exponential survival function directly rather than subtracting the CDF from one.
+
 * Fixed IPCW device mismatch issue (#147)
 * Fixed the Brier score zero-standard-error warning, which tested the reduced vector rather than each element and so only fired when every standard error was zero (#167)
 
