@@ -175,7 +175,15 @@ def survival_function_weibull(
         log_scale = log_scale.unsqueeze(1).expand(time.shape)  # expand across columns
         log_shape = log_shape.unsqueeze(1).expand(time.shape)  # expand across columns
 
-    return 1 - torch.distributions.weibull.Weibull(torch.exp(log_scale), torch.exp(log_shape)).cdf(time)
+    distribution = torch.distributions.weibull.Weibull(torch.exp(log_scale), torch.exp(log_shape))
+    for transform in reversed(distribution.transforms):
+        time = transform.inv(time)
+    if distribution._validate_args:
+        distribution.base_dist._validate_sample(time)
+    survival = torch.exp(-distribution.base_dist.rate * time)
+    # Match the CDF's zero-sign correction for degenerate transforms.
+    sign = distribution.scale.sign() * distribution.concentration_reciprocal.sign()
+    return torch.where(sign == 0, 0.5 + 0.0 * survival, survival)
 
 
 def neg_log_likelihood_weibull(
