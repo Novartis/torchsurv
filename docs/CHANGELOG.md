@@ -28,6 +28,8 @@ Version 0.2.0
 * Added dependency-groups in ``pyproject.toml`` (dev, docs, publish) (#148)
 * Added ruff + mypy strict mode to pre-commit and CI (#148)
 * Modernized CI workflows to use uv + astral-sh/setup-uv@v5 (#148)
+* Added label-triggered Claude issue-to-PR workflow with a diff-based tier gate that auto-merges only easy PRs (``.github/claude-tiers.md``)
+* QC workflow now also runs on pull requests from forks
 * Upgraded workflow tests with better Python/PyTorch version coverage (#158)
 
 ### Testing
