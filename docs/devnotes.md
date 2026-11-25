@@ -150,6 +150,22 @@ There are a few errors in the PDF build due to layout issues,
 but the PDF can still be used to summarize the package in a single
 file.
 
+## Claude issue-to-PR automation
+
+Maintainers can label an issue `claude` to have Claude open a PR (`.github/workflows/claude-issue.yml`). Every same-repo PR is then classified from its diff by `dev/classify_pr.py`, run from the base branch by `.github/workflows/claude-pr-gate.yml`. The rules are in `.github/claude-tiers.md`.
+
+- `tier:easy` PRs from Claude are armed for auto-merge, once the repository variable `CLAUDE_AUTOMERGE_ENABLED` is `true`. They still need every required check to pass.
+- `tier:needs-human` PRs are never auto-merged and go to the CODEOWNERS for review.
+- Changing the tier rules means editing `dev/classify_pr.py` and `tests/test_classify_pr.py`, and always needs a human review.
+
+One-time repository setup (admin):
+
+1. Create the labels `claude`, `tier:easy` and `tier:needs-human`.
+2. Add the `ANTHROPIC_API_KEY` repository secret and install the Claude GitHub App.
+3. Enable "Allow auto-merge", and add `claude-tier-gate` to the required checks on `main`.
+4. Decide how an easy PR satisfies the one-approval rule in `GOVERNANCE.md` (a dedicated approving bot or a ruleset bypass).
+5. Pin `anthropics/claude-code-action` and the other actions to commit SHAs.
+
 ## Steps to create a new release
 
 ### 1. On PyPI

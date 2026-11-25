@@ -1,0 +1,62 @@
+name: "Claude PR Gate 🚦"
+
+# Classifies every same-repo PR from its diff (see .github/claude-tiers.md) and arms auto-merge for easy
+# PRs opened by Claude. The classifier is run from the BASE branch, so a PR cannot change its own gate.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+concurrency:
+  group: claude-pr-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  claude-tier-gate:
+    name: "claude-tier-gate"
+    # Fork PRs get a read-only token and cannot be labeled or merged by this job.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.pull_request.number }}
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+      CLAUDE_AUTHOR: ${{ vars.CLAUDE_PR_AUTHOR || 'claude[bot]' }}
+      AUTOMERGE: ${{ vars.CLAUDE_AUTOMERGE_ENABLED || 'false' }}
+    steps:
+    - name: Checkout base branch
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.base.sha }}
+        fetch-depth: 0
+
+    - name: Fetch PR head
+      run: git fetch --no-tags origin "$HEAD_SHA"
+
+    - name: Classify
+      id: classify
+      run: python3 dev/classify_pr.py --base "$BASE_SHA" --head "$HEAD_SHA" --github-output
+
+    - name: Label and comment
+      env:
+        TIER: ${{ steps.classify.outputs.tier }}
+        REASON: ${{ steps.classify.outputs.reason }}
+      run: |
+        if [ "$TIER" = "easy" ]; then add="tier:easy"; remove="tier:needs-human"; else add="tier:needs-human"; remove="tier:easy"; fi
+        gh pr edit "$PR" --add-label "$add" --remove-label "$remove"
+        gh pr comment "$PR" --edit-last --create-if-none --body "**Tier: \`${TIER}\`** for \`${HEAD_SHA:0:7}\`: ${REASON}"
+
+    # Always disarm first, so a push that turns an easy PR into a hard one cannot merge on the old decision.
+    - name: Disarm auto-merge
+      run: gh pr merge "$PR" --disable-auto || true
+
+    - name: Arm auto-merge
+      if: >-
+        steps.classify.outputs.tier == 'easy'
+        && env.AUTOMERGE == 'true'
+        && env.PR_AUTHOR == env.CLAUDE_AUTHOR
+      run: gh pr merge "$PR" --auto --squash --match-head-commit "$HEAD_SHA"

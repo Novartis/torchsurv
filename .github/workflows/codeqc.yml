@@ -1,10 +1,11 @@
 name: "QC 🛠️"
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   lint:
     name: "Lint & Type Check"
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -25,6 +26,7 @@ jobs:
 
   test:
     name: "Tests"
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -48,6 +50,7 @@ jobs:
 
   docs:
     name: "Docs Build"
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
