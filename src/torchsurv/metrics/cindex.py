@@ -703,6 +703,7 @@ class ConcordanceIndex:
         assert self.estimate is not None
         assert self.event is not None
         assert self.time is not None
+        assert self.weight is not None
         # Get the bootstrap samples of concordance index
         for _ in range(n_bootstraps):
             if metric == "p_value":  # bootstrap samples given null distribution (cindex = 0.5)
@@ -733,7 +734,7 @@ class ConcordanceIndex:
                         self.estimate[index, :][:, index],
                         self.event[index],
                         self.time[index],
-                        self.weight,
+                        self.weight[index],
                         self.tmax,
                         instate=False,
                     )
