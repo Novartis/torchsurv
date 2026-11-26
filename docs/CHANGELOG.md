@@ -12,6 +12,7 @@ Version 0.2.0
 
 ### Bug Fixes
 
+* Fixed the concordance index failing with IPCW weights when ``time`` is float64 or integer, or the weights are in another dtype than ``time`` (#173)
 * Fixed IPCW device mismatch issue (#147)
 * Fixed the Brier score zero-standard-error warning, which tested the reduced vector rather than each element and so only fired when every standard error was zero (#167)
 

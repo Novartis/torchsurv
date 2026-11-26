@@ -847,12 +847,14 @@ class ConcordanceIndex:
         """Obtain subject-specific weight."""
 
         # If weight is not provided, use ones instead.
-        weight_updated = torch.zeros_like(time)
+        # Promote so that integer time, or weights in another float dtype, can be stored.
+        dtype = time.dtype if weight is None else torch.promote_types(time.dtype, weight.dtype)
+        weight_updated = torch.zeros_like(time, dtype=dtype)
 
         # If tmax is provided, truncate time after tmax (mask = False)
         masks = torch.ones_like(time).bool() if tmax is None else time < tmax
         weight_updated[masks] = (
-            torch.tensor(1.0, dtype=weight_updated.dtype, device=time.device) if weight is None else weight[masks]
+            torch.tensor(1.0, dtype=dtype, device=time.device) if weight is None else weight[masks].to(dtype)
         )
 
         return weight_updated
