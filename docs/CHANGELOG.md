@@ -14,7 +14,7 @@ Version 0.2.0
 
 * Fixed IPCW device mismatch issue (#147)
 * Fixed the Brier score zero-standard-error warning, which tested the reduced vector rather than each element and so only fired when every standard error was zero (#167)
-* Fixed the bootstrap confidence interval of the concordance index with IPCW weights, which resampled subjects but not their weights
+* Fixed the bootstrap confidence interval of the concordance index with IPCW weights, which resampled subjects but not their weights (#172)
 
 ### Core Refactoring
 
